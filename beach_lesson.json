@@ -111,9 +111,9 @@
           "round": 2,
           "instruction": "Each crab needs 2 corals. Feed all 3 crabs.",
           "drop_zones": [
-            { "id": "z1", "image_key": "bowl_stone" },
-            { "id": "z2", "image_key": "bowl_stone" },
-            { "id": "z3", "image_key": "bowl_stone" }
+            { "id": "z1", "image_key": "crab_blue" },
+            { "id": "z2", "image_key": "crab_blue" },
+            { "id": "z3", "image_key": "crab_blue" }
           ],
           "draggables": [
             { "id": "c1", "image_key": "coral" },
@@ -150,7 +150,15 @@
             { "id": "p12", "image_key": "pearl_red" },
             { "id": "p13", "image_key": "pearl_red" },
             { "id": "p14", "image_key": "pearl_red" },
-            { "id": "p15", "image_key": "pearl_red" }
+            { "id": "p15", "image_key": "pearl_red" },
+            { "id": "d1", "image_key": "cherry", "decoy": true },
+            { "id": "d2", "image_key": "cherry", "decoy": true },
+            { "id": "d3", "image_key": "cherry", "decoy": true },
+            { "id": "d4", "image_key": "cherry", "decoy": true },
+            { "id": "d5", "image_key": "cookie", "decoy": true },
+            { "id": "d6", "image_key": "cookie", "decoy": true },
+            { "id": "d7", "image_key": "cookie", "decoy": true },
+            { "id": "d8", "image_key": "cookie", "decoy": true }
           ],
           "required_per_zone": { "z1": 4, "z2": 4, "z3": 4 }
         },
@@ -236,11 +244,11 @@
       "mechanic_reason": "Pattern decoding as sequence input cards.",
       "success_message": "Cipher cracked! The door recognizes your logic.",
       "rounds": [
-        { "round": 1, "instruction": "1, 2, 2, 4, 4, 8, 8, ?", "inputs": [{ "id": "n1", "prompt": "Type the next number", "answer": 16 }] },
-        { "round": 2, "instruction": "3, 4, 6, 8, 12, 16, ?, ?", "inputs": [{ "id": "n2", "prompt": "First missing number", "answer": 24 }, { "id": "n3", "prompt": "Second missing number", "answer": 32 }] },
-        { "round": 3, "instruction": "1, 3, 2, 6, 4, 12, 8, ?", "inputs": [{ "id": "n4", "prompt": "Type the next number", "answer": 24 }] },
-        { "round": 4, "instruction": "5, 6, 10, 12, 20, 24, ?, ?", "inputs": [{ "id": "n5", "prompt": "First missing number", "answer": 40 }, { "id": "n6", "prompt": "Second missing number", "answer": 48 }] },
-        { "round": 5, "instruction": "2, 3, 4, 6, 8, 12, 16, ?", "inputs": [{ "id": "n7", "prompt": "Type the next number", "answer": 24 }] }
+        { "round": 1, "instruction": "1, 2, 2, 4, 4, 8, 8, ?", "inputs": [{ "id": "n1", "prompt": "1 - 2 - 2 - 4 - 4 - 8 - 8 - ?", "answer": 16 }] },
+        { "round": 2, "instruction": "3, 4, 6, 8, 12, 16, ?, ?", "inputs": [{ "id": "n2", "prompt": "3 - 4 - 6 - 8 - 12 - 16 - ? - 32", "answer": 24 }] },
+        { "round": 3, "instruction": "1, 3, 2, 6, 4, 12, 8, ?", "inputs": [{ "id": "n4", "prompt": "1 - 3 - 2 - 6 - 4 - 12 - 8 - ?", "answer": 24 }] },
+        { "round": 4, "instruction": "5, 6, 10, 12, 20, 24, ?, ?", "inputs": [{ "id": "n5", "prompt": "5 - 6 - 10 - 12 - 20 - 24 - ? - 48", "answer": 40 }] },
+        { "round": 5, "instruction": "2, 3, 4, 6, 8, 12, 16, ?", "inputs": [{ "id": "n7", "prompt": "2 - 3 - 4 - 6 - 8 - 12 - 16 - ?", "answer": 24 }] }
       ]
     },
     {
@@ -253,11 +261,11 @@
       "mechanic_reason": "Choose the bigger value under pressure.",
       "success_message": "Correct tunnel every time. The maze obeys your choices.",
       "rounds": [
-        { "round": 1, "instruction": "Which tunnel? Tap the bigger one.", "question": "A: 3 + 4 | B: 2 + 6", "left_path": { "label": "3 + 4", "correct": false, "image_key": "totem_1", "image_kind": "target" }, "right_path": { "label": "2 + 6", "correct": true, "image_key": "totem_2", "image_kind": "target" } },
-        { "round": 2, "instruction": "Which tunnel? Tap the bigger one.", "question": "A: 12 + 5 | B: 14 + 4", "left_path": { "label": "12 + 5", "correct": false, "image_key": "basket_wood", "image_kind": "target" }, "right_path": { "label": "14 + 4", "correct": true, "image_key": "basket_woven", "image_kind": "target" } },
-        { "round": 3, "instruction": "Which tunnel? Tap the bigger one.", "question": "A: 3 × 4 | B: 2 × 5", "left_path": { "label": "3 × 4", "correct": true, "image_key": "chest_open", "image_kind": "target" }, "right_path": { "label": "2 × 5", "correct": false, "image_key": "bag_cloth", "image_kind": "target" } },
-        { "round": 4, "instruction": "Which tunnel? Tap the bigger one.", "question": "A: 6 × 4 | B: 5 × 5", "left_path": { "label": "6 × 4", "correct": false, "image_key": "bowl_stone", "image_kind": "target" }, "right_path": { "label": "5 × 5", "correct": true, "image_key": "cauldron", "image_kind": "target" } },
-        { "round": 5, "instruction": "Which tunnel? Tap the bigger one.", "question": "A: 23 + 18 | B: 27 + 15", "left_path": { "label": "23 + 18", "correct": false, "image_key": "stone_blue", "image_kind": "item" }, "right_path": { "label": "27 + 15", "correct": true, "image_key": "pearl_blue", "image_kind": "item" } }
+        { "round": 1, "instruction": "Which tunnel? Tap the bigger one.", "question": "Choose the bigger value.", "left_path": { "label": "3 + 4", "correct": false, "image_key": "totem_1", "image_kind": "target" }, "right_path": { "label": "2 + 6", "correct": true, "image_key": "totem_2", "image_kind": "target" } },
+        { "round": 2, "instruction": "Which tunnel? Tap the bigger one.", "question": "Choose the bigger value.", "left_path": { "label": "12 + 5", "correct": false, "image_key": "basket_wood", "image_kind": "target" }, "right_path": { "label": "14 + 4", "correct": true, "image_key": "basket_woven", "image_kind": "target" } },
+        { "round": 3, "instruction": "Which tunnel? Tap the bigger one.", "question": "Choose the bigger value.", "left_path": { "label": "3 × 4", "correct": true, "image_key": "chest_open", "image_kind": "target" }, "right_path": { "label": "2 × 5", "correct": false, "image_key": "bag_cloth", "image_kind": "target" } },
+        { "round": 4, "instruction": "Which tunnel? Tap the bigger one.", "question": "Choose the bigger value.", "left_path": { "label": "6 × 4", "correct": false, "image_key": "bowl_stone", "image_kind": "target" }, "right_path": { "label": "5 × 5", "correct": true, "image_key": "cauldron", "image_kind": "target" } },
+        { "round": 5, "instruction": "Which tunnel? Tap the bigger one.", "question": "Choose the bigger value.", "left_path": { "label": "23 + 18", "correct": false, "image_key": "stone_blue", "image_kind": "item" }, "right_path": { "label": "27 + 15", "correct": true, "image_key": "pearl_blue", "image_kind": "item" } }
       ]
     },
     {

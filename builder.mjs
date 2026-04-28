@@ -1503,6 +1503,7 @@ function buildHtml(
     const required = stage.required_per_zone || {};
     const prefill = stage.prefill_per_zone || {};
     const zones = stage.drop_zones || [];
+    const draggableById = Object.fromEntries((stage.draggables || []).map((d) => [String(d.id), d]));
 
     const divider = document.createElement("div");
     divider.className = "dd-divider";
@@ -1558,6 +1559,17 @@ function buildHtml(
           return;
         }
         const zoneId = zoneHit.dataset.zoneId;
+        const meta = draggableById[String(draggable.dataset.id)] || {};
+        if(meta.decoy === true){
+          draggable.style.cssText = draggable.dataset.start;
+          shake(draggable);
+          return;
+        }
+        if(Array.isArray(meta.accept_zone_ids) && meta.accept_zone_ids.length > 0 && !meta.accept_zone_ids.includes(zoneId)){
+          draggable.style.cssText = draggable.dataset.start;
+          shake(draggable);
+          return;
+        }
         const max = Number(required[zoneId] || 0);
         if(state.zoneCounts[zoneId] >= max){
           draggable.style.cssText = draggable.dataset.start;
