@@ -537,6 +537,57 @@ function buildHtml(
       border-color:#ffd5d1;
       animation:shake .22s ease;
     }
+    .seq-board{
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      width:100%;
+      align-items:center;
+      margin-top:4px;
+    }
+    .seq-row{
+      font-size:clamp(30px,4.2vw,48px);
+      font-weight:900;
+      color:#dff8dc;
+      letter-spacing:.02em;
+      display:flex;
+      gap:8px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:center;
+      border-radius:14px;
+      padding:8px 12px;
+    }
+    .seq-blank{
+      width:84px;
+      padding:7px 8px;
+      border-radius:12px;
+      border:3px solid rgba(244,208,63,.62);
+      background:rgba(255,255,255,.82);
+      color:#0f2039;
+      font-size:30px;
+      font-weight:900;
+      text-align:center;
+      outline:none;
+    }
+    .seq-blank.ok{
+      border-color:var(--ok);
+      background:rgba(120,235,170,.28);
+      color:#0f3b22;
+      -webkit-text-fill-color:#0f3b22;
+    }
+    .seq-submit{
+      margin-top:10px;
+      padding:12px 36px;
+      font-size:30px;
+      font-weight:900;
+      border:none;
+      border-radius:999px;
+      cursor:pointer;
+      color:#2a1b00;
+      background:linear-gradient(135deg,#ffd979,#f1b73c);
+      box-shadow:0 5px 0 #a07022;
+    }
     .choice-box{
       position:absolute;
       left:4%;
@@ -1353,7 +1404,8 @@ function buildHtml(
       "left_path", "right_path", "sequence", "round", "operator_tasks",
       "tap_step", "counter_start", "counter_goal", "counter_suffix",
       "tap_mode", "totem_targets", "bowl_image_key", "per_target_goal",
-      "number_start", "number_end", "goal_image_key"
+      "number_start", "number_end", "goal_image_key",
+      "sequence_board", "hide_instruction_label"
     ];
     for(const k of pass){
       if(round[k] !== undefined) out[k] = round[k];
@@ -1696,6 +1748,59 @@ function buildHtml(
     head.className = "eq-head";
     head.textContent = "🔐";
     card.appendChild(head);
+
+    if(stage.sequence_board && Array.isArray(stage.sequence_board.rows)){
+      const rows = stage.sequence_board.rows;
+      const answers = Array.isArray(stage.sequence_board.answers) ? stage.sequence_board.answers : [];
+      let blankIdx = 0;
+      const board = document.createElement("div");
+      board.className = "seq-board";
+      rows.forEach((parts) => {
+        const row = document.createElement("div");
+        row.className = "seq-row";
+        (parts || []).forEach((part) => {
+          if(String(part) === "_"){
+            const input = document.createElement("input");
+            input.className = "seq-blank";
+            input.type = "number";
+            input.dataset.answer = String(answers[blankIdx] ?? "");
+            blankIdx += 1;
+            row.appendChild(input);
+          } else {
+            const span = document.createElement("span");
+            span.textContent = String(part);
+            row.appendChild(span);
+          }
+        });
+        board.appendChild(row);
+      });
+      const btn = document.createElement("button");
+      btn.className = "seq-submit";
+      btn.type = "button";
+      btn.textContent = "+ Harder";
+      btn.onclick = () => {
+        const blanks = [...board.querySelectorAll(".seq-blank")];
+        const ok = blanks.every((b) => String(b.value).trim() === String(b.dataset.answer).trim());
+        if(ok){
+          blanks.forEach((b) => {
+            b.classList.add("ok");
+            b.disabled = true;
+          });
+          markSuccess(stage);
+        }else{
+          blanks.forEach((b) => {
+            if(String(b.value).trim() !== String(b.dataset.answer).trim()){
+              b.classList.add("bad");
+              setTimeout(() => b.classList.remove("bad"), 200);
+            }
+          });
+        }
+      };
+      card.appendChild(board);
+      card.appendChild(btn);
+      lane.appendChild(card);
+      return;
+    }
 
     (stage.inputs || []).forEach((entry) => {
       const line = document.createElement("div");
@@ -2117,7 +2222,11 @@ function buildHtml(
     const engStage = { ...stage, type: engType };
     const instruction = stage.instruction || stage.question || LESSON.story_hook || "";
     const cleanInstruction = String(instruction).trim() ? instruction : englishStageFallback(engStage);
-    $("instruction").textContent = cleanInstruction + "  (" + (state.stagePracticeDone + 1) + "/" + state.stagePracticeTarget + ")";
+    if(stage.hide_instruction_label){
+      $("instruction").textContent = "(" + (state.stagePracticeDone + 1) + "/" + state.stagePracticeTarget + ")";
+    }else{
+      $("instruction").textContent = cleanInstruction + "  (" + (state.stagePracticeDone + 1) + "/" + state.stagePracticeTarget + ")";
+    }
     $("bg").src = backgroundPath(resolveStageBackground(stage, index));
     $("bg").onerror = () => {
       $("bg").src = "";
