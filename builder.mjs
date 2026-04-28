@@ -1227,7 +1227,7 @@ function buildHtml(
       <div class="completion-section">Inventory</div>
       <div class="inventory-row" id="completionInventory"></div>
       <div class="completion-coins" id="completionCoins">🪙 0 coins earned!</div>
-      <button class="completion-reload" id="completionShopBtn">🛍️ To Shop</button>
+      <button class="completion-reload" id="completionPlayAgainBtn">🔄 Play Again</button>
     </div>
   </div>
   <div class="story-screen" id="storyScreen">
@@ -1516,6 +1516,18 @@ function buildHtml(
     return String(key || "Mystery Artifact")
       .replace(/[_-]+/g, " ")
       .replace(/\b\w/g, (c) => c.toUpperCase());
+  }
+
+  function ensureRingIceInventory(){
+    const hasRing = state.earnedArtifacts.some((a) => a && a.key === "ring_ice");
+    if(hasRing) return;
+    state.earnedArtifacts.unshift({
+      key: "ring_ice",
+      name: "Ring of Ice",
+      image: "assets/characters/ring_ice.webp",
+      emoji: "🧊",
+      description: "A legacy artifact from the previous island.",
+    });
   }
 
   function posStyle(x, y){
@@ -2753,17 +2765,37 @@ function buildHtml(
     row.innerHTML = "";
     const items = state.earnedArtifacts.slice(-12);
     for(const art of items){
-      const img = document.createElement("img");
-      img.className = "inventory-icon";
-      img.src = art.image;
-      img.alt = art.name || art.key || "artifact";
-      img.onerror = () => img.remove();
-      row.appendChild(img);
+      const wrap = document.createElement("div");
+      wrap.className = "inventory-icon";
+      if(art.image){
+        const img = document.createElement("img");
+        img.src = art.image;
+        img.alt = art.name || art.key || "artifact";
+        img.style.width = "100%";
+        img.style.height = "100%";
+        img.style.objectFit = "contain";
+        img.onerror = () => {
+          wrap.textContent = art.emoji || "🏆";
+          wrap.style.display = "flex";
+          wrap.style.alignItems = "center";
+          wrap.style.justifyContent = "center";
+          wrap.style.fontSize = "28px";
+        };
+        wrap.appendChild(img);
+      } else {
+        wrap.textContent = art.emoji || "🏆";
+        wrap.style.display = "flex";
+        wrap.style.alignItems = "center";
+        wrap.style.justifyContent = "center";
+        wrap.style.fontSize = "28px";
+      }
+      row.appendChild(wrap);
     }
     if(items.length === 0) row.textContent = "—";
   }
 
   function showCompletionScreen(){
+    ensureRingIceInventory();
     const art = state.completionArtifact || {};
     const charKey = LESSON.meta?.character_key || LESSON.character?.image_key || Object.keys(CHARACTER_MAP)[0] || "";
     const avatar = $("completionAvatar");
@@ -2772,8 +2804,8 @@ function buildHtml(
     avatar.onload = () => { avatar.style.display = "block"; };
 
     $("completionName").textContent = LESSON.meta?.student_name || "Hero";
-    $("completionLevel").textContent = "Level " + Math.max(1, Number(LESSON.meta?.lesson_number || 1) + 1);
-    $("completionCoins").textContent = "🪙 " + state.totalCoins + " coins earned!";
+    $("completionLevel").textContent = "Level 3";
+    $("completionCoins").textContent = "🪙 " + state.totalCoins + " coins remaining";
     $("completionBg").src = backgroundPath("stage1_generated");
     $("completionArtifactName").textContent = art.name || "Mystery Artifact";
     $("completionArtifactDesc").textContent = art.description || "A magical reward for your journey.";
@@ -2867,18 +2899,11 @@ function buildHtml(
   }
 
   $("successNextBtn").addEventListener("click", nextStep);
-  $("completionShopBtn").addEventListener("click", openShopScreen);
+  $("completionPlayAgainBtn").addEventListener("click", () => location.reload());
   $("storyShopBtn").addEventListener("click", openShopScreen);
   $("shopFinishBtn").addEventListener("click", () => {
     $("shopScreen").classList.remove("on");
-    $("game").style.pointerEvents = "";
-    $("stageBackBtn").classList.remove("hidden");
-    $("stageSkipBtn").classList.remove("hidden");
-    $("instruction").classList.remove("hidden");
-    $("coinsLabel").parentElement.classList.remove("hidden");
-    $("introScreen").classList.remove("hidden");
-    state.stageIndex = 0;
-    state.stagePracticeDone = 0;
+    showCompletionScreen();
   });
   $("completionBackBtn").addEventListener("click", () => {
     $("completionScreen").classList.remove("on");

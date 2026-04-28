@@ -1079,7 +1079,7 @@
       <div class="completion-section">Inventory</div>
       <div class="inventory-row" id="completionInventory"></div>
       <div class="completion-coins" id="completionCoins">🪙 0 coins earned!</div>
-      <button class="completion-reload" id="completionShopBtn">🛍️ To Shop</button>
+      <button class="completion-reload" id="completionPlayAgainBtn">🔄 Play Again</button>
     </div>
   </div>
   <div class="story-screen" id="storyScreen">
@@ -1107,7 +1107,7 @@
   const CHARACTER_MAP = {"boy_blue":"assets/characters/boy_blue.webp","boy_brown":"assets/characters/boy_brown.webp","boy_green":"assets/characters/boy_green.webp","elf_blue":"assets/characters/elf_blue.webp","elf_green":"assets/characters/elf_green.webp","elf_red":"assets/characters/elf_red.webp","fairy_green":"assets/characters/fairy_green.webp","fairy_purple":"assets/characters/fairy_purple.webp","fairy_red":"assets/characters/fairy_red.webp","girl_blue":"assets/characters/girl_blue.webp","girl_brown":"assets/characters/girl_brown.webp","girl_green":"assets/characters/girl_green.webp","pirate_blue":"assets/characters/pirate_blue.webp","pirate_brown":"assets/characters/pirate_brown.webp","pirate_green":"assets/characters/pirate_green.webp","wizard_blue":"assets/characters/wizard_blue.webp","wizard_green":"assets/characters/wizard_green.webp","wizard_red":"assets/characters/wizard_red.webp"};
   const ITEMS_MAP = {"artifact":"assets/items/artifact.png","bamboo":"assets/items/bamboo.png","banana":"assets/items/banana.png","bubble":"assets/items/bubble.png","butterfly":"assets/items/butterfly.png","candy":"assets/items/candy.png","cherry":"assets/items/cherry.png","cookie":"assets/items/cookie.png","coral":"assets/items/coral.png","crab_blue":"assets/items/crab_blue.png","hibiscus":"assets/items/hibiscus.png","jellyfish":"assets/items/jellyfish.png","leaf":"assets/items/leaf.png","lollipop":"assets/items/lollipop.png","mushroom":"assets/items/mushroom.png","pawprint":"assets/items/pawprint.png","pearl_blue":"assets/items/pearl_blue.png","pearl_red":"assets/items/pearl_red.png","samurai_monkey":"assets/items/samurai_monkey.png","shell_blue":"assets/items/shell_blue.png","shell_red":"assets/items/shell_red.png","spore":"assets/items/spore.png","starfish":"assets/items/starfish.png","stone_blue":"assets/items/stone_blue.png"};
   const TARGETS_MAP = {"bag_cloth":"assets/targets/bag_cloth.png","basket_wood":"assets/targets/basket_wood.png","basket_woven":"assets/targets/basket_woven.png","bowl_stone":"assets/targets/bowl_stone.png","bowl_wood":"assets/targets/bowl_wood.png","cauldron":"assets/targets/cauldron.png","chest_open":"assets/targets/chest_open.png","totem_1":"assets/targets/totem_1.png","totem_2":"assets/targets/totem_2.png","totem_3":"assets/targets/totem_3.png"};
-  const ARTIFACT_MAP = {"boots_jump":"assets/artifacts/boots_jump.png","cloak_invisible":"assets/artifacts/cloak_invisible.png","crown":"assets/artifacts/crown.webp","dron":"assets/artifacts/dron.webp","egg":"assets/artifacts/egg.webp","glasses":"assets/artifacts/glasses.webp","glasses_mind":"assets/artifacts/glasses_mind.png","lizard":"assets/artifacts/lizard.webp","sword":"assets/artifacts/sword.webp","sword_light":"assets/artifacts/sword_light.png"};
+  const ARTIFACT_MAP = {"boots_jump":"assets/artifacts/boots_jump.png","cloak_invisible":"assets/artifacts/cloak_invisible.png","crown":"assets/artifacts/crown.webp","dron":"assets/artifacts/dron.webp","egg":"assets/artifacts/egg.webp","glasses":"assets/artifacts/glasses.webp","glasses_mind":"assets/artifacts/glasses_mind.png","lizard":"assets/artifacts/lizard.webp","ring_ice":"assets/artifacts/ring_ice.webp","sword":"assets/artifacts/sword.webp","sword_light":"assets/artifacts/sword_light.png"};
   const SHOP_ITEMS = [
     { id: "sword", name: "Sword", img: "assets/characters/sword.webp", price: 150 },
     { id: "egg", name: "Egg", img: "assets/characters/egg.webp", price: 75 },
@@ -1368,6 +1368,18 @@
     return String(key || "Mystery Artifact")
       .replace(/[_-]+/g, " ")
       .replace(/w/g, (c) => c.toUpperCase());
+  }
+
+  function ensureRingIceInventory(){
+    const hasRing = state.earnedArtifacts.some((a) => a && a.key === "ring_ice");
+    if(hasRing) return;
+    state.earnedArtifacts.unshift({
+      key: "ring_ice",
+      name: "Ring of Ice",
+      image: "assets/characters/ring_ice.webp",
+      emoji: "🧊",
+      description: "A legacy artifact from the previous island.",
+    });
   }
 
   function posStyle(x, y){
@@ -2605,17 +2617,37 @@
     row.innerHTML = "";
     const items = state.earnedArtifacts.slice(-12);
     for(const art of items){
-      const img = document.createElement("img");
-      img.className = "inventory-icon";
-      img.src = art.image;
-      img.alt = art.name || art.key || "artifact";
-      img.onerror = () => img.remove();
-      row.appendChild(img);
+      const wrap = document.createElement("div");
+      wrap.className = "inventory-icon";
+      if(art.image){
+        const img = document.createElement("img");
+        img.src = art.image;
+        img.alt = art.name || art.key || "artifact";
+        img.style.width = "100%";
+        img.style.height = "100%";
+        img.style.objectFit = "contain";
+        img.onerror = () => {
+          wrap.textContent = art.emoji || "🏆";
+          wrap.style.display = "flex";
+          wrap.style.alignItems = "center";
+          wrap.style.justifyContent = "center";
+          wrap.style.fontSize = "28px";
+        };
+        wrap.appendChild(img);
+      } else {
+        wrap.textContent = art.emoji || "🏆";
+        wrap.style.display = "flex";
+        wrap.style.alignItems = "center";
+        wrap.style.justifyContent = "center";
+        wrap.style.fontSize = "28px";
+      }
+      row.appendChild(wrap);
     }
     if(items.length === 0) row.textContent = "—";
   }
 
   function showCompletionScreen(){
+    ensureRingIceInventory();
     const art = state.completionArtifact || {};
     const charKey = LESSON.meta?.character_key || LESSON.character?.image_key || Object.keys(CHARACTER_MAP)[0] || "";
     const avatar = $("completionAvatar");
@@ -2624,8 +2656,8 @@
     avatar.onload = () => { avatar.style.display = "block"; };
 
     $("completionName").textContent = LESSON.meta?.student_name || "Hero";
-    $("completionLevel").textContent = "Level " + Math.max(1, Number(LESSON.meta?.lesson_number || 1) + 1);
-    $("completionCoins").textContent = "🪙 " + state.totalCoins + " coins earned!";
+    $("completionLevel").textContent = "Level 3";
+    $("completionCoins").textContent = "🪙 " + state.totalCoins + " coins remaining";
     $("completionBg").src = backgroundPath("stage1_generated");
     $("completionArtifactName").textContent = art.name || "Mystery Artifact";
     $("completionArtifactDesc").textContent = art.description || "A magical reward for your journey.";
@@ -2719,18 +2751,11 @@
   }
 
   $("successNextBtn").addEventListener("click", nextStep);
-  $("completionShopBtn").addEventListener("click", openShopScreen);
+  $("completionPlayAgainBtn").addEventListener("click", () => location.reload());
   $("storyShopBtn").addEventListener("click", openShopScreen);
   $("shopFinishBtn").addEventListener("click", () => {
     $("shopScreen").classList.remove("on");
-    $("game").style.pointerEvents = "";
-    $("stageBackBtn").classList.remove("hidden");
-    $("stageSkipBtn").classList.remove("hidden");
-    $("instruction").classList.remove("hidden");
-    $("coinsLabel").parentElement.classList.remove("hidden");
-    $("introScreen").classList.remove("hidden");
-    state.stageIndex = 0;
-    state.stagePracticeDone = 0;
+    showCompletionScreen();
   });
   $("completionBackBtn").addEventListener("click", () => {
     $("completionScreen").classList.remove("on");
