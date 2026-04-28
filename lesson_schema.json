@@ -1,0 +1,135 @@
+{
+  "$schema": "Monkey Archipelago — Lesson JSON Schema v2.0",
+  "description": "Root lesson object may be at top level or under \"lesson\"",
+
+  "meta": {
+    "lesson_id": "MA-SEQ-L1-MONKEY-0000",
+    "student_name": "Alex",
+    "student_code": "MONKEY-0000",
+    "age": 7,
+    "topic": "sequences_patterns",
+    "island_number": 2,
+    "lesson_number": 1,
+    "difficulty": "medium",
+    "character_key": "pirate_blue"
+  },
+
+  "story": {
+    "island_name": "Синий Остров",
+    "villain": "Синяя Обезьяна-Краб",
+    "artifact_name": "Очки чтения мыслей",
+    "artifact_emoji": "🕶️",
+    "act1": "The Blue Island glows at sunset; coconut paths wind toward an ancient cave door covered in glowing shells.",
+    "act2": "The Crab Monkey mixed up every counting shell — now the gate will not open until the number patterns are restored!",
+    "act3": "Alex, only you can read the secret rhythm of the shells and open the way for the monkeys.",
+    "goal": "Today you practice seeing what comes next in a pattern and why the rule works."
+  },
+
+  "stages": [
+    {
+      "id": 1,
+      "type": "drag_drop",
+      "mechanic_reason": "Age 7 medium: start with hands-on drag — lowest cognitive load before symbols.",
+      "title": "Gather the shells",
+      "background": "stage1_generated",
+      "coins": 10,
+      "instruction": "Drag shells into the baskets as shown.",
+      "draggables": [],
+      "drop_zones": [],
+      "required_per_zone": {},
+      "success_message": "Nice start!"
+    },
+    {
+      "id": 2,
+      "type": "pattern_input",
+      "mechanic_reason": "Medium: bridge from objects to number sequences at cave entrance.",
+      "title": "Next number at the gate",
+      "background": "2",
+      "coins": 10,
+      "instruction": "Type the missing number in the pattern.",
+      "inputs": [],
+      "success_message": "Pattern found!"
+    },
+    {
+      "id": 3,
+      "type": "multi_choice",
+      "mechanic_reason": "Medium: quick check of rule understanding inside the cave.",
+      "title": "Which rule fits?",
+      "background": "3",
+      "coins": 10,
+      "question": "What comes next: 2, 5, 8, ?",
+      "options": [
+        { "label": "10", "value": 1, "correct": false },
+        { "label": "11", "value": 2, "correct": true },
+        { "label": "12", "value": 3, "correct": false }
+      ],
+      "success_message": "Correct!"
+    },
+    {
+      "id": 4,
+      "type": "drag_sort",
+      "mechanic_reason": "Medium: ordering reinforces sequence comparison skills.",
+      "title": "Smallest to largest",
+      "background": "4",
+      "coins": 10,
+      "instruction": "Place values in order in the slots.",
+      "items": [],
+      "correct_order": [],
+      "success_message": "Ordered!"
+    },
+    {
+      "id": 5,
+      "type": "fill_blank",
+      "mechanic_reason": "Medium: one focused input before finale.",
+      "title": "One missing step",
+      "background": "5",
+      "coins": 10,
+      "instruction": "Fill the blank.",
+      "inputs": [{ "id": "fb1", "prompt": "? + 4 = 10", "answer": 6, "x": 40, "y": 50 }],
+      "success_message": "Sharp!"
+    },
+    {
+      "id": 6,
+      "type": "animation",
+      "mechanic_reason": "Finale: celebrate and award artifact; optional short sequence before reward.",
+      "title": "The compass awakens",
+      "background": "stage6_generated",
+      "coins": 20,
+      "sequence": [
+        { "delay": 0, "action": "show_text", "target": "screen", "data": { "text": "The gate opens!" } },
+        { "delay": 1200, "action": "fade_in", "target": "artifact", "data": { "emoji": "🕶️" } }
+      ],
+      "artifact": {
+        "emoji": "🕶️",
+        "name": "Mind-reading glasses",
+        "description": "Lets you hear what numbers are thinking so patterns cannot hide.",
+        "dalle_prompt": "Magical reading glasses with glowing purple crystal lenses, soft sparkles, mind-reading aura, magical glowing artifact, Pixar 3D style, warm golden light, floating in air, transparent background, WEBP. No text."
+      },
+      "success_message": "You did it!"
+    }
+  ],
+
+  "images_needed": {
+    "library": ["basket", "shell_blue", "shell_red"],
+    "generate_with_dalle": [
+      {
+        "key": "shell_blue",
+        "prompt": "Single blue sea shell game icon, isolated, transparent background, no text.",
+        "count": 1
+      },
+      {
+        "key": "artifact",
+        "prompt": "Magical reading glasses with glowing purple crystal lenses, soft sparkles, mind-reading aura, magical glowing artifact, Pixar 3D style, warm golden light, floating in air, transparent background, WEBP. No text.",
+        "count": 1
+      }
+    ]
+  },
+
+  "tutor_notes": {
+    "block1_script": "Open with the story acts, then let the child predict before each task.",
+    "block2_hint": "If stuck, compare two neighbors in the list and say what changed.",
+    "block3_tips": ["Praise the rule explanation, not only the final number.", "Use fingers for small steps if needed."],
+    "block5_abstraction": "Patterns are just rules you can say in words: 'add 3 each time' or 'double then add 1'.",
+    "weak_point_focus": "Hidden steps and 'find the wrong number' tasks."
+  }
+}

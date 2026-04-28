@@ -1,0 +1,152 @@
+[
+  {
+    "key": "jellyfish",
+    "file": "assets/items/jellyfish.png",
+    "ready": false
+  },
+  {
+    "key": "lollipop",
+    "file": "assets/items/lollipop.png",
+    "ready": false
+  },
+  {
+    "key": "candy",
+    "file": "assets/items/candy.png",
+    "ready": false
+  },
+  {
+    "key": "bubble",
+    "file": "assets/items/bubble.png",
+    "ready": false
+  },
+  {
+    "key": "gummy_bear",
+    "file": "assets/items/gummy_bear.png",
+    "ready": false
+  },
+  {
+    "key": "crab",
+    "file": "assets/items/crab.png",
+    "ready": false
+  },
+  {
+    "key": "shell",
+    "file": "assets/items/shell.png",
+    "ready": false
+  },
+  {
+    "key": "pearl",
+    "file": "assets/items/pearl.png",
+    "ready": false
+  },
+  {
+    "key": "coral",
+    "file": "assets/items/coral.png",
+    "ready": false
+  },
+  {
+    "key": "starfish",
+    "file": "assets/items/starfish.png",
+    "ready": false
+  },
+  {
+    "key": "snowflake",
+    "file": "assets/items/snowflake.png",
+    "ready": false
+  },
+  {
+    "key": "pine_cone",
+    "file": "assets/items/pine_cone.png",
+    "ready": false
+  },
+  {
+    "key": "gift",
+    "file": "assets/items/gift.png",
+    "ready": false
+  },
+  {
+    "key": "snowball",
+    "file": "assets/items/snowball.png",
+    "ready": false
+  },
+  {
+    "key": "cookie",
+    "file": "assets/items/cookie.png",
+    "ready": false
+  },
+  {
+    "key": "cherry",
+    "file": "assets/items/cherry.png",
+    "ready": false
+  },
+  {
+    "key": "sakura",
+    "file": "assets/items/sakura.png",
+    "ready": false
+  },
+  {
+    "key": "lantern",
+    "file": "assets/items/lantern.png",
+    "ready": false
+  },
+  {
+    "key": "dango",
+    "file": "assets/items/dango.png",
+    "ready": false
+  },
+  {
+    "key": "bamboo",
+    "file": "assets/items/bamboo.png",
+    "ready": false
+  },
+  {
+    "key": "mushroom",
+    "file": "assets/items/mushroom.png",
+    "ready": false
+  },
+  {
+    "key": "spore",
+    "file": "assets/items/spore.png",
+    "ready": false
+  },
+  {
+    "key": "butterfly",
+    "file": "assets/items/butterfly.png",
+    "ready": false
+  },
+  {
+    "key": "orb",
+    "file": "assets/items/orb.png",
+    "ready": false
+  },
+  {
+    "key": "leaf",
+    "file": "assets/items/leaf.png",
+    "ready": false
+  },
+  {
+    "key": "hibiscus",
+    "file": "assets/items/hibiscus.png",
+    "ready": false
+  },
+  {
+    "key": "jump_stone",
+    "file": "assets/items/jump_stone.png",
+    "ready": false
+  },
+  {
+    "key": "banana",
+    "file": "assets/items/banana.png",
+    "ready": false
+  },
+  {
+    "key": "wave",
+    "file": "assets/items/wave.png",
+    "ready": false
+  },
+  {
+    "key": "pawprint",
+    "file": "assets/items/pawprint.png",
+    "ready": false
+  }
+]

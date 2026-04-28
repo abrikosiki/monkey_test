@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tutor Lesson Editor</title>
+  <style>
+    :root{color-scheme:dark}
+    body{font-family:Inter,system-ui,Arial,sans-serif;background:#0b1426;color:#eaf3ff;margin:0}
+    .wrap{max-width:1180px;margin:20px auto;padding:0 16px 40px}
+    .card{background:#12203a;border:1px solid #223a66;border-radius:16px;padding:16px;box-shadow:0 10px 26px rgba(0,0,0,.18)}
+    h1,h2,h3{margin:0 0 10px}
+    h1{font-size:28px}
+    h2{font-size:20px}
+    h3{font-size:16px}
+    .muted{color:#9db7de;font-size:13px}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+    .full{grid-column:1/-1}
+    label{display:block;font-size:12px;color:#9db7de;margin-bottom:4px}
+    input,select,textarea{width:100%;box-sizing:border-box;border-radius:10px;border:1px solid #2f4d7a;background:#0f1b31;color:#eaf3ff;padding:10px}
+    textarea{min-height:64px;resize:vertical}
+    .row,.topbar,.section-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    button,.button-link{border:none;border-radius:12px;padding:10px 14px;font-weight:800;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center}
+    .primary{background:#3fc08c;color:#062717}
+    .secondary{background:#f1be4f;color:#2a1b00}
+    .ghost{background:#21365d;color:#dce8ff}
+    .danger{background:#7f2940;color:#ffe5ec}
+    .small{padding:7px 10px;font-size:12px;border-radius:10px}
+    .topbar{margin:12px 0 18px}
+    .status{padding:8px 12px;border-radius:999px;background:#0f1b31;border:1px solid #28456f}
+    .section{margin-top:14px}
+    .stage{margin-top:14px;border-top:1px solid #243d69;padding-top:14px}
+    .round{margin-top:12px;background:#0f1b31;border:1px solid #28456f;border-radius:14px;padding:12px}
+    .chips{display:flex;gap:8px;flex-wrap:wrap}
+    .chip{padding:6px 10px;border-radius:999px;background:#21365d;color:#dce8ff;font-size:12px}
+    .list-table{display:grid;gap:8px}
+    .list-row{display:grid;grid-template-columns:1.6fr .7fr auto;gap:8px;align-items:end}
+    .option-row{display:grid;grid-template-columns:2fr .8fr auto auto;gap:8px;align-items:end}
+    .path-row{display:grid;grid-template-columns:1.5fr .9fr .9fr .7fr auto;gap:8px;align-items:end}
+    .rule{font-size:12px;color:#9db7de;margin-top:6px}
+    .empty{padding:12px;border:1px dashed #335487;border-radius:12px;color:#9db7de}
+    @media (max-width:900px){
+      .grid,.grid3,.list-row,.option-row,.path-row{grid-template-columns:1fr}
+      .full{grid-column:auto}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Tutor Lesson Editor</h1>
+    <div class="muted">Generate, edit, save, download, and preview lessons without touching JSON.</div>
+
+    <div class="card section">
+      <h2>Tutor Form</h2>
+      <div class="grid" id="formGrid"></div>
+      <div class="topbar">
+        <button class="primary" id="generateBtn">Generate Lesson</button>
+        <button class="ghost" id="loadBtn">Load Current Lesson</button>
+        <button class="secondary" id="saveBtn">Save Lesson JSON</button>
+        <button class="secondary" id="buildBtn">Build lesson_game.html</button>
+        <button class="ghost" id="downloadBtn">Download JSON</button>
+        <a class="button-link ghost" id="previewBtn" href="/lesson_game.html" target="_blank" rel="noopener">Open Game Preview</a>
+        <span class="status" id="status">Ready.</span>
+      </div>
+    </div>
+
+    <div class="card section">
+      <h2>Lesson Editor</h2>
+      <div id="editorRoot" class="empty">Generate or load a lesson to start editing.</div>
+    </div>
+  </div>
+
+  <script>
+    const formFields = [
+      ["child_name", "Child name"], ["child_code", "Child code"], ["age", "Age", "number"],
+      ["difficulty", "Difficulty", "select", ["easy","medium","hard"]],
+      ["topic", "Topic key"], ["topic_label", "Topic label"], ["lesson_number", "Lesson number", "number"],
+      ["island", "Island", "number"], ["character_key", "Character key"],
+      ["weak_points", "Weak points", "textarea"], ["focus", "Focus", "textarea"],
+      ["knows", "Knows", "textarea"], ["notes", "Notes", "textarea"],
+    ];
+
+    const formGrid = document.getElementById("formGrid");
+    const editorRoot = document.getElementById("editorRoot");
+    const statusEl = document.getElementById("status");
+    const formControls = {};
+    let lessonState = null;
+
+    const el = (tag, props = {}, children = []) => {
+      const node = document.createElement(tag);
+      for (const [k, v] of Object.entries(props)) {
+        if (k === "className") node.className = v;
+        else if (k === "text") node.textContent = v;
+        else node[k] = v;
+      }
+      for (const child of [].concat(children)) if (child) node.appendChild(child);
+      return node;
+    };
+
+    const clone = (v) => JSON.parse(JSON.stringify(v));
+    const setStatus = (text) => statusEl.textContent = text;
+
+    function buildForm(defaults) {
+      for (const [key, label, type = "text", options = []] of formFields) {
+        const box = el("div", { className: type === "textarea" ? "full" : "" });
+        box.appendChild(el("label", { text: label }));
+        let input;
+        if (type === "select") {
+          input = el("select");
+          for (const opt of options) input.appendChild(el("option", { value: opt, text: opt }));
+        } else if (type === "textarea") {
+          input = el("textarea");
+        } else {
+          input = el("input", { type });
+        }
+        input.value = defaults[key] ?? "";
+        formControls[key] = input;
+        box.appendChild(input);
+        formGrid.appendChild(box);
+      }
+    }
+
+    const getFormPayload = () => Object.fromEntries(formFields.map(([key,,type="text"]) => [key, type==="number" ? Number(formControls[key].value || 0) : formControls[key].value]));
+
+    async function post(path, body) {
+      const res = await fetch(path, { method:"POST", headers:{ "Content-Type":"application/json" }, body:JSON.stringify(body || {}) });
+      const data = await res.json();
+      if (!res.ok || !data.ok) throw new Error(data.error || "Request failed");
+      return data;
+    }
+    async function get(path) {
+      const res = await fetch(path);
+      const data = await res.json();
+      if (!res.ok || !data.ok) throw new Error(data.error || "Request failed");
+      return data;
+    }
+
+    function bindInput(node, onChange, type = "text") {
+      const apply = () => onChange(type === "number" ? Number(node.value || 0) : node.value);
+      node.addEventListener("input", apply);
+      node.addEventListener("change", apply);
+      return node;
+    }
+
+    function makeField(label, value, onChange, opts = {}) {
+      const box = el("div", { className: opts.full ? "full" : "" });
+      box.appendChild(el("label", { text: label }));
+      const type = opts.type || "text";
+      let input;
+      if (type === "textarea") input = el("textarea");
+      else if (type === "select") {
+        input = el("select");
+        for (const option of opts.options || []) input.appendChild(el("option", { value: option, text: option }));
+      } else input = el("input", { type });
+      input.value = value ?? "";
+      bindInput(input, onChange, type);
+      box.appendChild(input);
+      return box;
+    }
+
+    function removeButton(onClick) {
+      const btn = el("button", { className: "danger small", text: "Remove" });
+      btn.type = "button";
+      btn.onclick = onClick;
+      return btn;
+    }
+
+    function rerender() { renderLessonEditor(); }
+
+    function renderStory(parent, lesson) {
+      const story = lesson.story || {};
+      const card = el("div", { className: "stage" });
+      card.appendChild(el("h3", { text: "Story" }));
+      const grid = el("div", { className: "grid" });
+      grid.append(
+        makeField("Island name", story.island_name, (v) => story.island_name = v),
+        makeField("Villain", story.villain, (v) => story.villain = v),
+        makeField("Artifact name", story.artifact_name, (v) => story.artifact_name = v),
+        makeField("Artifact emoji", story.artifact_emoji, (v) => story.artifact_emoji = v),
+        makeField("Act 1", story.act1, (v) => story.act1 = v, { type:"textarea", full:true }),
+        makeField("Act 2", story.act2, (v) => story.act2 = v, { type:"textarea", full:true }),
+        makeField("Act 3", story.act3, (v) => story.act3 = v, { type:"textarea", full:true }),
+        makeField("Goal", story.goal, (v) => story.goal = v, { type:"textarea", full:true }),
+      );
+      card.appendChild(grid);
+      parent.appendChild(card);
+    }
+
+    function renderInputsList(parent, round) {
+      if (!Array.isArray(round.inputs)) round.inputs = [];
+      const wrap = el("div", { className: "list-table" });
+      parent.appendChild(el("div", { className: "rule", text: "Input tasks" }));
+      round.inputs.forEach((item, idx) => {
+        const row = el("div", { className: "list-row" });
+        row.append(
+          makeField("Prompt", item.prompt, (v) => item.prompt = v),
+          makeField("Answer", item.answer, (v) => item.answer = Number(v || 0), { type:"number" }),
+          removeButton(() => { round.inputs.splice(idx,1); rerender(); })
+        );
+        wrap.appendChild(row);
+      });
+      const add = el("button", { className:"ghost small", text:"Add input" });
+      add.type = "button";
+      add.onclick = () => { round.inputs.push({ id: "new_input", prompt: "10 ÷ 2 =", answer: 5 }); rerender(); };
+      parent.appendChild(wrap);
+      parent.appendChild(add);
+    }
+
+    function renderOperatorTasks(parent, round) {
+      if (!Array.isArray(round.operator_tasks)) round.operator_tasks = [];
+      const wrap = el("div", { className: "list-table" });
+      parent.appendChild(el("div", { className: "rule", text: "Operator choice tasks" }));
+      round.operator_tasks.forEach((item, idx) => {
+        const row = el("div", { className: "list-row" });
+        row.append(
+          makeField("Expression", item.expression, (v) => item.expression = v),
+          makeField("Answer", item.answer, (v) => item.answer = v, { type:"select", options:["+","-","×","÷"] }),
+          removeButton(() => { round.operator_tasks.splice(idx,1); rerender(); })
+        );
+        wrap.appendChild(row);
+      });
+      const add = el("button", { className:"ghost small", text:"Add operator task" });
+      add.type = "button";
+      add.onclick = () => { round.operator_tasks.push({ expression: "12 ? 3 = 4", answer: "÷" }); rerender(); };
+      parent.appendChild(wrap);
+      parent.appendChild(add);
+    }
+
+    function renderOptions(parent, round) {
+      if (!Array.isArray(round.options) || !round.options.length) return;
+      parent.appendChild(el("div", { className: "rule", text: "Multiple choice options" }));
+      const wrap = el("div", { className: "list-table" });
+      round.options.forEach((opt, idx) => {
+        const row = el("div", { className: "option-row" });
+        const checkBox = el("input", { type: "checkbox" });
+        checkBox.checked = !!opt.correct;
+        checkBox.onchange = () => opt.correct = checkBox.checked;
+        const checkWrap = el("div", {}, [el("label", { text: "Correct" }), checkBox]);
+        row.append(
+          makeField("Label", opt.label, (v) => opt.label = v),
+          makeField("Value", opt.value, (v) => opt.value = Number(v || 0), { type:"number" }),
+          checkWrap,
+          removeButton(() => { round.options.splice(idx,1); rerender(); })
+        );
+        wrap.appendChild(row);
+      });
+      const add = el("button", { className:"ghost small", text:"Add option" });
+      add.type = "button";
+      add.onclick = () => { round.options.push({ label: "New option", value: round.options.length + 1, correct: false }); rerender(); };
+      parent.appendChild(wrap);
+      parent.appendChild(add);
+    }
+
+    function renderPaths(parent, round) {
+      if (!round.left_path && !round.right_path) return;
+      parent.appendChild(el("div", { className: "rule", text: "Corridor paths" }));
+      const wrap = el("div", { className: "list-table" });
+      [["Left path", round.left_path], ["Right path", round.right_path]].forEach(([title, pathObj]) => {
+        if (!pathObj) return;
+        const row = el("div", { className: "path-row" });
+        const checkBox = el("input", { type: "checkbox" });
+        checkBox.checked = !!pathObj.correct;
+        checkBox.onchange = () => pathObj.correct = checkBox.checked;
+        const checkWrap = el("div", {}, [el("label", { text: "Correct" }), checkBox]);
+        row.append(
+          makeField(title + " label", pathObj.label, (v) => pathObj.label = v),
+          makeField("Image key", pathObj.image_key, (v) => pathObj.image_key = v),
+          makeField("Kind", pathObj.image_kind || "item", (v) => pathObj.image_kind = v, { type:"select", options:["item","target"] }),
+          checkWrap,
+          el("div")
+        );
+        wrap.appendChild(row);
+      });
+      parent.appendChild(wrap);
+    }
+
+    function renderRound(parent, round, stage) {
+      const box = el("div", { className: "round" });
+      const actions = el("div", { className: "section-actions" }, [
+        el("h3", { text: `Round ${round.round || "?"}` }),
+        removeButton(() => {
+          stage.rounds = (stage.rounds || []).filter((r) => r !== round).map((r, i) => ({ ...r, round: i + 1 }));
+          rerender();
+        })
+      ]);
+      box.appendChild(actions);
+      const grid = el("div", { className: "grid" });
+      grid.appendChild(makeField("Instruction", round.instruction, (v) => round.instruction = v, { type:"textarea", full:true }));
+      if ("question" in round) grid.appendChild(makeField("Question", round.question, (v) => round.question = v, { type:"textarea", full:true }));
+      box.appendChild(grid);
+      if ("inputs" in round || stage.type === "animation" || stage.type === "fill_blank") renderInputsList(box, round);
+      if ("operator_tasks" in round || stage.type === "animation") renderOperatorTasks(box, round);
+      renderOptions(box, round);
+      renderPaths(box, round);
+      parent.appendChild(box);
+    }
+
+    function renderStage(parent, stage, index) {
+      const card = el("div", { className: "stage" });
+      card.appendChild(el("h3", { text: `Stage ${index + 1}: ${stage.title || stage.type}` }));
+      card.appendChild(el("div", { className: "chips" }, [
+        el("span", { className: "chip", text: stage.type || "unknown" }),
+        el("span", { className: "chip", text: `Background: ${stage.background || "-"}` }),
+        el("span", { className: "chip", text: `Coins: ${stage.coins ?? 0}` }),
+      ]));
+      const grid = el("div", { className: "grid section" });
+      grid.append(
+        makeField("Title", stage.title, (v) => stage.title = v),
+        makeField("Background", stage.background, (v) => stage.background = v),
+        makeField("Coins", stage.coins, (v) => stage.coins = Number(v || 0), { type:"number" }),
+        makeField("Round bonus coins", stage.round_bonus_coins, (v) => stage.round_bonus_coins = Number(v || 0), { type:"number" }),
+        makeField("Mechanic reason", stage.mechanic_reason, (v) => stage.mechanic_reason = v, { type:"textarea", full:true }),
+        makeField("Success message", stage.success_message, (v) => stage.success_message = v, { type:"textarea", full:true }),
+      );
+      card.appendChild(grid);
+      if (stage.artifact) {
+        const art = stage.artifact;
+        const artGrid = el("div", { className: "grid section" });
+        artGrid.append(
+          makeField("Artifact emoji", art.emoji, (v) => art.emoji = v),
+          makeField("Artifact name", art.name, (v) => art.name = v),
+          makeField("Artifact description", art.description, (v) => art.description = v, { type:"textarea", full:true })
+        );
+        card.appendChild(artGrid);
+      }
+      const roundsWrap = el("div");
+      (stage.rounds || []).forEach((round) => renderRound(roundsWrap, round, stage));
+      card.appendChild(roundsWrap);
+      const addRound = el("button", { className: "ghost small", text: "Add round" });
+      addRound.type = "button";
+      addRound.onclick = () => {
+        if (!Array.isArray(stage.rounds)) stage.rounds = [];
+        const base = { round: stage.rounds.length + 1, instruction: "New round" };
+        if (stage.type === "multi_choice") base.options = [{ label:"Option 1", value:1, correct:false }, { label:"Option 2", value:2, correct:true }];
+        if (stage.type === "corridor_choice") {
+          base.question = "Choose a path";
+          base.left_path = { label:"Left", image_key:"", image_kind:"item", correct:true };
+          base.right_path = { label:"Right", image_key:"", image_kind:"item", correct:false };
+        }
+        if (stage.type === "fill_blank" || stage.type === "animation") base.inputs = [{ id: "new_input", prompt: "10 ÷ 2 =", answer: 5 }];
+        if (stage.type === "animation") base.operator_tasks = [];
+        stage.rounds.push(base);
+        rerender();
+      };
+      card.appendChild(addRound);
+      parent.appendChild(card);
+    }
+
+    function renderLessonEditor() {
+      if (!lessonState) {
+        editorRoot.className = "empty";
+        editorRoot.textContent = "Generate or load a lesson to start editing.";
+        return;
+      }
+      editorRoot.className = "";
+      editorRoot.innerHTML = "";
+
+      const meta = lessonState.meta || {};
+      const metaCard = el("div", { className: "stage" });
+      metaCard.appendChild(el("h3", { text: "Meta" }));
+      const metaGrid = el("div", { className: "grid3" });
+      metaGrid.append(
+        makeField("Student name", meta.student_name, (v) => meta.student_name = v),
+        makeField("Student code", meta.student_code, (v) => meta.student_code = v),
+        makeField("Character key", meta.character_key, (v) => meta.character_key = v),
+        makeField("Age", meta.age, (v) => meta.age = Number(v || 0), { type:"number" }),
+        makeField("Difficulty", meta.difficulty, (v) => meta.difficulty = v),
+        makeField("Topic key", meta.topic_key, (v) => meta.topic_key = v),
+        makeField("Weak point", meta.weak_point, (v) => meta.weak_point = v, { type:"textarea", full:true }),
+        makeField("Focus area", meta.focus_area, (v) => meta.focus_area = v, { type:"textarea", full:true }),
+      );
+      metaCard.appendChild(metaGrid);
+      editorRoot.appendChild(metaCard);
+      renderStory(editorRoot, lessonState);
+      (lessonState.stages || []).forEach((stage, index) => renderStage(editorRoot, stage, index));
+    }
+
+    async function loadCurrentLesson() {
+      const data = await get("/api/current-lesson");
+      lessonState = data.lesson;
+      renderLessonEditor();
+      setStatus(lessonState ? "Loaded current lesson." : "No lesson file found yet.");
+    }
+
+    function downloadJson() {
+      if (!lessonState) { setStatus("No lesson loaded."); return; }
+      const blob = new Blob([JSON.stringify(lessonState, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "output_lesson.json";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    document.getElementById("generateBtn").onclick = async () => {
+      try { setStatus("Generating lesson with Claude..."); const data = await post("/api/generate", { form: getFormPayload() }); lessonState = data.lesson; renderLessonEditor(); setStatus("Generated and saved output_lesson.json"); } catch (err) { setStatus("Error: " + err.message); }
+    };
+    document.getElementById("loadBtn").onclick = async () => {
+      try { setStatus("Loading current lesson..."); await loadCurrentLesson(); } catch (err) { setStatus("Error: " + err.message); }
+    };
+    document.getElementById("saveBtn").onclick = async () => {
+      try { if (!lessonState) throw new Error("No lesson loaded"); setStatus("Saving output_lesson.json..."); await post("/api/save-lesson", { lesson: lessonState }); setStatus("Saved output_lesson.json"); } catch (err) { setStatus("Error: " + err.message); }
+    };
+    document.getElementById("buildBtn").onclick = async () => {
+      try { setStatus("Building lesson_game.html..."); await post("/api/build-lesson"); setStatus("Built lesson_game.html"); } catch (err) { setStatus("Error: " + err.message); }
+    };
+    document.getElementById("downloadBtn").onclick = downloadJson;
+
+    async function init() {
+      const defaults = await get("/api/default-form");
+      buildForm(defaults.form || {});
+      await loadCurrentLesson();
+    }
+    init().catch((err) => setStatus("Error: " + err.message));
+  </script>
+</body>
+</html>

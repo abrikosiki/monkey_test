@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: monkey-tutor-ui
+    env: node
+    plan: starter
+    buildCommand: npm install
+    startCommand: npm run tutor:web
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: false
