@@ -119,6 +119,24 @@ async function runBuildLesson() {
   });
 }
 
+async function runGenerateAssets() {
+  return new Promise((resolve, reject) => {
+    const child = spawn(process.execPath, ["generate_assets.mjs", "output_lesson.json"], {
+      cwd: __dirname,
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+    let stdout = "";
+    let stderr = "";
+    child.stdout.on("data", (d) => (stdout += d.toString()));
+    child.stderr.on("data", (d) => (stderr += d.toString()));
+    child.on("error", reject);
+    child.on("close", (code) => {
+      if (code === 0) resolve(stdout.trim());
+      else reject(new Error(stderr || stdout || `asset generation failed with code ${code}`));
+    });
+  });
+}
+
 function sendJson(res, status, data) {
   res.writeHead(status, { "Content-Type": "application/json; charset=utf-8" });
   res.end(JSON.stringify(data));
@@ -204,6 +222,12 @@ const server = http.createServer(async (req, res) => {
 
     if (req.method === "POST" && url.pathname === "/api/build-lesson") {
       const output = await runBuildLesson();
+      sendJson(res, 200, { ok: true, output });
+      return;
+    }
+
+    if (req.method === "POST" && url.pathname === "/api/generate-assets") {
+      const output = await runGenerateAssets();
       sendJson(res, 200, { ok: true, output });
       return;
     }

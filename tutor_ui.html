@@ -59,6 +59,7 @@
         <button class="ghost" id="loadBtn">Load Current Lesson</button>
         <button class="secondary" id="saveBtn">Save Lesson JSON</button>
         <button class="secondary" id="buildBtn">Build lesson_game.html</button>
+        <button class="secondary" id="assetsBtn">Generate Assets</button>
         <button class="ghost" id="downloadBtn">Download JSON</button>
         <a class="button-link ghost" id="previewBtn" href="/lesson_game.html" target="_blank" rel="noopener">Open Game Preview</a>
         <span class="status" id="status">Ready.</span>
@@ -407,6 +408,9 @@
     };
     document.getElementById("buildBtn").onclick = async () => {
       try { setStatus("Building lesson_game.html..."); await post("/api/build-lesson"); setStatus("Built lesson_game.html"); } catch (err) { setStatus("Error: " + err.message); }
+    };
+    document.getElementById("assetsBtn").onclick = async () => {
+      try { setStatus("Generating assets..."); await post("/api/generate-assets"); setStatus("Assets generated / reused"); } catch (err) { setStatus("Error: " + err.message); }
     };
     document.getElementById("downloadBtn").onclick = downloadJson;
 
