@@ -1209,6 +1209,52 @@
     return "assets/artifacts/" + key + ".png";
   }
 
+  const PRELOADED_ASSETS = new Set();
+
+  function preloadImage(src){
+    const url = String(src || "").trim();
+    if(!url || PRELOADED_ASSETS.has(url)) return;
+    PRELOADED_ASSETS.add(url);
+    const img = new Image();
+    img.decoding = "async";
+    img.loading = "eager";
+    img.src = url;
+  }
+
+  function collectStageAssetUrls(stage, stageIndex){
+    const urls = new Set();
+    if(!stage) return urls;
+    urls.add(backgroundPath(resolveStageBackground(stage, stageIndex)));
+    const charKey = LESSON.meta?.character_key || LESSON.character?.image_key || "";
+    if(charKey) urls.add(characterPath(charKey));
+    if(stage.image_key) urls.add(imagePathByKey(stage.image_key, "item"));
+    if(stage.goal_image_key) urls.add(imagePathByKey(stage.goal_image_key, "target"));
+    if(stage.bowl_image_key) urls.add(imagePathByKey(stage.bowl_image_key, "target"));
+    (stage.totem_targets || []).forEach((k) => urls.add(imagePathByKey(k, "target")));
+    (stage.drop_zones || []).forEach((z) => {
+      const kind = z.image_kind === "item" ? "item" : "target";
+      urls.add(imagePathByKey(z.image_key, kind));
+    });
+    (stage.draggables || []).forEach((d) => urls.add(imagePathByKey(d.image_key, "item")));
+    (stage.items || []).forEach((it) => urls.add(imagePathByKey(it.image_key, "item")));
+    if(stage.left_path?.image_key){
+      const lk = stage.left_path.image_kind === "target" ? "target" : "item";
+      urls.add(imagePathByKey(stage.left_path.image_key, lk));
+    }
+    if(stage.right_path?.image_key){
+      const rk = stage.right_path.image_kind === "target" ? "target" : "item";
+      urls.add(imagePathByKey(stage.right_path.image_key, rk));
+    }
+    return urls;
+  }
+
+  function warmupStageAssets(index){
+    const current = STAGES[index];
+    const next = STAGES[Math.min(index + 1, STAGES.length - 1)];
+    collectStageAssetUrls(current, index).forEach(preloadImage);
+    collectStageAssetUrls(next, Math.min(index + 1, STAGES.length - 1)).forEach(preloadImage);
+  }
+
   function titleFromKey(key){
     return String(key || "Mystery Artifact")
       .replace(/[_-]+/g, " ")
@@ -1380,6 +1426,7 @@
     const img = document.createElement("img");
     img.className = className;
     img.src = imagePathByKey(imageKey, kind);
+    img.decoding = "async";
     img.alt = imageKey || "item";
     img.style.cssText += extraStyle;
     img.onerror = () => {
@@ -2214,6 +2261,7 @@
     clearStage();
     const baseStage = STAGES[index];
     if(!baseStage) return;
+    warmupStageAssets(index);
     const stage = resolveCurrentTask(baseStage);
 
     const engType = resolveEngineType(stage.type);
@@ -2225,6 +2273,8 @@
     }else{
       $("instruction").textContent = cleanInstruction + "  (" + (state.stagePracticeDone + 1) + "/" + state.stagePracticeTarget + ")";
     }
+    $("bg").fetchPriority = "high";
+    $("bg").decoding = "async";
     $("bg").src = backgroundPath(resolveStageBackground(stage, index));
     $("bg").onerror = () => {
       $("bg").src = "";
