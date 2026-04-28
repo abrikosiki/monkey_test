@@ -988,26 +988,39 @@ function buildHtml(
       background:linear-gradient(135deg,#7ecec4,#1a9e92);color:#072026;font-size:24px;
       box-shadow:0 5px 0 #0d5e58;
     }
-    .shop-wrap{
-      width:min(96vw,1060px);height:min(92vh,760px);background:rgba(10,20,35,.96);
-      border:2px solid rgba(244,208,63,.45);border-radius:22px;padding:22px;display:flex;flex-direction:column;gap:14px;
+    .shop-screen{background:rgba(0,0,0,.28)}
+    .shop-bg{
+      position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;
+      filter:saturate(1.06) contrast(1.04);
     }
-    .shop-head{display:flex;justify-content:space-between;align-items:center}
-    .shop-title{font-size:40px;color:var(--sand)}
-    .shop-coins{font-size:24px;color:var(--sand)}
+    .shop-wrap{
+      position:relative;z-index:1;
+      width:min(1080px,94vw);background:rgba(5,15,30,.78);border:2px solid rgba(244,208,63,.45);
+      border-radius:22px;padding:18px 18px 16px;box-shadow:0 20px 56px rgba(0,0,0,.55)
+    }
+    .shop-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+    .shop-title{font-family:'Fredoka One',cursive;font-size:34px;color:var(--sand)}
+    .shop-coins{font-family:'Fredoka One',cursive;font-size:24px;color:#ffe8b2}
     .shop-grid{
-      display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;overflow:auto;padding:4px;
+      display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;
     }
     .shop-item{
-      background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.22);border-radius:16px;padding:12px;
-      display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;
+      background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.2);border-radius:14px;padding:10px;
+      display:flex;flex-direction:column;align-items:center;gap:8px;transition:transform .15s,box-shadow .15s,border-color .15s;
     }
-    .shop-item img{width:96px;height:96px;object-fit:contain}
+    .shop-item:hover{transform:translateY(-3px) scale(1.02);border-color:rgba(244,208,63,.75);box-shadow:0 10px 18px rgba(0,0,0,.35),0 0 14px rgba(244,208,63,.22)}
+    .shop-item img{width:120px;height:76px;object-fit:contain;filter:drop-shadow(0 5px 8px rgba(0,0,0,.35))}
+    .shop-name{color:#ffe8b2;font-weight:800}
+    .shop-price{color:#c8e8c8;font-weight:800}
     .shop-buy{
-      border:none;border-radius:999px;padding:8px 16px;cursor:pointer;font-size:16px;
-      background:linear-gradient(135deg,#ffd979,#f1b73c);color:#2a1b00;box-shadow:0 4px 0 #9b6b21;
+      padding:8px 16px;border:none;border-radius:999px;cursor:pointer;font-family:'Fredoka One',cursive;font-size:16px;
+      color:#1d1606;background:linear-gradient(135deg,#ffcf66,#f3a93f);box-shadow:0 4px 0 #9b6b21
     }
     .shop-buy:disabled{opacity:.55;cursor:not-allowed;box-shadow:none}
+    .shop-finish{
+      margin-top:14px;width:100%;padding:13px 20px;border:none;border-radius:999px;cursor:pointer;
+      font-family:'Fredoka One',cursive;font-size:22px;color:#0b1b2f;background:linear-gradient(135deg,#93d3ff,#4a9fe4);box-shadow:0 5px 0 #2a6ea6
+    }
     .balance-card{
       position:absolute;left:50%;top:28%;transform:translateX(-50%);width:min(90%,720px);
       background:linear-gradient(180deg,rgba(10,20,35,.95),rgba(10,20,35,.92));
@@ -1217,13 +1230,14 @@ function buildHtml(
     </div>
   </div>
   <div class="shop-screen" id="shopScreen">
+    <img class="shop-bg" id="shopBg" alt="">
     <div class="shop-wrap">
-      <div class="shop-head">
-        <div class="shop-title">Monkey Shop</div>
-        <div class="shop-coins" id="shopCoins">🪙 0</div>
+      <div class="shop-top">
+        <div class="shop-title">🛒 Monkey Shop</div>
+        <div class="shop-coins">🪙 <span id="shopCoins">0</span></div>
       </div>
       <div class="shop-grid" id="shopGrid"></div>
-      <button class="completion-back" id="shopBackBtn">← Back</button>
+      <button class="shop-finish" id="shopFinishBtn">🏁 Finish Adventure</button>
     </div>
   </div>
 
@@ -2670,7 +2684,7 @@ function buildHtml(
   function renderShop(){
     const grid = $("shopGrid");
     grid.innerHTML = "";
-    $("shopCoins").textContent = "🪙 " + state.totalCoins;
+    $("shopCoins").textContent = String(state.totalCoins);
     const entries = Object.keys(ARTIFACT_MAP).slice(0, 12).map((key, i) => ({
       key,
       image: artifactPathByKey(key),
@@ -2678,6 +2692,7 @@ function buildHtml(
       price: 30 + (i % 5) * 10,
     }));
     entries.forEach((it) => {
+      const owned = state.earnedArtifacts.some((a) => a && a.key === it.key);
       const card = document.createElement("div");
       card.className = "shop-item";
       const img = document.createElement("img");
@@ -2685,20 +2700,22 @@ function buildHtml(
       img.alt = it.name;
       img.onerror = () => { img.style.display = "none"; };
       const name = document.createElement("div");
+      name.className = "shop-name";
       name.textContent = it.name;
       const price = document.createElement("div");
+      price.className = "shop-price";
       price.textContent = "🪙 " + it.price;
       const btn = document.createElement("button");
       btn.className = "shop-buy";
-      btn.textContent = "Buy";
-      btn.disabled = state.totalCoins < it.price;
+      const canBuy = state.totalCoins >= it.price && !owned;
+      btn.textContent = owned ? "Owned" : "Buy";
+      btn.disabled = !canBuy && !owned;
       btn.onclick = () => {
-        if(state.totalCoins < it.price) return;
+        if(state.totalCoins < it.price || owned) return;
         state.totalCoins -= it.price;
+        state.earnedArtifacts.push({ key: it.key, name: it.name, image: it.image, description: "" });
         $("coinsLabel").textContent = String(state.totalCoins);
-        $("shopCoins").textContent = "🪙 " + state.totalCoins;
-        btn.textContent = "Bought";
-        btn.disabled = true;
+        renderShop();
       };
       card.append(img, name, price, btn);
       grid.appendChild(card);
@@ -2710,6 +2727,7 @@ function buildHtml(
     showCompletionScreen();
     renderShop();
     $("completionScreen").classList.remove("on");
+    $("shopBg").src = backgroundPath("shop");
     $("shopScreen").classList.add("on");
   }
 
@@ -2834,7 +2852,7 @@ function buildHtml(
   $("successNextBtn").addEventListener("click", nextStep);
   $("completionShopBtn").addEventListener("click", openShopScreen);
   $("storyShopBtn").addEventListener("click", openShopScreen);
-  $("shopBackBtn").addEventListener("click", () => {
+  $("shopFinishBtn").addEventListener("click", () => {
     $("shopScreen").classList.remove("on");
     $("game").style.pointerEvents = "";
     $("stageBackBtn").classList.remove("hidden");
