@@ -20,10 +20,10 @@
     "villain": "Stone Guardian",
     "artifact_name": "Vault Compass",
     "artifact_emoji": "🧭",
-    "act1": "You arrive at Hungry Beach where monkeys and shamans wait for food and offerings.",
-    "act2": "A Stone Guardian blocks the fruit vault and seals the path with puzzle magic.",
-    "act3": "Only your math choices can open the ancient arch and free the island.",
-    "goal": "Use taps, grouping, pattern logic, and boss hacks to unlock the vault."
+    "act1": "Hero, you did it - you froze the first robo-monkey and got the Ice Ring.",
+    "act2": "But the adventure is just beginning. Doctor Krit is holding the Monkey Chief himself prisoner in his own fruit temple on the next island. The monkeys of the archipelago are starving - all the fruit is locked inside, and the Chief can't feed anyone.",
+    "act3": "We have to break into the temple through 6 trials, feed the hungry monkeys along the way, and free the Chief from the fruit vault.",
+    "goal": "Pass every trial and open the fruit temple for the archipelago."
   },
   "stages": [
     {
@@ -46,25 +46,40 @@
           "round": 2,
           "instruction": "Chief's necklace: 8 pearls total, each dive gives 2 pearls. How many taps?",
           "target_count": 4,
-          "image_key": "pearl_blue"
+          "image_key": "pearl_blue",
+          "tap_step": 2,
+          "counter_start": 0,
+          "counter_goal": 8
         },
         {
           "round": 3,
           "instruction": "Strength potion: 15 mushrooms total, each throw gives 3. Tap to brew!",
           "target_count": 5,
-          "image_key": "mushroom"
+          "image_key": "mushroom",
+          "tap_step": 3,
+          "counter_start": 0,
+          "counter_goal": 15
         },
         {
           "round": 4,
           "instruction": "Tribute: 3 totems need 4 each. Tap 12 times to finish all offerings.",
           "target_count": 12,
-          "image_key": "stone_blue"
+          "image_key": "stone_blue",
+          "tap_mode": "totems",
+          "totem_targets": ["totem_1", "totem_2", "totem_3"],
+          "bowl_image_key": "bowl_wood",
+          "per_target_goal": 4
         },
         {
           "round": 5,
           "instruction": "Pit climb: from -6 to 0, each jump is +2. How many taps?",
           "target_count": 3,
-          "image_key": "samurai_monkey"
+          "image_key": "samurai_monkey",
+          "tap_mode": "number_line",
+          "number_start": -6,
+          "number_end": 0,
+          "tap_step": 2,
+          "goal_image_key": "chest_open"
         }
       ]
     },

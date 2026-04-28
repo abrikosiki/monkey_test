@@ -1350,7 +1350,10 @@ function buildHtml(
     const pass = [
       "instruction", "draggables", "drop_zones", "required_per_zone", "prefill_per_zone",
       "inputs", "question", "options", "items", "correct_order", "target_count", "image_key",
-      "left_path", "right_path", "sequence", "round", "operator_tasks"
+      "left_path", "right_path", "sequence", "round", "operator_tasks",
+      "tap_step", "counter_start", "counter_goal", "counter_suffix",
+      "tap_mode", "totem_targets", "bowl_image_key", "per_target_goal",
+      "number_start", "number_end", "goal_image_key"
     ];
     for(const k of pass){
       if(round[k] !== undefined) out[k] = round[k];
@@ -1758,22 +1761,107 @@ function buildHtml(
   }
 
   function renderTapCount(stage){
-    const target = Number(stage.target_count || 5);
-    let count = 0;
+    const mode = String(stage.tap_mode || "").trim();
+    if(mode === "totems"){
+      const targets = Array.isArray(stage.totem_targets) ? stage.totem_targets : ["totem_1", "totem_2", "totem_3"];
+      const perTarget = Number(stage.per_target_goal || 4);
+      const counts = targets.map(() => 0);
+      const row = document.createElement("div");
+      row.style.cssText =
+        "position:absolute;left:50%;top:28%;transform:translateX(-50%);display:flex;gap:16px;justify-content:center;align-items:flex-end;z-index:12;flex-wrap:wrap;";
+      const labels = [];
+      targets.forEach((key) => {
+        const col = document.createElement("div");
+        col.style.cssText = "display:flex;flex-direction:column;align-items:center;gap:6px;min-width:110px;";
+        const totem = makeImg("game-img", key, "position:relative;width:92px;height:112px;");
+        const bowl = makeImg("game-img", stage.bowl_image_key || "bowl_wood", "position:relative;width:74px;height:74px;", "target");
+        const lbl = document.createElement("div");
+        lbl.textContent = "0 / " + perTarget;
+        lbl.style.cssText = "font-size:22px;font-weight:900;color:var(--sand);";
+        labels.push(lbl);
+        col.appendChild(totem);
+        col.appendChild(bowl);
+        col.appendChild(lbl);
+        row.appendChild(col);
+      });
+      const img = makeImg("game-img", stage.image_key || "stone_blue", "position:absolute;left:50%;top:78%;transform:translate(-50%,-50%);cursor:pointer;z-index:12;");
+      img.style.width = "132px";
+      img.style.height = "132px";
+      img.addEventListener("click", () => {
+        if(state.stageSolved) return;
+        const idx = counts.findIndex((n) => n < perTarget);
+        if(idx === -1) return;
+        counts[idx] += 1;
+        labels[idx].textContent = counts[idx] + " / " + perTarget;
+        const done = counts.every((n) => n >= perTarget);
+        if(done) markSuccess(stage);
+      });
+      lane.appendChild(row);
+      lane.appendChild(img);
+      return;
+    }
+
+    if(mode === "number_line"){
+      const start = Number(stage.number_start != null ? stage.number_start : -6);
+      const end = Number(stage.number_end != null ? stage.number_end : 0);
+      const step = Number(stage.tap_step || 2);
+      let value = start;
+      const wrap = document.createElement("div");
+      wrap.style.cssText =
+        "position:absolute;left:50%;top:30%;transform:translateX(-50%);text-align:center;z-index:12;min-width:380px;";
+      const counter = document.createElement("div");
+      counter.textContent = String(value);
+      counter.style.cssText = "font-size:36px;font-weight:900;margin-bottom:14px;color:var(--sand);";
+      const shaft = document.createElement("div");
+      shaft.style.cssText = "position:relative;margin:0 auto;width:120px;height:240px;border-radius:18px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.24);";
+      const monkey = makeImg("game-img", stage.image_key || "samurai_monkey", "position:absolute;left:50%;bottom:8px;transform:translateX(-50%);width:86px;height:86px;transition:bottom .22s ease;");
+      const goal = makeImg("game-img", stage.goal_image_key || "chest_open", "position:absolute;left:50%;top:8px;transform:translateX(-50%);width:72px;height:72px;", "target");
+      shaft.appendChild(goal);
+      shaft.appendChild(monkey);
+      const btn = makeImg("game-img", stage.image_key || "samurai_monkey", "position:relative;cursor:pointer;margin-top:16px;");
+      btn.style.width = "108px";
+      btn.style.height = "108px";
+      const applyPos = () => {
+        const progress = Math.max(0, Math.min(1, (value - start) / Math.max(1, end - start)));
+        const px = 8 + progress * 150;
+        monkey.style.bottom = px + "px";
+      };
+      applyPos();
+      btn.addEventListener("click", () => {
+        if(state.stageSolved) return;
+        value += step;
+        if(value > end) value = end;
+        counter.textContent = String(value);
+        applyPos();
+        if(value >= end) markSuccess(stage);
+      });
+      wrap.appendChild(counter);
+      wrap.appendChild(shaft);
+      wrap.appendChild(btn);
+      lane.appendChild(wrap);
+      return;
+    }
+
+    const step = Number(stage.tap_step || 1);
+    const start = Number(stage.counter_start != null ? stage.counter_start : 0);
+    const goal = Number(stage.counter_goal != null ? stage.counter_goal : stage.target_count || 5);
+    const suffix = String(stage.counter_suffix || "").trim();
+    let value = start;
     const wrap = document.createElement("div");
     wrap.style.cssText =
       "position:absolute;left:50%;top:38%;transform:translateX(-50%);text-align:center;z-index:12;";
     const counter = document.createElement("div");
-    counter.textContent = "0 / " + target;
+    counter.textContent = value + " / " + goal + (suffix ? " " + suffix : "");
     counter.style.cssText = "font-size:32px;font-weight:900;margin-bottom:12px;color:var(--sand);";
     const img = makeImg("game-img", stage.image_key || "banana", "position:relative;cursor:pointer;");
     img.style.width = "128px";
     img.style.height = "128px";
     img.addEventListener("click", () => {
       if(state.stageSolved) return;
-      count += 1;
-      counter.textContent = count + " / " + target;
-      if(count >= target) markSuccess(stage);
+      value += step;
+      if(value > goal) value = goal;
+      counter.textContent = value + " / " + goal + (suffix ? " " + suffix : "");
+      if(value >= goal) markSuccess(stage);
     });
     wrap.appendChild(counter);
     wrap.appendChild(img);
