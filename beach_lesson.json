@@ -9,6 +9,7 @@
     "lesson_number": 1,
     "total_lessons": 1,
     "island_number": 1,
+    "start_coins": 165,
     "character_key": "pirate_green",
     "language": "en",
     "weak_point": "Rushes and skips signs",
@@ -290,24 +291,60 @@
     {
       "id": 6,
       "type": "animation",
-      "title": "Vault Reward",
+      "title": "Final Balance Chains",
       "background": "5",
       "coins": 30,
       "round_bonus_coins": 2,
-      "mechanic_reason": "Final reward reveal and closure.",
-      "success_message": "Amazing! You freed the island and opened the fruit vault.",
+      "mechanic_reason": "Boss logic chains with drag-number balance puzzles.",
+      "success_message": "Amazing! You solved every chain and broke the final lock.",
       "rounds": [
-        { "round": 1, "instruction": "The Guardian cracks and falls.", "sequence": [{ "delay": 0, "action": "show_text", "target": "screen", "data": { "text": "The stone shell breaks..." } }] },
-        { "round": 2, "instruction": "The tunnel lights up.", "sequence": [{ "delay": 0, "action": "show_text", "target": "screen", "data": { "text": "Spirits open the hidden path..." } }] },
-        { "round": 3, "instruction": "The ancient king spirit appears.", "sequence": [{ "delay": 0, "action": "show_text", "target": "screen", "data": { "text": "A calm light fills the vault..." } }] },
-        { "round": 4, "instruction": "Treasure chest unlocks.", "sequence": [{ "delay": 0, "action": "show_text", "target": "screen", "data": { "text": "The fruit vault opens!" } }] },
-        { "round": 5, "instruction": "Claim the compass artifact.", "sequence": [{ "delay": 0, "action": "fade_in", "target": "artifact", "data": { "emoji": "🧭" } }] }
+        {
+          "round": 1,
+          "instruction": "First chain — easy. What number balances the scale?",
+          "balance_left": "3 + 4",
+          "balance_right": "? + 2",
+          "balance_answer": 5,
+          "balance_options": [3, 4, 5, 6]
+        },
+        {
+          "round": 2,
+          "instruction": "Second chain. Think carefully — what fills the gap?",
+          "balance_left": "10 − 3",
+          "balance_right": "4 + ?",
+          "balance_answer": 3,
+          "balance_options": [2, 3, 4, 5]
+        },
+        {
+          "round": 3,
+          "instruction": "Third chain has multiplication! Find the missing piece.",
+          "balance_left": "2 × 6",
+          "balance_right": "? + 5",
+          "balance_answer": 7,
+          "balance_options": [6, 7, 8, 9]
+        },
+        {
+          "round": 4,
+          "instruction": "Fourth chain — both sides have multipliers. Be careful!",
+          "balance_left": "3 × 4",
+          "balance_right": "2 × ?",
+          "balance_answer": 6,
+          "balance_options": [4, 5, 6, 7]
+        },
+        {
+          "round": 5,
+          "instruction": "Last chain — the Monkey King is almost free! Doctor Krit made this one the strongest. You can do it!",
+          "balance_left": "4 × 3 + 2",
+          "balance_right": "5 × ? − 1",
+          "balance_answer": 3,
+          "balance_options": [2, 3, 4, 5]
+        }
       ],
+      "post_story_text": "The Monkey King is free! The King thanks you and gives you his Crown. But Doctor Krit is still out there — and the next island will be even more dangerous. Well done, hero!",
       "artifact": {
-        "emoji": "🧭",
-        "name": "Vault Compass",
-        "description": "Points to the right math path when choices are close.",
-        "key": "artifact"
+        "emoji": "👑",
+        "name": "Monkey King's Crown",
+        "description": "Royal crown of the freed Monkey King.",
+        "key": "crown"
       }
     }
   ],

@@ -971,6 +971,68 @@ function buildHtml(
     }
     .completion-reload:hover{transform:translateY(-2px)}
     .completion-reload:active{transform:translateY(3px)}
+    .story-screen,.shop-screen{
+      position:fixed;inset:0;z-index:340;display:none;align-items:center;justify-content:center;
+      background:rgba(4,10,22,.82);backdrop-filter:blur(8px);
+    }
+    .story-screen.on,.shop-screen.on{display:flex}
+    .story-card{
+      width:min(92vw,760px);background:rgba(8,18,33,.92);border:2px solid rgba(244,208,63,.5);
+      border-radius:22px;padding:28px 26px;text-align:center;box-shadow:0 24px 45px rgba(0,0,0,.45);
+      display:flex;flex-direction:column;gap:18px;animation:completionIn .35s ease both;
+    }
+    .story-title{font-size:38px;color:var(--sand)}
+    .story-text{font-size:21px;line-height:1.45;color:#e3edf8}
+    .story-shop-btn{
+      margin:0 auto;padding:12px 34px;border:none;border-radius:999px;cursor:pointer;
+      background:linear-gradient(135deg,#7ecec4,#1a9e92);color:#072026;font-size:24px;
+      box-shadow:0 5px 0 #0d5e58;
+    }
+    .shop-wrap{
+      width:min(96vw,1060px);height:min(92vh,760px);background:rgba(10,20,35,.96);
+      border:2px solid rgba(244,208,63,.45);border-radius:22px;padding:22px;display:flex;flex-direction:column;gap:14px;
+    }
+    .shop-head{display:flex;justify-content:space-between;align-items:center}
+    .shop-title{font-size:40px;color:var(--sand)}
+    .shop-coins{font-size:24px;color:var(--sand)}
+    .shop-grid{
+      display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;overflow:auto;padding:4px;
+    }
+    .shop-item{
+      background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.22);border-radius:16px;padding:12px;
+      display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;
+    }
+    .shop-item img{width:96px;height:96px;object-fit:contain}
+    .shop-buy{
+      border:none;border-radius:999px;padding:8px 16px;cursor:pointer;font-size:16px;
+      background:linear-gradient(135deg,#ffd979,#f1b73c);color:#2a1b00;box-shadow:0 4px 0 #9b6b21;
+    }
+    .shop-buy:disabled{opacity:.55;cursor:not-allowed;box-shadow:none}
+    .balance-card{
+      position:absolute;left:50%;top:28%;transform:translateX(-50%);width:min(90%,720px);
+      background:linear-gradient(180deg,rgba(10,20,35,.95),rgba(10,20,35,.92));
+      border:3px solid rgba(244,208,63,.66);border-radius:28px;padding:22px;display:flex;flex-direction:column;gap:14px;z-index:13;
+    }
+    .balance-row{display:flex;justify-content:space-between;gap:14px;align-items:center}
+    .balance-side{
+      flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.18);border-radius:14px;
+      min-height:92px;display:flex;align-items:center;justify-content:center;font-size:40px;color:#e7f6d8;
+    }
+    .balance-eq{font-size:38px;color:var(--sand)}
+    .balance-blank{
+      min-width:72px;min-height:58px;border-radius:10px;border:3px dashed rgba(244,208,63,.72);
+      display:inline-flex;align-items:center;justify-content:center;margin:0 8px;padding:0 10px;color:#fff;
+      background:rgba(255,255,255,.04);
+    }
+    .balance-blank.ok{border-style:solid;border-color:var(--ok);background:rgba(79,217,130,.22);color:#d9ffe8}
+    .balance-blank.bad{border-style:solid;border-color:#ff9f9f;background:rgba(176,58,46,.55)}
+    .tile-rack{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+    .num-tile{
+      width:62px;height:62px;border-radius:14px;border:2px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);
+      display:flex;align-items:center;justify-content:center;font-size:30px;cursor:grab;user-select:none;
+    }
+    .num-tile:active{cursor:grabbing}
+    .balance-hint{text-align:center;font-size:14px;color:#ffe8b2}
     @media (max-width:700px){
       .completion-card{padding:24px 20px;gap:14px}
       .completion-title{font-size:24px}
@@ -1144,7 +1206,24 @@ function buildHtml(
       <div class="completion-section">Inventory</div>
       <div class="inventory-row" id="completionInventory"></div>
       <div class="completion-coins" id="completionCoins">🪙 0 coins earned!</div>
-      <button class="completion-reload" id="completionReloadBtn">🔄 Play Again</button>
+      <button class="completion-reload" id="completionShopBtn">🛍️ To Shop</button>
+    </div>
+  </div>
+  <div class="story-screen" id="storyScreen">
+    <div class="story-card">
+      <div class="story-title">👑 Monkey King Is Free!</div>
+      <div class="story-text" id="storyText"></div>
+      <button class="story-shop-btn" id="storyShopBtn">🛍️ Open Shop</button>
+    </div>
+  </div>
+  <div class="shop-screen" id="shopScreen">
+    <div class="shop-wrap">
+      <div class="shop-head">
+        <div class="shop-title">Monkey Shop</div>
+        <div class="shop-coins" id="shopCoins">🪙 0</div>
+      </div>
+      <div class="shop-grid" id="shopGrid"></div>
+      <button class="completion-back" id="shopBackBtn">← Back</button>
     </div>
   </div>
 
@@ -1164,7 +1243,7 @@ function buildHtml(
     stageIndex: 0,
     stagePracticeDone: 0,
     stagePracticeTarget: PRACTICE_TARGET,
-    totalCoins: 0,
+    totalCoins: Number(LESSON.meta?.start_coins || 0),
     stageSolved: false,
     selectedSortId: null,
     drag: null,
@@ -1452,7 +1531,9 @@ function buildHtml(
       "tap_mode", "totem_targets", "bowl_image_key", "per_target_goal",
       "number_start", "number_end", "goal_image_key",
       "sequence_board", "hide_instruction_label", "input_style",
-      "totem_cycle", "tap_target_order"
+      "totem_cycle", "tap_target_order",
+      "balance_left", "balance_right", "balance_answer", "balance_options",
+      "post_story_text"
     ];
     for(const k of pass){
       if(round[k] !== undefined) out[k] = round[k];
@@ -2277,6 +2358,7 @@ function buildHtml(
     layer.appendChild(text);
     const inputs = Array.isArray(stage.inputs) ? stage.inputs : [];
     const opTasks = Array.isArray(stage.operator_tasks) ? stage.operator_tasks : [];
+    const hasBalance = String(stage.balance_left || "").trim() && String(stage.balance_right || "").trim() && Array.isArray(stage.balance_options);
     const operatorDone = new Set();
     let card = null;
     let opsWrap = null;
@@ -2298,6 +2380,78 @@ function buildHtml(
         markSuccess(stage);
       }
     };
+    if(hasBalance){
+      counter.textContent = "Balance the chain";
+      task.appendChild(counter);
+      const card = document.createElement("div");
+      card.className = "balance-card";
+      const row = document.createElement("div");
+      row.className = "balance-row";
+      const left = document.createElement("div");
+      left.className = "balance-side";
+      left.textContent = String(stage.balance_left);
+      const eq = document.createElement("div");
+      eq.className = "balance-eq";
+      eq.textContent = "=";
+      const right = document.createElement("div");
+      right.className = "balance-side";
+      const blank = document.createElement("span");
+      blank.className = "balance-blank";
+      blank.textContent = "?";
+      const parts = String(stage.balance_right).split("?");
+      right.append(document.createTextNode(parts[0] || ""));
+      right.appendChild(blank);
+      right.append(document.createTextNode(parts.slice(1).join("?") || ""));
+      row.appendChild(left);
+      row.appendChild(eq);
+      row.appendChild(right);
+      card.appendChild(row);
+
+      const rack = document.createElement("div");
+      rack.className = "tile-rack";
+      const expected = Number(stage.balance_answer);
+      const placeValue = (val) => {
+        if(state.stageSolved) return;
+        blank.textContent = String(val);
+        if(Number(val) === expected){
+          blank.classList.add("ok");
+          [...rack.querySelectorAll(".num-tile")].forEach((n) => n.style.pointerEvents = "none");
+          setTimeout(() => markSuccess(stage), 180);
+        }else{
+          blank.classList.remove("ok");
+          blank.classList.add("bad");
+          setTimeout(() => blank.classList.remove("bad"), 200);
+          blank.textContent = "?";
+          shake(blank);
+        }
+      };
+      blank.addEventListener("dragover", (e) => e.preventDefault());
+      blank.addEventListener("drop", (e) => {
+        e.preventDefault();
+        const val = e.dataTransfer?.getData("text/plain");
+        placeValue(val);
+      });
+      (stage.balance_options || []).forEach((num) => {
+        const tile = document.createElement("div");
+        tile.className = "num-tile";
+        tile.textContent = String(num);
+        tile.draggable = true;
+        tile.addEventListener("dragstart", (e) => {
+          if(e.dataTransfer) e.dataTransfer.setData("text/plain", String(num));
+        });
+        tile.addEventListener("click", () => placeValue(num));
+        rack.appendChild(tile);
+      });
+      card.appendChild(rack);
+      const hint = document.createElement("div");
+      hint.className = "balance-hint";
+      hint.textContent = "Drag one number tile to the gap";
+      card.appendChild(hint);
+      task.appendChild(card);
+      layer.appendChild(task);
+      lane.appendChild(layer);
+      return;
+    }
     if(inputs.length > 0 || opTasks.length > 0){
       counter.textContent = "Solve all to unlock artifact";
       task.appendChild(counter);
@@ -2494,7 +2648,69 @@ function buildHtml(
     };
     state.completionArtifact = reward;
     state.earnedArtifacts.push(reward);
+    showEndingStoryScreen();
+  }
+
+  function showEndingStoryScreen(){
+    const stage6 = STAGES[5] || {};
+    const text = String(
+      stage6.post_story_text ||
+      "The Monkey King is free! The King thanks you and gives you his Crown. But Doctor Krit is still out there — and the next island will be even more dangerous. Well done, hero!"
+    );
+    $("storyText").textContent = text;
+    $("successScreen").classList.remove("on");
+    $("stageBackBtn").classList.add("hidden");
+    $("stageSkipBtn").classList.add("hidden");
+    $("instruction").classList.add("hidden");
+    $("coinsLabel").parentElement.classList.add("hidden");
+    $("game").style.pointerEvents = "none";
+    $("storyScreen").classList.add("on");
+  }
+
+  function renderShop(){
+    const grid = $("shopGrid");
+    grid.innerHTML = "";
+    $("shopCoins").textContent = "🪙 " + state.totalCoins;
+    const entries = Object.keys(ARTIFACT_MAP).slice(0, 12).map((key, i) => ({
+      key,
+      image: artifactPathByKey(key),
+      name: titleFromKey(key),
+      price: 30 + (i % 5) * 10,
+    }));
+    entries.forEach((it) => {
+      const card = document.createElement("div");
+      card.className = "shop-item";
+      const img = document.createElement("img");
+      img.src = it.image;
+      img.alt = it.name;
+      img.onerror = () => { img.style.display = "none"; };
+      const name = document.createElement("div");
+      name.textContent = it.name;
+      const price = document.createElement("div");
+      price.textContent = "🪙 " + it.price;
+      const btn = document.createElement("button");
+      btn.className = "shop-buy";
+      btn.textContent = "Buy";
+      btn.disabled = state.totalCoins < it.price;
+      btn.onclick = () => {
+        if(state.totalCoins < it.price) return;
+        state.totalCoins -= it.price;
+        $("coinsLabel").textContent = String(state.totalCoins);
+        $("shopCoins").textContent = "🪙 " + state.totalCoins;
+        btn.textContent = "Bought";
+        btn.disabled = true;
+      };
+      card.append(img, name, price, btn);
+      grid.appendChild(card);
+    });
+  }
+
+  function openShopScreen(){
+    $("storyScreen").classList.remove("on");
     showCompletionScreen();
+    renderShop();
+    $("completionScreen").classList.remove("on");
+    $("shopScreen").classList.add("on");
   }
 
   function renderCompletionInventory(){
@@ -2616,7 +2832,19 @@ function buildHtml(
   }
 
   $("successNextBtn").addEventListener("click", nextStep);
-  $("completionReloadBtn").addEventListener("click", () => location.reload());
+  $("completionShopBtn").addEventListener("click", openShopScreen);
+  $("storyShopBtn").addEventListener("click", openShopScreen);
+  $("shopBackBtn").addEventListener("click", () => {
+    $("shopScreen").classList.remove("on");
+    $("game").style.pointerEvents = "";
+    $("stageBackBtn").classList.remove("hidden");
+    $("stageSkipBtn").classList.remove("hidden");
+    $("instruction").classList.remove("hidden");
+    $("coinsLabel").parentElement.classList.remove("hidden");
+    $("introScreen").classList.remove("hidden");
+    state.stageIndex = 0;
+    state.stagePracticeDone = 0;
+  });
   $("completionBackBtn").addEventListener("click", () => {
     $("completionScreen").classList.remove("on");
     $("game").style.pointerEvents = "";
@@ -2661,6 +2889,7 @@ function buildHtml(
   }
 
   setupPlayerAvatar();
+  $("coinsLabel").textContent = String(state.totalCoins);
   $("introBg").src = backgroundPath("second");
   $("introStory").textContent = buildIntroNarrative(LESSON) || "A new mystery is waiting on the island.";
   </script>
