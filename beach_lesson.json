@@ -339,12 +339,12 @@
           "balance_options": [2, 3, 4, 5]
         }
       ],
-      "post_story_text": "The Monkey King is free! The King thanks you and gives you his Glasses. But Doctor Krit is still out there — and the next island will be even more dangerous. Well done, hero!",
+      "post_story_text": "The Monkey King is free! The King thanks you and gives you his Light Sword. But Doctor Krit is still out there — and the next island will be even more dangerous. Well done, hero!",
       "artifact": {
-        "emoji": "🕶️",
-        "name": "Monkey King's Glasses",
-        "description": "Legendary glasses of the freed Monkey King.",
-        "key": "glasses"
+        "emoji": "⚔️",
+        "name": "Monkey King's Light Sword",
+        "description": "Legendary light sword of the freed Monkey King.",
+        "key": "sword_light"
       }
     }
   ],
