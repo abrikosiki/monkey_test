@@ -1757,7 +1757,7 @@ function buildHtml(
         row.className = "seq-row";
         const promptParts = String(entry.prompt || "")
           .replace(/,/g, " ")
-          .split(/(\?)/)
+          .split(/(\\?)/)
           .map((s) => s.trim())
           .filter(Boolean);
         let blankAdded = false;
