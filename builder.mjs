@@ -995,8 +995,8 @@ function buildHtml(
     }
     .shop-wrap{
       position:relative;z-index:1;
-      width:min(1080px,94vw);background:rgba(5,15,30,.78);border:2px solid rgba(244,208,63,.45);
-      border-radius:22px;padding:18px 18px 16px;box-shadow:0 20px 56px rgba(0,0,0,.55)
+      width:min(760px,80vw);background:rgba(5,15,30,.78);border:2px solid rgba(244,208,63,.45);
+      border-radius:22px;padding:14px 14px 12px;box-shadow:0 20px 56px rgba(0,0,0,.55)
     }
     .shop-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
     .shop-title{font-family:'Fredoka One',cursive;font-size:34px;color:var(--sand)}
@@ -1020,6 +1020,14 @@ function buildHtml(
     .shop-finish{
       margin-top:14px;width:100%;padding:13px 20px;border:none;border-radius:999px;cursor:pointer;
       font-family:'Fredoka One',cursive;font-size:22px;color:#0b1b2f;background:linear-gradient(135deg,#93d3ff,#4a9fe4);box-shadow:0 5px 0 #2a6ea6
+    }
+    @media (max-width:900px){
+      .shop-wrap{width:min(760px,92vw)}
+      .shop-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    }
+    @media (max-width:620px){
+      .shop-grid{grid-template-columns:1fr}
+      .shop-title{font-size:28px}
     }
     .balance-card{
       position:absolute;left:50%;top:28%;transform:translateX(-50%);width:min(90%,720px);
