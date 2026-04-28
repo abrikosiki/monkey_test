@@ -1108,6 +1108,14 @@
   const ITEMS_MAP = {"artifact":"assets/items/artifact.png","bamboo":"assets/items/bamboo.png","banana":"assets/items/banana.png","bubble":"assets/items/bubble.png","butterfly":"assets/items/butterfly.png","candy":"assets/items/candy.png","cherry":"assets/items/cherry.png","cookie":"assets/items/cookie.png","coral":"assets/items/coral.png","crab_blue":"assets/items/crab_blue.png","hibiscus":"assets/items/hibiscus.png","jellyfish":"assets/items/jellyfish.png","leaf":"assets/items/leaf.png","lollipop":"assets/items/lollipop.png","mushroom":"assets/items/mushroom.png","pawprint":"assets/items/pawprint.png","pearl_blue":"assets/items/pearl_blue.png","pearl_red":"assets/items/pearl_red.png","samurai_monkey":"assets/items/samurai_monkey.png","shell_blue":"assets/items/shell_blue.png","shell_red":"assets/items/shell_red.png","spore":"assets/items/spore.png","starfish":"assets/items/starfish.png","stone_blue":"assets/items/stone_blue.png"};
   const TARGETS_MAP = {"bag_cloth":"assets/targets/bag_cloth.png","basket_wood":"assets/targets/basket_wood.png","basket_woven":"assets/targets/basket_woven.png","bowl_stone":"assets/targets/bowl_stone.png","bowl_wood":"assets/targets/bowl_wood.png","cauldron":"assets/targets/cauldron.png","chest_open":"assets/targets/chest_open.png","totem_1":"assets/targets/totem_1.png","totem_2":"assets/targets/totem_2.png","totem_3":"assets/targets/totem_3.png"};
   const ARTIFACT_MAP = {"boots_jump":"assets/artifacts/boots_jump.png","cloak_invisible":"assets/artifacts/cloak_invisible.png","crown":"assets/artifacts/crown.webp","dron":"assets/artifacts/dron.webp","egg":"assets/artifacts/egg.webp","glasses":"assets/artifacts/glasses.webp","glasses_mind":"assets/artifacts/glasses_mind.png","lizard":"assets/artifacts/lizard.webp","sword":"assets/artifacts/sword.webp","sword_light":"assets/artifacts/sword_light.png"};
+  const SHOP_ITEMS = [
+    { id: "sword", name: "Sword", img: "assets/characters/sword.webp", price: 150 },
+    { id: "egg", name: "Egg", img: "assets/characters/egg.webp", price: 75 },
+    { id: "dron", name: "Quadro", img: "assets/characters/dron.webp", price: 260 },
+    { id: "lizard", name: "Lizard", img: "assets/characters/lizard.webp", price: 50 },
+    { id: "crown", name: "Crown", img: "assets/characters/crown.webp", price: 25 },
+    { id: "glasses", name: "Glasses", img: "assets/characters/glasses.webp", price: 25 },
+  ];
 
   const $ = (id) => document.getElementById(id);
   const izone = $("izone");
@@ -2545,20 +2553,21 @@
     const grid = $("shopGrid");
     grid.innerHTML = "";
     $("shopCoins").textContent = String(state.totalCoins);
-    const entries = Object.keys(ARTIFACT_MAP).slice(0, 6).map((key, i) => ({
-      key,
-      image: artifactPathByKey(key),
-      name: titleFromKey(key),
-      price: 30 + (i % 5) * 10,
-    }));
-    entries.forEach((it) => {
-      const owned = state.earnedArtifacts.some((a) => a && a.key === it.key);
+    SHOP_ITEMS.forEach((it) => {
+      const owned = state.earnedArtifacts.some((a) => a && a.key === it.id);
       const card = document.createElement("div");
       card.className = "shop-item";
       const img = document.createElement("img");
-      img.src = it.image;
+      img.src = it.img;
       img.alt = it.name;
-      img.onerror = () => { img.style.display = "none"; };
+      img.onerror = () => {
+        const fallback = artifactPathByKey(it.id);
+        if(fallback && fallback !== it.img){
+          img.src = fallback;
+        } else {
+          img.style.display = "none";
+        }
+      };
       const name = document.createElement("div");
       name.className = "shop-name";
       name.textContent = it.name;
@@ -2573,7 +2582,7 @@
       btn.onclick = () => {
         if(state.totalCoins < it.price || owned) return;
         state.totalCoins -= it.price;
-        state.earnedArtifacts.push({ key: it.key, name: it.name, image: it.image, description: "" });
+        state.earnedArtifacts.push({ key: it.id, name: it.name, image: it.img, description: "" });
         $("coinsLabel").textContent = String(state.totalCoins);
         renderShop();
       };

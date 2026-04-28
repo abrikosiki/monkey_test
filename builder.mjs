@@ -1256,6 +1256,14 @@ function buildHtml(
   const ITEMS_MAP = ${itemsPayload};
   const TARGETS_MAP = ${targetsPayload};
   const ARTIFACT_MAP = ${artifactsPayload};
+  const SHOP_ITEMS = [
+    { id: "sword", name: "Sword", img: "assets/characters/sword.webp", price: 150 },
+    { id: "egg", name: "Egg", img: "assets/characters/egg.webp", price: 75 },
+    { id: "dron", name: "Quadro", img: "assets/characters/dron.webp", price: 260 },
+    { id: "lizard", name: "Lizard", img: "assets/characters/lizard.webp", price: 50 },
+    { id: "crown", name: "Crown", img: "assets/characters/crown.webp", price: 25 },
+    { id: "glasses", name: "Glasses", img: "assets/characters/glasses.webp", price: 25 },
+  ];
 
   const $ = (id) => document.getElementById(id);
   const izone = $("izone");
@@ -2693,20 +2701,21 @@ function buildHtml(
     const grid = $("shopGrid");
     grid.innerHTML = "";
     $("shopCoins").textContent = String(state.totalCoins);
-    const entries = Object.keys(ARTIFACT_MAP).slice(0, 6).map((key, i) => ({
-      key,
-      image: artifactPathByKey(key),
-      name: titleFromKey(key),
-      price: 30 + (i % 5) * 10,
-    }));
-    entries.forEach((it) => {
-      const owned = state.earnedArtifacts.some((a) => a && a.key === it.key);
+    SHOP_ITEMS.forEach((it) => {
+      const owned = state.earnedArtifacts.some((a) => a && a.key === it.id);
       const card = document.createElement("div");
       card.className = "shop-item";
       const img = document.createElement("img");
-      img.src = it.image;
+      img.src = it.img;
       img.alt = it.name;
-      img.onerror = () => { img.style.display = "none"; };
+      img.onerror = () => {
+        const fallback = artifactPathByKey(it.id);
+        if(fallback && fallback !== it.img){
+          img.src = fallback;
+        } else {
+          img.style.display = "none";
+        }
+      };
       const name = document.createElement("div");
       name.className = "shop-name";
       name.textContent = it.name;
@@ -2721,7 +2730,7 @@ function buildHtml(
       btn.onclick = () => {
         if(state.totalCoins < it.price || owned) return;
         state.totalCoins -= it.price;
-        state.earnedArtifacts.push({ key: it.key, name: it.name, image: it.image, description: "" });
+        state.earnedArtifacts.push({ key: it.id, name: it.name, image: it.img, description: "" });
         $("coinsLabel").textContent = String(state.totalCoins);
         renderShop();
       };
