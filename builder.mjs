@@ -1405,7 +1405,7 @@ function buildHtml(
       "tap_step", "counter_start", "counter_goal", "counter_suffix",
       "tap_mode", "totem_targets", "bowl_image_key", "per_target_goal",
       "number_start", "number_end", "goal_image_key",
-      "sequence_board", "hide_instruction_label"
+      "sequence_board", "hide_instruction_label", "input_style"
     ];
     for(const k of pass){
       if(round[k] !== undefined) out[k] = round[k];
@@ -1748,6 +1748,76 @@ function buildHtml(
     head.className = "eq-head";
     head.textContent = "🔐";
     card.appendChild(head);
+
+    if(stage.input_style === "sequence_inline"){
+      const board = document.createElement("div");
+      board.className = "seq-board";
+      (stage.inputs || []).forEach((entry) => {
+        const row = document.createElement("div");
+        row.className = "seq-row";
+        const promptParts = String(entry.prompt || "")
+          .replace(/,/g, " ")
+          .split(/(\?)/)
+          .map((s) => s.trim())
+          .filter(Boolean);
+        let blankAdded = false;
+        promptParts.forEach((part) => {
+          if(part === "?" && !blankAdded){
+            const input = document.createElement("input");
+            input.className = "seq-blank answer";
+            input.type = "number";
+            input.inputMode = "numeric";
+            input.autocomplete = "off";
+            input.dataset.answer = String(entry.answer ?? "");
+            input.addEventListener("keydown", (e) => {
+              if(e.key === "Enter") e.preventDefault();
+            });
+            row.appendChild(input);
+            blankAdded = true;
+          } else {
+            const span = document.createElement("span");
+            span.textContent = part;
+            row.appendChild(span);
+          }
+        });
+        if(!blankAdded){
+          const input = document.createElement("input");
+          input.className = "seq-blank answer";
+          input.type = "number";
+          input.inputMode = "numeric";
+          input.autocomplete = "off";
+          input.dataset.answer = String(entry.answer ?? "");
+          row.appendChild(input);
+        }
+        board.appendChild(row);
+      });
+      const btn = document.createElement("button");
+      btn.className = "seq-submit";
+      btn.type = "button";
+      btn.textContent = "+ Harder";
+      btn.onclick = () => {
+        const blanks = [...board.querySelectorAll(".seq-blank")];
+        const ok = blanks.every((b) => String(b.value).trim() === String(b.dataset.answer).trim());
+        if(ok){
+          blanks.forEach((b) => {
+            b.classList.add("ok");
+            b.disabled = true;
+          });
+          markSuccess(stage);
+        }else{
+          blanks.forEach((b) => {
+            if(String(b.value).trim() !== String(b.dataset.answer).trim()){
+              b.classList.add("bad");
+              setTimeout(() => b.classList.remove("bad"), 200);
+            }
+          });
+        }
+      };
+      card.appendChild(board);
+      card.appendChild(btn);
+      lane.appendChild(card);
+      return;
+    }
 
     if(stage.sequence_board && Array.isArray(stage.sequence_board.rows)){
       const rows = stage.sequence_board.rows;
