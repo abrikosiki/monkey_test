@@ -1575,7 +1575,7 @@ function buildHtml(
         "game-img",
         z.image_key,
         "width:100%;height:100%;object-fit:contain;position:relative;opacity:1;filter:drop-shadow(0 6px 10px rgba(0,0,0,.35));",
-        "target"
+        z.image_kind === "item" ? "item" : "target"
       );
       zoneWrap.appendChild(img);
       lane.appendChild(zoneWrap);

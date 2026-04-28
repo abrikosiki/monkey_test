@@ -111,9 +111,9 @@
           "round": 2,
           "instruction": "Each crab needs 2 corals. Feed all 3 crabs.",
           "drop_zones": [
-            { "id": "z1", "image_key": "crab_blue" },
-            { "id": "z2", "image_key": "crab_blue" },
-            { "id": "z3", "image_key": "crab_blue" }
+            { "id": "z1", "image_key": "crab_blue", "image_kind": "item" },
+            { "id": "z2", "image_key": "crab_blue", "image_kind": "item" },
+            { "id": "z3", "image_key": "crab_blue", "image_kind": "item" }
           ],
           "draggables": [
             { "id": "c1", "image_key": "coral" },
