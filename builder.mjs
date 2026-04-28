@@ -1405,7 +1405,8 @@ function buildHtml(
       "tap_step", "counter_start", "counter_goal", "counter_suffix",
       "tap_mode", "totem_targets", "bowl_image_key", "per_target_goal",
       "number_start", "number_end", "goal_image_key",
-      "sequence_board", "hide_instruction_label", "input_style"
+      "sequence_board", "hide_instruction_label", "input_style",
+      "totem_cycle", "tap_target_order"
     ];
     for(const k of pass){
       if(round[k] !== undefined) out[k] = round[k];
@@ -1950,6 +1951,81 @@ function buildHtml(
   function renderTapCount(stage){
     const mode = String(stage.tap_mode || "").trim();
     if(mode === "totems"){
+      if(stage.totem_cycle){
+        const targets = Array.isArray(stage.totem_targets) ? stage.totem_targets : ["totem_1", "totem_2", "totem_3"];
+        const orderRaw = Array.isArray(stage.tap_target_order) && stage.tap_target_order.length > 0
+          ? stage.tap_target_order
+          : [1, 2, 3];
+        const order = orderRaw
+          .map((n) => Number(n) - 1)
+          .filter((n) => Number.isInteger(n) && n >= 0 && n < targets.length);
+        const finalOrder = order.length > 0 ? order : [0];
+        const goal = Number(stage.target_count || 12);
+        let taps = 0;
+        let cycleIdx = 0;
+
+        const topRow = document.createElement("div");
+        topRow.style.cssText =
+          "position:absolute;left:50%;top:18%;transform:translateX(-50%);display:flex;gap:34px;justify-content:center;align-items:flex-end;z-index:12;";
+        const totemEls = [];
+        targets.forEach((key, idx) => {
+          const totem = makeImg(
+            "game-img",
+            key,
+            "position:relative;width:116px;height:136px;transition:transform .16s ease, filter .16s ease, opacity .16s ease;opacity:.92;",
+            "target"
+          );
+          totem.dataset.idx = String(idx);
+          totemEls.push(totem);
+          topRow.appendChild(totem);
+        });
+
+        const stone = makeImg(
+          "game-img",
+          stage.image_key || "stone_blue",
+          "position:absolute;left:50%;top:78%;transform:translate(-50%,-50%);cursor:pointer;z-index:12;width:134px;height:134px;"
+        );
+
+        function flyTo(targetEl){
+          const projectile = stone.cloneNode(true);
+          projectile.style.pointerEvents = "none";
+          projectile.style.transition = "left .24s ease, top .24s ease, transform .24s ease, opacity .24s ease";
+          projectile.style.zIndex = "13";
+          lane.appendChild(projectile);
+          const r = targetEl.getBoundingClientRect();
+          const laneR = lane.getBoundingClientRect();
+          const tx = r.left - laneR.left + r.width / 2;
+          const ty = r.top - laneR.top + r.height / 2 + 10;
+          projectile.style.left = tx + "px";
+          projectile.style.top = ty + "px";
+          projectile.style.transform = "translate(-50%,-50%) scale(.34)";
+          projectile.style.opacity = "0";
+          setTimeout(() => projectile.remove(), 260);
+        }
+
+        stone.addEventListener("click", () => {
+          if(state.stageSolved) return;
+          const idx = finalOrder[cycleIdx % finalOrder.length];
+          cycleIdx += 1;
+          taps += 1;
+          const targetEl = totemEls[idx];
+          if(targetEl){
+            flyTo(targetEl);
+            targetEl.style.filter = "drop-shadow(0 0 22px rgba(244,208,63,.9))";
+            targetEl.style.transform = "scale(1.06)";
+            setTimeout(() => {
+              targetEl.style.filter = "drop-shadow(0 6px 10px rgba(0,0,0,.35))";
+              targetEl.style.transform = "scale(1)";
+            }, 170);
+          }
+          if(taps >= goal) markSuccess(stage);
+        });
+
+        lane.appendChild(topRow);
+        lane.appendChild(stone);
+        return;
+      }
+
       const targets = Array.isArray(stage.totem_targets) ? stage.totem_targets : ["totem_1", "totem_2", "totem_3"];
       const perTarget = Number(stage.per_target_goal || 4);
       const counts = targets.map(() => 0);
@@ -1960,7 +2036,7 @@ function buildHtml(
       targets.forEach((key) => {
         const col = document.createElement("div");
         col.style.cssText = "display:flex;flex-direction:column;align-items:center;gap:6px;min-width:110px;";
-        const totem = makeImg("game-img", key, "position:relative;width:92px;height:112px;");
+        const totem = makeImg("game-img", key, "position:relative;width:92px;height:112px;", "target");
         const bowl = makeImg("game-img", stage.bowl_image_key || "bowl_wood", "position:relative;width:74px;height:74px;", "target");
         const lbl = document.createElement("div");
         lbl.textContent = "0 / " + perTarget;

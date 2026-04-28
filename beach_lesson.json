@@ -62,13 +62,13 @@
         },
         {
           "round": 4,
-          "instruction": "Tribute: 3 totems need 4 each. Tap 12 times to finish all offerings.",
+          "instruction": "Tap the stone. It flies to the totems in cycle until all offerings are done.",
           "target_count": 12,
           "image_key": "stone_blue",
           "tap_mode": "totems",
           "totem_targets": ["totem_1", "totem_2", "totem_3"],
-          "bowl_image_key": "bowl_wood",
-          "per_target_goal": 4
+          "totem_cycle": true,
+          "tap_target_order": [1, 3, 3, 1]
         },
         {
           "round": 5,
