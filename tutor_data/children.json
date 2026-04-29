@@ -1,0 +1,16 @@
+[
+  {
+    "child_code": "MONKEY-4821",
+    "name": "Pirate",
+    "coins": 165,
+    "level": 2,
+    "character_key": "pirate_green"
+  },
+  {
+    "child_code": "MONKEY-8801",
+    "name": "Cleo",
+    "coins": 92,
+    "level": 1,
+    "character_key": "fairy_purple"
+  }
+]

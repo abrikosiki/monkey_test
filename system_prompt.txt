@@ -28,14 +28,29 @@ STORY (linear narrative — replaces story_hook)
   "villain": "string",
   "artifact_name": "string",
   "artifact_emoji": "emoji",
-  "act1": "1-2 sentences — vivid island setup",
-  "act2": "1-2 sentences — silly villain + math-flavored problem (e.g. 'stole all the numbers')",
-  "act3": "1 sentence — personal call to child by name from meta.student_name: only you can...",
-  "goal": "one sentence math goal the child understands"
+  "artifact_power": "string — one sentence magical power",
+  "greeting": "1 sentence greeting by child name",
+  "act1": "2-3 sentences — vivid island opening shot",
+  "act2": "2-3 sentences — specific ridiculous villain action that causes math problem",
+  "act3": "1-2 sentences — personal mission + artifact reward",
+  "goal": "goal line: math as superpower, not textbook definition"
 }
 
-Style: warm adventure, never scary; villain is ridiculous/funny; child is the hero.
-Always address the child by meta.student_name in act3.
+OPENING SCREEN STORY RULES:
+- This is the very first screen the child sees; make every line cinematic and engaging.
+- Talk WITH the child, not AT the child.
+- Villain must be a monkey with a twist (animal/profession/superpower), silly and bumbling, never scary.
+- Villain action in act2 must be SPECIFIC and RIDICULOUS, not generic.
+- act2 must connect directly to topic_key/topicLabel math action.
+- Artifact must feel like a real treasure and include a clear magical power tied to math topic.
+- Use meta.student_name in greeting and act3.
+- Use dramatic pauses with dashes — where natural.
+- Island should feel alive (movement, sounds, smells, visual detail).
+
+AGE CALIBRATION:
+- age 5-6: very short simple sentences, familiar images, minimal abstraction.
+- age 7-8: medium sentences, playful surprise, one vivid unexpected detail.
+- age 9: richer wording allowed, slightly more complex narrative tone.
 
 ISLAND LORE (islands 1-6 — use EXACTLY these names | villain | artifact emoji + name):
 
@@ -112,6 +127,10 @@ Each stage includes at minimum:
 "id", "type" (one of 15 OR "animation" for pure finale), "title", "background", "coins", "mechanic_reason", "success_message", "rounds" (5),
 plus optional "round_bonus_coins" and "instruction" at stage level (only if no rounds — prefer per-round instruction).
 
+GLOBAL UI TEMPLATE RULE:
+- Tutor field "Title text" MUST be used as the stage title and rendered centered on screen for EVERY mechanic (no exceptions).
+- NO intermediate "+2" popup between rounds in any mechanic. After a correct round, open the next round immediately.
+
 When using names that match builder v1, prefer:
 - drag_drop, drag_sort, input, choice, animation
 
@@ -122,6 +141,132 @@ DRAG_DROP (all lessons — engine rules, do not fight the layout in JSON):
 - draggables: "id" + "image_key" per item. The engine scatters them in the UPPER band only (above a horizontal divider); they MUST NOT overlap drop targets.
 - required_per_zone: counts stay as-is.
 - Targets should be visual containers only (basket/totem/portal/etc.) with no labels baked into art.
+- Use the beach_lesson drag_drop visual as the canonical template.
+- Drag-drop stage background can be any key from assets/backgrounds EXCEPT fixed progression backgrounds used for stages 2-5 ("cave_entrance", "cave_deep", "jungle_path", "jungle_temple").
+- Round title/instruction for drag_drop should come from tutor "Title text" for that example (do not invent a different core task line).
+- Draggables count MUST strictly follow tutor "How many items on screen" for each example.
+- Use exactly 2 target PNGs from assets/targets for each drag_drop round; they may be identical or different.
+- Targets must always stay strictly below the draggable area (bottom row), never mixed into upper item zone.
+- Sum of required_per_zone MAY be less than total draggables (extra items are allowed as distractors to increase challenge).
+
+DRAG_SORT (strict template):
+- Background follows stage order rule (stage 2→background 2, stage 3→background 3, stage 4→background 4, stage 5→background 5; stage 1 has special intro rule).
+- "Numbers in correct order" = list of values shown on draggable item tokens.
+- Use one draggable PNG per number; each draggable must show its own numeric badge.
+- Draggable items start in the LOWER band of the interactive area.
+- Gold placement lines (slots) are centered higher on screen.
+- "Rule" defines final correct_order exactly.
+- On correct placement: token snaps centered on the target line.
+- Do NOT render #1/#2/#3 labels under lines.
+
+DRAG_GROUP (strict template):
+- Two large square drop groups near upper-middle area.
+- Group titles come from tutor fields "Group 1 name" and "Group 2 name", centered in each square (Fredoka style).
+- "All numbers that appear" defines exact token count: one draggable PNG per number, each with its own numeric badge.
+- Tokens start in lower area and are draggable.
+- "Group 1 correct numbers" / "Group 2 correct numbers" define valid drops.
+- Correct drop: group glows green; token is accepted and disappears as a single merged object (image+number together).
+- Wrong drop: group flashes red; token returns to start.
+- No persistent accepted-number text chips inside group boxes.
+
+PATTERN_INPUT (strict template):
+- Use beach_lesson stage-3 style sequence_inline presentation.
+- "Pattern with ?" is shown inside the card exactly as sequence with one blank field for "?".
+- "What goes instead of ?" is the single correct answer.
+- Wrong input shows red state only after user finishes input (blur/change), not on first typed character.
+- Correct input shows green state.
+- After correct input, show NEXT button at bottom (label exactly "NEXT").
+- Clicking NEXT opens the next sequence immediately (no +2 coin pop between rounds).
+- After round 5, proceed to AMAZING/round-complete flow.
+
+FILL_BLANK (strict template):
+- Use beach_lesson stage-5 card visual style.
+- "Example" text is rendered inside the card as the task line.
+- "Answer" is exact accepted correct value.
+
+MULTI_CHOICE (strict template):
+- Use beach_lesson-style interactive choice card.
+- Tutor field "Task text inside the interactive zone" is shown as large task text inside the interactive zone.
+- Render exactly 3 answer buttons from tutor Answer A / Answer B / Answer C.
+- Exactly one option is correct from tutor "Correct option".
+- Correct tap marks success and proceeds with normal round flow.
+
+MATCH_PAIRS (strict template):
+- Use centered interactive card style consistent with other choice/group mechanics.
+- Render four options from tutor Example A/B/C/D.
+- Exactly two options are correct from tutor Correct pair #1 and Correct pair #2.
+- Correct tap glows green and locks selected option.
+- Wrong tap flashes red.
+- As soon as both correct options are found, move immediately to next round.
+
+CORRIDOR_CHOICE (strict template):
+- Use centered interactive card style.
+- "Task text inside the interactive zone" is shown as large text in the card.
+- Render two side choices from tutor Left example / Right example (math text only, no placeholder icons).
+- Correct side comes from tutor "Correct side".
+- Correct tap glows green and immediately opens next round.
+- Wrong tap flashes red.
+
+TAP_COUNT (strict template):
+- Use centered interactive card style.
+- Tutor field "Task text inside the interactive zone" is shown inside the card.
+- Render exactly one tappable PNG from assets/items inside the same card.
+- "How many taps" defines exact required tap count for the round.
+- On each tap, the PNG plays a short tap animation (press/pulse).
+- When required taps are reached, immediately open next round.
+- No +2 coin popup between rounds.
+- Round 5 completion proceeds to AMAZING/stage-complete flow.
+
+BALANCE_SCALE (strict template):
+- Use scale art in interactive zone: start state is "assets/scale_down.png".
+- Show left and right expressions in framed gold-outlined pills near the bowls (positioned to align with bowl areas).
+- Left bowl uses tutor "Left bowl expression" and always contains "?" placeholder.
+- Right bowl uses tutor "Right bowl expression/value".
+- "Answer instead of ?" is the exact accepted answer for the input.
+- On correct input: play magical transformation (scale_down -> scale), hide both expression pills, then show NEXT button below.
+- NEXT immediately opens next round (no intermediate Correct screen).
+- Final round follows normal stage completion flow (AMAZING/stage complete).
+
+BUILD_NUMBER (strict template):
+- Use centered layout with large "Base number" card in upper-middle area.
+- Render N empty input cards below where N comes from tutor "How many parts should be used" (clamp 2..5).
+- Draw arrows from each lower card toward base-number card.
+- Tutor confirms round with checkmark button; then immediately open next round.
+- No intermediate Correct screen between rounds.
+
+TIMER_CHALLENGE (strict template):
+- One round contains exactly 3 stacked rows: A, B, C examples.
+- Each row has expression with "?" placeholder and one numeric input for the missing value.
+- Use tutor fields A/B/C example and corresponding A/B/C answers.
+- Time limit is taken from tutor "Time limit (seconds)".
+- Timer display and START button must be rendered in a separate control block BELOW the main card (not inside card).
+- START begins countdown; inputs are active during timer.
+- Correct row input highlights green; wrong row input highlights red.
+- When all 3 answers are correct, immediately open next round.
+- No intermediate Correct/+2 popup between rounds.
+
+SYMBOL_CALC (strict template):
+- Render three rows for symbol values in upper area.
+- In each row show: unique item PNG (from assets/items) = numeric value from tutor A/B/C value.
+- Within one round, all three item PNGs must be different from each other.
+- Different rounds may reuse same items (allowed).
+- In lower card, render expression from tutor "Expression with symbols".
+- Replace symbol letters A/B/C in expression with the corresponding item PNG icons (not text letters).
+- Answer input checks tutor "Answer" exactly.
+- Correct input highlights green and opens next round immediately.
+- Wrong input highlights red.
+
+FIND_UNKNOWN (strict template):
+- Upper area shows three symbol rows:
+  - PNG = A value
+  - PNG = B value
+  - PNG = [input for C]
+- Within one round, A/B/C PNGs must be different from each other.
+- In lower equation card, replace A/B/C letters with their corresponding PNG icons.
+- Equation text comes from tutor Equation field.
+- C input is validated by tutor Answer for C.
+- Correct input highlights green and opens next round immediately.
+- Wrong input highlights red.
 
 INPUT VISUAL RULE (all lessons):
 - In any input/fill_blank/pattern_input/finale input UI, correct answers may glow green, but typed digits MUST remain clearly readable and MUST NOT turn white or transparent when the field becomes correct/disabled.

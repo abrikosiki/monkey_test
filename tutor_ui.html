@@ -3,133 +3,174 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tutor Lesson Editor</title>
+  <title>Monkey Archipelago Tutor</title>
   <style>
-    :root{color-scheme:dark}
-    body{font-family:Inter,system-ui,Arial,sans-serif;background:#0b1426;color:#eaf3ff;margin:0}
-    .wrap{max-width:1180px;margin:20px auto;padding:0 16px 40px}
-    .card{background:#12203a;border:1px solid #223a66;border-radius:16px;padding:16px;box-shadow:0 10px 26px rgba(0,0,0,.18)}
-    h1,h2,h3{margin:0 0 10px}
-    h1{font-size:28px}
-    h2{font-size:20px}
-    h3{font-size:16px}
-    .muted{color:#9db7de;font-size:13px}
-    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-    .grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-    .full{grid-column:1/-1}
-    label{display:block;font-size:12px;color:#9db7de;margin-bottom:4px}
-    input,select,textarea{width:100%;box-sizing:border-box;border-radius:10px;border:1px solid #2f4d7a;background:#0f1b31;color:#eaf3ff;padding:10px}
-    textarea{min-height:64px;resize:vertical}
-    .row,.topbar,.section-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-    button,.button-link{border:none;border-radius:12px;padding:10px 14px;font-weight:800;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center}
-    .primary{background:#3fc08c;color:#062717}
-    .secondary{background:#f1be4f;color:#2a1b00}
-    .ghost{background:#21365d;color:#dce8ff}
-    .danger{background:#7f2940;color:#ffe5ec}
-    .small{padding:7px 10px;font-size:12px;border-radius:10px}
-    .topbar{margin:12px 0 18px}
-    .status{padding:8px 12px;border-radius:999px;background:#0f1b31;border:1px solid #28456f}
-    .section{margin-top:14px}
-    .stage{margin-top:14px;border-top:1px solid #243d69;padding-top:14px}
-    .round{margin-top:12px;background:#0f1b31;border:1px solid #28456f;border-radius:14px;padding:12px}
-    .chips{display:flex;gap:8px;flex-wrap:wrap}
-    .chip{padding:6px 10px;border-radius:999px;background:#21365d;color:#dce8ff;font-size:12px}
-    .list-table{display:grid;gap:8px}
-    .list-row{display:grid;grid-template-columns:1.6fr .7fr auto;gap:8px;align-items:end}
-    .option-row{display:grid;grid-template-columns:2fr .8fr auto auto;gap:8px;align-items:end}
-    .path-row{display:grid;grid-template-columns:1.5fr .9fr .9fr .7fr auto;gap:8px;align-items:end}
-    .rule{font-size:12px;color:#9db7de;margin-top:6px}
-    .empty{padding:12px;border:1px dashed #335487;border-radius:12px;color:#9db7de}
-    @media (max-width:900px){
-      .grid,.grid3,.list-row,.option-row,.path-row{grid-template-columns:1fr}
-      .full{grid-column:auto}
+    :root{
+      color-scheme:dark;
+      --bg:#08111f;
+      --panel:#10203a;
+      --panel-2:#0d1a2f;
+      --line:#28456f;
+      --text:#ecf4ff;
+      --muted:#9db7de;
+      --teal:#5ed0b0;
+      --gold:#f1be4f;
+      --blue:#63b4ff;
+      --danger:#8a3753;
     }
+    *{box-sizing:border-box}
+    body{margin:0;background:linear-gradient(180deg,#08111f,#0d1830 42%,#08111f);color:var(--text);font-family:Inter,system-ui,Arial,sans-serif}
+    .wrap{max-width:1380px;margin:0 auto;padding:18px 18px 56px}
+    .header{position:sticky;top:0;z-index:20;background:rgba(8,17,31,.88);backdrop-filter:blur(10px);padding:14px 0 16px;margin-bottom:18px}
+    .header-row{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap}
+    h1,h2,h3{margin:0}
+    h1{font-size:30px}
+    h2{font-size:21px}
+    h3{font-size:17px}
+    .sub{color:var(--muted);font-size:14px;margin-top:6px;max-width:780px;line-height:1.45}
+    .status-pill{padding:8px 12px;border-radius:999px;background:#0d1a2f;border:1px solid var(--line);color:#dce8ff;font-weight:700}
+    .actions{display:flex;gap:10px;flex-wrap:wrap}
+    button,.button-link{border:none;border-radius:12px;padding:11px 16px;font-weight:800;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+    .primary{background:var(--teal);color:#062717}
+    .secondary{background:var(--gold);color:#2a1b00}
+    .ghost{background:#21365d;color:#dce8ff}
+    .danger{background:var(--danger);color:#ffe5ec}
+    .small{padding:7px 10px;font-size:12px;border-radius:10px}
+    .layout{display:grid;grid-template-columns:360px minmax(0,1fr);gap:18px}
+    .stack{display:flex;flex-direction:column;gap:18px}
+    .card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 10px 26px rgba(0,0,0,.18)}
+    .muted{color:var(--muted)}
+    .field-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .field-grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .full{grid-column:1/-1}
+    label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}
+    input,select,textarea{width:100%;box-sizing:border-box;border-radius:12px;border:1px solid #2f4d7a;background:var(--panel-2);color:var(--text);padding:11px 12px}
+    textarea{min-height:78px;resize:vertical}
+    .child-card{display:flex;gap:14px;align-items:center;background:var(--panel-2);border:1px solid var(--line);border-radius:16px;padding:12px;margin-top:12px}
+    .child-avatar{width:92px;height:112px;object-fit:contain;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12)}
+    .meta-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
+    .meta-chip{background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:9px 10px;font-size:12px}
+    .stage-card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px}
+    .stage-head{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+    .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .chip{padding:6px 10px;border-radius:999px;background:#21365d;color:#dce8ff;font-size:12px}
+    .example{margin-top:12px;background:var(--panel-2);border:1px solid var(--line);border-radius:16px;padding:12px}
+    .example-head{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+    .hint{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.4}
+    .example-summary{font-size:12px;color:#cfe2ff;background:#122746;border:1px solid #2d4a74;border-radius:12px;padding:8px 10px;margin-top:10px}
+    .stage-rule{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.45}
+    .log{white-space:pre-wrap;background:var(--panel-2);border:1px solid var(--line);border-radius:16px;padding:12px;font-size:13px;color:#dbe9ff;max-height:240px;overflow:auto}
+    .lesson-tools{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    .json-box{margin-top:12px;background:#091425;border:1px solid var(--line);border-radius:16px;padding:12px;max-height:280px;overflow:auto;white-space:pre-wrap;font-size:12px}
+    @media (max-width:1100px){.layout{grid-template-columns:1fr}.field-grid,.field-grid.three{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
   <div class="wrap">
-    <h1>Tutor Lesson Editor</h1>
-    <div class="muted">Generate, edit, save, download, and preview lessons without touching JSON.</div>
-
-    <div class="card section">
-      <h2>Tutor Form</h2>
-      <div class="grid" id="formGrid"></div>
-      <div class="topbar">
-        <button class="primary" id="generateBtn">Generate Lesson</button>
-        <button class="ghost" id="loadBtn">Load Current Lesson</button>
-        <button class="secondary" id="saveBtn">Save Lesson JSON</button>
-        <button class="secondary" id="buildBtn">Build lesson_game.html</button>
-        <button class="secondary" id="assetsBtn">Generate Assets</button>
-        <button class="ghost" id="downloadBtn">Download JSON</button>
-        <a class="button-link ghost" id="previewBtn" href="/lesson_game.html" target="_blank" rel="noopener">Open Game Preview</a>
-        <span class="status" id="status">Ready.</span>
+    <div class="header">
+      <div class="header-row">
+        <div>
+          <h1>Monkey Archipelago Tutor</h1>
+          <div class="sub">Single-page tutor workspace with child lookup, structured 6-stage editing, autosave, Claude generation, lesson build, and preview.</div>
+        </div>
+        <div class="stack" style="align-items:flex-end">
+          <div class="status-pill" id="autosaveStatus">Ready</div>
+          <div class="actions">
+            <button class="ghost" id="saveDraftBtn">Save Draft</button>
+            <button class="primary" id="generateBtn">Create Lesson</button>
+            <button class="secondary" id="buildBtn">Build HTML</button>
+            <button class="secondary" id="assetsBtn">Generate Assets</button>
+            <a class="button-link ghost" id="previewBtn" href="/lesson_game.html" target="_blank" rel="noopener">Open Preview</a>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="card section">
-      <h2>Lesson Editor</h2>
-      <div id="editorRoot" class="empty">Generate or load a lesson to start editing.</div>
+    <div class="layout">
+      <div class="stack">
+        <div class="card">
+          <h2>Child</h2>
+          <div class="field-grid">
+            <div class="full">
+              <label>Child code</label>
+              <div style="display:flex;gap:10px">
+                <input id="childCodeInput" placeholder="MONKEY-4821" />
+                <button class="ghost" id="fetchChildBtn" type="button">Fetch Child</button>
+              </div>
+            </div>
+          </div>
+          <div id="childPreview" class="hint">Enter a child code and fetch profile data.</div>
+        </div>
+
+        <div class="card">
+          <h2>Lesson Output</h2>
+          <div class="hint">Tutor fills only mechanics and math examples. Story, villain, artifact, assets, and all child-facing text are generated automatically.</div>
+          <div class="lesson-tools">
+            <button class="ghost small" id="loadLessonBtn">Load Current Lesson JSON</button>
+            <button class="ghost small" id="downloadJsonBtn">Download JSON</button>
+          </div>
+          <div class="json-box" id="lessonJsonBox">No generated lesson loaded yet.</div>
+        </div>
+      </div>
+
+      <div class="stack">
+        <div id="stagesRoot"></div>
+      </div>
     </div>
   </div>
 
   <script>
-    const formFields = [
-      ["child_name", "Child name"], ["child_code", "Child code"], ["age", "Age", "number"],
-      ["difficulty", "Difficulty", "select", ["easy","medium","hard"]],
-      ["topic", "Topic key"], ["topic_label", "Topic label"], ["lesson_number", "Lesson number", "number"],
-      ["island", "Island", "number"], ["character_key", "Character key"],
-      ["weak_points", "Weak points", "textarea"], ["focus", "Focus", "textarea"],
-      ["knows", "Knows", "textarea"], ["notes", "Notes", "textarea"],
-    ];
-
-    const formGrid = document.getElementById("formGrid");
-    const editorRoot = document.getElementById("editorRoot");
-    const statusEl = document.getElementById("status");
-    const formControls = {};
-    let lessonState = null;
-
-    const el = (tag, props = {}, children = []) => {
-      const node = document.createElement(tag);
-      for (const [k, v] of Object.entries(props)) {
-        if (k === "className") node.className = v;
-        else if (k === "text") node.textContent = v;
-        else node[k] = v;
-      }
-      for (const child of [].concat(children)) if (child) node.appendChild(child);
-      return node;
+    const $ = (id) => document.getElementById(id);
+    const clone = (v) => JSON.parse(JSON.stringify(v));
+    const state = {
+      draft: null,
+      lesson: null,
+      mechanics: [],
+      fixedBackgrounds: {},
+      autosaveTimer: null,
+      autosavePending: false,
     };
 
-    const clone = (v) => JSON.parse(JSON.stringify(v));
-    const setStatus = (text) => statusEl.textContent = text;
+    const MECHANIC_HINTS = {
+      drag_drop: "Use instruction + item/target hints + expected distribution.",
+      drag_sort: "Use prompt, answer rule, and item hints for ordered values.",
+      drag_group: "Describe the two groups in item/target hints.",
+      pattern_input: "Use prompt + answer for each missing value.",
+      fill_blank: "Use prompt + answer for each equation.",
+      multi_choice: "Use prompt + 3 options + correct option.",
+      corridor_choice: "Task text + left example + right example + correct side.",
+      match_pairs: "Set A/B/C/D and choose the two correct pairs.",
+      tap_count: "Use instruction + answer count + item hints.",
+      balance_scale: "Use left/right expressions + answer + option tiles.",
+      build_number: "Set base number and required parts count; no single correct answer.",
+      timer_challenge: "3 example lines (A/B/C), answer per line, and seconds.",
+      symbol_calc: "Set A/B/C values, expression, and final answer.",
+      find_unknown: "Set A/B values, equation, and answer for C.",
+    };
 
-    function buildForm(defaults) {
-      for (const [key, label, type = "text", options = []] of formFields) {
-        const box = el("div", { className: type === "textarea" ? "full" : "" });
-        box.appendChild(el("label", { text: label }));
-        let input;
-        if (type === "select") {
-          input = el("select");
-          for (const opt of options) input.appendChild(el("option", { value: opt, text: opt }));
-        } else if (type === "textarea") {
-          input = el("textarea");
-        } else {
-          input = el("input", { type });
-        }
-        input.value = defaults[key] ?? "";
-        formControls[key] = input;
-        box.appendChild(input);
-        formGrid.appendChild(box);
-      }
+    const MECHANIC_TEMPLATES = {
+      drag_drop: () => ({ titleText: "Share the items", prompt: "", answer: "", screenItemCount: 6, targetCount: 2, zoneCounts: [3, 3], options: [], leftExpression: "", rightExpression: "", correctSide: "", note: "", numbersText: "", group1Name: "", group1Values: "", group2Name: "", group2Values: "", choiceA: "", choiceB: "", choiceC: "", correctOption: "A", pairA: "", pairB: "", pairC: "", pairD: "", correctPair1: "A", correctPair2: "B", baseNumber: "", partsCount: "", readyFlag: false, timerExampleA: "", timerExampleB: "", timerExampleC: "", timerAnswerA: "", timerAnswerB: "", timerAnswerC: "", timerSeconds: 30, symbolA: "", symbolB: "", symbolC: "", symbolExpression: "", unknownA: "", unknownB: "", unknownEquation: "" }),
+      drag_sort: () => ({ titleText: "Put in order", prompt: "2, 4, 6, 8", answer: "2,4,6,8", screenItemCount: "", targetCount: "", zoneCounts: [], options: [], leftExpression: "", rightExpression: "", correctSide: "", note: "ascending", numbersText: "", group1Name: "", group1Values: "", group2Name: "", group2Values: "", choiceA: "", choiceB: "", choiceC: "", correctOption: "A" }),
+      drag_group: () => ({ titleText: "Sort the numbers", prompt: "", answer: "", screenItemCount: "", targetCount: "", zoneCounts: [], options: [], leftExpression: "", rightExpression: "", correctSide: "", note: "", numbersText: "2, 3, 4, 9", group1Name: "Even", group1Values: "2, 4", group2Name: "Odd", group2Values: "3, 9", choiceA: "", choiceB: "", choiceC: "", correctOption: "A", pairA: "", pairB: "", pairC: "", pairD: "", correctPair1: "A", correctPair2: "B", baseNumber: "", partsCount: "", readyFlag: false, timerExampleA: "", timerExampleB: "", timerExampleC: "", timerAnswerA: "", timerAnswerB: "", timerAnswerC: "", timerSeconds: 30, symbolA: "", symbolB: "", symbolC: "", symbolExpression: "", unknownA: "", unknownB: "", unknownEquation: "" }),
+      pattern_input: () => ({ titleText: "Find the missing number", prompt: "2, 4, 6, ?", answer: "8", screenItemCount: "", targetCount: "", zoneCounts: [], options: [], leftExpression: "", rightExpression: "", correctSide: "", note: "", numbersText: "", group1Name: "", group1Values: "", group2Name: "", group2Values: "", choiceA: "", choiceB: "", choiceC: "", correctOption: "A", pairA: "", pairB: "", pairC: "", pairD: "", correctPair1: "A", correctPair2: "B", baseNumber: "", partsCount: "", readyFlag: false, timerExampleA: "", timerExampleB: "", timerExampleC: "", timerAnswerA: "", timerAnswerB: "", timerAnswerC: "", timerSeconds: 30, symbolA: "", symbolB: "", symbolC: "", symbolExpression: "", unknownA: "", unknownB: "", unknownEquation: "" }),
+      fill_blank: () => ({ titleText: "Solve the example", prompt: "12 ÷ 3 =", answer: "4", screenItemCount: "", targetCount: "", zoneCounts: [], options: [], leftExpression: "", rightExpression: "", correctSide: "", note: "", numbersText: "", group1Name: "", group1Values: "", group2Name: "", group2Values: "", choiceA: "", choiceB: "", choiceC: "", correctOption: "A", pairA: "", pairB: "", pairC: "", pairD: "", correctPair1: "A", correctPair2: "B", baseNumber: "", partsCount: "", readyFlag: false, timerExampleA: "", timerExampleB: "", timerExampleC: "", timerAnswerA: "", timerAnswerB: "", timerAnswerC: "", timerSeconds: 30, symbolA: "", symbolB: "", symbolC: "", symbolExpression: "", unknownA: "", unknownB: "", unknownEquation: "" }),
+      multi_choice: () => ({ titleText: "Choose the correct answer", prompt: "Which answer is correct?", answer: "", screenItemCount: "", targetCount: "", zoneCounts: [], options: [], leftExpression: "", rightExpression: "", correctSide: "", note: "", numbersText: "", group1Name: "", group1Values: "", group2Name: "", group2Values: "", choiceA: "3", choiceB: "4", choiceC: "5", correctOption: "B", pairA: "", pairB: "", pairC: "", pairD: "", correctPair1: "A", correctPair2: "B", baseNumber: "", partsCount: "", readyFlag: false, timerExampleA: "", timerExampleB: "", timerExampleC: "", timerAnswerA: "", timerAnswerB: "", timerAnswerC: "", timerSeconds: 30, symbolA: "", symbolB: "", symbolC: "", symbolExpression: "", unknownA: "", unknownB: "", unknownEquation: "" }),
+      corridor_choice: () => ({ titleText: "Choose side", prompt: "Which side is correct?", answer: "", screenItemCount: "", targetCount: "", zoneCounts: [], options: [], leftExpression: "8 ÷ 2", rightExpression: "10 ÷ 2", correctSide: "right", note: "", numbersText: "", group1Name: "", group1Values: "", group2Name: "", group2Values: "", choiceA: "", choiceB: "", choiceC: "", correctOption: "A", pairA: "", pairB: "", pairC: "", pairD: "", correctPair1: "A", correctPair2: "B", baseNumber: "", partsCount: "", readyFlag: false, timerExampleA: "", timerExampleB: "", timerExampleC: "", timerAnswerA: "", timerAnswerB: "", timerAnswerC: "", timerSeconds: 30, symbolA: "", symbolB: "", symbolC: "", symbolExpression: "", unknownA: "", unknownB: "", unknownEquation: "" }),
+      match_pairs: () => ({ titleText: "Find two correct pairs", prompt: "", answer: "", screenItemCount: "", targetCount: "", zoneCounts: [], options: [], leftExpression: "", rightExpression: "", correctSide: "", note: "", numbersText: "", group1Name: "", group1Values: "", group2Name: "", group2Values: "", choiceA: "", choiceB: "", choiceC: "", correctOption: "A", pairA: "2+2 = 4", pairB: "3+3 = 5", pairC: "5+1 = 6", pairD: "9-2 = 8", correctPair1: "A", correctPair2: "C", baseNumber: "", partsCount: "", readyFlag: false, timerExampleA: "", timerExampleB: "", timerExampleC: "", timerAnswerA: "", timerAnswerB: "", timerAnswerC: "", timerSeconds: 30, symbolA: "", symbolB: "", symbolC: "", symbolExpression: "", unknownA: "", unknownB: "", unknownEquation: "" }),
+      tap_count: () => ({ titleText: "Tap the item", prompt: "Tap this item 4 times", answer: "4", screenItemCount: "", targetCount: "", zoneCounts: [], options: [], leftExpression: "", rightExpression: "", correctSide: "", note: "", numbersText: "", group1Name: "", group1Values: "", group2Name: "", group2Values: "", choiceA: "", choiceB: "", choiceC: "", correctOption: "A", pairA: "", pairB: "", pairC: "", pairD: "", correctPair1: "A", correctPair2: "B", baseNumber: "", partsCount: "", readyFlag: false, timerExampleA: "", timerExampleB: "", timerExampleC: "", timerAnswerA: "", timerAnswerB: "", timerAnswerC: "", timerSeconds: 30, symbolA: "", symbolB: "", symbolC: "", symbolExpression: "", unknownA: "", unknownB: "", unknownEquation: "" }),
+      balance_scale: () => ({ titleText: "Balance the scale", prompt: "", answer: "4", screenItemCount: "", targetCount: "", zoneCounts: [], options: [], leftExpression: "3 + ?", rightExpression: "7", correctSide: "", note: "", numbersText: "", group1Name: "", group1Values: "", group2Name: "", group2Values: "", choiceA: "", choiceB: "", choiceC: "", correctOption: "A", pairA: "", pairB: "", pairC: "", pairD: "", correctPair1: "A", correctPair2: "B", baseNumber: "", partsCount: "", readyFlag: false, timerExampleA: "", timerExampleB: "", timerExampleC: "", timerAnswerA: "", timerAnswerB: "", timerAnswerC: "", timerSeconds: 30, symbolA: "", symbolB: "", symbolC: "", symbolExpression: "", unknownA: "", unknownB: "", unknownEquation: "" }),
+      build_number: () => ({ titleText: "Build the number", prompt: "", answer: "", screenItemCount: "", targetCount: "", zoneCounts: [], options: [], leftExpression: "", rightExpression: "", correctSide: "", note: "", numbersText: "", group1Name: "", group1Values: "", group2Name: "", group2Values: "", choiceA: "", choiceB: "", choiceC: "", correctOption: "A", pairA: "", pairB: "", pairC: "", pairD: "", correctPair1: "A", correctPair2: "B", baseNumber: 24, partsCount: 3, readyFlag: false, timerExampleA: "", timerExampleB: "", timerExampleC: "", timerAnswerA: "", timerAnswerB: "", timerAnswerC: "", timerSeconds: 30, symbolA: "", symbolB: "", symbolC: "", symbolExpression: "", unknownA: "", unknownB: "", unknownEquation: "" }),
+      timer_challenge: () => ({ titleText: "Solve fast", prompt: "", answer: "", screenItemCount: "", targetCount: "", zoneCounts: [], options: [], leftExpression: "", rightExpression: "", correctSide: "", note: "", numbersText: "", group1Name: "", group1Values: "", group2Name: "", group2Values: "", choiceA: "", choiceB: "", choiceC: "", correctOption: "A", pairA: "", pairB: "", pairC: "", pairD: "", correctPair1: "A", correctPair2: "B", baseNumber: "", partsCount: "", readyFlag: false, timerExampleA: "8 ÷ 2", timerExampleB: "7 + 3", timerExampleC: "9 - 4", timerAnswerA: "4", timerAnswerB: "10", timerAnswerC: "5", timerSeconds: 30, symbolA: "", symbolB: "", symbolC: "", symbolExpression: "", unknownA: "", unknownB: "", unknownEquation: "" }),
+      symbol_calc: () => ({ titleText: "Compute by symbols", prompt: "", answer: "10", screenItemCount: "", targetCount: "", zoneCounts: [], options: [], leftExpression: "", rightExpression: "", correctSide: "", note: "", numbersText: "", group1Name: "", group1Values: "", group2Name: "", group2Values: "", choiceA: "", choiceB: "", choiceC: "", correctOption: "A", pairA: "", pairB: "", pairC: "", pairD: "", correctPair1: "A", correctPair2: "B", baseNumber: "", partsCount: "", readyFlag: false, timerExampleA: "", timerExampleB: "", timerExampleC: "", timerAnswerA: "", timerAnswerB: "", timerAnswerC: "", timerSeconds: 30, symbolA: 4, symbolB: 3, symbolC: 2, symbolExpression: "A + B × C", unknownA: "", unknownB: "", unknownEquation: "" }),
+      find_unknown: () => ({ titleText: "Find unknown C", prompt: "", answer: "5", screenItemCount: "", targetCount: "", zoneCounts: [], options: [], leftExpression: "", rightExpression: "", correctSide: "", note: "", numbersText: "", group1Name: "", group1Values: "", group2Name: "", group2Values: "", choiceA: "", choiceB: "", choiceC: "", correctOption: "A", pairA: "", pairB: "", pairC: "", pairD: "", correctPair1: "A", correctPair2: "B", baseNumber: "", partsCount: "", readyFlag: false, timerExampleA: "", timerExampleB: "", timerExampleC: "", timerAnswerA: "", timerAnswerB: "", timerAnswerC: "", timerSeconds: 30, symbolA: "", symbolB: "", symbolC: "", symbolExpression: "", unknownA: 4, unknownB: 6, unknownEquation: "A + B + C = 15" }),
+    };
+
+    function log(_message) {}
+
+    function setAutosaveStatus(text) {
+      $("autosaveStatus").textContent = text;
     }
 
-    const getFormPayload = () => Object.fromEntries(formFields.map(([key,,type="text"]) => [key, type==="number" ? Number(formControls[key].value || 0) : formControls[key].value]));
-
-    async function post(path, body) {
-      const res = await fetch(path, { method:"POST", headers:{ "Content-Type":"application/json" }, body:JSON.stringify(body || {}) });
-      const data = await res.json();
-      if (!res.ok || !data.ok) throw new Error(data.error || "Request failed");
-      return data;
-    }
     async function get(path) {
       const res = await fetch(path);
       const data = await res.json();
@@ -137,256 +178,522 @@
       return data;
     }
 
-    function bindInput(node, onChange, type = "text") {
-      const apply = () => onChange(type === "number" ? Number(node.value || 0) : node.value);
-      node.addEventListener("input", apply);
-      node.addEventListener("change", apply);
-      return node;
+    async function post(path, body) {
+      const res = await fetch(path, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body || {}),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.ok) throw new Error(data.error || "Request failed");
+      return data;
     }
 
-    function makeField(label, value, onChange, opts = {}) {
-      const box = el("div", { className: opts.full ? "full" : "" });
-      box.appendChild(el("label", { text: label }));
-      const type = opts.type || "text";
-      let input;
-      if (type === "textarea") input = el("textarea");
-      else if (type === "select") {
-        input = el("select");
-        for (const option of opts.options || []) input.appendChild(el("option", { value: option, text: option }));
-      } else input = el("input", { type });
-      input.value = value ?? "";
-      bindInput(input, onChange, type);
-      box.appendChild(input);
-      return box;
+    function syncContextInputsToDraft() {
+      if (!state.draft) return;
+      state.draft.childCode = $("childCodeInput").value.trim();
+      state.draft.updatedAt = new Date().toISOString();
+    }
+
+    function syncDraftToInputs() {
+      if (!state.draft) return;
+      $("childCodeInput").value = state.draft.childCode || "";
+      renderChildPreview();
+    }
+
+    function queueAutosave() {
+      syncContextInputsToDraft();
+      state.autosavePending = true;
+      setAutosaveStatus("Saving soon...");
+      clearTimeout(state.autosaveTimer);
+      state.autosaveTimer = setTimeout(() => saveDraft(true), 900);
+    }
+
+    async function saveDraft(silent = false) {
+      if (!state.draft) return;
+      syncContextInputsToDraft();
+      try {
+        const data = await post("/api/drafts/save", { draft: state.draft });
+        state.autosavePending = false;
+        setAutosaveStatus(`Saved ${new Date(data.savedAt).toLocaleTimeString()}`);
+        if (!silent) log("Draft saved.");
+      } catch (err) {
+        setAutosaveStatus("Save failed");
+        log("Draft save failed: " + err.message);
+      }
+    }
+
+    function renderChildPreview() {
+      const root = $("childPreview");
+      const child = state.draft?.child;
+      if (!child) {
+        root.className = "hint";
+        root.textContent = "Enter a child code and fetch profile data.";
+        return;
+      }
+      root.className = "";
+      root.innerHTML = "";
+      const card = document.createElement("div");
+      card.className = "child-card";
+      const img = document.createElement("img");
+      img.className = "child-avatar";
+      img.src = child.characterImagePath;
+      img.alt = child.name;
+      const body = document.createElement("div");
+      body.style.flex = "1";
+      const title = document.createElement("h3");
+      title.textContent = child.name;
+      const code = document.createElement("div");
+      code.className = "muted";
+      code.textContent = child.childCode;
+      const meta = document.createElement("div");
+      meta.className = "meta-list";
+      [
+        `Level ${child.level}`,
+        `🪙 ${child.coins} coins`,
+        child.characterKey,
+        child.characterImagePath
+      ].forEach((text) => {
+        const chip = document.createElement("div");
+        chip.className = "meta-chip";
+        chip.textContent = text;
+        meta.appendChild(chip);
+      });
+      body.append(title, code, meta);
+      card.append(img, body);
+      root.appendChild(card);
+    }
+
+    function makeInput(label, value, onInput, opts = {}) {
+      const wrap = document.createElement("div");
+      if (opts.full) wrap.className = "full";
+      const lab = document.createElement("label");
+      lab.textContent = label;
+      const field = opts.type === "textarea" ? document.createElement("textarea") : opts.type === "select" ? document.createElement("select") : document.createElement("input");
+      if (opts.type === "select") {
+        for (const option of opts.options || []) {
+          const el = document.createElement("option");
+          el.value = option;
+          el.textContent = option;
+          field.appendChild(el);
+        }
+      } else if (opts.type) {
+        field.type = opts.type;
+      }
+      field.value = value ?? "";
+      field.addEventListener("input", () => {
+        onInput(opts.type === "number" ? Number(field.value || 0) : field.value);
+        queueAutosave();
+      });
+      field.addEventListener("change", () => {
+        onInput(opts.type === "number" ? Number(field.value || 0) : field.value);
+        queueAutosave();
+      });
+      wrap.append(lab, field);
+      return wrap;
     }
 
     function removeButton(onClick) {
-      const btn = el("button", { className: "danger small", text: "Remove" });
+      const btn = document.createElement("button");
+      btn.className = "danger small";
       btn.type = "button";
+      btn.textContent = "Remove";
       btn.onclick = onClick;
       return btn;
     }
 
-    function rerender() { renderLessonEditor(); }
-
-    function renderStory(parent, lesson) {
-      const story = lesson.story || {};
-      const card = el("div", { className: "stage" });
-      card.appendChild(el("h3", { text: "Story" }));
-      const grid = el("div", { className: "grid" });
-      grid.append(
-        makeField("Island name", story.island_name, (v) => story.island_name = v),
-        makeField("Villain", story.villain, (v) => story.villain = v),
-        makeField("Artifact name", story.artifact_name, (v) => story.artifact_name = v),
-        makeField("Artifact emoji", story.artifact_emoji, (v) => story.artifact_emoji = v),
-        makeField("Act 1", story.act1, (v) => story.act1 = v, { type:"textarea", full:true }),
-        makeField("Act 2", story.act2, (v) => story.act2 = v, { type:"textarea", full:true }),
-        makeField("Act 3", story.act3, (v) => story.act3 = v, { type:"textarea", full:true }),
-        makeField("Goal", story.goal, (v) => story.goal = v, { type:"textarea", full:true }),
-      );
-      card.appendChild(grid);
-      parent.appendChild(card);
+    function exampleSummary(example, mechanic) {
+      if (mechanic === "drag_drop") return `Title: ${example.titleText || "?"} | items on screen: ${example.screenItemCount || "?"} | targets: ${example.targetCount || "?"} | per zone: ${(example.zoneCounts || []).join(", ") || "?"}`;
+      if (mechanic === "drag_group") return `Title: ${example.titleText || "?"} | numbers: ${example.numbersText || "?"} | ${example.group1Name || "Group 1"}: ${example.group1Values || "?"} | ${example.group2Name || "Group 2"}: ${example.group2Values || "?"}`;
+      if (mechanic === "fill_blank") return `Title: ${example.titleText || "?"} | example: ${example.prompt || "?"} | answer: ${example.answer || "?"}`;
+      if (mechanic === "pattern_input") return `Title: ${example.titleText || "?"} | pattern: ${example.prompt || "?"} | missing value: ${example.answer || "?"}`;
+      if (mechanic === "balance_scale") return `Title: ${example.titleText || "?"} | ${example.leftExpression || "?"} = ${example.rightExpression || "?"}; answer ${example.answer || "?"}`;
+      if (mechanic === "corridor_choice") return `Title: ${example.titleText || "?"} | task: ${example.prompt || "?"} | left "${example.leftExpression || "?"}" vs right "${example.rightExpression || "?"}" -> ${example.correctSide || "?"}`;
+      if (mechanic === "multi_choice") return `Title: ${example.titleText || "?"} | ${example.prompt || "?"} | A:${example.choiceA || "?"} B:${example.choiceB || "?"} C:${example.choiceC || "?"} | correct: ${example.correctOption || "?"}`;
+      if (mechanic === "drag_sort") return `Title: ${example.titleText || "?"} | numbers in order: ${example.prompt || "?"} | rule: ${example.answer || "?"}`;
+      if (mechanic === "match_pairs") return `Title: ${example.titleText || "?"} | A:${example.pairA || "?"} B:${example.pairB || "?"} C:${example.pairC || "?"} D:${example.pairD || "?"} | correct: ${example.correctPair1 || "?"}, ${example.correctPair2 || "?"}`;
+      if (mechanic === "tap_count") return `Title: ${example.titleText || "?"} | task: ${example.prompt || "?"} | taps: ${example.answer || "?"}`;
+      if (mechanic === "build_number") return `Title: ${example.titleText || "?"} | base number: ${example.baseNumber || "?"} | parts: ${example.partsCount || "?"} | ready: ${example.readyFlag ? "yes" : "no"}`;
+      if (mechanic === "timer_challenge") return `Title: ${example.titleText || "?"} | A:${example.timerExampleA || "?"}->${example.timerAnswerA || "?"} | B:${example.timerExampleB || "?"}->${example.timerAnswerB || "?"} | C:${example.timerExampleC || "?"}->${example.timerAnswerC || "?"} | ${example.timerSeconds || "?"}s`;
+      if (mechanic === "symbol_calc") return `Title: ${example.titleText || "?"} | A=${example.symbolA || "?"} B=${example.symbolB || "?"} C=${example.symbolC || "?"} | ${example.symbolExpression || "?"} = ${example.answer || "?"}`;
+      if (mechanic === "find_unknown") return `Title: ${example.titleText || "?"} | A=${example.unknownA || "?"} B=${example.unknownB || "?"} | ${example.unknownEquation || "?"} | C=${example.answer || "?"}`;
+      return `Prompt: ${example.prompt || "?"} | answer: ${example.answer || "?"}`;
     }
 
-    function renderInputsList(parent, round) {
-      if (!Array.isArray(round.inputs)) round.inputs = [];
-      const wrap = el("div", { className: "list-table" });
-      parent.appendChild(el("div", { className: "rule", text: "Input tasks" }));
-      round.inputs.forEach((item, idx) => {
-        const row = el("div", { className: "list-row" });
-        row.append(
-          makeField("Prompt", item.prompt, (v) => item.prompt = v),
-          makeField("Answer", item.answer, (v) => item.answer = Number(v || 0), { type:"number" }),
-          removeButton(() => { round.inputs.splice(idx,1); rerender(); })
-        );
-        wrap.appendChild(row);
-      });
-      const add = el("button", { className:"ghost small", text:"Add input" });
-      add.type = "button";
-      add.onclick = () => { round.inputs.push({ id: "new_input", prompt: "10 ÷ 2 =", answer: 5 }); rerender(); };
-      parent.appendChild(wrap);
-      parent.appendChild(add);
-    }
-
-    function renderOperatorTasks(parent, round) {
-      if (!Array.isArray(round.operator_tasks)) round.operator_tasks = [];
-      const wrap = el("div", { className: "list-table" });
-      parent.appendChild(el("div", { className: "rule", text: "Operator choice tasks" }));
-      round.operator_tasks.forEach((item, idx) => {
-        const row = el("div", { className: "list-row" });
-        row.append(
-          makeField("Expression", item.expression, (v) => item.expression = v),
-          makeField("Answer", item.answer, (v) => item.answer = v, { type:"select", options:["+","-","×","÷"] }),
-          removeButton(() => { round.operator_tasks.splice(idx,1); rerender(); })
-        );
-        wrap.appendChild(row);
-      });
-      const add = el("button", { className:"ghost small", text:"Add operator task" });
-      add.type = "button";
-      add.onclick = () => { round.operator_tasks.push({ expression: "12 ? 3 = 4", answer: "÷" }); rerender(); };
-      parent.appendChild(wrap);
-      parent.appendChild(add);
-    }
-
-    function renderOptions(parent, round) {
-      if (!Array.isArray(round.options) || !round.options.length) return;
-      parent.appendChild(el("div", { className: "rule", text: "Multiple choice options" }));
-      const wrap = el("div", { className: "list-table" });
-      round.options.forEach((opt, idx) => {
-        const row = el("div", { className: "option-row" });
-        const checkBox = el("input", { type: "checkbox" });
-        checkBox.checked = !!opt.correct;
-        checkBox.onchange = () => opt.correct = checkBox.checked;
-        const checkWrap = el("div", {}, [el("label", { text: "Correct" }), checkBox]);
-        row.append(
-          makeField("Label", opt.label, (v) => opt.label = v),
-          makeField("Value", opt.value, (v) => opt.value = Number(v || 0), { type:"number" }),
-          checkWrap,
-          removeButton(() => { round.options.splice(idx,1); rerender(); })
-        );
-        wrap.appendChild(row);
-      });
-      const add = el("button", { className:"ghost small", text:"Add option" });
-      add.type = "button";
-      add.onclick = () => { round.options.push({ label: "New option", value: round.options.length + 1, correct: false }); rerender(); };
-      parent.appendChild(wrap);
-      parent.appendChild(add);
-    }
-
-    function renderPaths(parent, round) {
-      if (!round.left_path && !round.right_path) return;
-      parent.appendChild(el("div", { className: "rule", text: "Corridor paths" }));
-      const wrap = el("div", { className: "list-table" });
-      [["Left path", round.left_path], ["Right path", round.right_path]].forEach(([title, pathObj]) => {
-        if (!pathObj) return;
-        const row = el("div", { className: "path-row" });
-        const checkBox = el("input", { type: "checkbox" });
-        checkBox.checked = !!pathObj.correct;
-        checkBox.onchange = () => pathObj.correct = checkBox.checked;
-        const checkWrap = el("div", {}, [el("label", { text: "Correct" }), checkBox]);
-        row.append(
-          makeField(title + " label", pathObj.label, (v) => pathObj.label = v),
-          makeField("Image key", pathObj.image_key, (v) => pathObj.image_key = v),
-          makeField("Kind", pathObj.image_kind || "item", (v) => pathObj.image_kind = v, { type:"select", options:["item","target"] }),
-          checkWrap,
-          el("div")
-        );
-        wrap.appendChild(row);
-      });
-      parent.appendChild(wrap);
-    }
-
-    function renderRound(parent, round, stage) {
-      const box = el("div", { className: "round" });
-      const actions = el("div", { className: "section-actions" }, [
-        el("h3", { text: `Round ${round.round || "?"}` }),
-        removeButton(() => {
-          stage.rounds = (stage.rounds || []).filter((r) => r !== round).map((r, i) => ({ ...r, round: i + 1 }));
-          rerender();
-        })
-      ]);
-      box.appendChild(actions);
-      const grid = el("div", { className: "grid" });
-      grid.appendChild(makeField("Instruction", round.instruction, (v) => round.instruction = v, { type:"textarea", full:true }));
-      if ("question" in round) grid.appendChild(makeField("Question", round.question, (v) => round.question = v, { type:"textarea", full:true }));
-      box.appendChild(grid);
-      if ("inputs" in round || stage.type === "animation" || stage.type === "fill_blank") renderInputsList(box, round);
-      if ("operator_tasks" in round || stage.type === "animation") renderOperatorTasks(box, round);
-      renderOptions(box, round);
-      renderPaths(box, round);
-      parent.appendChild(box);
-    }
-
-    function renderStage(parent, stage, index) {
-      const card = el("div", { className: "stage" });
-      card.appendChild(el("h3", { text: `Stage ${index + 1}: ${stage.title || stage.type}` }));
-      card.appendChild(el("div", { className: "chips" }, [
-        el("span", { className: "chip", text: stage.type || "unknown" }),
-        el("span", { className: "chip", text: `Background: ${stage.background || "-"}` }),
-        el("span", { className: "chip", text: `Coins: ${stage.coins ?? 0}` }),
-      ]));
-      const grid = el("div", { className: "grid section" });
-      grid.append(
-        makeField("Title", stage.title, (v) => stage.title = v),
-        makeField("Background", stage.background, (v) => stage.background = v),
-        makeField("Coins", stage.coins, (v) => stage.coins = Number(v || 0), { type:"number" }),
-        makeField("Round bonus coins", stage.round_bonus_coins, (v) => stage.round_bonus_coins = Number(v || 0), { type:"number" }),
-        makeField("Mechanic reason", stage.mechanic_reason, (v) => stage.mechanic_reason = v, { type:"textarea", full:true }),
-        makeField("Success message", stage.success_message, (v) => stage.success_message = v, { type:"textarea", full:true }),
-      );
-      card.appendChild(grid);
-      if (stage.artifact) {
-        const art = stage.artifact;
-        const artGrid = el("div", { className: "grid section" });
-        artGrid.append(
-          makeField("Artifact emoji", art.emoji, (v) => art.emoji = v),
-          makeField("Artifact name", art.name, (v) => art.name = v),
-          makeField("Artifact description", art.description, (v) => art.description = v, { type:"textarea", full:true })
-        );
-        card.appendChild(artGrid);
-      }
-      const roundsWrap = el("div");
-      (stage.rounds || []).forEach((round) => renderRound(roundsWrap, round, stage));
-      card.appendChild(roundsWrap);
-      const addRound = el("button", { className: "ghost small", text: "Add round" });
-      addRound.type = "button";
-      addRound.onclick = () => {
-        if (!Array.isArray(stage.rounds)) stage.rounds = [];
-        const base = { round: stage.rounds.length + 1, instruction: "New round" };
-        if (stage.type === "multi_choice") base.options = [{ label:"Option 1", value:1, correct:false }, { label:"Option 2", value:2, correct:true }];
-        if (stage.type === "corridor_choice") {
-          base.question = "Choose a path";
-          base.left_path = { label:"Left", image_key:"", image_kind:"item", correct:true };
-          base.right_path = { label:"Right", image_key:"", image_kind:"item", correct:false };
-        }
-        if (stage.type === "fill_blank" || stage.type === "animation") base.inputs = [{ id: "new_input", prompt: "10 ÷ 2 =", answer: 5 }];
-        if (stage.type === "animation") base.operator_tasks = [];
-        stage.rounds.push(base);
-        rerender();
+    function buildExampleTemplate(mechanic, roundNumber) {
+      const base = {
+        roundNumber,
+        instruction: "",
+        titleText: "",
+        prompt: "",
+        answer: "",
+        options: [],
+        choiceA: "",
+        choiceB: "",
+        choiceC: "",
+        correctOption: "A",
+        leftExpression: "",
+        rightExpression: "",
+        correctSide: "",
+        screenItemCount: "",
+        targetCount: "",
+        zoneCounts: [],
+        numbersText: "",
+        group1Name: "",
+        group1Values: "",
+        group2Name: "",
+        group2Values: "",
+        pairA: "",
+        pairB: "",
+        pairC: "",
+        pairD: "",
+        correctPair1: "A",
+        correctPair2: "B",
+        baseNumber: "",
+        partsCount: "",
+        readyFlag: false,
+        timerExampleA: "",
+        timerExampleB: "",
+        timerExampleC: "",
+        timerAnswerA: "",
+        timerAnswerB: "",
+        timerAnswerC: "",
+        timerSeconds: 30,
+        symbolA: "",
+        symbolB: "",
+        symbolC: "",
+        symbolExpression: "",
+        unknownA: "",
+        unknownB: "",
+        unknownEquation: "",
+        note: "",
       };
-      card.appendChild(addRound);
-      parent.appendChild(card);
+      const factory = MECHANIC_TEMPLATES[mechanic];
+      return { ...base, ...(factory ? factory() : {}) };
     }
 
-    function renderLessonEditor() {
-      if (!lessonState) {
-        editorRoot.className = "empty";
-        editorRoot.textContent = "Generate or load a lesson to start editing.";
-        return;
-      }
-      editorRoot.className = "";
-      editorRoot.innerHTML = "";
+    function ensureExampleShape(example, mechanic) {
+      return Object.assign(example, buildExampleTemplate(mechanic, example.roundNumber || 1), example || {});
+    }
 
-      const meta = lessonState.meta || {};
-      const metaCard = el("div", { className: "stage" });
-      metaCard.appendChild(el("h3", { text: "Meta" }));
-      const metaGrid = el("div", { className: "grid3" });
-      metaGrid.append(
-        makeField("Student name", meta.student_name, (v) => meta.student_name = v),
-        makeField("Student code", meta.student_code, (v) => meta.student_code = v),
-        makeField("Character key", meta.character_key, (v) => meta.character_key = v),
-        makeField("Age", meta.age, (v) => meta.age = Number(v || 0), { type:"number" }),
-        makeField("Difficulty", meta.difficulty, (v) => meta.difficulty = v),
-        makeField("Topic key", meta.topic_key, (v) => meta.topic_key = v),
-        makeField("Weak point", meta.weak_point, (v) => meta.weak_point = v, { type:"textarea", full:true }),
-        makeField("Focus area", meta.focus_area, (v) => meta.focus_area = v, { type:"textarea", full:true }),
-      );
-      metaCard.appendChild(metaGrid);
-      editorRoot.appendChild(metaCard);
-      renderStory(editorRoot, lessonState);
-      (lessonState.stages || []).forEach((stage, index) => renderStage(editorRoot, stage, index));
+    function renderExampleFields(example, mechanic) {
+      ensureExampleShape(example, mechanic);
+      const grid = document.createElement("div");
+      grid.className = "field-grid";
+      const base = [
+        makeInput("Title text", example.titleText, (v) => example.titleText = v),
+      ];
+      const add = (...nodes) => nodes.forEach((n) => grid.appendChild(n));
+
+      if (mechanic === "drag_drop") {
+        const zoneCountWrap = document.createElement("div");
+        zoneCountWrap.className = "full";
+        const targetCountField = makeInput("How many targets", example.targetCount, (v) => {
+          const count = Math.max(0, Number(v || 0));
+          example.targetCount = count;
+          const next = Array.from({ length: count }, (_, idx) => Number(example.zoneCounts?.[idx] || 0));
+          example.zoneCounts = next;
+          renderStages();
+        }, { type: "number" });
+        zoneCountWrap.appendChild(targetCountField.firstChild);
+        zoneCountWrap.appendChild(targetCountField.lastChild);
+        add(
+          ...base,
+          makeInput("How many items on screen", example.screenItemCount, (v) => example.screenItemCount = Number(v || 0), { type: "number" }),
+          targetCountField,
+        );
+        const zoneGrid = document.createElement("div");
+        zoneGrid.className = "field-grid full";
+        const zoneCount = Math.max(0, Number(example.targetCount || 0));
+        for (let i = 0; i < zoneCount; i++) {
+          zoneGrid.appendChild(
+            makeInput(`Zone ${i + 1}: correct item count`, example.zoneCounts?.[i] || 0, (v) => {
+              if (!Array.isArray(example.zoneCounts)) example.zoneCounts = [];
+              example.zoneCounts[i] = Number(v || 0);
+            }, { type: "number" })
+          );
+        }
+        add(zoneGrid);
+      } else if (mechanic === "drag_group") {
+        add(
+          ...base,
+          makeInput("All numbers that appear", example.numbersText, (v) => example.numbersText = v, { type: "textarea", full: true }),
+          makeInput("Group 1 name", example.group1Name, (v) => example.group1Name = v),
+          makeInput("Group 1 correct numbers", example.group1Values, (v) => example.group1Values = v),
+          makeInput("Group 2 name", example.group2Name, (v) => example.group2Name = v),
+          makeInput("Group 2 correct numbers", example.group2Values, (v) => example.group2Values = v),
+        );
+      } else if (mechanic === "multi_choice") {
+        add(
+          ...base,
+          makeInput("Task text inside the interactive zone", example.prompt, (v) => example.prompt = v, { type: "textarea", full: true }),
+          makeInput("Answer A", example.choiceA, (v) => example.choiceA = v),
+          makeInput("Answer B", example.choiceB, (v) => example.choiceB = v),
+          makeInput("Answer C", example.choiceC, (v) => example.choiceC = v),
+          makeInput("Correct option", example.correctOption, (v) => example.correctOption = v, { type: "select", options: ["A", "B", "C"] }),
+        );
+      } else if (mechanic === "corridor_choice") {
+        add(
+          ...base,
+          makeInput("Task text inside the interactive zone", example.prompt, (v) => example.prompt = v, { type: "textarea", full: true }),
+          makeInput("Left example", example.leftExpression, (v) => example.leftExpression = v),
+          makeInput("Right example", example.rightExpression, (v) => example.rightExpression = v),
+          makeInput("Correct side", example.correctSide, (v) => example.correctSide = v, { type: "select", options: ["left", "right"] }),
+        );
+      } else if (mechanic === "match_pairs") {
+        add(
+          ...base,
+          makeInput("Example A", example.pairA, (v) => example.pairA = v),
+          makeInput("Example B", example.pairB, (v) => example.pairB = v),
+          makeInput("Example C", example.pairC, (v) => example.pairC = v),
+          makeInput("Example D", example.pairD, (v) => example.pairD = v),
+          makeInput("Correct pair #1", example.correctPair1, (v) => example.correctPair1 = v, { type: "select", options: ["A", "B", "C", "D"] }),
+          makeInput("Correct pair #2", example.correctPair2, (v) => example.correctPair2 = v, { type: "select", options: ["A", "B", "C", "D"] }),
+        );
+      } else if (mechanic === "balance_scale") {
+        add(
+          ...base,
+          makeInput("Left bowl expression (with ?)", example.leftExpression, (v) => example.leftExpression = v),
+          makeInput("Right bowl expression/value", example.rightExpression, (v) => example.rightExpression = v),
+          makeInput("Answer instead of ?", example.answer, (v) => example.answer = v),
+        );
+      } else if (mechanic === "tap_count") {
+        add(
+          ...base,
+          makeInput("Task text inside the interactive zone", example.prompt, (v) => example.prompt = v, { type: "textarea", full: true }),
+          makeInput("How many taps", example.answer, (v) => example.answer = v),
+        );
+      } else if (mechanic === "build_number") {
+        const doneWrap = document.createElement("div");
+        doneWrap.className = "field full";
+        const doneBtn = document.createElement("button");
+        doneBtn.type = "button";
+        doneBtn.className = "secondary";
+        doneBtn.textContent = example.readyFlag ? "Ready: yes" : "Mark as ready";
+        doneBtn.onclick = () => {
+          example.readyFlag = !example.readyFlag;
+          renderStages();
+          queueAutosave();
+        };
+        doneWrap.appendChild(doneBtn);
+        add(
+          ...base,
+          makeInput("Base number", example.baseNumber, (v) => example.baseNumber = Number(v || 0), { type: "number" }),
+          makeInput("How many parts should be used", example.partsCount || 3, (v) => example.partsCount = Number(v || 3), { type: "select", options: ["2", "3", "4"] }),
+          doneWrap,
+        );
+      } else if (mechanic === "timer_challenge") {
+        add(
+          ...base,
+          makeInput("A: example", example.timerExampleA, (v) => example.timerExampleA = v),
+          makeInput("A: answer", example.timerAnswerA, (v) => example.timerAnswerA = v),
+          makeInput("B: example", example.timerExampleB, (v) => example.timerExampleB = v),
+          makeInput("B: answer", example.timerAnswerB, (v) => example.timerAnswerB = v),
+          makeInput("C: example", example.timerExampleC, (v) => example.timerExampleC = v),
+          makeInput("C: answer", example.timerAnswerC, (v) => example.timerAnswerC = v),
+          makeInput("Time limit (seconds)", example.timerSeconds, (v) => example.timerSeconds = Number(v || 0), { type: "number" }),
+        );
+      } else if (mechanic === "drag_sort") {
+        add(
+          ...base,
+          makeInput("Numbers in correct order", example.prompt, (v) => example.prompt = v, { type: "textarea", full: true }),
+          makeInput("Rule", example.answer, (v) => example.answer = v),
+        );
+      } else if (mechanic === "fill_blank") {
+        add(
+          ...base,
+          makeInput("Example", example.prompt, (v) => example.prompt = v, { type: "textarea", full: true }),
+          makeInput("Answer", example.answer, (v) => example.answer = v),
+        );
+      } else if (mechanic === "pattern_input") {
+        add(
+          ...base,
+          makeInput("Pattern with ?", example.prompt, (v) => example.prompt = v, { type: "textarea", full: true }),
+          makeInput("What goes instead of ?", example.answer, (v) => example.answer = v),
+        );
+      } else if (mechanic === "symbol_calc") {
+        add(
+          ...base,
+          makeInput("A value", example.symbolA, (v) => example.symbolA = Number(v || 0), { type: "number" }),
+          makeInput("B value", example.symbolB, (v) => example.symbolB = Number(v || 0), { type: "number" }),
+          makeInput("C value", example.symbolC, (v) => example.symbolC = Number(v || 0), { type: "number" }),
+          makeInput("Expression with symbols", example.symbolExpression, (v) => example.symbolExpression = v, { type: "textarea", full: true }),
+          makeInput("Answer", example.answer, (v) => example.answer = v),
+        );
+      } else if (mechanic === "find_unknown") {
+        add(
+          ...base,
+          makeInput("A value", example.unknownA, (v) => example.unknownA = Number(v || 0), { type: "number" }),
+          makeInput("B value", example.unknownB, (v) => example.unknownB = Number(v || 0), { type: "number" }),
+          makeInput("Equation (contains C)", example.unknownEquation, (v) => example.unknownEquation = v, { type: "textarea", full: true }),
+          makeInput("Answer for C", example.answer, (v) => example.answer = v),
+        );
+      } else {
+        add(
+          ...base,
+          makeInput("Prompt", example.prompt, (v) => example.prompt = v, { type: "textarea", full: true }),
+          makeInput("Answer", example.answer, (v) => example.answer = v),
+        );
+      }
+
+      const hint = document.createElement("div");
+      hint.className = "hint full";
+      hint.textContent = MECHANIC_HINTS[mechanic] || "Fill the manual math example for this mechanic.";
+      grid.appendChild(hint);
+      const summary = document.createElement("div");
+      summary.className = "example-summary full";
+      summary.textContent = exampleSummary(example, mechanic);
+      grid.appendChild(summary);
+      return grid;
+    }
+
+    function renderStages() {
+      const root = $("stagesRoot");
+      root.innerHTML = "";
+      (state.draft?.stages || []).forEach((stage) => {
+        const card = document.createElement("div");
+        card.className = "stage-card";
+        const head = document.createElement("div");
+        head.className = "stage-head";
+        const titleWrap = document.createElement("div");
+        const title = document.createElement("h2");
+        title.textContent = `Stage ${stage.stageNumber}`;
+        const sub = document.createElement("div");
+        sub.className = "muted";
+        sub.textContent = `Fixed background: ${stage.background}`;
+        titleWrap.append(title, sub);
+        const picker = makeInput("Mechanic", stage.mechanic, (v) => {
+          stage.mechanic = v;
+          stage.examples = Array.from({ length: Math.max(1, stage.examples?.length || 5) }, (_, idx) => buildExampleTemplate(v, idx + 1));
+          renderStages();
+        }, {
+          type: "select",
+          options: state.mechanics.map((m) => m.id),
+        });
+        picker.style.minWidth = "250px";
+        head.append(titleWrap, picker);
+        card.appendChild(head);
+
+        const chips = document.createElement("div");
+        chips.className = "chips";
+        [
+          `Rounds: ${(stage.examples || []).length}`,
+          stage.stageNumber === 1 || stage.stageNumber === 6 ? "Unique background" : "Fixed background",
+          stage.mechanic || "No mechanic selected"
+        ].forEach((text) => {
+          const chip = document.createElement("span");
+          chip.className = "chip";
+          chip.textContent = text;
+          chips.appendChild(chip);
+        });
+        card.appendChild(chips);
+        const stageRule = document.createElement("div");
+        stageRule.className = "stage-rule";
+        stageRule.textContent = `Stage ${stage.stageNumber} should contain exactly 5 tutor-written math examples. Story, assets, villain, artifact, and all child-facing text are generated automatically.`;
+        card.appendChild(stageRule);
+
+        const examples = Array.isArray(stage.examples) ? stage.examples : [];
+        examples.forEach((example, idx) => {
+          const ex = document.createElement("div");
+          ex.className = "example";
+          const exHead = document.createElement("div");
+          exHead.className = "example-head";
+          const h = document.createElement("h3");
+          h.textContent = `Example ${idx + 1}`;
+          exHead.append(h, removeButton(() => {
+            if (stage.examples.length <= 1) return;
+            stage.examples.splice(idx, 1);
+            stage.examples.forEach((item, index) => item.roundNumber = index + 1);
+            renderStages();
+            queueAutosave();
+          }));
+          ex.appendChild(exHead);
+          ex.appendChild(renderExampleFields(example, stage.mechanic));
+          card.appendChild(ex);
+        });
+
+        const addBtn = document.createElement("button");
+        addBtn.className = "ghost small";
+        addBtn.type = "button";
+        addBtn.textContent = "+ Add example";
+        addBtn.onclick = () => {
+          if (stage.examples.length >= 5) return;
+          stage.examples.push(buildExampleTemplate(stage.mechanic, stage.examples.length + 1));
+          renderStages();
+          queueAutosave();
+        };
+        card.appendChild(addBtn);
+        root.appendChild(card);
+      });
+    }
+
+    function renderLessonJson() {
+      $("lessonJsonBox").textContent = state.lesson ? JSON.stringify(state.lesson, null, 2) : "No generated lesson loaded yet.";
+    }
+
+    async function fetchChild() {
+      try {
+        const childCode = $("childCodeInput").value.trim();
+        if (!childCode) throw new Error("Enter child code first");
+        setAutosaveStatus("Fetching child...");
+        const data = await post("/api/child/fetch", { childCode });
+        state.draft.childCode = childCode;
+        state.draft.child = data.child;
+        renderChildPreview();
+        queueAutosave();
+      } catch (err) {
+        setAutosaveStatus("Child fetch failed");
+      }
     }
 
     async function loadCurrentLesson() {
-      const data = await get("/api/current-lesson");
-      lessonState = data.lesson;
-      renderLessonEditor();
-      setStatus(lessonState ? "Loaded current lesson." : "No lesson file found yet.");
+      try {
+        const data = await get("/api/current-lesson");
+        state.lesson = data.lesson;
+        renderLessonJson();
+      } catch (err) {
+      }
+    }
+
+    async function generateLesson() {
+      try {
+        syncContextInputsToDraft();
+        setAutosaveStatus("Generating...");
+        await saveDraft(true);
+        const data = await post("/api/generate", { draft: state.draft });
+        state.lesson = data.lesson;
+        renderLessonJson();
+        setAutosaveStatus("Lesson generated");
+      } catch (err) {
+        setAutosaveStatus("Generation failed");
+      }
+    }
+
+    async function buildLesson() {
+      try {
+        setAutosaveStatus("Building HTML...");
+        await post("/api/build-lesson");
+        setAutosaveStatus("HTML ready");
+      } catch (err) {
+        setAutosaveStatus("Build failed");
+      }
+    }
+
+    async function generateAssets() {
+      try {
+        setAutosaveStatus("Generating assets...");
+        await post("/api/generate-assets");
+        setAutosaveStatus("Assets ready");
+      } catch (err) {
+        setAutosaveStatus("Assets failed");
+      }
     }
 
     function downloadJson() {
-      if (!lessonState) { setStatus("No lesson loaded."); return; }
-      const blob = new Blob([JSON.stringify(lessonState, null, 2)], { type: "application/json" });
+      if (!state.lesson) {
+        return;
+      }
+      const blob = new Blob([JSON.stringify(state.lesson, null, 2)], { type: "application/json" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
@@ -397,29 +704,37 @@
       URL.revokeObjectURL(url);
     }
 
-    document.getElementById("generateBtn").onclick = async () => {
-      try { setStatus("Generating lesson with Claude..."); const data = await post("/api/generate", { form: getFormPayload() }); lessonState = data.lesson; renderLessonEditor(); setStatus("Generated and saved output_lesson.json"); } catch (err) { setStatus("Error: " + err.message); }
-    };
-    document.getElementById("loadBtn").onclick = async () => {
-      try { setStatus("Loading current lesson..."); await loadCurrentLesson(); } catch (err) { setStatus("Error: " + err.message); }
-    };
-    document.getElementById("saveBtn").onclick = async () => {
-      try { if (!lessonState) throw new Error("No lesson loaded"); setStatus("Saving output_lesson.json..."); await post("/api/save-lesson", { lesson: lessonState }); setStatus("Saved output_lesson.json"); } catch (err) { setStatus("Error: " + err.message); }
-    };
-    document.getElementById("buildBtn").onclick = async () => {
-      try { setStatus("Building lesson_game.html..."); await post("/api/build-lesson"); setStatus("Built lesson_game.html"); } catch (err) { setStatus("Error: " + err.message); }
-    };
-    document.getElementById("assetsBtn").onclick = async () => {
-      try { setStatus("Generating assets..."); await post("/api/generate-assets"); setStatus("Assets generated / reused"); } catch (err) { setStatus("Error: " + err.message); }
-    };
-    document.getElementById("downloadBtn").onclick = downloadJson;
-
     async function init() {
-      const defaults = await get("/api/default-form");
-      buildForm(defaults.form || {});
-      await loadCurrentLesson();
+      const data = await get("/api/bootstrap");
+      state.draft = data.draft;
+      state.lesson = data.lesson;
+      state.mechanics = data.mechanics;
+      state.fixedBackgrounds = data.fixedBackgrounds;
+      syncDraftToInputs();
+      renderStages();
+      renderLessonJson();
+      setAutosaveStatus("Ready");
+
+      ["childCodeInput"]
+        .forEach((id) => $(id).addEventListener("input", queueAutosave));
+
+      $("fetchChildBtn").onclick = fetchChild;
+      $("saveDraftBtn").onclick = () => saveDraft(false);
+      $("generateBtn").onclick = generateLesson;
+      $("buildBtn").onclick = buildLesson;
+      $("assetsBtn").onclick = generateAssets;
+      $("loadLessonBtn").onclick = loadCurrentLesson;
+      $("downloadJsonBtn").onclick = downloadJson;
+
+      setInterval(() => {
+        if (state.autosavePending) saveDraft(true);
+      }, 30000);
     }
-    init().catch((err) => setStatus("Error: " + err.message));
+
+    init().catch((err) => {
+      setAutosaveStatus("Init failed");
+      log("Init failed: " + err.message);
+    });
   </script>
 </body>
 </html>

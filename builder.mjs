@@ -374,6 +374,28 @@ function buildHtml(
       inset:auto;
       transform:none;
     }
+    .zone-need{
+      position:absolute;
+      left:50%;
+      top:100%;
+      transform:translate(-50%, 8px);
+      min-width:34px;
+      height:34px;
+      padding:0 10px;
+      border-radius:999px;
+      border:2px solid rgba(84,56,8,.85);
+      background:radial-gradient(circle at 30% 30%,#fff6c7 0%,#ffd667 52%,#e5a227 100%);
+      color:#2c1f08;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-family:'Fredoka One',cursive;
+      font-size:18px;
+      text-shadow:0 1px 0 rgba(255,255,255,.45);
+      box-shadow:0 4px 10px rgba(0,0,0,.28);
+      pointer-events:none;
+      z-index:3;
+    }
     .drop-zone.done{
       border-color:rgba(79,217,130,.55);
       box-shadow:0 0 0 3px rgba(79,217,130,.24), var(--glow);
@@ -446,6 +468,66 @@ function buildHtml(
       pointer-events:none;
       z-index:16;
     }
+    .group-zone{
+      position:absolute;
+      width:240px;
+      min-height:210px;
+      border-radius:24px;
+      border:3px solid rgba(244,208,63,.7);
+      background:linear-gradient(180deg,rgba(9,24,56,.92) 0%, rgba(8,20,48,.88) 100%);
+      box-shadow:0 18px 36px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.08);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:16px 14px;
+      z-index:11;
+      overflow:hidden;
+    }
+    .group-zone-title{
+      position:absolute;
+      inset:0;
+      color:#ffe7a6;
+      font-family:'Fredoka One',cursive;
+      font-size:26px;
+      text-shadow:0 2px 6px rgba(0,0,0,.45);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      line-height:1.1;
+      text-align:center;
+      pointer-events:none;
+    }
+    .group-zone-good{
+      border-color:rgba(79,217,130,.9);
+      box-shadow:0 0 0 4px rgba(79,217,130,.24), 0 18px 36px rgba(0,0,0,.42), var(--glow);
+    }
+    .group-zone-bad{
+      border-color:rgba(255,90,90,.92);
+      box-shadow:0 0 0 4px rgba(255,90,90,.2), 0 18px 36px rgba(0,0,0,.42);
+    }
+    .group-token{
+      position:absolute;
+      width:114px;
+      height:114px;
+      transform:translate(-50%,-50%);
+      z-index:13;
+      touch-action:none;
+      cursor:grab;
+    }
+    .group-token:active{cursor:grabbing}
+    .group-token .game-img{
+      width:100%;
+      height:100%;
+      object-fit:contain;
+      position:absolute;
+      inset:0;
+    }
+    .group-token .value-chip{
+      left:50% !important;
+      top:8% !important;
+      transform:translate(-50%,-50%);
+      z-index:16;
+    }
     .input-row{
       position:absolute;
       min-width:260px;
@@ -484,6 +566,15 @@ function buildHtml(
       opacity:1;
       color:#0f3b22;
       -webkit-text-fill-color:#0f3b22;
+    }
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button{
+      -webkit-appearance:none;
+      margin:0;
+    }
+    input[type="number"]{
+      -moz-appearance:textfield;
+      appearance:textfield;
     }
     .eq-card{
       position:absolute;
@@ -576,7 +667,15 @@ function buildHtml(
       color:#0f3b22;
       -webkit-text-fill-color:#0f3b22;
     }
+    .seq-blank.bad{
+      border-color:#ff6a6a;
+      background:rgba(255,106,106,.2);
+      color:#4a0f0f;
+      -webkit-text-fill-color:#4a0f0f;
+      box-shadow:0 0 0 3px rgba(255,106,106,.18);
+    }
     .seq-submit{
+      display:none;
       margin-top:10px;
       padding:12px 36px;
       font-size:30px;
@@ -588,11 +687,13 @@ function buildHtml(
       background:linear-gradient(135deg,#ffd979,#f1b73c);
       box-shadow:0 5px 0 #a07022;
     }
+    .seq-submit.show{display:inline-block}
     .choice-box{
       position:absolute;
-      left:4%;
-      width:92%;
-      top:12%;
+      left:50%;
+      transform:translateX(-50%);
+      width:min(760px,92%);
+      top:28%;
       background:rgba(8,18,33,.75);
       border:1px solid rgba(255,255,255,.22);
       border-radius:18px;
@@ -633,6 +734,323 @@ function buildHtml(
     }
     .choice-btn:active{transform:translateY(2px)}
     .choice-btn.ok{background:linear-gradient(135deg,#9bf2b7,#4fd982); box-shadow:0 4px 0 #2f8b4e}
+    .choice-btn.bad{background:linear-gradient(135deg,#ffb3b3,#ff6f6f); box-shadow:0 4px 0 #a33f3f}
+    .balance-scale-wrap{
+      position:absolute;
+      left:50%;
+      top:16%;
+      transform:translateX(-50%);
+      width:min(860px,94%);
+      z-index:12;
+      text-align:center;
+    }
+    .balance-scale-img{
+      width:100%;
+      max-width:760px;
+      object-fit:contain;
+      filter:drop-shadow(0 14px 24px rgba(0,0,0,.35));
+      transition:transform .35s ease, opacity .3s ease;
+    }
+    .balance-side-text{
+      position:absolute;
+      top:66%;
+      transform:translate(-50%,-50%);
+      color:#fff7d6;
+      font-family:'Fredoka One',cursive;
+      font-size:34px;
+      text-shadow:0 2px 7px rgba(0,0,0,.55);
+      white-space:nowrap;
+    }
+    .balance-side-text.left{left:21%}
+    .balance-side-text.right{left:76%; top:62%}
+    .balance-pill{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:58px;
+      padding:6px 14px;
+      border-radius:14px;
+      border:3px solid rgba(244,208,63,.85);
+      background:rgba(8,18,33,.6);
+      box-shadow:0 8px 16px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.08);
+    }
+    .balance-answer-input{
+      width:92px;
+      padding:6px 8px;
+      border-radius:12px;
+      border:3px solid rgba(244,208,63,.75);
+      background:rgba(255,255,255,.9);
+      color:#0f2039;
+      font-family:'Fredoka One',cursive;
+      font-size:30px;
+      text-align:center;
+      outline:none;
+      vertical-align:middle;
+      margin:0 6px;
+    }
+    .balance-answer-input.ok{
+      border-color:var(--ok);
+      background:rgba(120,235,170,.34);
+      color:#0f3b22;
+    }
+    .balance-answer-input.bad{
+      border-color:#ff6a6a;
+      background:rgba(255,106,106,.25);
+      color:#4a0f0f;
+    }
+    .balance-next{
+      margin-top:6px;
+    }
+    .build-wrap{
+      position:absolute;
+      left:50%;
+      top:18%;
+      transform:translateX(-50%);
+      width:min(760px,94%);
+      text-align:center;
+      z-index:12;
+      min-height:520px;
+    }
+    .build-target{
+      display:inline-flex;
+      min-width:220px;
+      min-height:112px;
+      padding:12px 28px;
+      border-radius:20px;
+      border:3px solid rgba(244,208,63,.85);
+      background:linear-gradient(180deg,rgba(8,18,33,.84),rgba(10,24,56,.82));
+      color:#ffe7a6;
+      align-items:center;
+      justify-content:center;
+      font-family:'Fredoka One',cursive;
+      font-size:66px;
+      text-shadow:0 2px 7px rgba(0,0,0,.5);
+      box-shadow:0 14px 28px rgba(0,0,0,.34);
+      position:relative;
+      z-index:2;
+    }
+    .build-arrow-layer{
+      position:absolute;
+      left:0;
+      top:0;
+      width:100%;
+      height:100%;
+      pointer-events:none;
+      z-index:1;
+    }
+    .build-slots{
+      margin-top:184px;
+      display:flex;
+      gap:18px;
+      justify-content:center;
+      flex-wrap:wrap;
+      position:relative;
+      z-index:2;
+    }
+    .build-slot{
+      width:126px;
+      height:126px;
+      border-radius:18px;
+      border:3px solid rgba(244,208,63,.78);
+      background:rgba(8,18,33,.9);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.08), 0 8px 18px rgba(0,0,0,.28);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .build-slot-input{
+      width:78px;
+      height:56px;
+      border-radius:12px;
+      border:2px solid rgba(244,208,63,.7);
+      background:rgba(255,255,255,.9);
+      color:#0f2039;
+      font-family:'Fredoka One',cursive;
+      font-size:30px;
+      text-align:center;
+      outline:none;
+    }
+    .build-next{
+      margin-top:22px;
+      min-width:76px;
+      padding:12px 18px;
+      font-size:32px;
+      line-height:1;
+    }
+    .timer-card{
+      position:absolute;
+      left:50%;
+      top:24%;
+      transform:translateX(-50%);
+      width:min(760px,94%);
+      background:linear-gradient(180deg,rgba(8,18,33,.9),rgba(10,24,56,.88));
+      border:3px solid rgba(244,208,63,.76);
+      border-radius:24px;
+      padding:18px 18px 16px;
+      box-shadow:0 18px 36px rgba(0,0,0,.38);
+      z-index:12;
+      text-align:center;
+    }
+    .timer-top{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      margin-bottom:10px;
+      color:#ffe7a6;
+      font-family:'Fredoka One',cursive;
+      font-size:28px;
+    }
+    .timer-badge{
+      min-width:92px;
+      height:46px;
+      border-radius:999px;
+      border:2px solid rgba(244,208,63,.85);
+      background:rgba(0,0,0,.25);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:28px;
+    }
+    .timer-start{
+      margin-left:6px;
+      padding:8px 18px;
+      border:none;
+      border-radius:999px;
+      background:linear-gradient(135deg,#ffd979,#f1b73c);
+      box-shadow:0 4px 0 #a07022;
+      color:#2a1b00;
+      font-family:'Fredoka One',cursive;
+      font-size:22px;
+      cursor:pointer;
+    }
+    .timer-panel{
+      position:absolute;
+      left:50%;
+      top:76%;
+      transform:translateX(-50%);
+      display:flex;
+      align-items:flex-end;
+      gap:14px;
+      z-index:12;
+      background:linear-gradient(180deg,rgba(8,18,33,.92),rgba(10,24,56,.9));
+      border:3px solid rgba(244,208,63,.76);
+      border-radius:20px;
+      box-shadow:0 14px 28px rgba(0,0,0,.35);
+      padding:10px 14px 12px;
+    }
+    .timer-panel-left{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:4px;
+      min-width:110px;
+    }
+    .timer-label{
+      font-family:'Fredoka One',cursive;
+      font-size:14px;
+      letter-spacing:.04em;
+      color:#ffe7a6;
+      text-transform:uppercase;
+      opacity:.95;
+    }
+    .timer-row{
+      margin:10px auto;
+      max-width:620px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      color:#dff8dc;
+      font-family:'Fredoka One',cursive;
+      font-size:30px;
+    }
+    .timer-input{
+      width:88px;
+      padding:6px 8px;
+      border-radius:12px;
+      border:3px solid rgba(244,208,63,.75);
+      background:rgba(255,255,255,.92);
+      color:#0f2039;
+      font-family:'Fredoka One',cursive;
+      font-size:30px;
+      text-align:center;
+      outline:none;
+    }
+    .timer-input:disabled{opacity:.65}
+    .timer-input.ok{border-color:var(--ok); background:rgba(120,235,170,.35); color:#0f3b22}
+    .timer-input.bad{border-color:#ff6a6a; background:rgba(255,106,106,.26); color:#4a0f0f}
+    .symbol-wrap{
+      position:absolute;
+      left:50%;
+      top:20%;
+      transform:translateX(-50%);
+      width:min(760px,94%);
+      z-index:12;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      align-items:center;
+    }
+    .symbol-row{
+      width:min(520px,100%);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:12px;
+      color:#ffe7a6;
+      font-family:'Fredoka One',cursive;
+      font-size:34px;
+      text-shadow:0 2px 6px rgba(0,0,0,.5);
+    }
+    .symbol-item{
+      width:92px;
+      height:92px;
+      object-fit:contain;
+      filter:drop-shadow(0 8px 14px rgba(0,0,0,.32));
+    }
+    .symbol-calc-card{
+      margin-top:12px;
+      width:min(620px,100%);
+      background:linear-gradient(180deg,rgba(8,18,33,.9),rgba(10,24,56,.88));
+      border:3px solid rgba(244,208,63,.76);
+      border-radius:22px;
+      box-shadow:0 16px 32px rgba(0,0,0,.36);
+      padding:16px 16px 14px;
+      text-align:center;
+    }
+    .symbol-expr{
+      color:#dff8dc;
+      font-family:'Fredoka One',cursive;
+      font-size:34px;
+      margin-bottom:10px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+    .symbol-inline{
+      width:42px;
+      height:42px;
+      object-fit:contain;
+      filter:drop-shadow(0 4px 8px rgba(0,0,0,.28));
+      vertical-align:middle;
+    }
+    .symbol-answer{
+      width:120px;
+      padding:8px 10px;
+      border-radius:12px;
+      border:3px solid rgba(244,208,63,.75);
+      background:rgba(255,255,255,.92);
+      color:#0f2039;
+      font-family:'Fredoka One',cursive;
+      font-size:34px;
+      text-align:center;
+      outline:none;
+    }
+    .symbol-answer.ok{border-color:var(--ok); background:rgba(120,235,170,.35); color:#0f3b22}
+    .symbol-answer.bad{border-color:#ff6a6a; background:rgba(255,106,106,.26); color:#4a0f0f}
     .corridor-row{
       display:flex;
       gap:16px;
@@ -1129,7 +1547,7 @@ function buildHtml(
       inset:0;
       z-index:260;
       display:flex;
-      align-items:flex-end;
+      align-items:center;
       justify-content:center;
       background:#101522;
     }
@@ -1144,20 +1562,33 @@ function buildHtml(
     .intro-panel{
       position:relative;
       z-index:2;
-      width:100%;
-      padding:18px 60px 24px;
+      width:min(940px,92vw);
+      padding:26px 28px 24px;
       text-align:center;
-      background:rgba(5,15,30,.88);
-      border-top:2px solid rgba(244,208,63,.45);
+      background:rgba(5,15,30,.82);
+      border:2px solid rgba(244,208,63,.45);
+      border-radius:22px;
+      box-shadow:0 24px 58px rgba(0,0,0,.55);
     }
     .intro-story{
-      font-size:clamp(14px,1.6vw,19px);
+      min-height:120px;
+      font-size:clamp(14px,1.45vw,17px);
       color:#c8e8c8;
-      line-height:1.6;
-      max-width:1200px;
+      line-height:1.7;
+      max-width:860px;
       margin:0 auto 12px;
     }
+    .intro-cur{
+      display:inline-block;
+      width:2px;
+      height:1em;
+      background:var(--sand);
+      vertical-align:text-bottom;
+      animation:introBlink .8s step-end infinite;
+      margin-left:4px;
+    }
     .intro-start{
+      display:none;
       padding:13px 50px;
       font-family:'Fredoka One',cursive;
       font-size:20px;
@@ -1168,6 +1599,18 @@ function buildHtml(
       border-radius:50px;
       cursor:pointer;
       box-shadow:0 5px 0 #7b5e0a;
+    }
+    .intro-start.show{
+      display:inline-block;
+      animation:introPop .5s cubic-bezier(.34,1.56,.64,1) forwards;
+    }
+    @keyframes introBlink{
+      0%,49%{opacity:1}
+      50%,100%{opacity:0}
+    }
+    @keyframes introPop{
+      from{transform:scale(.8);opacity:0}
+      to{transform:scale(1);opacity:1}
     }
   </style>
 </head>
@@ -1256,14 +1699,24 @@ function buildHtml(
   const ITEMS_MAP = ${itemsPayload};
   const TARGETS_MAP = ${targetsPayload};
   const ARTIFACT_MAP = ${artifactsPayload};
-  const SHOP_ITEMS = [
-    { id: "sword", name: "Sword", img: "assets/characters/sword.webp", price: 150 },
-    { id: "egg", name: "Egg", img: "assets/characters/egg.webp", price: 75 },
-    { id: "dron", name: "Quadro", img: "assets/characters/dron.webp", price: 260 },
-    { id: "lizard", name: "Lizard", img: "assets/characters/lizard.webp", price: 50 },
-    { id: "crown", name: "Crown", img: "assets/characters/crown.webp", price: 25 },
-    { id: "glasses", name: "Glasses", img: "assets/characters/glasses.webp", price: 25 },
-  ];
+  function buildShopItemsFromArtifacts(){
+    const keys = Object.keys(ARTIFACT_MAP || {});
+    const sorted = keys.sort((a, b) => titleFromKey(a).localeCompare(titleFromKey(b)));
+    const cheap = [35, 45, 60, 75];
+    const mid = [95, 120, 145, 170];
+    const high = [210, 260, 320, 420];
+    return sorted.map((key, i) => {
+      const bucket = i % 3 === 0 ? cheap : (i % 3 === 1 ? mid : high);
+      const price = bucket[Math.floor(i / 3) % bucket.length];
+      return {
+        id: key,
+        name: titleFromKey(key),
+        img: artifactPathByKey(key),
+        price,
+      };
+    });
+  }
+  const SHOP_ITEMS = buildShopItemsFromArtifacts();
 
   const $ = (id) => document.getElementById(id);
   const izone = $("izone");
@@ -1320,6 +1773,7 @@ function buildHtml(
     const t = resolveEngineType(stage.type);
     if(t === "drag_drop") return "Drag items into the correct baskets.";
     if(t === "drag_sort") return "Select an item, then place it into the next slot.";
+    if(t === "drag_group") return "Sort the numbers into the correct groups.";
     if(t === "input") return "Type the correct number in each input field.";
     if(t === "choice") return "Choose the correct answer.";
     if(t === "tap_count") return "Tap as many times as the task says.";
@@ -1332,6 +1786,7 @@ function buildHtml(
     const t = resolveEngineType(stage.type);
     if(t === "drag_drop") return "Great! All baskets are complete!";
     if(t === "drag_sort") return "Perfect order!";
+    if(t === "drag_group") return "Great grouping!";
     if(t === "input") return "All answers are correct!";
     if(t === "choice") return "Correct choice!";
     if(t === "tap_count") return "Nice counting!";
@@ -1567,7 +2022,26 @@ function buildHtml(
     const out = { ...base };
     const pass = [
       "instruction", "draggables", "drop_zones", "required_per_zone", "prefill_per_zone",
-      "inputs", "question", "options", "items", "correct_order", "target_count", "image_key",
+      "inputs", "question", "options", "items", "correct_order", "target_count", "image_key", "answer",
+      "numbers_text", "group1_name", "group2_name", "group1_values", "group2_values",
+      "base_number", "parts_count",
+      "baseNumber", "partsCount",
+      "timer_example_a", "timer_example_b", "timer_example_c",
+      "timer_answer_a", "timer_answer_b", "timer_answer_c", "timer_seconds",
+      "timerExampleA", "timerExampleB", "timerExampleC",
+      "timerAnswerA", "timerAnswerB", "timerAnswerC", "timerSeconds",
+      "symbol_a", "symbol_b", "symbol_c", "symbol_expression",
+      "symbolA", "symbolB", "symbolC", "symbolExpression",
+      "symbol_item_a", "symbol_item_b", "symbol_item_c",
+      "symbolItemA", "symbolItemB", "symbolItemC",
+      "unknown_a", "unknown_b", "unknown_equation",
+      "unknownA", "unknownB", "unknownEquation",
+      "unknown_item_a", "unknown_item_b", "unknown_item_c",
+      "unknownItemA", "unknownItemB", "unknownItemC",
+      "pair_a", "pair_b", "pair_c", "pair_d", "correct_pair_1", "correct_pair_2",
+      "pairA", "pairB", "pairC", "pairD", "correctPair1", "correctPair2",
+      "left_expression", "right_expression", "correct_side",
+      "leftExpression", "rightExpression", "correctSide",
       "left_path", "right_path", "sequence", "round", "operator_tasks",
       "tap_step", "counter_start", "counter_goal", "counter_suffix",
       "tap_mode", "totem_targets", "bowl_image_key", "per_target_goal",
@@ -1630,7 +2104,7 @@ function buildHtml(
   function showRoundSuccess(onContinue){
     const overlay = document.createElement("div");
     overlay.className = "round-pop";
-    overlay.innerHTML = '<div class="round-pop-inner"><span class="round-check">✓</span><span class="round-plus">+2 🪙</span></div>';
+    overlay.innerHTML = '<div class="round-pop-inner"><span class="round-check">✓</span><span class="round-plus">Correct!</span></div>';
     document.body.appendChild(overlay);
     requestAnimationFrame(() => overlay.classList.add("on"));
     const t = setTimeout(() => {
@@ -1660,11 +2134,8 @@ function buildHtml(
 
     if(nRounds >= 2){
       if(state.stagePracticeDone < nRounds){
-        addCoins(bonus);
-        showRoundSuccess(() => {
-          state.stageSolved = false;
-          renderStage(state.stageIndex);
-        });
+        state.stageSolved = false;
+        renderStage(state.stageIndex);
         return;
       }
       addCoins(bonus);
@@ -1749,10 +2220,14 @@ function buildHtml(
         z.image_kind === "item" ? "item" : "target"
       );
       zoneWrap.appendChild(img);
+      const need = Number(required[z.id] ?? 0);
+      const needBadge = document.createElement("div");
+      needBadge.className = "zone-need";
+      needBadge.textContent = String(need);
+      zoneWrap.appendChild(needBadge);
       lane.appendChild(zoneWrap);
       state.zoneCounts[z.id] = Number(prefill[z.id] ?? 0);
       zoneById[z.id] = zoneWrap;
-      const need = Number(required[z.id] ?? 0);
       const have = Number(prefill[z.id] ?? 0);
       if(have >= need && need > 0) zoneWrap.classList.add("done");
     });
@@ -1822,7 +2297,7 @@ function buildHtml(
     const row2Count = useTwoRows ? (total - cols) : 0;
     const xStart = 14;
     const xEnd = 86;
-    const rowY = useTwoRows ? [72, 86] : [80];
+    const rowY = useTwoRows ? [48, 60] : [50];
 
     const slotPos = [];
     for(let i = 0; i < row1Count; i++){
@@ -1844,7 +2319,7 @@ function buildHtml(
       slot.dataset.index = String(i);
       const p = slotPos[i] || { x: 50, y: 80 };
       slot.style.cssText += posStyle(p.x, p.y);
-      slot.innerHTML = "<div class='sort-slot-line'></div><div class='sort-slot-label'>#" + (i + 1) + "</div>";
+      slot.innerHTML = "<div class='sort-slot-line'></div>";
       slot.onclick = () => onSortSlotClick(stage, slot);
       slots.push(slot);
       lane.appendChild(slot);
@@ -1852,7 +2327,7 @@ function buildHtml(
 
     const items = stage.items || [];
     const itemSpots = buildScatterPositions(items.length, {
-      xMin: 10, xMax: 90, yMin: 10, yMax: useTwoRows ? 40 : 46, minDistance: 19,
+      xMin: 10, xMax: 90, yMin: useTwoRows ? 76 : 80, yMax: useTwoRows ? 90 : 92, minDistance: 19,
     });
 
     items.forEach((item, i) => {
@@ -1877,6 +2352,106 @@ function buildHtml(
     });
   }
 
+  function parseNumberList(value){
+    if(Array.isArray(value)) return value.map((v) => String(v).trim()).filter(Boolean);
+    return String(value || "")
+      .split(/[,\\s]+/)
+      .map((v) => v.trim())
+      .filter(Boolean);
+  }
+
+  function renderDragGroup(stage){
+    const all = parseNumberList(stage.numbers_text || stage.numbersText || "");
+    const g1Name = String(stage.group1_name || stage.group1Name || "Group 1");
+    const g2Name = String(stage.group2_name || stage.group2Name || "Group 2");
+    const g1Set = new Set(parseNumberList(stage.group1_values || stage.group1Values || ""));
+    const g2Set = new Set(parseNumberList(stage.group2_values || stage.group2Values || ""));
+    const groupBoxes = [];
+    const acceptedCount = { g1: 0, g2: 0 };
+    const expectedTotal = g1Set.size + g2Set.size;
+
+    const mkGroup = (id, title, x) => {
+      const box = document.createElement("div");
+      box.className = "group-zone";
+      box.dataset.groupId = id;
+      box.style.cssText += posStyle(x, 38);
+      const t = document.createElement("div");
+      t.className = "group-zone-title";
+      t.textContent = title;
+      box.append(t);
+      lane.appendChild(box);
+      groupBoxes.push({ id, box });
+    };
+
+    mkGroup("g1", g1Name, 26);
+    mkGroup("g2", g2Name, 74);
+
+    const numberList = all.map((num, idx) => ({
+      num: String(num),
+      id: "gnum" + (idx + 1),
+    }));
+
+    const bottomSpots = buildScatterPositions(numberList.length, {
+      xMin: 10, xMax: 90, yMin: 78, yMax: 92, minDistance: 16,
+    });
+
+    numberList.forEach(({ num, id }, i) => {
+      const spot = bottomSpots[i] || { x: 14 + i * 10, y: 86 };
+      const chip = document.createElement("div");
+      chip.className = "group-token";
+      chip.style.cssText += posStyle(spot.x, spot.y);
+      chip.dataset.id = id;
+      chip.dataset.num = String(num);
+      chip.dataset.start = chip.style.cssText;
+      const img = makeImg("game-img", "banana", "");
+      const badge = document.createElement("div");
+      badge.className = "value-chip";
+      badge.textContent = String(num);
+      chip.appendChild(img);
+      chip.appendChild(badge);
+
+      enablePointerDrag(chip, (x, y) => {
+        const hit = groupBoxes.find(({ box }) => {
+          const r = box.getBoundingClientRect();
+          return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
+        });
+        if(!hit){
+          chip.style.cssText = chip.dataset.start;
+          shake(chip);
+          return;
+        }
+        const isCorrect = (hit.id === "g1" && g1Set.has(String(num))) || (hit.id === "g2" && g2Set.has(String(num)));
+        hit.box.classList.remove("group-zone-good", "group-zone-bad");
+        if(!isCorrect){
+          hit.box.classList.add("group-zone-bad");
+          setTimeout(() => hit.box.classList.remove("group-zone-bad"), 260);
+          chip.style.cssText = chip.dataset.start;
+          shake(chip);
+          return;
+        }
+
+        hit.box.classList.add("group-zone-good");
+        acceptedCount[hit.id] += 1;
+        const laneRect = lane.getBoundingClientRect();
+        const boxRect = hit.box.getBoundingClientRect();
+        const targetX = (boxRect.left - laneRect.left) + boxRect.width / 2;
+        const targetY = (boxRect.top - laneRect.top) + boxRect.height / 2;
+        chip.style.pointerEvents = "none";
+        chip.style.transition = "left .2s ease, top .2s ease, opacity .2s ease, transform .2s ease";
+        chip.style.left = targetX + "px";
+        chip.style.top = targetY + "px";
+        chip.style.transform = "translate(-50%,-50%) scale(.45)";
+        chip.style.opacity = "0";
+        setTimeout(() => chip.remove(), 220);
+        if((acceptedCount.g1 + acceptedCount.g2) >= expectedTotal){
+          markSuccess(stage);
+        }
+      });
+
+      lane.appendChild(chip);
+    });
+  }
+
   function onSortSlotClick(stage, slot){
     if(state.stageSolved || slot.dataset.filled === "1") return;
     if(!state.selectedSortId){
@@ -1896,12 +2471,15 @@ function buildHtml(
     itemEl.dataset.locked = "1";
     itemEl.classList.remove("selected");
     itemEl.style.pointerEvents = "none";
-    const shelfY = slot.offsetTop + 26;
-    itemEl.style.cssText += "left:" + (slot.offsetLeft + slot.offsetWidth/2) + "px;top:" + shelfY + "px;transform:translate(-50%,-100%) scale(.88);";
+    const laneRect = lane.getBoundingClientRect();
+    const slotRect = slot.getBoundingClientRect();
+    const centerX = (slotRect.left - laneRect.left) + (slotRect.width / 2);
+    const lineCenterY = (slotRect.top - laneRect.top) + slotRect.height - 24 - 3;
+    itemEl.style.cssText += "left:" + centerX + "px;top:" + lineCenterY + "px;transform:translate(-50%,-100%) scale(.72);";
     const badge = state.sortBadges[state.selectedSortId];
     if(badge){
-      badge.style.left = (slot.offsetLeft + slot.offsetWidth / 2) + "px";
-      badge.style.top = (slot.offsetTop - 8) + "px";
+      badge.style.left = centerX + "px";
+      badge.style.top = (lineCenterY - 52) + "px";
       badge.style.transform = "translate(-50%,-50%) scale(.9)";
     }
     slot.dataset.filled = "1";
@@ -1965,25 +2543,38 @@ function buildHtml(
       const btn = document.createElement("button");
       btn.className = "seq-submit";
       btn.type = "button";
-      btn.textContent = "+ Harder";
-      btn.onclick = () => {
+      btn.textContent = "NEXT";
+      btn.onclick = () => markSuccess(stage);
+      const evaluate = () => {
         const blanks = [...board.querySelectorAll(".seq-blank")];
+        const allFilled = blanks.every((b) => String(b.value).trim() !== "");
+        if(!allFilled){
+          btn.classList.remove("show");
+          blanks.forEach((b) => b.classList.remove("ok"));
+          return;
+        }
         const ok = blanks.every((b) => String(b.value).trim() === String(b.dataset.answer).trim());
         if(ok){
           blanks.forEach((b) => {
             b.classList.add("ok");
             b.disabled = true;
           });
-          markSuccess(stage);
+          btn.classList.add("show");
         }else{
+          btn.classList.remove("show");
           blanks.forEach((b) => {
+            b.classList.remove("ok");
             if(String(b.value).trim() !== String(b.dataset.answer).trim()){
               b.classList.add("bad");
-              setTimeout(() => b.classList.remove("bad"), 200);
+              setTimeout(() => b.classList.remove("bad"), 220);
             }
           });
         }
       };
+      board.querySelectorAll(".seq-blank").forEach((b) => {
+        b.addEventListener("change", evaluate);
+        b.addEventListener("blur", evaluate);
+      });
       card.appendChild(board);
       card.appendChild(btn);
       lane.appendChild(card);
@@ -2018,25 +2609,38 @@ function buildHtml(
       const btn = document.createElement("button");
       btn.className = "seq-submit";
       btn.type = "button";
-      btn.textContent = "+ Harder";
-      btn.onclick = () => {
+      btn.textContent = "NEXT";
+      btn.onclick = () => markSuccess(stage);
+      const evaluate = () => {
         const blanks = [...board.querySelectorAll(".seq-blank")];
+        const allFilled = blanks.every((b) => String(b.value).trim() !== "");
+        if(!allFilled){
+          btn.classList.remove("show");
+          blanks.forEach((b) => b.classList.remove("ok"));
+          return;
+        }
         const ok = blanks.every((b) => String(b.value).trim() === String(b.dataset.answer).trim());
         if(ok){
           blanks.forEach((b) => {
             b.classList.add("ok");
             b.disabled = true;
           });
-          markSuccess(stage);
+          btn.classList.add("show");
         }else{
+          btn.classList.remove("show");
           blanks.forEach((b) => {
+            b.classList.remove("ok");
             if(String(b.value).trim() !== String(b.dataset.answer).trim()){
               b.classList.add("bad");
-              setTimeout(() => b.classList.remove("bad"), 200);
+              setTimeout(() => b.classList.remove("bad"), 220);
             }
           });
         }
       };
+      board.querySelectorAll(".seq-blank").forEach((b) => {
+        b.addEventListener("change", evaluate);
+        b.addEventListener("blur", evaluate);
+      });
       card.appendChild(board);
       card.appendChild(btn);
       lane.appendChild(card);
@@ -2085,10 +2689,6 @@ function buildHtml(
   function renderChoice(stage){
     const box = document.createElement("div");
     box.className = "choice-box";
-    const sub = document.createElement("div");
-    sub.className = "choice-sub";
-    sub.textContent = stage.instruction || "Read the story and choose one correct equation.";
-    box.appendChild(sub);
     const q = document.createElement("div");
     q.className = "choice-q";
     const questionRaw = stage.question || "Choose the correct answer";
@@ -2102,9 +2702,13 @@ function buildHtml(
       btn.textContent = optLabel || ("Option " + (idxFromOption(stage.options, opt) + 1));
       btn.onclick = () => {
         if(state.stageSolved) return;
-        if(opt.correct){
+        const isCorrect = opt.correct === true || String(opt.correct).toLowerCase() === "true";
+        if(isCorrect){
           btn.classList.add("ok");
-          markSuccess(stage);
+          box.querySelectorAll(".choice-btn").forEach((b) => {
+            b.style.pointerEvents = "none";
+          });
+          setTimeout(() => markSuccess(stage), 140);
         }else{
           shake(btn);
         }
@@ -2278,106 +2882,604 @@ function buildHtml(
     const step = Number(stage.tap_step || 1);
     const start = Number(stage.counter_start != null ? stage.counter_start : 0);
     const goal = Number(stage.counter_goal != null ? stage.counter_goal : stage.target_count || 5);
-    const suffix = String(stage.counter_suffix || "").trim();
     let value = start;
-    const wrap = document.createElement("div");
-    wrap.style.cssText =
-      "position:absolute;left:50%;top:38%;transform:translateX(-50%);text-align:center;z-index:12;";
-    const counter = document.createElement("div");
-    counter.textContent = value + " / " + goal + (suffix ? " " + suffix : "");
-    counter.style.cssText = "font-size:32px;font-weight:900;margin-bottom:12px;color:var(--sand);";
-    const img = makeImg("game-img", stage.image_key || "banana", "position:relative;cursor:pointer;");
-    img.style.width = "128px";
-    img.style.height = "128px";
+    const box = document.createElement("div");
+    box.className = "choice-box";
+    box.style.top = "28%";
+    const q = document.createElement("div");
+    q.className = "choice-q";
+    q.textContent = stage.question || stage.prompt || ("Tap this item " + goal + " times");
+    box.appendChild(q);
+    const img = makeImg("game-img", stage.image_key || "shell_blue", "position:relative;cursor:pointer;margin:8px auto 6px;display:block;");
+    img.style.width = "138px";
+    img.style.height = "138px";
     img.addEventListener("click", () => {
       if(state.stageSolved) return;
+      img.animate(
+        [
+          { transform: "scale(1)" },
+          { transform: "scale(0.9)" },
+          { transform: "scale(1.08)" },
+          { transform: "scale(1)" },
+        ],
+        { duration: 220, easing: "ease-out" }
+      );
       value += step;
       if(value > goal) value = goal;
-      counter.textContent = value + " / " + goal + (suffix ? " " + suffix : "");
       if(value >= goal) markSuccess(stage);
     });
-    wrap.appendChild(counter);
-    wrap.appendChild(img);
-    lane.appendChild(wrap);
+    box.appendChild(img);
+    lane.appendChild(box);
   }
 
   function renderCorridorChoice(stage){
     const box = document.createElement("div");
     box.className = "choice-box";
-    const sub = document.createElement("div");
-    sub.className = "choice-sub";
-    sub.textContent = stage.instruction || "Read both options and tap the one that matches division.";
-    box.appendChild(sub);
+    const subText = String(stage.instruction || "").trim();
+    if(subText){
+      const sub = document.createElement("div");
+      sub.className = "choice-sub";
+      sub.textContent = subText;
+      box.appendChild(sub);
+    }
     const q = document.createElement("div");
     q.className = "choice-q";
     q.textContent = stage.question || "Choose a path";
     box.appendChild(q);
     const row = document.createElement("div");
     row.className = "corridor-row";
-    const left = stage.left_path || {};
-    const right = stage.right_path || {};
-    const emojiFor = (lbl) => {
-      const t = String(lbl || "").toLowerCase();
-      if(t.includes("basket") || t.includes("bag") || t.includes("crate")) return "🧺";
-      if(t.includes("banana")) return "🍌";
-      if(t.includes("apple")) return "🍎";
-      if(t.includes("cookie")) return "🍪";
-      if(t.includes("sticker")) return "⭐";
-      if(t.includes("wrong")) return "❌";
-      return "🧩";
-    };
-
-    const makeCorridorIcon = (pathObj) => {
-      const imageKey = pathObj.image_key;
-      const imageKind = pathObj.image_kind === "target" ? "target" : "item";
-      if(imageKey){
-        const img = document.createElement("img");
-        img.className = "corridor-icon";
-        img.src = imagePathByKey(imageKey, imageKind);
-        img.alt = imageKey;
-        img.onerror = () => {
-          img.replaceWith(Object.assign(document.createElement("div"), {
-            className: "corridor-emoji",
-            textContent: emojiFor(pathObj.label),
-          }));
-        };
-        return img;
+    const correctSideRaw = String(stage.correct_side || stage.correctSide || "").toLowerCase();
+    const left = stage.left_path || { label: stage.left_expression || stage.leftExpression || "Left" };
+    const right = stage.right_path || { label: stage.right_expression || stage.rightExpression || "Right" };
+    if(left.correct == null && right.correct == null){
+      if(correctSideRaw === "left" || correctSideRaw === "l"){
+        left.correct = true;
+        right.correct = false;
+      } else if(correctSideRaw === "right" || correctSideRaw === "r"){
+        left.correct = false;
+        right.correct = true;
       }
-      const em = document.createElement("div");
-      em.className = "corridor-emoji";
-      em.textContent = emojiFor(pathObj.label);
-      return em;
-    };
-
+    }
     [
       { path: left, key: "L" },
       { path: right, key: "R" },
     ].forEach(({ path }, i) => {
       const btn = document.createElement("button");
       btn.className = "choice-btn corridor-choice";
-      const icon = makeCorridorIcon(path);
       const label = document.createElement("div");
       label.className = "corridor-label";
       label.textContent = path.label || (i === 0 ? "Left" : "Right");
-      btn.appendChild(icon);
       btn.appendChild(label);
       btn.onclick = () => {
         if(state.stageSolved) return;
         if(path.correct){
           btn.classList.add("ok");
-          markSuccess(stage);
+          row.querySelectorAll(".choice-btn").forEach((b) => { b.style.pointerEvents = "none"; });
+          setTimeout(() => markSuccess(stage), 140);
         }else{
+          btn.classList.add("bad");
+          setTimeout(() => btn.classList.remove("bad"), 240);
           shake(btn);
         }
       };
       row.appendChild(btn);
     });
     box.appendChild(row);
-    const hint = document.createElement("div");
-    hint.className = "choice-hint";
-    hint.textContent = "Tap one path";
-    box.appendChild(hint);
     lane.appendChild(box);
+  }
+
+  function renderMatchPairs(stage){
+    const box = document.createElement("div");
+    box.className = "choice-box";
+    const q = document.createElement("div");
+    q.className = "choice-q";
+    q.textContent = stage.question || stage.prompt || "Find two correct pairs";
+    box.appendChild(q);
+
+    const row = document.createElement("div");
+    row.className = "corridor-row";
+    const items = [
+      { key: "A", text: stage.pair_a || stage.pairA || "A" },
+      { key: "B", text: stage.pair_b || stage.pairB || "B" },
+      { key: "C", text: stage.pair_c || stage.pairC || "C" },
+      { key: "D", text: stage.pair_d || stage.pairD || "D" },
+    ];
+    const correct = new Set([
+      String(stage.correct_pair_1 || stage.correctPair1 || "").toUpperCase(),
+      String(stage.correct_pair_2 || stage.correctPair2 || "").toUpperCase(),
+    ].filter(Boolean));
+    let found = 0;
+
+    items.forEach((it) => {
+      const btn = document.createElement("button");
+      btn.className = "choice-btn corridor-choice";
+      const label = document.createElement("div");
+      label.className = "corridor-label";
+      label.textContent = String(it.text);
+      btn.appendChild(label);
+      btn.onclick = () => {
+        if(state.stageSolved || btn.dataset.locked === "1") return;
+        if(correct.has(it.key)){
+          btn.classList.add("ok");
+          btn.dataset.locked = "1";
+          btn.style.pointerEvents = "none";
+          found += 1;
+          if(found >= 2){
+            row.querySelectorAll(".choice-btn").forEach((b) => { b.style.pointerEvents = "none"; });
+            setTimeout(() => markSuccess(stage), 140);
+          }
+        }else{
+          btn.classList.add("bad");
+          setTimeout(() => btn.classList.remove("bad"), 240);
+          shake(btn);
+        }
+      };
+      row.appendChild(btn);
+    });
+    box.appendChild(row);
+    lane.appendChild(box);
+  }
+
+  function renderBalanceScale(stage){
+    const wrap = document.createElement("div");
+    wrap.className = "balance-scale-wrap";
+    const scale = document.createElement("img");
+    scale.className = "balance-scale-img";
+    scale.src = "assets/scale_down.png";
+    scale.alt = "scale";
+    wrap.appendChild(scale);
+
+    const leftText = String(stage.left_expression || stage.leftExpression || stage.balance_left || "7 + ?");
+    const rightText = String(stage.right_expression || stage.rightExpression || stage.balance_right || "70");
+    const expected = String(stage.answer ?? stage.balance_answer ?? "");
+    const base = STAGES[state.stageIndex] || stage;
+    const rounds = Array.isArray(base.rounds) ? base.rounds : [];
+    const nRounds = rounds.length || 1;
+
+    let solved = false;
+    const revealNext = () => {
+      if(solved) return;
+      solved = true;
+      left.style.opacity = "0";
+      right.style.opacity = "0";
+      left.style.pointerEvents = "none";
+      right.style.pointerEvents = "none";
+      scale.style.opacity = "0.35";
+      setTimeout(() => {
+        scale.src = "assets/scale.png";
+        scale.style.opacity = "1";
+        scale.style.filter = "drop-shadow(0 0 28px rgba(244,208,63,.9)) drop-shadow(0 0 46px rgba(173,216,255,.55))";
+        scale.style.transform = "scale(1.04)";
+        setTimeout(() => {
+          scale.style.transform = "scale(1)";
+          scale.style.filter = "drop-shadow(0 14px 24px rgba(0,0,0,.35))";
+        }, 320);
+      }, 180);
+      const nextBtn = document.createElement("button");
+      nextBtn.className = "seq-submit show balance-next";
+      nextBtn.type = "button";
+      nextBtn.textContent = "NEXT";
+      nextBtn.onclick = () => {
+        if(state.stageSolved) return;
+        state.stageSolved = true;
+        state.stagePracticeDone += 1;
+        if(state.stagePracticeDone < nRounds){
+          state.stageSolved = false;
+          renderStage(state.stageIndex);
+          return;
+        }
+        const bonus = Number(base.round_bonus_coins != null ? base.round_bonus_coins : 2);
+        addCoins(bonus);
+        addCoins(Number(base.coins != null ? base.coins : stage.coins) || 0);
+        const msg = String(stage.success_message || "").trim()
+          ? stage.success_message
+          : englishSuccessFallback({ ...stage, type: resolveEngineType(stage.type) });
+        showSuccess(msg, () => advanceToNextStage(), "Round " + nRounds + "/" + nRounds + " — stage clear!");
+      };
+      wrap.appendChild(nextBtn);
+    };
+
+    const left = document.createElement("div");
+    left.className = "balance-side-text left";
+    const leftPill = document.createElement("span");
+    leftPill.className = "balance-pill";
+    if(leftText.includes("?")){
+      const parts = leftText.split("?");
+      const inp = document.createElement("input");
+      inp.className = "balance-answer-input";
+      inp.type = "number";
+      inp.inputMode = "numeric";
+      inp.autocomplete = "off";
+      const evaluate = () => {
+        const v = String(inp.value).trim();
+        if(v === "") return;
+        if(v === expected){
+          inp.classList.remove("bad");
+          inp.classList.add("ok");
+          inp.disabled = true;
+          revealNext();
+        }else{
+          inp.classList.remove("ok");
+          inp.classList.add("bad");
+          setTimeout(() => inp.classList.remove("bad"), 220);
+          shake(inp);
+        }
+      };
+      inp.addEventListener("change", evaluate);
+      inp.addEventListener("blur", evaluate);
+      leftPill.append(document.createTextNode(parts[0] || ""));
+      leftPill.appendChild(inp);
+      leftPill.append(document.createTextNode(parts.slice(1).join("?") || ""));
+    }else{
+      leftPill.textContent = leftText;
+    }
+    left.appendChild(leftPill);
+
+    const right = document.createElement("div");
+    right.className = "balance-side-text right";
+    const rightPill = document.createElement("span");
+    rightPill.className = "balance-pill";
+    rightPill.textContent = rightText;
+    right.appendChild(rightPill);
+
+    wrap.appendChild(left);
+    wrap.appendChild(right);
+    lane.appendChild(wrap);
+  }
+
+  function renderBuildNumber(stage){
+    const baseNumber = Number(stage.base_number ?? stage.baseNumber ?? 0);
+    const rawParts = Number(stage.parts_count ?? stage.partsCount ?? 2);
+    const partsCount = Math.max(2, Math.min(5, rawParts || 2));
+
+    const wrap = document.createElement("div");
+    wrap.className = "build-wrap";
+    const target = document.createElement("div");
+    target.className = "build-target";
+    target.textContent = String(baseNumber);
+    wrap.appendChild(target);
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("class", "build-arrow-layer");
+    svg.setAttribute("viewBox", "0 0 1000 1000");
+    const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+    const marker = document.createElementNS("http://www.w3.org/2000/svg", "marker");
+    marker.setAttribute("id", "buildArrowHead");
+    marker.setAttribute("markerWidth", "10");
+    marker.setAttribute("markerHeight", "10");
+    marker.setAttribute("refX", "8");
+    marker.setAttribute("refY", "5");
+    marker.setAttribute("orient", "auto");
+    const poly = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+    poly.setAttribute("points", "0 0, 10 5, 0 10");
+    poly.setAttribute("fill", "#f4d03f");
+    marker.appendChild(poly);
+    defs.appendChild(marker);
+    svg.appendChild(defs);
+    wrap.appendChild(svg);
+
+    const slots = document.createElement("div");
+    slots.className = "build-slots";
+    for(let i = 0; i < partsCount; i++){
+      const slot = document.createElement("div");
+      slot.className = "build-slot";
+      const input = document.createElement("input");
+      input.className = "build-slot-input";
+      input.type = "number";
+      input.inputMode = "numeric";
+      input.autocomplete = "off";
+      slot.appendChild(input);
+      slots.appendChild(slot);
+    }
+    wrap.appendChild(slots);
+    const slotCenters = [];
+    for(let i = 0; i < partsCount; i++){
+      const x = ((i + 1) * (1000 / (partsCount + 1)));
+      slotCenters.push(x);
+    }
+    slotCenters.forEach((x) => {
+      const idx = slotCenters.indexOf(x);
+      const spread = partsCount <= 1 ? 0 : ((idx / (partsCount - 1)) - 0.5) * 180;
+      const targetX = 500 + spread;
+      const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      line.setAttribute("x1", String(x));
+      line.setAttribute("y1", "690");
+      line.setAttribute("x2", String(targetX));
+      line.setAttribute("y2", "280");
+      line.setAttribute("stroke", "rgba(244,208,63,.9)");
+      line.setAttribute("stroke-width", "6");
+      line.setAttribute("stroke-linecap", "round");
+      line.setAttribute("marker-end", "url(#buildArrowHead)");
+      svg.appendChild(line);
+    });
+
+    const next = document.createElement("button");
+    next.className = "seq-submit show build-next";
+    next.type = "button";
+    next.textContent = "✓";
+    next.onclick = () => markSuccess(stage);
+    wrap.appendChild(next);
+
+    lane.appendChild(wrap);
+  }
+
+  function renderTimerChallenge(stage){
+    const card = document.createElement("div");
+    card.className = "timer-card";
+    const secondsTotal = Math.max(1, Number(stage.timer_seconds ?? stage.timerSeconds ?? 30));
+    let seconds = secondsTotal;
+    let running = false;
+    let timerId = null;
+
+    const panel = document.createElement("div");
+    panel.className = "timer-panel";
+    const leftWrap = document.createElement("div");
+    leftWrap.className = "timer-panel-left";
+    const timeLabel = document.createElement("div");
+    timeLabel.className = "timer-label";
+    timeLabel.textContent = "Time left";
+    const badge = document.createElement("div");
+    badge.className = "timer-badge";
+    badge.textContent = String(seconds);
+    const startBtn = document.createElement("button");
+    startBtn.className = "timer-start";
+    startBtn.type = "button";
+    startBtn.textContent = "START";
+    leftWrap.appendChild(timeLabel);
+    leftWrap.appendChild(badge);
+    panel.appendChild(leftWrap);
+    panel.appendChild(startBtn);
+
+    const rows = [
+      { tag: "A", ex: String(stage.timer_example_a ?? stage.timerExampleA ?? "6 + ? = 10"), ans: String(stage.timer_answer_a ?? stage.timerAnswerA ?? "4") },
+      { tag: "B", ex: String(stage.timer_example_b ?? stage.timerExampleB ?? "9 - ? = 4"), ans: String(stage.timer_answer_b ?? stage.timerAnswerB ?? "5") },
+      { tag: "C", ex: String(stage.timer_example_c ?? stage.timerExampleC ?? "3 × ? = 12"), ans: String(stage.timer_answer_c ?? stage.timerAnswerC ?? "4") },
+    ];
+    const inputs = [];
+    rows.forEach((r) => {
+      const row = document.createElement("div");
+      row.className = "timer-row";
+      const parts = r.ex.split("?");
+      row.appendChild(document.createTextNode(r.tag + ": " + (parts[0] || "")));
+      const inp = document.createElement("input");
+      inp.className = "timer-input";
+      inp.type = "number";
+      inp.inputMode = "numeric";
+      inp.autocomplete = "off";
+      inp.disabled = true;
+      inp.dataset.answer = r.ans;
+      inputs.push(inp);
+      row.appendChild(inp);
+      row.appendChild(document.createTextNode(parts.slice(1).join("?") || ""));
+      card.appendChild(row);
+    });
+
+    const stopTimer = () => {
+      if(timerId){
+        clearInterval(timerId);
+        timerId = null;
+      }
+      running = false;
+    };
+    const checkDone = () => {
+      const ok = inputs.every((i) => String(i.value).trim() === String(i.dataset.answer).trim());
+      if(ok){
+        stopTimer();
+        inputs.forEach((i) => { i.classList.add("ok"); i.disabled = true; });
+        setTimeout(() => markSuccess(stage), 140);
+      }
+    };
+
+    inputs.forEach((inp) => {
+      inp.addEventListener("change", () => {
+        if(!running) return;
+        if(String(inp.value).trim() === String(inp.dataset.answer).trim()){
+          inp.classList.remove("bad");
+          inp.classList.add("ok");
+        }else{
+          inp.classList.remove("ok");
+          inp.classList.add("bad");
+          setTimeout(() => inp.classList.remove("bad"), 220);
+        }
+        checkDone();
+      });
+    });
+
+    startBtn.onclick = () => {
+      if(running) return;
+      running = true;
+      seconds = secondsTotal;
+      badge.textContent = String(seconds);
+      startBtn.style.pointerEvents = "none";
+      startBtn.style.opacity = ".65";
+      inputs.forEach((i) => { i.disabled = false; i.focus({ preventScroll: true }); });
+      timerId = setInterval(() => {
+        seconds -= 1;
+        badge.textContent = String(Math.max(0, seconds));
+        if(seconds <= 0){
+          stopTimer();
+          inputs.forEach((i) => i.disabled = true);
+          startBtn.style.pointerEvents = "auto";
+          startBtn.style.opacity = "1";
+        }
+      }, 1000);
+    };
+
+    lane.appendChild(card);
+    lane.appendChild(panel);
+  }
+
+  function renderSymbolCalc(stage){
+    const wrap = document.createElement("div");
+    wrap.className = "symbol-wrap";
+
+    const defaultKeys = ["shell_blue", "banana", "stone_blue", "cherry", "mushroom", "pearl_blue"];
+    const fallbackA = stage.symbol_item_a || stage.symbolItemA || defaultKeys[0];
+    const fallbackB = stage.symbol_item_b || stage.symbolItemB || defaultKeys[1];
+    const fallbackC = stage.symbol_item_c || stage.symbolItemC || defaultKeys[2];
+    const uniq = [];
+    [fallbackA, fallbackB, fallbackC].forEach((k) => {
+      if(!uniq.includes(k)) uniq.push(k);
+    });
+    for(const k of defaultKeys){
+      if(uniq.length >= 3) break;
+      if(!uniq.includes(k)) uniq.push(k);
+    }
+    const itemA = uniq[0];
+    const itemB = uniq[1];
+    const itemC = uniq[2];
+
+    const rows = [
+      { key: "A", img: itemA, value: stage.symbol_a ?? stage.symbolA ?? 4 },
+      { key: "B", img: itemB, value: stage.symbol_b ?? stage.symbolB ?? 3 },
+      { key: "C", img: itemC, value: stage.symbol_c ?? stage.symbolC ?? 2 },
+    ];
+    rows.forEach((r) => {
+      const row = document.createElement("div");
+      row.className = "symbol-row";
+      const img = makeImg("symbol-item", r.img, "");
+      const txt = document.createElement("span");
+      txt.textContent = "= " + r.value;
+      row.appendChild(img);
+      row.appendChild(txt);
+      wrap.appendChild(row);
+    });
+
+    const card = document.createElement("div");
+    card.className = "symbol-calc-card";
+    const expr = document.createElement("div");
+    expr.className = "symbol-expr";
+    const exprRaw = String(stage.symbol_expression || stage.symbolExpression || "A + B × C");
+    const symbolMap = { A: itemA, B: itemB, C: itemC };
+    exprRaw
+      .split(/(\\bA\\b|\\bB\\b|\\bC\\b)/g)
+      .filter(Boolean)
+      .forEach((part) => {
+        const key = part.trim();
+        if(symbolMap[key]){
+          const img = makeImg("symbol-inline", symbolMap[key], "");
+          expr.appendChild(img);
+        }else{
+          const span = document.createElement("span");
+          span.textContent = part;
+          expr.appendChild(span);
+        }
+      });
+    const inp = document.createElement("input");
+    inp.className = "symbol-answer";
+    inp.type = "number";
+    inp.inputMode = "numeric";
+    inp.autocomplete = "off";
+    const expected = String(stage.answer ?? "");
+    const evaluate = () => {
+      const v = String(inp.value).trim();
+      if(v === "") return;
+      if(v === expected){
+        inp.classList.remove("bad");
+        inp.classList.add("ok");
+        inp.disabled = true;
+        setTimeout(() => markSuccess(stage), 140);
+      }else{
+        inp.classList.remove("ok");
+        inp.classList.add("bad");
+        setTimeout(() => inp.classList.remove("bad"), 220);
+        shake(inp);
+      }
+    };
+    inp.addEventListener("change", evaluate);
+    inp.addEventListener("blur", evaluate);
+    card.appendChild(expr);
+    card.appendChild(inp);
+    wrap.appendChild(card);
+    lane.appendChild(wrap);
+  }
+
+  function renderFindUnknown(stage){
+    const wrap = document.createElement("div");
+    wrap.className = "symbol-wrap";
+
+    const defaultKeys = ["shell_blue", "banana", "stone_blue", "cherry", "mushroom", "pearl_blue"];
+    const fallbackA = stage.unknown_item_a || stage.unknownItemA || defaultKeys[0];
+    const fallbackB = stage.unknown_item_b || stage.unknownItemB || defaultKeys[1];
+    const fallbackC = stage.unknown_item_c || stage.unknownItemC || defaultKeys[2];
+    const uniq = [];
+    [fallbackA, fallbackB, fallbackC].forEach((k) => {
+      if(!uniq.includes(k)) uniq.push(k);
+    });
+    for(const k of defaultKeys){
+      if(uniq.length >= 3) break;
+      if(!uniq.includes(k)) uniq.push(k);
+    }
+    const itemA = uniq[0];
+    const itemB = uniq[1];
+    const itemC = uniq[2];
+
+    const rowA = document.createElement("div");
+    rowA.className = "symbol-row";
+    rowA.appendChild(makeImg("symbol-item", itemA, ""));
+    rowA.appendChild(Object.assign(document.createElement("span"), { textContent: "= " + (stage.unknown_a ?? stage.unknownA ?? 4) }));
+    wrap.appendChild(rowA);
+
+    const rowB = document.createElement("div");
+    rowB.className = "symbol-row";
+    rowB.appendChild(makeImg("symbol-item", itemB, ""));
+    rowB.appendChild(Object.assign(document.createElement("span"), { textContent: "= " + (stage.unknown_b ?? stage.unknownB ?? 6) }));
+    wrap.appendChild(rowB);
+
+    const rowC = document.createElement("div");
+    rowC.className = "symbol-row";
+    rowC.appendChild(makeImg("symbol-item", itemC, ""));
+    rowC.appendChild(Object.assign(document.createElement("span"), { textContent: "= " }));
+    const cInput = document.createElement("input");
+    cInput.className = "symbol-answer";
+    cInput.style.width = "102px";
+    cInput.type = "number";
+    cInput.inputMode = "numeric";
+    cInput.autocomplete = "off";
+    rowC.appendChild(cInput);
+    wrap.appendChild(rowC);
+
+    const card = document.createElement("div");
+    card.className = "symbol-calc-card";
+    const expr = document.createElement("div");
+    expr.className = "symbol-expr";
+    const exprRaw = String(stage.unknown_equation || stage.unknownEquation || "A + B + C = 15");
+    const symbolMap = { A: itemA, B: itemB, C: itemC };
+    exprRaw
+      .split(/(\\bA\\b|\\bB\\b|\\bC\\b)/g)
+      .filter(Boolean)
+      .forEach((part) => {
+        const key = part.trim();
+        if(symbolMap[key]){
+          expr.appendChild(makeImg("symbol-inline", symbolMap[key], ""));
+        }else{
+          const span = document.createElement("span");
+          span.textContent = part;
+          expr.appendChild(span);
+        }
+      });
+    card.appendChild(expr);
+    wrap.appendChild(card);
+
+    const expected = String(stage.answer ?? "");
+    const evaluate = () => {
+      const v = String(cInput.value).trim();
+      if(v === "") return;
+      if(v === expected){
+        cInput.classList.remove("bad");
+        cInput.classList.add("ok");
+        cInput.disabled = true;
+        setTimeout(() => markSuccess(stage), 140);
+      }else{
+        cInput.classList.remove("ok");
+        cInput.classList.add("bad");
+        setTimeout(() => cInput.classList.remove("bad"), 220);
+        shake(cInput);
+      }
+    };
+    cInput.addEventListener("change", evaluate);
+    cInput.addEventListener("blur", evaluate);
+
+    lane.appendChild(wrap);
   }
 
   function renderAnimation(stage){
@@ -2610,7 +3712,7 @@ function buildHtml(
 
     const engType = resolveEngineType(stage.type);
     const engStage = { ...stage, type: engType };
-    const instruction = stage.instruction || stage.question || LESSON.story_hook || "";
+    const instruction = stage.title || stage.question || LESSON.story_hook || "";
     const cleanInstruction = String(instruction).trim() ? instruction : englishStageFallback(engStage);
     if(stage.hide_instruction_label){
       $("instruction").textContent = "(" + (state.stagePracticeDone + 1) + "/" + state.stagePracticeTarget + ")";
@@ -2627,6 +3729,13 @@ function buildHtml(
     setMessage("");
     if(engType === "drag_drop") renderDragDrop(stage);
     else if(engType === "drag_sort") renderDragSort(stage);
+    else if(engType === "drag_group") renderDragGroup(stage);
+    else if(engType === "match_pairs") renderMatchPairs(stage);
+    else if(engType === "balance_scale") renderBalanceScale(stage);
+    else if(engType === "build_number") renderBuildNumber(stage);
+    else if(engType === "timer_challenge") renderTimerChallenge(stage);
+    else if(engType === "symbol_calc") renderSymbolCalc(stage);
+    else if(engType === "find_unknown") renderFindUnknown(stage);
     else if(engType === "input") renderInput(stage);
     else if(engType === "choice") renderChoice(stage);
     else if(engType === "tap_count") renderTapCount(stage);
@@ -2690,7 +3799,9 @@ function buildHtml(
     };
     state.completionArtifact = reward;
     state.earnedArtifacts.push(reward);
-    showEndingStoryScreen();
+    showSuccess("The final challenge is complete!", () => {
+      openShopScreen();
+    }, "AMAZING! Your reward is ready.", "Go to shop");
   }
 
   function showEndingStoryScreen(){
@@ -2837,10 +3948,11 @@ function buildHtml(
     confetti(120);
   }
 
-  function showSuccess(msg, cb, learnText){
+  function showSuccess(msg, cb, learnText, buttonLabel){
     state.successCb = cb;
     $("successMsg").textContent = msg || "Well done!";
     $("successLearn").textContent = learnText || "Great progress today!";
+    $("successNextBtn").textContent = buttonLabel || "Next →";
     $("successScreen").classList.add("on");
     confetti();
   }
@@ -2912,7 +4024,7 @@ function buildHtml(
     $("stageSkipBtn").classList.remove("hidden");
     $("instruction").classList.remove("hidden");
     $("coinsLabel").parentElement.classList.remove("hidden");
-    $("introScreen").classList.remove("hidden");
+    showIntroScreen();
     state.stageIndex = 0;
     state.stagePracticeDone = 0;
   });
@@ -2924,7 +4036,7 @@ function buildHtml(
       renderStage(state.stageIndex);
       return;
     }
-    $("introScreen").classList.remove("hidden");
+    showIntroScreen();
   });
   $("stageSkipBtn").addEventListener("click", () => {
     state.stagePracticeDone = state.stagePracticeTarget;
@@ -2948,10 +4060,61 @@ function buildHtml(
     return lesson.story_hook || "";
   }
 
+  const introState = {
+    text: "",
+    idx: 0,
+    timer: null,
+    speedMs: 18
+  };
+
+  function stopIntroTyping(){
+    if(introState.timer){
+      clearTimeout(introState.timer);
+      introState.timer = null;
+    }
+  }
+
+  function renderIntroTyped(done){
+    const body = introState.text.slice(0, introState.idx);
+    $("introStory").innerHTML = "";
+    $("introStory").append(document.createTextNode(body));
+    if(!done){
+      const cur = document.createElement("span");
+      cur.className = "intro-cur";
+      $("introStory").append(cur);
+    }
+  }
+
+  function typeIntroStep(){
+    if(introState.idx >= introState.text.length){
+      renderIntroTyped(true);
+      $("introStartBtn").classList.add("show");
+      stopIntroTyping();
+      return;
+    }
+    introState.idx += 1;
+    renderIntroTyped(false);
+    introState.timer = setTimeout(typeIntroStep, introState.speedMs);
+  }
+
+  function playIntroTyping(text){
+    stopIntroTyping();
+    introState.text = text || "";
+    introState.idx = 0;
+    $("introStartBtn").classList.remove("show");
+    renderIntroTyped(false);
+    typeIntroStep();
+  }
+
+  function showIntroScreen(){
+    $("introScreen").classList.remove("hidden");
+    playIntroTyping(buildIntroNarrative(LESSON) || "A new mystery is waiting on the island.");
+  }
+
   setupPlayerAvatar();
   $("coinsLabel").textContent = String(state.totalCoins);
   $("introBg").src = backgroundPath("second");
-  $("introStory").textContent = buildIntroNarrative(LESSON) || "A new mystery is waiting on the island.";
+  showIntroScreen();
   </script>
 </body>
 </html>`;
