@@ -1413,14 +1413,17 @@ function buildHtml(
     }
     .shop-wrap{
       position:relative;z-index:1;
-      width:min(1080px,94vw);background:rgba(5,15,30,.78);border:2px solid rgba(244,208,63,.45);
-      border-radius:22px;padding:18px 18px 16px;box-shadow:0 20px 56px rgba(0,0,0,.55)
+      width:min(980px,92vw);max-height:min(86vh,760px);
+      background:rgba(5,15,30,.78);border:2px solid rgba(244,208,63,.45);
+      border-radius:22px;padding:18px 18px 16px;box-shadow:0 20px 56px rgba(0,0,0,.55);
+      display:flex;flex-direction:column;
     }
     .shop-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
     .shop-title{font-family:'Fredoka One',cursive;font-size:34px;color:var(--sand)}
     .shop-coins{font-family:'Fredoka One',cursive;font-size:24px;color:#ffe8b2}
     .shop-grid{
       display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;
+      overflow:auto;max-height:min(52vh,470px);padding-right:6px;
     }
     .shop-item{
       background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.2);border-radius:14px;padding:10px;
@@ -2058,6 +2061,36 @@ function buildHtml(
     if(round.coins != null) out.coins = round.coins;
     if(round.success_message) out.success_message = round.success_message;
     if(round.title) out.title = round.title;
+
+    // Compatibility bridge: many generated lessons use "example" for fill_blank rows.
+    // The input renderer expects inputs: [{ prompt, answer }].
+    if(
+      (resolveEngineType(out.type) === "input") &&
+      !Array.isArray(out.inputs) &&
+      (round.example != null || round.prompt != null || round.answer != null)
+    ){
+      const promptText = round.prompt ?? round.example ?? out.prompt ?? "";
+      out.inputs = [{ prompt: String(promptText), answer: round.answer ?? out.answer ?? "" }];
+    }
+
+    // Compatibility bridge: generated multi_choice often sends "correct_option"
+    // while renderer expects option objects with correct: true.
+    if(
+      resolveEngineType(out.type) === "choice" &&
+      Array.isArray(round.options) &&
+      round.options.length
+    ){
+      const correctId = String(round.correct_option ?? round.correctOption ?? "").trim().toUpperCase();
+      out.options = round.options.map((opt, idx) => {
+        const id = String(opt.id ?? String.fromCharCode(65 + idx)).trim().toUpperCase();
+        const isCorrect = (opt.correct === true) || (String(opt.correct).toLowerCase() === "true") || (correctId && id === correctId);
+        return { ...opt, id, correct: isCorrect };
+      });
+    }
+
+    if(resolveEngineType(out.type) === "choice" && !out.question){
+      out.question = round.question ?? round.prompt ?? round.instruction ?? out.question ?? "";
+    }
     return out;
   }
 

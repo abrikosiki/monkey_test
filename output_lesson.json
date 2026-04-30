@@ -1,344 +1,254 @@
 {
   "meta": {
-    "lesson_id": "MONKEY-8801-L1",
-    "student_name": "Cleo",
-    "student_code": "MONKEY-8801",
-    "age": 8,
-    "difficulty": "medium",
+    "lesson_id": "division_hanaydo_l2",
+    "student_name": "Pirate",
+    "student_code": "MONKEY-4821",
+    "student_level": 2,
+    "character_key": "pirate_green",
+    "character_image": "assets/characters/pirate_green.webp",
+    "coins_balance": 165,
     "topic_key": "number_division",
-    "lesson_number": 1,
-    "total_lessons": 5,
+    "topic_label": "Division",
+    "difficulty": "medium",
     "island_number": 4,
-    "character_key": "fairy_purple",
-    "language": "en"
+    "age_range": "7-8",
+    "created_at": "2025-01-10T00:00:00Z"
   },
   "story": {
-    "island_name": "Hanaydo — Cherry Blossom Island",
-    "villain": "The Samurai Monkey",
-    "artifact_name": "Blade of Light",
+    "island_name": "Ханайдо — Остров Вишни",
+    "villain": "Обезьяна-Самурай",
+    "artifact_name": "Клинок Света",
     "artifact_emoji": "⚔️",
-    "act1": "Hanaydo blooms with cherry trees and ancient temples where cherry petals dance in the wind. Every spring, the island divides its cherry harvest equally among all the monkey villages.",
-    "act2": "But the sneaky Samurai Monkey has stolen the division symbol (÷) and hidden it in his dojo! Now no one can share anything fairly — all the cherries are stuck in giant piles and the villages are confused!",
-    "act3": "Cleo, only you can master the art of equal groups and bring back the ÷ symbol before cherry season ends!",
-    "goal": "Learn how division means splitting things into equal groups"
+    "artifact_power": "splits any problem into perfect equal parts with one swift strike",
+    "greeting": "Pirate, the cherry blossoms are falling — but something's wrong on Hanaydo Island!",
+    "act1": "You step onto soft pink petals covering ancient stone paths. Cherry trees tower above you, their branches heavy with fruit. In the distance, a golden temple glows between the trees. The air smells sweet and warm.",
+    "act2": "The Monkey-Samurai has stolen all the cherry baskets and locked them inside the temple! He's trying to divide them into his army of monkey warriors — but he keeps getting the math wrong. Now cherries are rolling everywhere, and the temple doors won't open until the baskets are shared equally.",
+    "act3": "Only you can solve the division puzzles and open the temple, Pirate. Inside waits the Blade of Light — a legendary sword that can split any problem into perfect equal parts with one swift strike.",
+    "goal": "Division is your superpower for sharing things fairly — no one gets left out, and every group gets exactly the same amount."
   },
   "stages": [
     {
       "id": 1,
       "type": "drag_drop",
-      "title": "Cherry Garden Welcome",
-      "background": "hanaydo_garden",
+      "title": "Share the Cherries",
+      "background": "cherry_temple_entrance",
       "coins": 15,
-      "mechanic_reason": "Age 8 medium: drag_drop on stage 1 provides gentle visual introduction to equal groups concept without pressure",
-      "success_message": "Perfect! You shared the cherries equally between the bowls!",
+      "mechanic_reason": "drag_drop at age 7-8 medium difficulty — visual equal sharing builds concrete division understanding before abstract symbols",
+      "success_message": "Perfect sharing, Pirate! Every basket has the same amount!",
       "rounds": [
         {
-          "instruction": "The temple has 6 cherries. Put them equally into 2 bowls (3 in each).",
-          "drop_zones": [
-            {
-              "id": "bowl1",
-              "image_key": "bowl_wood"
-            },
-            {
-              "id": "bowl2",
-              "image_key": "bowl_wood"
-            }
-          ],
+          "instruction": "Share the cherries equally between the two baskets",
           "draggables": [
             {
-              "id": "c1",
+              "id": "d1",
               "image_key": "cherry"
             },
             {
-              "id": "c2",
+              "id": "d2",
               "image_key": "cherry"
             },
             {
-              "id": "c3",
+              "id": "d3",
               "image_key": "cherry"
             },
             {
-              "id": "c4",
+              "id": "d4",
               "image_key": "cherry"
             },
             {
-              "id": "c5",
+              "id": "d5",
               "image_key": "cherry"
             },
             {
-              "id": "c6",
+              "id": "d6",
               "image_key": "cherry"
+            }
+          ],
+          "drop_zones": [
+            {
+              "id": "zone1",
+              "image_key": "basket_woven"
+            },
+            {
+              "id": "zone2",
+              "image_key": "basket_woven"
             }
           ],
           "required_per_zone": {
-            "bowl1": 3,
-            "bowl2": 3
+            "zone1": 3,
+            "zone2": 3
           }
         },
         {
-          "instruction": "Now we have 8 peaches. Share them equally into 2 baskets (4 in each).",
-          "drop_zones": [
-            {
-              "id": "basket1",
-              "image_key": "basket_bamboo"
-            },
-            {
-              "id": "basket2",
-              "image_key": "basket_bamboo"
-            }
-          ],
+          "instruction": "Share the rice balls equally between the two bowls",
           "draggables": [
             {
-              "id": "p1",
-              "image_key": "peach"
+              "id": "d1",
+              "image_key": "onigiri"
             },
             {
-              "id": "p2",
-              "image_key": "peach"
+              "id": "d2",
+              "image_key": "onigiri"
             },
             {
-              "id": "p3",
-              "image_key": "peach"
+              "id": "d3",
+              "image_key": "onigiri"
             },
             {
-              "id": "p4",
-              "image_key": "peach"
+              "id": "d4",
+              "image_key": "onigiri"
             },
             {
-              "id": "p5",
-              "image_key": "peach"
+              "id": "d5",
+              "image_key": "onigiri"
             },
             {
-              "id": "p6",
-              "image_key": "peach"
+              "id": "d6",
+              "image_key": "onigiri"
+            }
+          ],
+          "drop_zones": [
+            {
+              "id": "zone1",
+              "image_key": "bowl_wooden"
             },
             {
-              "id": "p7",
-              "image_key": "peach"
-            },
-            {
-              "id": "p8",
-              "image_key": "peach"
+              "id": "zone2",
+              "image_key": "bowl_wooden"
             }
           ],
           "required_per_zone": {
-            "basket1": 4,
-            "basket2": 4
+            "zone1": 3,
+            "zone2": 3
           }
         },
         {
-          "instruction": "10 plums need to go into 2 boxes. How many in each box?",
-          "drop_zones": [
-            {
-              "id": "box1",
-              "image_key": "box_red"
-            },
-            {
-              "id": "box2",
-              "image_key": "box_red"
-            }
-          ],
+          "instruction": "Share the lanterns equally between the two gates",
           "draggables": [
             {
-              "id": "pl1",
-              "image_key": "plum"
+              "id": "d1",
+              "image_key": "lantern"
             },
             {
-              "id": "pl2",
-              "image_key": "plum"
+              "id": "d2",
+              "image_key": "lantern"
             },
             {
-              "id": "pl3",
-              "image_key": "plum"
+              "id": "d3",
+              "image_key": "lantern"
             },
             {
-              "id": "pl4",
-              "image_key": "plum"
+              "id": "d4",
+              "image_key": "lantern"
             },
             {
-              "id": "pl5",
-              "image_key": "plum"
+              "id": "d5",
+              "image_key": "lantern"
             },
             {
-              "id": "pl6",
-              "image_key": "plum"
+              "id": "d6",
+              "image_key": "lantern"
+            }
+          ],
+          "drop_zones": [
+            {
+              "id": "zone1",
+              "image_key": "torii_gate"
             },
             {
-              "id": "pl7",
-              "image_key": "plum"
-            },
-            {
-              "id": "pl8",
-              "image_key": "plum"
-            },
-            {
-              "id": "pl9",
-              "image_key": "plum"
-            },
-            {
-              "id": "pl10",
-              "image_key": "plum"
+              "id": "zone2",
+              "image_key": "torii_gate"
             }
           ],
           "required_per_zone": {
-            "box1": 5,
-            "box2": 5
+            "zone1": 3,
+            "zone2": 3
           }
         },
         {
-          "instruction": "The monks need 12 rice cakes shared equally among 3 plates. Divide them!",
-          "drop_zones": [
-            {
-              "id": "plate1",
-              "image_key": "plate_ceramic"
-            },
-            {
-              "id": "plate2",
-              "image_key": "plate_ceramic"
-            },
-            {
-              "id": "plate3",
-              "image_key": "plate_ceramic"
-            }
-          ],
+          "instruction": "Share the lotus flowers equally between the two ponds",
           "draggables": [
             {
-              "id": "rc1",
-              "image_key": "rice_cake"
+              "id": "d1",
+              "image_key": "lotus"
             },
             {
-              "id": "rc2",
-              "image_key": "rice_cake"
+              "id": "d2",
+              "image_key": "lotus"
             },
             {
-              "id": "rc3",
-              "image_key": "rice_cake"
+              "id": "d3",
+              "image_key": "lotus"
             },
             {
-              "id": "rc4",
-              "image_key": "rice_cake"
+              "id": "d4",
+              "image_key": "lotus"
             },
             {
-              "id": "rc5",
-              "image_key": "rice_cake"
+              "id": "d5",
+              "image_key": "lotus"
             },
             {
-              "id": "rc6",
-              "image_key": "rice_cake"
+              "id": "d6",
+              "image_key": "lotus"
+            }
+          ],
+          "drop_zones": [
+            {
+              "id": "zone1",
+              "image_key": "pond"
             },
             {
-              "id": "rc7",
-              "image_key": "rice_cake"
-            },
-            {
-              "id": "rc8",
-              "image_key": "rice_cake"
-            },
-            {
-              "id": "rc9",
-              "image_key": "rice_cake"
-            },
-            {
-              "id": "rc10",
-              "image_key": "rice_cake"
-            },
-            {
-              "id": "rc11",
-              "image_key": "rice_cake"
-            },
-            {
-              "id": "rc12",
-              "image_key": "rice_cake"
+              "id": "zone2",
+              "image_key": "pond"
             }
           ],
           "required_per_zone": {
-            "plate1": 4,
-            "plate2": 4,
-            "plate3": 4
+            "zone1": 3,
+            "zone2": 3
           }
         },
         {
-          "instruction": "Final garden test: 15 apples into 3 temple storage jars. Go!",
-          "drop_zones": [
-            {
-              "id": "jar1",
-              "image_key": "jar_clay"
-            },
-            {
-              "id": "jar2",
-              "image_key": "jar_clay"
-            },
-            {
-              "id": "jar3",
-              "image_key": "jar_clay"
-            }
-          ],
+          "instruction": "Share the swords equally between the two racks",
           "draggables": [
             {
-              "id": "a1",
-              "image_key": "apple"
+              "id": "d1",
+              "image_key": "katana"
             },
             {
-              "id": "a2",
-              "image_key": "apple"
+              "id": "d2",
+              "image_key": "katana"
             },
             {
-              "id": "a3",
-              "image_key": "apple"
+              "id": "d3",
+              "image_key": "katana"
             },
             {
-              "id": "a4",
-              "image_key": "apple"
+              "id": "d4",
+              "image_key": "katana"
             },
             {
-              "id": "a5",
-              "image_key": "apple"
+              "id": "d5",
+              "image_key": "katana"
             },
             {
-              "id": "a6",
-              "image_key": "apple"
+              "id": "d6",
+              "image_key": "katana"
+            }
+          ],
+          "drop_zones": [
+            {
+              "id": "zone1",
+              "image_key": "sword_rack"
             },
             {
-              "id": "a7",
-              "image_key": "apple"
-            },
-            {
-              "id": "a8",
-              "image_key": "apple"
-            },
-            {
-              "id": "a9",
-              "image_key": "apple"
-            },
-            {
-              "id": "a10",
-              "image_key": "apple"
-            },
-            {
-              "id": "a11",
-              "image_key": "apple"
-            },
-            {
-              "id": "a12",
-              "image_key": "apple"
-            },
-            {
-              "id": "a13",
-              "image_key": "apple"
-            },
-            {
-              "id": "a14",
-              "image_key": "apple"
-            },
-            {
-              "id": "a15",
-              "image_key": "apple"
+              "id": "zone2",
+              "image_key": "sword_rack"
             }
           ],
           "required_per_zone": {
-            "jar1": 5,
-            "jar2": 5,
-            "jar3": 5
+            "zone1": 3,
+            "zone2": 3
           }
         }
       ],
@@ -346,112 +256,67 @@
     },
     {
       "id": 2,
-      "type": "multi_choice",
-      "title": "The Division Symbol",
-      "background": "temple_interior",
+      "type": "symbol_calc",
+      "title": "Decode the Samurai Scrolls",
+      "background": "cave_entrance",
       "coins": 20,
-      "mechanic_reason": "Age 8 medium: multi_choice introduces the ÷ symbol explicitly and connects it to equal sharing from stage 1",
-      "success_message": "Yes! The ÷ symbol means 'divide into equal groups'!",
+      "mechanic_reason": "symbol_calc at age 7-8 medium introduces multi-step thinking (multiplication then addition) through visual symbols before pure numbers",
+      "success_message": "You cracked the code, Pirate! The scrolls reveal the temple's secrets!",
       "rounds": [
         {
-          "instruction": "This is the division symbol: ÷. What does 8 ÷ 2 mean?",
-          "options": [
-            {
-              "id": "a",
-              "text": "Take 2 away from 8",
-              "correct": false
-            },
-            {
-              "id": "b",
-              "text": "Split 8 into 2 equal groups",
-              "correct": true
-            },
-            {
-              "id": "c",
-              "text": "Add 8 and 2 together",
-              "correct": false
-            }
-          ]
+          "instruction": "Calculate the value of the symbols",
+          "symbol_a_value": 4,
+          "symbol_b_value": 3,
+          "symbol_c_value": 2,
+          "symbol_a_image": "cherry",
+          "symbol_b_image": "lantern",
+          "symbol_c_image": "lotus",
+          "expression": "A + B × C",
+          "answer": "10"
         },
         {
-          "instruction": "If we see 10 ÷ 5, what are we doing?",
-          "options": [
-            {
-              "id": "a",
-              "text": "Making 5 groups with equal items",
-              "correct": true
-            },
-            {
-              "id": "b",
-              "text": "Counting to 10 five times",
-              "correct": false
-            },
-            {
-              "id": "c",
-              "text": "Subtracting 5 from 10",
-              "correct": false
-            }
-          ]
+          "instruction": "Calculate the value of the symbols",
+          "symbol_a_value": 5,
+          "symbol_b_value": 2,
+          "symbol_c_value": 3,
+          "symbol_a_image": "onigiri",
+          "symbol_b_image": "katana",
+          "symbol_c_image": "cherry",
+          "expression": "A + B × C",
+          "answer": "11"
         },
         {
-          "instruction": "12 ÷ 3 = ? means we put 12 things into how many groups?",
-          "options": [
-            {
-              "id": "a",
-              "text": "12 groups",
-              "correct": false
-            },
-            {
-              "id": "b",
-              "text": "3 groups",
-              "correct": true
-            },
-            {
-              "id": "c",
-              "text": "9 groups",
-              "correct": false
-            }
-          ]
+          "instruction": "Calculate the value of the symbols",
+          "symbol_a_value": 6,
+          "symbol_b_value": 4,
+          "symbol_c_value": 2,
+          "symbol_a_image": "lotus",
+          "symbol_b_image": "lantern",
+          "symbol_c_image": "onigiri",
+          "expression": "A + B × C",
+          "answer": "14"
         },
         {
-          "instruction": "The Samurai Monkey says 6 ÷ 2 = 4 because 6 - 2 = 4. Is he right?",
-          "options": [
-            {
-              "id": "a",
-              "text": "Yes, division is the same as subtraction",
-              "correct": false
-            },
-            {
-              "id": "b",
-              "text": "No! 6 ÷ 2 = 3 (3 in each group)",
-              "correct": true
-            },
-            {
-              "id": "c",
-              "text": "Yes, 6 ÷ 2 = 4",
-              "correct": false
-            }
-          ]
+          "instruction": "Calculate the value of the symbols",
+          "symbol_a_value": 3,
+          "symbol_b_value": 5,
+          "symbol_c_value": 2,
+          "symbol_a_image": "cherry",
+          "symbol_b_image": "katana",
+          "symbol_c_image": "lotus",
+          "expression": "A + B × C",
+          "answer": "13"
         },
         {
-          "instruction": "Which picture shows 15 ÷ 3?",
-          "options": [
-            {
-              "id": "a",
-              "text": "15 cherries in 5 piles of 3",
-              "correct": false
-            },
-            {
-              "id": "b",
-              "text": "15 cherries in 3 piles of 5",
-              "correct": true
-            },
-            {
-              "id": "c",
-              "text": "12 cherries in 3 piles of 4",
-              "correct": false
-            }
-          ]
+          "instruction": "Calculate the value of the symbols",
+          "symbol_a_value": 7,
+          "symbol_b_value": 3,
+          "symbol_c_value": 2,
+          "symbol_a_image": "lantern",
+          "symbol_b_image": "onigiri",
+          "symbol_c_image": "cherry",
+          "expression": "A + B × C",
+          "answer": "13"
         }
       ],
       "round_bonus_coins": 2
@@ -459,891 +324,260 @@
     {
       "id": 3,
       "type": "fill_blank",
-      "title": "Dojo Practice",
-      "background": "dojo_training",
+      "title": "Unlock the Temple Doors",
+      "background": "cave_deep",
       "coins": 25,
-      "mechanic_reason": "Age 8 medium: fill_blank requires mental calculation with small numbers to build division fluency without visual aids",
-      "success_message": "Amazing! You've mastered basic division equations!",
+      "mechanic_reason": "fill_blank at age 7-8 medium — direct division practice with small numbers builds fluency and confidence",
+      "success_message": "The doors swing open! You've mastered equal sharing, Pirate!",
       "rounds": [
         {
-          "instruction": "The dojo has 8 training swords to share among 2 racks. How many on each rack? 8 ÷ 2 = __",
-          "question": "8 ÷ 2 = __",
-          "answer": "4",
-          "input_type": "number"
+          "instruction": "Solve the division",
+          "example": "12 ÷ 3 = ?",
+          "answer": "4"
         },
         {
-          "instruction": "10 bamboo sticks divided equally into 5 bundles. How many per bundle? 10 ÷ 5 = __",
-          "question": "10 ÷ 5 = __",
-          "answer": "2",
-          "input_type": "number"
+          "instruction": "Solve the division",
+          "example": "15 ÷ 3 = ?",
+          "answer": "5"
         },
         {
-          "instruction": "12 paper lanterns hung in 3 rows. How many per row? 12 ÷ 3 = __",
-          "question": "12 ÷ 3 = __",
-          "answer": "4",
-          "input_type": "number"
+          "instruction": "Solve the division",
+          "example": "18 ÷ 3 = ?",
+          "answer": "6"
         },
         {
-          "instruction": "The Samurai Monkey has 20 throwing stars in 4 pouches. Stars per pouch? 20 ÷ 4 = __",
-          "question": "20 ÷ 4 = __",
-          "answer": "5",
-          "input_type": "number"
+          "instruction": "Solve the division",
+          "example": "16 ÷ 4 = ?",
+          "answer": "4"
         },
         {
-          "instruction": "Final dojo test! 16 meditation cushions arranged in 4 circles. Cushions per circle? 16 ÷ 4 = __",
-          "question": "16 ÷ 4 = __",
-          "answer": "4",
-          "input_type": "number"
+          "instruction": "Solve the division",
+          "example": "20 ÷ 4 = ?",
+          "answer": "5"
         }
       ],
-      "round_bonus_coins": 3
+      "round_bonus_coins": 2
     },
     {
       "id": 4,
-      "type": "drag_sort",
-      "title": "Cherry Blossom Sorting",
-      "background": "blossom_path",
-      "coins": 25,
-      "mechanic_reason": "Age 8 medium: drag_sort adds complexity by requiring children to order division problems by answer size, building number sense",
-      "success_message": "Perfect sorting! You understand how division results change!",
+      "type": "fill_blank",
+      "title": "Navigate the Inner Halls",
+      "background": "jungle_path",
+      "coins": 30,
+      "mechanic_reason": "fill_blank at age 7-8 medium — repeating division mechanic with slightly harder numbers deepens pattern recognition",
+      "success_message": "You're getting closer to the Monkey-Samurai's treasure room!",
       "rounds": [
         {
-          "instruction": "Sort these from SMALLEST answer to BIGGEST answer:",
-          "items": [
-            {
-              "id": "eq1",
-              "text": "6 ÷ 3",
-              "value": 2
-            },
-            {
-              "id": "eq2",
-              "text": "8 ÷ 2",
-              "value": 4
-            },
-            {
-              "id": "eq3",
-              "text": "15 ÷ 5",
-              "value": 3
-            }
-          ],
-          "correct_order": [
-            "eq1",
-            "eq3",
-            "eq2"
-          ]
+          "instruction": "Solve the division",
+          "example": "24 ÷ 4 = ?",
+          "answer": "6"
         },
         {
-          "instruction": "Order these division results from smallest to largest:",
-          "items": [
-            {
-              "id": "eq1",
-              "text": "12 ÷ 4",
-              "value": 3
-            },
-            {
-              "id": "eq2",
-              "text": "10 ÷ 5",
-              "value": 2
-            },
-            {
-              "id": "eq3",
-              "text": "20 ÷ 4",
-              "value": 5
-            }
-          ],
-          "correct_order": [
-            "eq2",
-            "eq1",
-            "eq3"
-          ]
+          "instruction": "Solve the division",
+          "example": "21 ÷ 3 = ?",
+          "answer": "7"
         },
         {
-          "instruction": "Arrange from smallest answer to biggest:",
-          "items": [
-            {
-              "id": "eq1",
-              "text": "9 ÷ 3",
-              "value": 3
-            },
-            {
-              "id": "eq2",
-              "text": "16 ÷ 4",
-              "value": 4
-            },
-            {
-              "id": "eq3",
-              "text": "4 ÷ 2",
-              "value": 2
-            },
-            {
-              "id": "eq4",
-              "text": "25 ÷ 5",
-              "value": 5
-            }
-          ],
-          "correct_order": [
-            "eq3",
-            "eq1",
-            "eq2",
-            "eq4"
-          ]
+          "instruction": "Solve the division",
+          "example": "28 ÷ 4 = ?",
+          "answer": "7"
         },
         {
-          "instruction": "Put these in order from smallest result to largest:",
-          "items": [
-            {
-              "id": "eq1",
-              "text": "18 ÷ 3",
-              "value": 6
-            },
-            {
-              "id": "eq2",
-              "text": "8 ÷ 4",
-              "value": 2
-            },
-            {
-              "id": "eq3",
-              "text": "12 ÷ 3",
-              "value": 4
-            },
-            {
-              "id": "eq4",
-              "text": "15 ÷ 5",
-              "value": 3
-            }
-          ],
-          "correct_order": [
-            "eq2",
-            "eq4",
-            "eq3",
-            "eq1"
-          ]
+          "instruction": "Solve the division",
+          "example": "27 ÷ 3 = ?",
+          "answer": "9"
         },
         {
-          "instruction": "Final challenge! Sort these five problems from smallest to biggest answer:",
-          "items": [
-            {
-              "id": "eq1",
-              "text": "10 ÷ 2",
-              "value": 5
-            },
-            {
-              "id": "eq2",
-              "text": "6 ÷ 2",
-              "value": 3
-            },
-            {
-              "id": "eq3",
-              "text": "8 ÷ 4",
-              "value": 2
-            },
-            {
-              "id": "eq4",
-              "text": "16 ÷ 4",
-              "value": 4
-            },
-            {
-              "id": "eq5",
-              "text": "18 ÷ 3",
-              "value": 6
-            }
-          ],
-          "correct_order": [
-            "eq3",
-            "eq2",
-            "eq4",
-            "eq1",
-            "eq5"
-          ]
+          "instruction": "Solve the division",
+          "example": "32 ÷ 4 = ?",
+          "answer": "8"
         }
       ],
-      "round_bonus_coins": 3
+      "round_bonus_coins": 2
     },
     {
       "id": 5,
-      "type": "match_pairs",
-      "title": "Temple Memory Match",
-      "background": "temple_courtyard",
-      "coins": 30,
-      "mechanic_reason": "Age 8 medium: match_pairs reinforces division facts by connecting problems to answers, building automaticity through memory matching",
-      "success_message": "Incredible! You matched all the division pairs perfectly!",
+      "type": "fill_blank",
+      "title": "Face the Samurai's Final Test",
+      "background": "jungle_temple",
+      "coins": 35,
+      "mechanic_reason": "fill_blank at age 7-8 medium — third round of division reinforces mastery and builds automaticity before finale",
+      "success_message": "The Monkey-Samurai bows in defeat! You've proven your division mastery!",
       "rounds": [
         {
-          "instruction": "Match each division problem to its answer:",
-          "pairs": [
-            {
-              "left": "6 ÷ 2",
-              "right": "3"
-            },
-            {
-              "left": "10 ÷ 5",
-              "right": "2"
-            },
-            {
-              "left": "12 ÷ 3",
-              "right": "4"
-            }
-          ]
+          "instruction": "Solve the division",
+          "example": "36 ÷ 4 = ?",
+          "answer": "9"
         },
         {
-          "instruction": "Connect the problems to the correct results:",
-          "pairs": [
-            {
-              "left": "8 ÷ 2",
-              "right": "4"
-            },
-            {
-              "left": "15 ÷ 3",
-              "right": "5"
-            },
-            {
-              "left": "14 ÷ 2",
-              "right": "7"
-            },
-            {
-              "left": "9 ÷ 3",
-              "right": "3"
-            }
-          ]
+          "instruction": "Solve the division",
+          "example": "30 ÷ 5 = ?",
+          "answer": "6"
         },
         {
-          "instruction": "Match these harder division facts:",
-          "pairs": [
-            {
-              "left": "20 ÷ 4",
-              "right": "5"
-            },
-            {
-              "left": "16 ÷ 4",
-              "right": "4"
-            },
-            {
-              "left": "18 ÷ 3",
-              "right": "6"
-            },
-            {
-              "left": "12 ÷ 4",
-              "right": "3"
-            }
-          ]
+          "instruction": "Solve the division",
+          "example": "35 ÷ 5 = ?",
+          "answer": "7"
         },
         {
-          "instruction": "The Samurai Monkey mixed these up! Match them correctly:",
-          "pairs": [
-            {
-              "left": "25 ÷ 5",
-              "right": "5"
-            },
-            {
-              "left": "10 ÷ 2",
-              "right": "5"
-            },
-            {
-              "left": "15 ÷ 5",
-              "right": "3"
-            },
-            {
-              "left": "12 ÷ 2",
-              "right": "6"
-            }
-          ]
+          "instruction": "Solve the division",
+          "example": "40 ÷ 5 = ?",
+          "answer": "8"
         },
         {
-          "instruction": "Final memory test! Match all five pairs:",
-          "pairs": [
-            {
-              "left": "8 ÷ 4",
-              "right": "2"
-            },
-            {
-              "left": "20 ÷ 5",
-              "right": "4"
-            },
-            {
-              "left": "18 ÷ 2",
-              "right": "9"
-            },
-            {
-              "left": "21 ÷ 3",
-              "right": "7"
-            },
-            {
-              "left": "16 ÷ 2",
-              "right": "8"
-            }
-          ]
+          "instruction": "Solve the division",
+          "example": "45 ÷ 5 = ?",
+          "answer": "9"
         }
       ],
-      "round_bonus_coins": 3
+      "round_bonus_coins": 2
     },
     {
       "id": 6,
-      "type": "drag_drop",
-      "title": "Defeat the Samurai Monkey!",
-      "background": "samurai_throne",
+      "type": "multi_choice",
+      "title": "Claim the Blade of Light",
+      "background": "cherry_throne_room",
       "coins": 50,
-      "mechanic_reason": "Age 8 medium: finale drag_drop creates climactic challenge with multiple groups and larger numbers, synthesizing all division concepts learned",
-      "success_message": "AMAZING! You've defeated the Samurai Monkey and recovered the ÷ symbol! The Blade of Light is yours, Cleo! Cherry season is saved!",
+      "mechanic_reason": "multi_choice at age 7-8 medium — finale uses quick recognition to celebrate mastery and test understanding without pressure",
+      "success_message": "AMAZING! You've won the Blade of Light, Pirate!",
       "rounds": [
         {
-          "instruction": "The Samurai Monkey's first defense: 12 ninja stars into 3 target boards!",
-          "drop_zones": [
+          "instruction": "Which answer solves 12 ÷ 3?",
+          "options": [
             {
-              "id": "target1",
-              "image_key": "target_wood"
+              "id": "A",
+              "label": "3"
             },
             {
-              "id": "target2",
-              "image_key": "target_wood"
+              "id": "B",
+              "label": "4"
             },
             {
-              "id": "target3",
-              "image_key": "target_wood"
+              "id": "C",
+              "label": "5"
             }
           ],
-          "draggables": [
-            {
-              "id": "star1",
-              "image_key": "shuriken"
-            },
-            {
-              "id": "star2",
-              "image_key": "shuriken"
-            },
-            {
-              "id": "star3",
-              "image_key": "shuriken"
-            },
-            {
-              "id": "star4",
-              "image_key": "shuriken"
-            },
-            {
-              "id": "star5",
-              "image_key": "shuriken"
-            },
-            {
-              "id": "star6",
-              "image_key": "shuriken"
-            },
-            {
-              "id": "star7",
-              "image_key": "shuriken"
-            },
-            {
-              "id": "star8",
-              "image_key": "shuriken"
-            },
-            {
-              "id": "star9",
-              "image_key": "shuriken"
-            },
-            {
-              "id": "star10",
-              "image_key": "shuriken"
-            },
-            {
-              "id": "star11",
-              "image_key": "shuriken"
-            },
-            {
-              "id": "star12",
-              "image_key": "shuriken"
-            }
-          ],
-          "required_per_zone": {
-            "target1": 4,
-            "target2": 4,
-            "target3": 4
-          }
+          "correct_option": "B"
         },
         {
-          "instruction": "Second wave! 16 bamboo arrows into 4 quivers!",
-          "drop_zones": [
+          "instruction": "Which answer solves 20 ÷ 4?",
+          "options": [
             {
-              "id": "quiver1",
-              "image_key": "quiver"
+              "id": "A",
+              "label": "4"
             },
             {
-              "id": "quiver2",
-              "image_key": "quiver"
+              "id": "B",
+              "label": "5"
             },
             {
-              "id": "quiver3",
-              "image_key": "quiver"
-            },
-            {
-              "id": "quiver4",
-              "image_key": "quiver"
+              "id": "C",
+              "label": "6"
             }
           ],
-          "draggables": [
-            {
-              "id": "arr1",
-              "image_key": "arrow"
-            },
-            {
-              "id": "arr2",
-              "image_key": "arrow"
-            },
-            {
-              "id": "arr3",
-              "image_key": "arrow"
-            },
-            {
-              "id": "arr4",
-              "image_key": "arrow"
-            },
-            {
-              "id": "arr5",
-              "image_key": "arrow"
-            },
-            {
-              "id": "arr6",
-              "image_key": "arrow"
-            },
-            {
-              "id": "arr7",
-              "image_key": "arrow"
-            },
-            {
-              "id": "arr8",
-              "image_key": "arrow"
-            },
-            {
-              "id": "arr9",
-              "image_key": "arrow"
-            },
-            {
-              "id": "arr10",
-              "image_key": "arrow"
-            },
-            {
-              "id": "arr11",
-              "image_key": "arrow"
-            },
-            {
-              "id": "arr12",
-              "image_key": "arrow"
-            },
-            {
-              "id": "arr13",
-              "image_key": "arrow"
-            },
-            {
-              "id": "arr14",
-              "image_key": "arrow"
-            },
-            {
-              "id": "arr15",
-              "image_key": "arrow"
-            },
-            {
-              "id": "arr16",
-              "image_key": "arrow"
-            }
-          ],
-          "required_per_zone": {
-            "quiver1": 4,
-            "quiver2": 4,
-            "quiver3": 4,
-            "quiver4": 4
-          }
+          "correct_option": "B"
         },
         {
-          "instruction": "Third challenge! 20 training stones into 5 meditation circles!",
-          "drop_zones": [
+          "instruction": "Which answer solves 18 ÷ 3?",
+          "options": [
             {
-              "id": "circle1",
-              "image_key": "stone_circle"
+              "id": "A",
+              "label": "5"
             },
             {
-              "id": "circle2",
-              "image_key": "stone_circle"
+              "id": "B",
+              "label": "6"
             },
             {
-              "id": "circle3",
-              "image_key": "stone_circle"
-            },
-            {
-              "id": "circle4",
-              "image_key": "stone_circle"
-            },
-            {
-              "id": "circle5",
-              "image_key": "stone_circle"
+              "id": "C",
+              "label": "7"
             }
           ],
-          "draggables": [
-            {
-              "id": "stone1",
-              "image_key": "stone_zen"
-            },
-            {
-              "id": "stone2",
-              "image_key": "stone_zen"
-            },
-            {
-              "id": "stone3",
-              "image_key": "stone_zen"
-            },
-            {
-              "id": "stone4",
-              "image_key": "stone_zen"
-            },
-            {
-              "id": "stone5",
-              "image_key": "stone_zen"
-            },
-            {
-              "id": "stone6",
-              "image_key": "stone_zen"
-            },
-            {
-              "id": "stone7",
-              "image_key": "stone_zen"
-            },
-            {
-              "id": "stone8",
-              "image_key": "stone_zen"
-            },
-            {
-              "id": "stone9",
-              "image_key": "stone_zen"
-            },
-            {
-              "id": "stone10",
-              "image_key": "stone_zen"
-            },
-            {
-              "id": "stone11",
-              "image_key": "stone_zen"
-            },
-            {
-              "id": "stone12",
-              "image_key": "stone_zen"
-            },
-            {
-              "id": "stone13",
-              "image_key": "stone_zen"
-            },
-            {
-              "id": "stone14",
-              "image_key": "stone_zen"
-            },
-            {
-              "id": "stone15",
-              "image_key": "stone_zen"
-            },
-            {
-              "id": "stone16",
-              "image_key": "stone_zen"
-            },
-            {
-              "id": "stone17",
-              "image_key": "stone_zen"
-            },
-            {
-              "id": "stone18",
-              "image_key": "stone_zen"
-            },
-            {
-              "id": "stone19",
-              "image_key": "stone_zen"
-            },
-            {
-              "id": "stone20",
-              "image_key": "stone_zen"
-            }
-          ],
-          "required_per_zone": {
-            "circle1": 4,
-            "circle2": 4,
-            "circle3": 4,
-            "circle4": 4,
-            "circle5": 4
-          }
+          "correct_option": "B"
         },
         {
-          "instruction": "He's getting tired! 18 ceremonial bells into 3 temple altars!",
-          "drop_zones": [
+          "instruction": "Which answer solves 24 ÷ 4?",
+          "options": [
             {
-              "id": "altar1",
-              "image_key": "altar_stone"
+              "id": "A",
+              "label": "5"
             },
             {
-              "id": "altar2",
-              "image_key": "altar_stone"
+              "id": "B",
+              "label": "6"
             },
             {
-              "id": "altar3",
-              "image_key": "altar_stone"
+              "id": "C",
+              "label": "7"
             }
           ],
-          "draggables": [
-            {
-              "id": "bell1",
-              "image_key": "bell_gold"
-            },
-            {
-              "id": "bell2",
-              "image_key": "bell_gold"
-            },
-            {
-              "id": "bell3",
-              "image_key": "bell_gold"
-            },
-            {
-              "id": "bell4",
-              "image_key": "bell_gold"
-            },
-            {
-              "id": "bell5",
-              "image_key": "bell_gold"
-            },
-            {
-              "id": "bell6",
-              "image_key": "bell_gold"
-            },
-            {
-              "id": "bell7",
-              "image_key": "bell_gold"
-            },
-            {
-              "id": "bell8",
-              "image_key": "bell_gold"
-            },
-            {
-              "id": "bell9",
-              "image_key": "bell_gold"
-            },
-            {
-              "id": "bell10",
-              "image_key": "bell_gold"
-            },
-            {
-              "id": "bell11",
-              "image_key": "bell_gold"
-            },
-            {
-              "id": "bell12",
-              "image_key": "bell_gold"
-            },
-            {
-              "id": "bell13",
-              "image_key": "bell_gold"
-            },
-            {
-              "id": "bell14",
-              "image_key": "bell_gold"
-            },
-            {
-              "id": "bell15",
-              "image_key": "bell_gold"
-            },
-            {
-              "id": "bell16",
-              "image_key": "bell_gold"
-            },
-            {
-              "id": "bell17",
-              "image_key": "bell_gold"
-            },
-            {
-              "id": "bell18",
-              "image_key": "bell_gold"
-            }
-          ],
-          "required_per_zone": {
-            "altar1": 6,
-            "altar2": 6,
-            "altar3": 6
-          }
+          "correct_option": "B"
         },
         {
-          "instruction": "FINAL BATTLE! The ÷ symbol appears! Divide 24 cherry blossoms into 4 sacred lanterns to claim victory!",
-          "drop_zones": [
+          "instruction": "Which answer solves 30 ÷ 5?",
+          "options": [
             {
-              "id": "lantern1",
-              "image_key": "lantern_red"
+              "id": "A",
+              "label": "5"
             },
             {
-              "id": "lantern2",
-              "image_key": "lantern_red"
+              "id": "B",
+              "label": "6"
             },
             {
-              "id": "lantern3",
-              "image_key": "lantern_red"
-            },
-            {
-              "id": "lantern4",
-              "image_key": "lantern_red"
+              "id": "C",
+              "label": "7"
             }
           ],
-          "draggables": [
-            {
-              "id": "blossom1",
-              "image_key": "cherry_blossom"
-            },
-            {
-              "id": "blossom2",
-              "image_key": "cherry_blossom"
-            },
-            {
-              "id": "blossom3",
-              "image_key": "cherry_blossom"
-            },
-            {
-              "id": "blossom4",
-              "image_key": "cherry_blossom"
-            },
-            {
-              "id": "blossom5",
-              "image_key": "cherry_blossom"
-            },
-            {
-              "id": "blossom6",
-              "image_key": "cherry_blossom"
-            },
-            {
-              "id": "blossom7",
-              "image_key": "cherry_blossom"
-            },
-            {
-              "id": "blossom8",
-              "image_key": "cherry_blossom"
-            },
-            {
-              "id": "blossom9",
-              "image_key": "cherry_blossom"
-            },
-            {
-              "id": "blossom10",
-              "image_key": "cherry_blossom"
-            },
-            {
-              "id": "blossom11",
-              "image_key": "cherry_blossom"
-            },
-            {
-              "id": "blossom12",
-              "image_key": "cherry_blossom"
-            },
-            {
-              "id": "blossom13",
-              "image_key": "cherry_blossom"
-            },
-            {
-              "id": "blossom14",
-              "image_key": "cherry_blossom"
-            },
-            {
-              "id": "blossom15",
-              "image_key": "cherry_blossom"
-            },
-            {
-              "id": "blossom16",
-              "image_key": "cherry_blossom"
-            },
-            {
-              "id": "blossom17",
-              "image_key": "cherry_blossom"
-            },
-            {
-              "id": "blossom18",
-              "image_key": "cherry_blossom"
-            },
-            {
-              "id": "blossom19",
-              "image_key": "cherry_blossom"
-            },
-            {
-              "id": "blossom20",
-              "image_key": "cherry_blossom"
-            },
-            {
-              "id": "blossom21",
-              "image_key": "cherry_blossom"
-            },
-            {
-              "id": "blossom22",
-              "image_key": "cherry_blossom"
-            },
-            {
-              "id": "blossom23",
-              "image_key": "cherry_blossom"
-            },
-            {
-              "id": "blossom24",
-              "image_key": "cherry_blossom"
-            }
-          ],
-          "required_per_zone": {
-            "lantern1": 6,
-            "lantern2": 6,
-            "lantern3": 6,
-            "lantern4": 6
-          }
+          "correct_option": "B"
         }
       ],
-      "round_bonus_coins": 4,
+      "round_bonus_coins": 2,
       "artifact": {
         "emoji": "⚔️",
         "name": "Blade of Light",
-        "description": "This glowing katana can slice through any math problem, revealing equal groups instantly!"
+        "description": "splits any problem into perfect equal parts with one swift strike"
       }
     }
   ],
   "images_needed": {
+    "backgrounds": [
+      "cherry_temple_entrance",
+      "cave_entrance",
+      "cave_deep",
+      "jungle_path",
+      "jungle_temple",
+      "cherry_throne_room"
+    ],
     "items": [
       "cherry",
-      "peach",
-      "plum",
-      "rice_cake",
-      "apple",
-      "shuriken",
-      "arrow",
-      "stone_zen",
-      "bell_gold",
-      "cherry_blossom"
+      "onigiri",
+      "lantern",
+      "lotus",
+      "katana"
     ],
     "targets": [
-      "bowl_wood",
-      "basket_bamboo",
-      "box_red",
-      "plate_ceramic",
-      "jar_clay",
-      "target_wood",
-      "quiver",
-      "stone_circle",
-      "altar_stone",
-      "lantern_red"
-    ],
-    "backgrounds": [
-      "hanaydo_garden",
-      "temple_interior",
-      "dojo_training",
-      "blossom_path",
-      "temple_courtyard",
-      "samurai_throne"
+      "basket_woven",
+      "bowl_wooden",
+      "torii_gate",
+      "pond",
+      "sword_rack"
     ],
     "artifact": {
       "key": "blade_of_light",
       "emoji": "⚔️",
-      "description": "Glowing Japanese katana with light beam effect"
+      "name": "Blade of Light"
     }
   },
   "tutor_notes": {
-    "block1_script": "Hi Cleo! Today we're learning about DIVISION. Division means splitting things into equal groups. When you see the ÷ symbol, think 'How many in each group?' For example, 8 ÷ 2 means 'If I split 8 things into 2 groups, how many are in each group?' The answer is 4. Remember: division is NOT the same as subtraction! With subtraction we take away. With division, we SHARE EQUALLY. Let's practice sharing cherries on this beautiful island!",
-    "block2_hint": "If Cleo struggles with drag_drop: 'Try putting one item in each bowl first, then go back and add more until they're equal.' If stuck on division facts: 'Think about your times tables backwards! If 3 × 4 = 12, then 12 ÷ 3 = 4.' For the finale: 'Count how many drop zones you have. That's how many groups. Now count total items and divide!'",
+    "block1_script": "Pirate, division is like being the fairest captain on the seven seas — everyone gets an equal share of the treasure! When you divide 12 cherries into 3 baskets, you're making sure each basket gets exactly 4. No one gets more, no one gets less. That's the magic of division — perfect fairness every time.",
+    "block2_hint": "If you're stuck on 18 ÷ 3, try thinking: 'How many groups of 3 fit into 18?' You can even use your fingers — count by 3s until you reach 18. Each time you count, that's one group!",
     "block3_tips": [
-      "Use counters/objects at home to practice division physically",
-      "Practice division as 'fair sharing' in daily life (cookies, toys, etc.)",
-      "Connect division to multiplication: 12 ÷ 3 is like asking '3 times what = 12?'",
-      "Watch for subtraction confusion: remind that division splits into groups, subtraction takes away",
-      "Celebrate when Cleo recognizes equal groups without counting one-by-one"
+      "Draw circles for each group and fill them one by one — like dealing cards to players",
+      "Skip count backwards from the big number by the small number until you reach zero",
+      "Remember your multiplication facts backwards — if 4 × 3 = 12, then 12 ÷ 3 = 4"
     ],
-    "block5_abstraction": "Division represents the inverse operation of multiplication and involves partitioning a quantity into equal subsets. The dividend is distributed among divisor-many groups, yielding the quotient. Mastery requires understanding both the 'measurement' model (how many groups of n?) and the 'partitive' model (how many in each of n groups?). Cleo should progress from concrete manipulation to symbolic representation, recognizing division as a function that maps ordered pairs to unique quotients within the natural numbers (excluding division by zero).",
-    "weak_point_focus": "Cleo confuses division with subtraction. Emphasize that SUBTRACTION removes items (6 - 2 = 4 means 'take away 2, you have 4 left'), but DIVISION shares items equally (6 ÷ 2 = 3 means 'split 6 into 2 groups of 3 each'). Use the word 'groups' constantly. Show visual comparisons. In rounds, if Cleo enters answers like she's subtracting, immediately pause and demonstrate the equal groups concept with concrete objects."
+    "block5_abstraction": "Division is the superpower of equal sharing. When you master it, you can split any amount into perfect groups — whether it's candy between friends, time between activities, or treasure between pirates. The Blade of Light represents this power: one swift calculation, and everything is divided fairly. In the real world, division helps us share resources, plan schedules, and make sure everyone gets their fair part. It's math that creates fairness and balance in the world.",
+    "weak_point_focus": "If Pirate struggles with larger divisions like 30 ÷ 5, go back to visual models. Use the drag_drop mechanic from Stage 1 with bigger numbers — let them physically see 30 items going into 5 groups. Once the pattern clicks visually, the abstract numbers will make sense. Division is sharing, and sharing is something every kid understands when they can see it happen."
   }
 }

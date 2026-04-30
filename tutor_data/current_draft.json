@@ -1,7 +1,6 @@
 {
   "draftId": "current",
   "childCode": "MONKEY-4821",
-  "child": null,
   "context": {
     "topicLabel": "Division",
     "topicKey": "number_division",
@@ -1510,5 +1509,13 @@
     }
   ],
   "status": "draft",
-  "updatedAt": "2026-04-29T10:49:42.717Z"
+  "updatedAt": "2026-04-29T15:55:12.288Z",
+  "child": {
+    "childCode": "MONKEY-4821",
+    "name": "Pirate",
+    "coins": 165,
+    "level": 2,
+    "characterKey": "pirate_green",
+    "characterImagePath": "assets/characters/pirate_green.webp"
+  }
 }

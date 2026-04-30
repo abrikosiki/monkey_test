@@ -76,11 +76,11 @@
         <div class="stack" style="align-items:flex-end">
           <div class="status-pill" id="autosaveStatus">Ready</div>
           <div class="actions">
-            <button class="ghost" id="saveDraftBtn">Save Draft</button>
             <button class="primary" id="generateBtn">Create Lesson</button>
-            <button class="secondary" id="buildBtn">Build HTML</button>
-            <button class="secondary" id="assetsBtn">Generate Assets</button>
-            <a class="button-link ghost" id="previewBtn" href="/lesson_game.html" target="_blank" rel="noopener">Open Preview</a>
+          </div>
+          <div class="actions" id="postGenerateActions" style="display:none">
+            <button class="secondary" id="downloadJsonBtn">Download JSON</button>
+            <a class="button-link ghost" id="previewBtn" href="/lesson_game.html" target="_blank" rel="noopener">Open in Browser</a>
           </div>
         </div>
       </div>
@@ -105,10 +105,6 @@
         <div class="card">
           <h2>Lesson Output</h2>
           <div class="hint">Tutor fills only mechanics and math examples. Story, villain, artifact, assets, and all child-facing text are generated automatically.</div>
-          <div class="lesson-tools">
-            <button class="ghost small" id="loadLessonBtn">Load Current Lesson JSON</button>
-            <button class="ghost small" id="downloadJsonBtn">Download JSON</button>
-          </div>
           <div class="json-box" id="lessonJsonBox">No generated lesson loaded yet.</div>
         </div>
       </div>
@@ -651,6 +647,7 @@
         const data = await get("/api/current-lesson");
         state.lesson = data.lesson;
         renderLessonJson();
+        if (state.lesson) $("postGenerateActions").style.display = "flex";
       } catch (err) {
       }
     }
@@ -661,31 +658,14 @@
         setAutosaveStatus("Generating...");
         await saveDraft(true);
         const data = await post("/api/generate", { draft: state.draft });
-        state.lesson = data.lesson;
-        renderLessonJson();
-        setAutosaveStatus("Lesson generated");
-      } catch (err) {
-        setAutosaveStatus("Generation failed");
-      }
-    }
-
-    async function buildLesson() {
-      try {
         setAutosaveStatus("Building HTML...");
         await post("/api/build-lesson");
-        setAutosaveStatus("HTML ready");
+        state.lesson = data.lesson;
+        renderLessonJson();
+        $("postGenerateActions").style.display = "flex";
+        setAutosaveStatus("Lesson ready");
       } catch (err) {
-        setAutosaveStatus("Build failed");
-      }
-    }
-
-    async function generateAssets() {
-      try {
-        setAutosaveStatus("Generating assets...");
-        await post("/api/generate-assets");
-        setAutosaveStatus("Assets ready");
-      } catch (err) {
-        setAutosaveStatus("Assets failed");
+        setAutosaveStatus("Generation failed");
       }
     }
 
@@ -713,17 +693,14 @@
       syncDraftToInputs();
       renderStages();
       renderLessonJson();
+      if (state.lesson) $("postGenerateActions").style.display = "flex";
       setAutosaveStatus("Ready");
 
       ["childCodeInput"]
         .forEach((id) => $(id).addEventListener("input", queueAutosave));
 
       $("fetchChildBtn").onclick = fetchChild;
-      $("saveDraftBtn").onclick = () => saveDraft(false);
       $("generateBtn").onclick = generateLesson;
-      $("buildBtn").onclick = buildLesson;
-      $("assetsBtn").onclick = generateAssets;
-      $("loadLessonBtn").onclick = loadCurrentLesson;
       $("downloadJsonBtn").onclick = downloadJson;
 
       setInterval(() => {

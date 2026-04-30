@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Monkey Archipelago - Cleo</title>
+  <title>Monkey Archipelago - Pirate</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
     :root{
@@ -226,6 +226,28 @@
       inset:auto;
       transform:none;
     }
+    .zone-need{
+      position:absolute;
+      left:50%;
+      top:100%;
+      transform:translate(-50%, 8px);
+      min-width:34px;
+      height:34px;
+      padding:0 10px;
+      border-radius:999px;
+      border:2px solid rgba(84,56,8,.85);
+      background:radial-gradient(circle at 30% 30%,#fff6c7 0%,#ffd667 52%,#e5a227 100%);
+      color:#2c1f08;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-family:'Fredoka One',cursive;
+      font-size:18px;
+      text-shadow:0 1px 0 rgba(255,255,255,.45);
+      box-shadow:0 4px 10px rgba(0,0,0,.28);
+      pointer-events:none;
+      z-index:3;
+    }
     .drop-zone.done{
       border-color:rgba(79,217,130,.55);
       box-shadow:0 0 0 3px rgba(79,217,130,.24), var(--glow);
@@ -298,6 +320,66 @@
       pointer-events:none;
       z-index:16;
     }
+    .group-zone{
+      position:absolute;
+      width:240px;
+      min-height:210px;
+      border-radius:24px;
+      border:3px solid rgba(244,208,63,.7);
+      background:linear-gradient(180deg,rgba(9,24,56,.92) 0%, rgba(8,20,48,.88) 100%);
+      box-shadow:0 18px 36px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.08);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:16px 14px;
+      z-index:11;
+      overflow:hidden;
+    }
+    .group-zone-title{
+      position:absolute;
+      inset:0;
+      color:#ffe7a6;
+      font-family:'Fredoka One',cursive;
+      font-size:26px;
+      text-shadow:0 2px 6px rgba(0,0,0,.45);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      line-height:1.1;
+      text-align:center;
+      pointer-events:none;
+    }
+    .group-zone-good{
+      border-color:rgba(79,217,130,.9);
+      box-shadow:0 0 0 4px rgba(79,217,130,.24), 0 18px 36px rgba(0,0,0,.42), var(--glow);
+    }
+    .group-zone-bad{
+      border-color:rgba(255,90,90,.92);
+      box-shadow:0 0 0 4px rgba(255,90,90,.2), 0 18px 36px rgba(0,0,0,.42);
+    }
+    .group-token{
+      position:absolute;
+      width:114px;
+      height:114px;
+      transform:translate(-50%,-50%);
+      z-index:13;
+      touch-action:none;
+      cursor:grab;
+    }
+    .group-token:active{cursor:grabbing}
+    .group-token .game-img{
+      width:100%;
+      height:100%;
+      object-fit:contain;
+      position:absolute;
+      inset:0;
+    }
+    .group-token .value-chip{
+      left:50% !important;
+      top:8% !important;
+      transform:translate(-50%,-50%);
+      z-index:16;
+    }
     .input-row{
       position:absolute;
       min-width:260px;
@@ -336,6 +418,15 @@
       opacity:1;
       color:#0f3b22;
       -webkit-text-fill-color:#0f3b22;
+    }
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button{
+      -webkit-appearance:none;
+      margin:0;
+    }
+    input[type="number"]{
+      -moz-appearance:textfield;
+      appearance:textfield;
     }
     .eq-card{
       position:absolute;
@@ -389,11 +480,72 @@
       border-color:#ffd5d1;
       animation:shake .22s ease;
     }
+    .seq-board{
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      width:100%;
+      align-items:center;
+      margin-top:4px;
+    }
+    .seq-row{
+      font-size:clamp(30px,4.2vw,48px);
+      font-weight:900;
+      color:#dff8dc;
+      letter-spacing:.02em;
+      display:flex;
+      gap:8px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:center;
+      border-radius:14px;
+      padding:8px 12px;
+    }
+    .seq-blank{
+      width:84px;
+      padding:7px 8px;
+      border-radius:12px;
+      border:3px solid rgba(244,208,63,.62);
+      background:rgba(255,255,255,.82);
+      color:#0f2039;
+      font-size:30px;
+      font-weight:900;
+      text-align:center;
+      outline:none;
+    }
+    .seq-blank.ok{
+      border-color:var(--ok);
+      background:rgba(120,235,170,.28);
+      color:#0f3b22;
+      -webkit-text-fill-color:#0f3b22;
+    }
+    .seq-blank.bad{
+      border-color:#ff6a6a;
+      background:rgba(255,106,106,.2);
+      color:#4a0f0f;
+      -webkit-text-fill-color:#4a0f0f;
+      box-shadow:0 0 0 3px rgba(255,106,106,.18);
+    }
+    .seq-submit{
+      display:none;
+      margin-top:10px;
+      padding:12px 36px;
+      font-size:30px;
+      font-weight:900;
+      border:none;
+      border-radius:999px;
+      cursor:pointer;
+      color:#2a1b00;
+      background:linear-gradient(135deg,#ffd979,#f1b73c);
+      box-shadow:0 5px 0 #a07022;
+    }
+    .seq-submit.show{display:inline-block}
     .choice-box{
       position:absolute;
-      left:4%;
-      width:92%;
-      top:12%;
+      left:50%;
+      transform:translateX(-50%);
+      width:min(760px,92%);
+      top:28%;
       background:rgba(8,18,33,.75);
       border:1px solid rgba(255,255,255,.22);
       border-radius:18px;
@@ -434,6 +586,323 @@
     }
     .choice-btn:active{transform:translateY(2px)}
     .choice-btn.ok{background:linear-gradient(135deg,#9bf2b7,#4fd982); box-shadow:0 4px 0 #2f8b4e}
+    .choice-btn.bad{background:linear-gradient(135deg,#ffb3b3,#ff6f6f); box-shadow:0 4px 0 #a33f3f}
+    .balance-scale-wrap{
+      position:absolute;
+      left:50%;
+      top:16%;
+      transform:translateX(-50%);
+      width:min(860px,94%);
+      z-index:12;
+      text-align:center;
+    }
+    .balance-scale-img{
+      width:100%;
+      max-width:760px;
+      object-fit:contain;
+      filter:drop-shadow(0 14px 24px rgba(0,0,0,.35));
+      transition:transform .35s ease, opacity .3s ease;
+    }
+    .balance-side-text{
+      position:absolute;
+      top:66%;
+      transform:translate(-50%,-50%);
+      color:#fff7d6;
+      font-family:'Fredoka One',cursive;
+      font-size:34px;
+      text-shadow:0 2px 7px rgba(0,0,0,.55);
+      white-space:nowrap;
+    }
+    .balance-side-text.left{left:21%}
+    .balance-side-text.right{left:76%; top:62%}
+    .balance-pill{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:58px;
+      padding:6px 14px;
+      border-radius:14px;
+      border:3px solid rgba(244,208,63,.85);
+      background:rgba(8,18,33,.6);
+      box-shadow:0 8px 16px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.08);
+    }
+    .balance-answer-input{
+      width:92px;
+      padding:6px 8px;
+      border-radius:12px;
+      border:3px solid rgba(244,208,63,.75);
+      background:rgba(255,255,255,.9);
+      color:#0f2039;
+      font-family:'Fredoka One',cursive;
+      font-size:30px;
+      text-align:center;
+      outline:none;
+      vertical-align:middle;
+      margin:0 6px;
+    }
+    .balance-answer-input.ok{
+      border-color:var(--ok);
+      background:rgba(120,235,170,.34);
+      color:#0f3b22;
+    }
+    .balance-answer-input.bad{
+      border-color:#ff6a6a;
+      background:rgba(255,106,106,.25);
+      color:#4a0f0f;
+    }
+    .balance-next{
+      margin-top:6px;
+    }
+    .build-wrap{
+      position:absolute;
+      left:50%;
+      top:18%;
+      transform:translateX(-50%);
+      width:min(760px,94%);
+      text-align:center;
+      z-index:12;
+      min-height:520px;
+    }
+    .build-target{
+      display:inline-flex;
+      min-width:220px;
+      min-height:112px;
+      padding:12px 28px;
+      border-radius:20px;
+      border:3px solid rgba(244,208,63,.85);
+      background:linear-gradient(180deg,rgba(8,18,33,.84),rgba(10,24,56,.82));
+      color:#ffe7a6;
+      align-items:center;
+      justify-content:center;
+      font-family:'Fredoka One',cursive;
+      font-size:66px;
+      text-shadow:0 2px 7px rgba(0,0,0,.5);
+      box-shadow:0 14px 28px rgba(0,0,0,.34);
+      position:relative;
+      z-index:2;
+    }
+    .build-arrow-layer{
+      position:absolute;
+      left:0;
+      top:0;
+      width:100%;
+      height:100%;
+      pointer-events:none;
+      z-index:1;
+    }
+    .build-slots{
+      margin-top:184px;
+      display:flex;
+      gap:18px;
+      justify-content:center;
+      flex-wrap:wrap;
+      position:relative;
+      z-index:2;
+    }
+    .build-slot{
+      width:126px;
+      height:126px;
+      border-radius:18px;
+      border:3px solid rgba(244,208,63,.78);
+      background:rgba(8,18,33,.9);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.08), 0 8px 18px rgba(0,0,0,.28);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .build-slot-input{
+      width:78px;
+      height:56px;
+      border-radius:12px;
+      border:2px solid rgba(244,208,63,.7);
+      background:rgba(255,255,255,.9);
+      color:#0f2039;
+      font-family:'Fredoka One',cursive;
+      font-size:30px;
+      text-align:center;
+      outline:none;
+    }
+    .build-next{
+      margin-top:22px;
+      min-width:76px;
+      padding:12px 18px;
+      font-size:32px;
+      line-height:1;
+    }
+    .timer-card{
+      position:absolute;
+      left:50%;
+      top:24%;
+      transform:translateX(-50%);
+      width:min(760px,94%);
+      background:linear-gradient(180deg,rgba(8,18,33,.9),rgba(10,24,56,.88));
+      border:3px solid rgba(244,208,63,.76);
+      border-radius:24px;
+      padding:18px 18px 16px;
+      box-shadow:0 18px 36px rgba(0,0,0,.38);
+      z-index:12;
+      text-align:center;
+    }
+    .timer-top{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      margin-bottom:10px;
+      color:#ffe7a6;
+      font-family:'Fredoka One',cursive;
+      font-size:28px;
+    }
+    .timer-badge{
+      min-width:92px;
+      height:46px;
+      border-radius:999px;
+      border:2px solid rgba(244,208,63,.85);
+      background:rgba(0,0,0,.25);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:28px;
+    }
+    .timer-start{
+      margin-left:6px;
+      padding:8px 18px;
+      border:none;
+      border-radius:999px;
+      background:linear-gradient(135deg,#ffd979,#f1b73c);
+      box-shadow:0 4px 0 #a07022;
+      color:#2a1b00;
+      font-family:'Fredoka One',cursive;
+      font-size:22px;
+      cursor:pointer;
+    }
+    .timer-panel{
+      position:absolute;
+      left:50%;
+      top:76%;
+      transform:translateX(-50%);
+      display:flex;
+      align-items:flex-end;
+      gap:14px;
+      z-index:12;
+      background:linear-gradient(180deg,rgba(8,18,33,.92),rgba(10,24,56,.9));
+      border:3px solid rgba(244,208,63,.76);
+      border-radius:20px;
+      box-shadow:0 14px 28px rgba(0,0,0,.35);
+      padding:10px 14px 12px;
+    }
+    .timer-panel-left{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:4px;
+      min-width:110px;
+    }
+    .timer-label{
+      font-family:'Fredoka One',cursive;
+      font-size:14px;
+      letter-spacing:.04em;
+      color:#ffe7a6;
+      text-transform:uppercase;
+      opacity:.95;
+    }
+    .timer-row{
+      margin:10px auto;
+      max-width:620px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      color:#dff8dc;
+      font-family:'Fredoka One',cursive;
+      font-size:30px;
+    }
+    .timer-input{
+      width:88px;
+      padding:6px 8px;
+      border-radius:12px;
+      border:3px solid rgba(244,208,63,.75);
+      background:rgba(255,255,255,.92);
+      color:#0f2039;
+      font-family:'Fredoka One',cursive;
+      font-size:30px;
+      text-align:center;
+      outline:none;
+    }
+    .timer-input:disabled{opacity:.65}
+    .timer-input.ok{border-color:var(--ok); background:rgba(120,235,170,.35); color:#0f3b22}
+    .timer-input.bad{border-color:#ff6a6a; background:rgba(255,106,106,.26); color:#4a0f0f}
+    .symbol-wrap{
+      position:absolute;
+      left:50%;
+      top:20%;
+      transform:translateX(-50%);
+      width:min(760px,94%);
+      z-index:12;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      align-items:center;
+    }
+    .symbol-row{
+      width:min(520px,100%);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:12px;
+      color:#ffe7a6;
+      font-family:'Fredoka One',cursive;
+      font-size:34px;
+      text-shadow:0 2px 6px rgba(0,0,0,.5);
+    }
+    .symbol-item{
+      width:92px;
+      height:92px;
+      object-fit:contain;
+      filter:drop-shadow(0 8px 14px rgba(0,0,0,.32));
+    }
+    .symbol-calc-card{
+      margin-top:12px;
+      width:min(620px,100%);
+      background:linear-gradient(180deg,rgba(8,18,33,.9),rgba(10,24,56,.88));
+      border:3px solid rgba(244,208,63,.76);
+      border-radius:22px;
+      box-shadow:0 16px 32px rgba(0,0,0,.36);
+      padding:16px 16px 14px;
+      text-align:center;
+    }
+    .symbol-expr{
+      color:#dff8dc;
+      font-family:'Fredoka One',cursive;
+      font-size:34px;
+      margin-bottom:10px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+    .symbol-inline{
+      width:42px;
+      height:42px;
+      object-fit:contain;
+      filter:drop-shadow(0 4px 8px rgba(0,0,0,.28));
+      vertical-align:middle;
+    }
+    .symbol-answer{
+      width:120px;
+      padding:8px 10px;
+      border-radius:12px;
+      border:3px solid rgba(244,208,63,.75);
+      background:rgba(255,255,255,.92);
+      color:#0f2039;
+      font-family:'Fredoka One',cursive;
+      font-size:34px;
+      text-align:center;
+      outline:none;
+    }
+    .symbol-answer.ok{border-color:var(--ok); background:rgba(120,235,170,.35); color:#0f3b22}
+    .symbol-answer.bad{border-color:#ff6a6a; background:rgba(255,106,106,.26); color:#4a0f0f}
     .corridor-row{
       display:flex;
       gap:16px;
@@ -772,6 +1241,92 @@
     }
     .completion-reload:hover{transform:translateY(-2px)}
     .completion-reload:active{transform:translateY(3px)}
+    .story-screen,.shop-screen{
+      position:fixed;inset:0;z-index:340;display:none;align-items:center;justify-content:center;
+      background:rgba(4,10,22,.82);backdrop-filter:blur(8px);
+    }
+    .story-screen.on,.shop-screen.on{display:flex}
+    .story-card{
+      width:min(92vw,760px);background:rgba(8,18,33,.92);border:2px solid rgba(244,208,63,.5);
+      border-radius:22px;padding:28px 26px;text-align:center;box-shadow:0 24px 45px rgba(0,0,0,.45);
+      display:flex;flex-direction:column;gap:18px;animation:completionIn .35s ease both;
+    }
+    .story-title{font-size:38px;color:var(--sand)}
+    .story-text{font-size:21px;line-height:1.45;color:#e3edf8}
+    .story-shop-btn{
+      margin:0 auto;padding:12px 34px;border:none;border-radius:999px;cursor:pointer;
+      background:linear-gradient(135deg,#7ecec4,#1a9e92);color:#072026;font-size:24px;
+      box-shadow:0 5px 0 #0d5e58;
+    }
+    .shop-screen{background:rgba(0,0,0,.28)}
+    .shop-bg{
+      position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;
+      filter:saturate(1.06) contrast(1.04);
+    }
+    .shop-wrap{
+      position:relative;z-index:1;
+      width:min(980px,92vw);max-height:min(86vh,760px);
+      background:rgba(5,15,30,.78);border:2px solid rgba(244,208,63,.45);
+      border-radius:22px;padding:18px 18px 16px;box-shadow:0 20px 56px rgba(0,0,0,.55);
+      display:flex;flex-direction:column;
+    }
+    .shop-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+    .shop-title{font-family:'Fredoka One',cursive;font-size:34px;color:var(--sand)}
+    .shop-coins{font-family:'Fredoka One',cursive;font-size:24px;color:#ffe8b2}
+    .shop-grid{
+      display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;
+      overflow:auto;max-height:min(52vh,470px);padding-right:6px;
+    }
+    .shop-item{
+      background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.2);border-radius:14px;padding:10px;
+      display:flex;flex-direction:column;align-items:center;gap:8px;transition:transform .15s,box-shadow .15s,border-color .15s;
+    }
+    .shop-item:hover{transform:translateY(-3px) scale(1.02);border-color:rgba(244,208,63,.75);box-shadow:0 10px 18px rgba(0,0,0,.35),0 0 14px rgba(244,208,63,.22)}
+    .shop-item img{width:120px;height:76px;object-fit:contain;filter:drop-shadow(0 5px 8px rgba(0,0,0,.35))}
+    .shop-name{color:#ffe8b2;font-weight:800}
+    .shop-price{color:#c8e8c8;font-weight:800}
+    .shop-buy{
+      padding:8px 16px;border:none;border-radius:999px;cursor:pointer;font-family:'Fredoka One',cursive;font-size:16px;
+      color:#1d1606;background:linear-gradient(135deg,#ffcf66,#f3a93f);box-shadow:0 4px 0 #9b6b21
+    }
+    .shop-buy:disabled{opacity:.55;cursor:not-allowed;box-shadow:none}
+    .shop-finish{
+      margin-top:14px;width:100%;padding:13px 20px;border:none;border-radius:999px;cursor:pointer;
+      font-family:'Fredoka One',cursive;font-size:22px;color:#0b1b2f;background:linear-gradient(135deg,#93d3ff,#4a9fe4);box-shadow:0 5px 0 #2a6ea6
+    }
+    @media (max-width:900px){
+      .shop-wrap{width:min(1080px,94vw)}
+      .shop-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    }
+    @media (max-width:620px){
+      .shop-grid{grid-template-columns:1fr}
+      .shop-title{font-size:28px}
+    }
+    .balance-card{
+      position:absolute;left:50%;top:28%;transform:translateX(-50%);width:min(90%,720px);
+      background:linear-gradient(180deg,rgba(10,20,35,.95),rgba(10,20,35,.92));
+      border:3px solid rgba(244,208,63,.66);border-radius:28px;padding:22px;display:flex;flex-direction:column;gap:14px;z-index:13;
+    }
+    .balance-row{display:flex;justify-content:space-between;gap:14px;align-items:center}
+    .balance-side{
+      flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.18);border-radius:14px;
+      min-height:92px;display:flex;align-items:center;justify-content:center;font-size:40px;color:#e7f6d8;
+    }
+    .balance-eq{font-size:38px;color:var(--sand)}
+    .balance-blank{
+      min-width:72px;min-height:58px;border-radius:10px;border:3px dashed rgba(244,208,63,.72);
+      display:inline-flex;align-items:center;justify-content:center;margin:0 8px;padding:0 10px;color:#fff;
+      background:rgba(255,255,255,.04);
+    }
+    .balance-blank.ok{border-style:solid;border-color:var(--ok);background:rgba(79,217,130,.22);color:#d9ffe8}
+    .balance-blank.bad{border-style:solid;border-color:#ff9f9f;background:rgba(176,58,46,.55)}
+    .tile-rack{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+    .num-tile{
+      width:62px;height:62px;border-radius:14px;border:2px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);
+      display:flex;align-items:center;justify-content:center;font-size:30px;cursor:grab;user-select:none;
+    }
+    .num-tile:active{cursor:grabbing}
+    .balance-hint{text-align:center;font-size:14px;color:#ffe8b2}
     @media (max-width:700px){
       .completion-card{padding:24px 20px;gap:14px}
       .completion-title{font-size:24px}
@@ -847,7 +1402,7 @@
       inset:0;
       z-index:260;
       display:flex;
-      align-items:flex-end;
+      align-items:center;
       justify-content:center;
       background:#101522;
     }
@@ -862,20 +1417,33 @@
     .intro-panel{
       position:relative;
       z-index:2;
-      width:100%;
-      padding:18px 60px 24px;
+      width:min(940px,92vw);
+      padding:26px 28px 24px;
       text-align:center;
-      background:rgba(5,15,30,.88);
-      border-top:2px solid rgba(244,208,63,.45);
+      background:rgba(5,15,30,.82);
+      border:2px solid rgba(244,208,63,.45);
+      border-radius:22px;
+      box-shadow:0 24px 58px rgba(0,0,0,.55);
     }
     .intro-story{
-      font-size:clamp(14px,1.6vw,19px);
+      min-height:120px;
+      font-size:clamp(14px,1.45vw,17px);
       color:#c8e8c8;
-      line-height:1.6;
-      max-width:1200px;
+      line-height:1.7;
+      max-width:860px;
       margin:0 auto 12px;
     }
+    .intro-cur{
+      display:inline-block;
+      width:2px;
+      height:1em;
+      background:var(--sand);
+      vertical-align:text-bottom;
+      animation:introBlink .8s step-end infinite;
+      margin-left:4px;
+    }
     .intro-start{
+      display:none;
       padding:13px 50px;
       font-family:'Fredoka One',cursive;
       font-size:20px;
@@ -886,6 +1454,18 @@
       border-radius:50px;
       cursor:pointer;
       box-shadow:0 5px 0 #7b5e0a;
+    }
+    .intro-start.show{
+      display:inline-block;
+      animation:introPop .5s cubic-bezier(.34,1.56,.64,1) forwards;
+    }
+    @keyframes introBlink{
+      0%,49%{opacity:1}
+      50%,100%{opacity:0}
+    }
+    @keyframes introPop{
+      from{transform:scale(.8);opacity:0}
+      to{transform:scale(1);opacity:1}
     }
   </style>
 </head>
@@ -945,17 +1525,53 @@
       <div class="completion-section">Inventory</div>
       <div class="inventory-row" id="completionInventory"></div>
       <div class="completion-coins" id="completionCoins">🪙 0 coins earned!</div>
-      <button class="completion-reload" id="completionReloadBtn">🔄 Play Again</button>
+      <button class="completion-reload" id="completionPlayAgainBtn">🔄 Play Again</button>
+    </div>
+  </div>
+  <div class="story-screen" id="storyScreen">
+    <div class="story-card">
+      <div class="story-title">👑 Monkey King Is Free!</div>
+      <div class="story-text" id="storyText"></div>
+      <button class="story-shop-btn" id="storyShopBtn">🛍️ Open Shop</button>
+    </div>
+  </div>
+  <div class="shop-screen" id="shopScreen">
+    <img class="shop-bg" id="shopBg" alt="">
+    <div class="shop-wrap">
+      <div class="shop-top">
+        <div class="shop-title">🛒 Monkey Shop</div>
+        <div class="shop-coins">🪙 <span id="shopCoins">0</span></div>
+      </div>
+      <div class="shop-grid" id="shopGrid"></div>
+      <button class="shop-finish" id="shopFinishBtn">🏁 Finish Adventure</button>
     </div>
   </div>
 
   <script>
-  const LESSON = {"meta":{"lesson_id":"MONKEY-8801-L1","student_name":"Cleo","student_code":"MONKEY-8801","age":8,"difficulty":"medium","topic_key":"number_division","lesson_number":1,"total_lessons":5,"island_number":4,"character_key":"fairy_purple","language":"en"},"story":{"island_name":"Hanaydo — Cherry Blossom Island","villain":"The Samurai Monkey","artifact_name":"Blade of Light","artifact_emoji":"⚔️","act1":"Hanaydo blooms with cherry trees and ancient temples where cherry petals dance in the wind. Every spring, the island divides its cherry harvest equally among all the monkey villages.","act2":"But the sneaky Samurai Monkey has stolen the division symbol (÷) and hidden it in his dojo! Now no one can share anything fairly — all the cherries are stuck in giant piles and the villages are confused!","act3":"Cleo, only you can master the art of equal groups and bring back the ÷ symbol before cherry season ends!","goal":"Learn how division means splitting things into equal groups"},"stages":[{"id":1,"type":"drag_drop","title":"Cherry Garden Welcome","background":"hanaydo_garden","coins":15,"mechanic_reason":"Age 8 medium: drag_drop on stage 1 provides gentle visual introduction to equal groups concept without pressure","success_message":"Perfect! You shared the cherries equally between the bowls!","rounds":[{"instruction":"The temple has 6 cherries. Put them equally into 2 bowls (3 in each).","drop_zones":[{"id":"bowl1","image_key":"bowl_wood"},{"id":"bowl2","image_key":"bowl_wood"}],"draggables":[{"id":"c1","image_key":"cherry"},{"id":"c2","image_key":"cherry"},{"id":"c3","image_key":"cherry"},{"id":"c4","image_key":"cherry"},{"id":"c5","image_key":"cherry"},{"id":"c6","image_key":"cherry"}],"required_per_zone":{"bowl1":3,"bowl2":3}},{"instruction":"Now we have 8 peaches. Share them equally into 2 baskets (4 in each).","drop_zones":[{"id":"basket1","image_key":"basket_bamboo"},{"id":"basket2","image_key":"basket_bamboo"}],"draggables":[{"id":"p1","image_key":"peach"},{"id":"p2","image_key":"peach"},{"id":"p3","image_key":"peach"},{"id":"p4","image_key":"peach"},{"id":"p5","image_key":"peach"},{"id":"p6","image_key":"peach"},{"id":"p7","image_key":"peach"},{"id":"p8","image_key":"peach"}],"required_per_zone":{"basket1":4,"basket2":4}},{"instruction":"10 plums need to go into 2 boxes. How many in each box?","drop_zones":[{"id":"box1","image_key":"box_red"},{"id":"box2","image_key":"box_red"}],"draggables":[{"id":"pl1","image_key":"plum"},{"id":"pl2","image_key":"plum"},{"id":"pl3","image_key":"plum"},{"id":"pl4","image_key":"plum"},{"id":"pl5","image_key":"plum"},{"id":"pl6","image_key":"plum"},{"id":"pl7","image_key":"plum"},{"id":"pl8","image_key":"plum"},{"id":"pl9","image_key":"plum"},{"id":"pl10","image_key":"plum"}],"required_per_zone":{"box1":5,"box2":5}},{"instruction":"The monks need 12 rice cakes shared equally among 3 plates. Divide them!","drop_zones":[{"id":"plate1","image_key":"plate_ceramic"},{"id":"plate2","image_key":"plate_ceramic"},{"id":"plate3","image_key":"plate_ceramic"}],"draggables":[{"id":"rc1","image_key":"rice_cake"},{"id":"rc2","image_key":"rice_cake"},{"id":"rc3","image_key":"rice_cake"},{"id":"rc4","image_key":"rice_cake"},{"id":"rc5","image_key":"rice_cake"},{"id":"rc6","image_key":"rice_cake"},{"id":"rc7","image_key":"rice_cake"},{"id":"rc8","image_key":"rice_cake"},{"id":"rc9","image_key":"rice_cake"},{"id":"rc10","image_key":"rice_cake"},{"id":"rc11","image_key":"rice_cake"},{"id":"rc12","image_key":"rice_cake"}],"required_per_zone":{"plate1":4,"plate2":4,"plate3":4}},{"instruction":"Final garden test: 15 apples into 3 temple storage jars. Go!","drop_zones":[{"id":"jar1","image_key":"jar_clay"},{"id":"jar2","image_key":"jar_clay"},{"id":"jar3","image_key":"jar_clay"}],"draggables":[{"id":"a1","image_key":"apple"},{"id":"a2","image_key":"apple"},{"id":"a3","image_key":"apple"},{"id":"a4","image_key":"apple"},{"id":"a5","image_key":"apple"},{"id":"a6","image_key":"apple"},{"id":"a7","image_key":"apple"},{"id":"a8","image_key":"apple"},{"id":"a9","image_key":"apple"},{"id":"a10","image_key":"apple"},{"id":"a11","image_key":"apple"},{"id":"a12","image_key":"apple"},{"id":"a13","image_key":"apple"},{"id":"a14","image_key":"apple"},{"id":"a15","image_key":"apple"}],"required_per_zone":{"jar1":5,"jar2":5,"jar3":5}}],"round_bonus_coins":2},{"id":2,"type":"multi_choice","title":"The Division Symbol","background":"temple_interior","coins":20,"mechanic_reason":"Age 8 medium: multi_choice introduces the ÷ symbol explicitly and connects it to equal sharing from stage 1","success_message":"Yes! The ÷ symbol means 'divide into equal groups'!","rounds":[{"instruction":"This is the division symbol: ÷. What does 8 ÷ 2 mean?","options":[{"id":"a","text":"Take 2 away from 8","correct":false},{"id":"b","text":"Split 8 into 2 equal groups","correct":true},{"id":"c","text":"Add 8 and 2 together","correct":false}]},{"instruction":"If we see 10 ÷ 5, what are we doing?","options":[{"id":"a","text":"Making 5 groups with equal items","correct":true},{"id":"b","text":"Counting to 10 five times","correct":false},{"id":"c","text":"Subtracting 5 from 10","correct":false}]},{"instruction":"12 ÷ 3 = ? means we put 12 things into how many groups?","options":[{"id":"a","text":"12 groups","correct":false},{"id":"b","text":"3 groups","correct":true},{"id":"c","text":"9 groups","correct":false}]},{"instruction":"The Samurai Monkey says 6 ÷ 2 = 4 because 6 - 2 = 4. Is he right?","options":[{"id":"a","text":"Yes, division is the same as subtraction","correct":false},{"id":"b","text":"No! 6 ÷ 2 = 3 (3 in each group)","correct":true},{"id":"c","text":"Yes, 6 ÷ 2 = 4","correct":false}]},{"instruction":"Which picture shows 15 ÷ 3?","options":[{"id":"a","text":"15 cherries in 5 piles of 3","correct":false},{"id":"b","text":"15 cherries in 3 piles of 5","correct":true},{"id":"c","text":"12 cherries in 3 piles of 4","correct":false}]}],"round_bonus_coins":2},{"id":3,"type":"fill_blank","title":"Dojo Practice","background":"dojo_training","coins":25,"mechanic_reason":"Age 8 medium: fill_blank requires mental calculation with small numbers to build division fluency without visual aids","success_message":"Amazing! You've mastered basic division equations!","rounds":[{"instruction":"The dojo has 8 training swords to share among 2 racks. How many on each rack? 8 ÷ 2 = __","question":"8 ÷ 2 = __","answer":"4","input_type":"number"},{"instruction":"10 bamboo sticks divided equally into 5 bundles. How many per bundle? 10 ÷ 5 = __","question":"10 ÷ 5 = __","answer":"2","input_type":"number"},{"instruction":"12 paper lanterns hung in 3 rows. How many per row? 12 ÷ 3 = __","question":"12 ÷ 3 = __","answer":"4","input_type":"number"},{"instruction":"The Samurai Monkey has 20 throwing stars in 4 pouches. Stars per pouch? 20 ÷ 4 = __","question":"20 ÷ 4 = __","answer":"5","input_type":"number"},{"instruction":"Final dojo test! 16 meditation cushions arranged in 4 circles. Cushions per circle? 16 ÷ 4 = __","question":"16 ÷ 4 = __","answer":"4","input_type":"number"}],"round_bonus_coins":3},{"id":4,"type":"drag_sort","title":"Cherry Blossom Sorting","background":"blossom_path","coins":25,"mechanic_reason":"Age 8 medium: drag_sort adds complexity by requiring children to order division problems by answer size, building number sense","success_message":"Perfect sorting! You understand how division results change!","rounds":[{"instruction":"Sort these from SMALLEST answer to BIGGEST answer:","items":[{"id":"eq1","text":"6 ÷ 3","value":2},{"id":"eq2","text":"8 ÷ 2","value":4},{"id":"eq3","text":"15 ÷ 5","value":3}],"correct_order":["eq1","eq3","eq2"]},{"instruction":"Order these division results from smallest to largest:","items":[{"id":"eq1","text":"12 ÷ 4","value":3},{"id":"eq2","text":"10 ÷ 5","value":2},{"id":"eq3","text":"20 ÷ 4","value":5}],"correct_order":["eq2","eq1","eq3"]},{"instruction":"Arrange from smallest answer to biggest:","items":[{"id":"eq1","text":"9 ÷ 3","value":3},{"id":"eq2","text":"16 ÷ 4","value":4},{"id":"eq3","text":"4 ÷ 2","value":2},{"id":"eq4","text":"25 ÷ 5","value":5}],"correct_order":["eq3","eq1","eq2","eq4"]},{"instruction":"Put these in order from smallest result to largest:","items":[{"id":"eq1","text":"18 ÷ 3","value":6},{"id":"eq2","text":"8 ÷ 4","value":2},{"id":"eq3","text":"12 ÷ 3","value":4},{"id":"eq4","text":"15 ÷ 5","value":3}],"correct_order":["eq2","eq4","eq3","eq1"]},{"instruction":"Final challenge! Sort these five problems from smallest to biggest answer:","items":[{"id":"eq1","text":"10 ÷ 2","value":5},{"id":"eq2","text":"6 ÷ 2","value":3},{"id":"eq3","text":"8 ÷ 4","value":2},{"id":"eq4","text":"16 ÷ 4","value":4},{"id":"eq5","text":"18 ÷ 3","value":6}],"correct_order":["eq3","eq2","eq4","eq1","eq5"]}],"round_bonus_coins":3},{"id":5,"type":"match_pairs","title":"Temple Memory Match","background":"temple_courtyard","coins":30,"mechanic_reason":"Age 8 medium: match_pairs reinforces division facts by connecting problems to answers, building automaticity through memory matching","success_message":"Incredible! You matched all the division pairs perfectly!","rounds":[{"instruction":"Match each division problem to its answer:","pairs":[{"left":"6 ÷ 2","right":"3"},{"left":"10 ÷ 5","right":"2"},{"left":"12 ÷ 3","right":"4"}]},{"instruction":"Connect the problems to the correct results:","pairs":[{"left":"8 ÷ 2","right":"4"},{"left":"15 ÷ 3","right":"5"},{"left":"14 ÷ 2","right":"7"},{"left":"9 ÷ 3","right":"3"}]},{"instruction":"Match these harder division facts:","pairs":[{"left":"20 ÷ 4","right":"5"},{"left":"16 ÷ 4","right":"4"},{"left":"18 ÷ 3","right":"6"},{"left":"12 ÷ 4","right":"3"}]},{"instruction":"The Samurai Monkey mixed these up! Match them correctly:","pairs":[{"left":"25 ÷ 5","right":"5"},{"left":"10 ÷ 2","right":"5"},{"left":"15 ÷ 5","right":"3"},{"left":"12 ÷ 2","right":"6"}]},{"instruction":"Final memory test! Match all five pairs:","pairs":[{"left":"8 ÷ 4","right":"2"},{"left":"20 ÷ 5","right":"4"},{"left":"18 ÷ 2","right":"9"},{"left":"21 ÷ 3","right":"7"},{"left":"16 ÷ 2","right":"8"}]}],"round_bonus_coins":3},{"id":6,"type":"drag_drop","title":"Defeat the Samurai Monkey!","background":"samurai_throne","coins":50,"mechanic_reason":"Age 8 medium: finale drag_drop creates climactic challenge with multiple groups and larger numbers, synthesizing all division concepts learned","success_message":"AMAZING! You've defeated the Samurai Monkey and recovered the ÷ symbol! The Blade of Light is yours, Cleo! Cherry season is saved!","rounds":[{"instruction":"The Samurai Monkey's first defense: 12 ninja stars into 3 target boards!","drop_zones":[{"id":"target1","image_key":"target_wood"},{"id":"target2","image_key":"target_wood"},{"id":"target3","image_key":"target_wood"}],"draggables":[{"id":"star1","image_key":"shuriken"},{"id":"star2","image_key":"shuriken"},{"id":"star3","image_key":"shuriken"},{"id":"star4","image_key":"shuriken"},{"id":"star5","image_key":"shuriken"},{"id":"star6","image_key":"shuriken"},{"id":"star7","image_key":"shuriken"},{"id":"star8","image_key":"shuriken"},{"id":"star9","image_key":"shuriken"},{"id":"star10","image_key":"shuriken"},{"id":"star11","image_key":"shuriken"},{"id":"star12","image_key":"shuriken"}],"required_per_zone":{"target1":4,"target2":4,"target3":4}},{"instruction":"Second wave! 16 bamboo arrows into 4 quivers!","drop_zones":[{"id":"quiver1","image_key":"quiver"},{"id":"quiver2","image_key":"quiver"},{"id":"quiver3","image_key":"quiver"},{"id":"quiver4","image_key":"quiver"}],"draggables":[{"id":"arr1","image_key":"arrow"},{"id":"arr2","image_key":"arrow"},{"id":"arr3","image_key":"arrow"},{"id":"arr4","image_key":"arrow"},{"id":"arr5","image_key":"arrow"},{"id":"arr6","image_key":"arrow"},{"id":"arr7","image_key":"arrow"},{"id":"arr8","image_key":"arrow"},{"id":"arr9","image_key":"arrow"},{"id":"arr10","image_key":"arrow"},{"id":"arr11","image_key":"arrow"},{"id":"arr12","image_key":"arrow"},{"id":"arr13","image_key":"arrow"},{"id":"arr14","image_key":"arrow"},{"id":"arr15","image_key":"arrow"},{"id":"arr16","image_key":"arrow"}],"required_per_zone":{"quiver1":4,"quiver2":4,"quiver3":4,"quiver4":4}},{"instruction":"Third challenge! 20 training stones into 5 meditation circles!","drop_zones":[{"id":"circle1","image_key":"stone_circle"},{"id":"circle2","image_key":"stone_circle"},{"id":"circle3","image_key":"stone_circle"},{"id":"circle4","image_key":"stone_circle"},{"id":"circle5","image_key":"stone_circle"}],"draggables":[{"id":"stone1","image_key":"stone_zen"},{"id":"stone2","image_key":"stone_zen"},{"id":"stone3","image_key":"stone_zen"},{"id":"stone4","image_key":"stone_zen"},{"id":"stone5","image_key":"stone_zen"},{"id":"stone6","image_key":"stone_zen"},{"id":"stone7","image_key":"stone_zen"},{"id":"stone8","image_key":"stone_zen"},{"id":"stone9","image_key":"stone_zen"},{"id":"stone10","image_key":"stone_zen"},{"id":"stone11","image_key":"stone_zen"},{"id":"stone12","image_key":"stone_zen"},{"id":"stone13","image_key":"stone_zen"},{"id":"stone14","image_key":"stone_zen"},{"id":"stone15","image_key":"stone_zen"},{"id":"stone16","image_key":"stone_zen"},{"id":"stone17","image_key":"stone_zen"},{"id":"stone18","image_key":"stone_zen"},{"id":"stone19","image_key":"stone_zen"},{"id":"stone20","image_key":"stone_zen"}],"required_per_zone":{"circle1":4,"circle2":4,"circle3":4,"circle4":4,"circle5":4}},{"instruction":"He's getting tired! 18 ceremonial bells into 3 temple altars!","drop_zones":[{"id":"altar1","image_key":"altar_stone"},{"id":"altar2","image_key":"altar_stone"},{"id":"altar3","image_key":"altar_stone"}],"draggables":[{"id":"bell1","image_key":"bell_gold"},{"id":"bell2","image_key":"bell_gold"},{"id":"bell3","image_key":"bell_gold"},{"id":"bell4","image_key":"bell_gold"},{"id":"bell5","image_key":"bell_gold"},{"id":"bell6","image_key":"bell_gold"},{"id":"bell7","image_key":"bell_gold"},{"id":"bell8","image_key":"bell_gold"},{"id":"bell9","image_key":"bell_gold"},{"id":"bell10","image_key":"bell_gold"},{"id":"bell11","image_key":"bell_gold"},{"id":"bell12","image_key":"bell_gold"},{"id":"bell13","image_key":"bell_gold"},{"id":"bell14","image_key":"bell_gold"},{"id":"bell15","image_key":"bell_gold"},{"id":"bell16","image_key":"bell_gold"},{"id":"bell17","image_key":"bell_gold"},{"id":"bell18","image_key":"bell_gold"}],"required_per_zone":{"altar1":6,"altar2":6,"altar3":6}},{"instruction":"FINAL BATTLE! The ÷ symbol appears! Divide 24 cherry blossoms into 4 sacred lanterns to claim victory!","drop_zones":[{"id":"lantern1","image_key":"lantern_red"},{"id":"lantern2","image_key":"lantern_red"},{"id":"lantern3","image_key":"lantern_red"},{"id":"lantern4","image_key":"lantern_red"}],"draggables":[{"id":"blossom1","image_key":"cherry_blossom"},{"id":"blossom2","image_key":"cherry_blossom"},{"id":"blossom3","image_key":"cherry_blossom"},{"id":"blossom4","image_key":"cherry_blossom"},{"id":"blossom5","image_key":"cherry_blossom"},{"id":"blossom6","image_key":"cherry_blossom"},{"id":"blossom7","image_key":"cherry_blossom"},{"id":"blossom8","image_key":"cherry_blossom"},{"id":"blossom9","image_key":"cherry_blossom"},{"id":"blossom10","image_key":"cherry_blossom"},{"id":"blossom11","image_key":"cherry_blossom"},{"id":"blossom12","image_key":"cherry_blossom"},{"id":"blossom13","image_key":"cherry_blossom"},{"id":"blossom14","image_key":"cherry_blossom"},{"id":"blossom15","image_key":"cherry_blossom"},{"id":"blossom16","image_key":"cherry_blossom"},{"id":"blossom17","image_key":"cherry_blossom"},{"id":"blossom18","image_key":"cherry_blossom"},{"id":"blossom19","image_key":"cherry_blossom"},{"id":"blossom20","image_key":"cherry_blossom"},{"id":"blossom21","image_key":"cherry_blossom"},{"id":"blossom22","image_key":"cherry_blossom"},{"id":"blossom23","image_key":"cherry_blossom"},{"id":"blossom24","image_key":"cherry_blossom"}],"required_per_zone":{"lantern1":6,"lantern2":6,"lantern3":6,"lantern4":6}}],"round_bonus_coins":4,"artifact":{"emoji":"⚔️","name":"Blade of Light","description":"This glowing katana can slice through any math problem, revealing equal groups instantly!"}}],"images_needed":{"items":["cherry","peach","plum","rice_cake","apple","shuriken","arrow","stone_zen","bell_gold","cherry_blossom"],"targets":["bowl_wood","basket_bamboo","box_red","plate_ceramic","jar_clay","target_wood","quiver","stone_circle","altar_stone","lantern_red"],"backgrounds":["hanaydo_garden","temple_interior","dojo_training","blossom_path","temple_courtyard","samurai_throne"],"artifact":{"key":"blade_of_light","emoji":"⚔️","description":"Glowing Japanese katana with light beam effect"}},"tutor_notes":{"block1_script":"Hi Cleo! Today we're learning about DIVISION. Division means splitting things into equal groups. When you see the ÷ symbol, think 'How many in each group?' For example, 8 ÷ 2 means 'If I split 8 things into 2 groups, how many are in each group?' The answer is 4. Remember: division is NOT the same as subtraction! With subtraction we take away. With division, we SHARE EQUALLY. Let's practice sharing cherries on this beautiful island!","block2_hint":"If Cleo struggles with drag_drop: 'Try putting one item in each bowl first, then go back and add more until they're equal.' If stuck on division facts: 'Think about your times tables backwards! If 3 × 4 = 12, then 12 ÷ 3 = 4.' For the finale: 'Count how many drop zones you have. That's how many groups. Now count total items and divide!'","block3_tips":["Use counters/objects at home to practice division physically","Practice division as 'fair sharing' in daily life (cookies, toys, etc.)","Connect division to multiplication: 12 ÷ 3 is like asking '3 times what = 12?'","Watch for subtraction confusion: remind that division splits into groups, subtraction takes away","Celebrate when Cleo recognizes equal groups without counting one-by-one"],"block5_abstraction":"Division represents the inverse operation of multiplication and involves partitioning a quantity into equal subsets. The dividend is distributed among divisor-many groups, yielding the quotient. Mastery requires understanding both the 'measurement' model (how many groups of n?) and the 'partitive' model (how many in each of n groups?). Cleo should progress from concrete manipulation to symbolic representation, recognizing division as a function that maps ordered pairs to unique quotients within the natural numbers (excluding division by zero).","weak_point_focus":"Cleo confuses division with subtraction. Emphasize that SUBTRACTION removes items (6 - 2 = 4 means 'take away 2, you have 4 left'), but DIVISION shares items equally (6 ÷ 2 = 3 means 'split 6 into 2 groups of 3 each'). Use the word 'groups' constantly. Show visual comparisons. In rounds, if Cleo enters answers like she's subtracting, immediately pause and demonstrate the equal groups concept with concrete objects."}};
+  const LESSON = {"meta":{"lesson_id":"division_hanaydo_l2","student_name":"Pirate","student_code":"MONKEY-4821","student_level":2,"character_key":"pirate_green","character_image":"assets/characters/pirate_green.webp","coins_balance":165,"topic_key":"number_division","topic_label":"Division","difficulty":"medium","island_number":4,"age_range":"7-8","created_at":"2025-01-10T00:00:00Z"},"story":{"island_name":"Ханайдо — Остров Вишни","villain":"Обезьяна-Самурай","artifact_name":"Клинок Света","artifact_emoji":"⚔️","artifact_power":"splits any problem into perfect equal parts with one swift strike","greeting":"Pirate, the cherry blossoms are falling — but something's wrong on Hanaydo Island!","act1":"You step onto soft pink petals covering ancient stone paths. Cherry trees tower above you, their branches heavy with fruit. In the distance, a golden temple glows between the trees. The air smells sweet and warm.","act2":"The Monkey-Samurai has stolen all the cherry baskets and locked them inside the temple! He's trying to divide them into his army of monkey warriors — but he keeps getting the math wrong. Now cherries are rolling everywhere, and the temple doors won't open until the baskets are shared equally.","act3":"Only you can solve the division puzzles and open the temple, Pirate. Inside waits the Blade of Light — a legendary sword that can split any problem into perfect equal parts with one swift strike.","goal":"Division is your superpower for sharing things fairly — no one gets left out, and every group gets exactly the same amount."},"stages":[{"id":1,"type":"drag_drop","title":"Share the Cherries","background":"cherry_temple_entrance","coins":15,"mechanic_reason":"drag_drop at age 7-8 medium difficulty — visual equal sharing builds concrete division understanding before abstract symbols","success_message":"Perfect sharing, Pirate! Every basket has the same amount!","rounds":[{"instruction":"Share the cherries equally between the two baskets","draggables":[{"id":"d1","image_key":"cherry"},{"id":"d2","image_key":"cherry"},{"id":"d3","image_key":"cherry"},{"id":"d4","image_key":"cherry"},{"id":"d5","image_key":"cherry"},{"id":"d6","image_key":"cherry"}],"drop_zones":[{"id":"zone1","image_key":"basket_woven"},{"id":"zone2","image_key":"basket_woven"}],"required_per_zone":{"zone1":3,"zone2":3}},{"instruction":"Share the rice balls equally between the two bowls","draggables":[{"id":"d1","image_key":"onigiri"},{"id":"d2","image_key":"onigiri"},{"id":"d3","image_key":"onigiri"},{"id":"d4","image_key":"onigiri"},{"id":"d5","image_key":"onigiri"},{"id":"d6","image_key":"onigiri"}],"drop_zones":[{"id":"zone1","image_key":"bowl_wooden"},{"id":"zone2","image_key":"bowl_wooden"}],"required_per_zone":{"zone1":3,"zone2":3}},{"instruction":"Share the lanterns equally between the two gates","draggables":[{"id":"d1","image_key":"lantern"},{"id":"d2","image_key":"lantern"},{"id":"d3","image_key":"lantern"},{"id":"d4","image_key":"lantern"},{"id":"d5","image_key":"lantern"},{"id":"d6","image_key":"lantern"}],"drop_zones":[{"id":"zone1","image_key":"torii_gate"},{"id":"zone2","image_key":"torii_gate"}],"required_per_zone":{"zone1":3,"zone2":3}},{"instruction":"Share the lotus flowers equally between the two ponds","draggables":[{"id":"d1","image_key":"lotus"},{"id":"d2","image_key":"lotus"},{"id":"d3","image_key":"lotus"},{"id":"d4","image_key":"lotus"},{"id":"d5","image_key":"lotus"},{"id":"d6","image_key":"lotus"}],"drop_zones":[{"id":"zone1","image_key":"pond"},{"id":"zone2","image_key":"pond"}],"required_per_zone":{"zone1":3,"zone2":3}},{"instruction":"Share the swords equally between the two racks","draggables":[{"id":"d1","image_key":"katana"},{"id":"d2","image_key":"katana"},{"id":"d3","image_key":"katana"},{"id":"d4","image_key":"katana"},{"id":"d5","image_key":"katana"},{"id":"d6","image_key":"katana"}],"drop_zones":[{"id":"zone1","image_key":"sword_rack"},{"id":"zone2","image_key":"sword_rack"}],"required_per_zone":{"zone1":3,"zone2":3}}],"round_bonus_coins":2},{"id":2,"type":"symbol_calc","title":"Decode the Samurai Scrolls","background":"cave_entrance","coins":20,"mechanic_reason":"symbol_calc at age 7-8 medium introduces multi-step thinking (multiplication then addition) through visual symbols before pure numbers","success_message":"You cracked the code, Pirate! The scrolls reveal the temple's secrets!","rounds":[{"instruction":"Calculate the value of the symbols","symbol_a_value":4,"symbol_b_value":3,"symbol_c_value":2,"symbol_a_image":"cherry","symbol_b_image":"lantern","symbol_c_image":"lotus","expression":"A + B × C","answer":"10"},{"instruction":"Calculate the value of the symbols","symbol_a_value":5,"symbol_b_value":2,"symbol_c_value":3,"symbol_a_image":"onigiri","symbol_b_image":"katana","symbol_c_image":"cherry","expression":"A + B × C","answer":"11"},{"instruction":"Calculate the value of the symbols","symbol_a_value":6,"symbol_b_value":4,"symbol_c_value":2,"symbol_a_image":"lotus","symbol_b_image":"lantern","symbol_c_image":"onigiri","expression":"A + B × C","answer":"14"},{"instruction":"Calculate the value of the symbols","symbol_a_value":3,"symbol_b_value":5,"symbol_c_value":2,"symbol_a_image":"cherry","symbol_b_image":"katana","symbol_c_image":"lotus","expression":"A + B × C","answer":"13"},{"instruction":"Calculate the value of the symbols","symbol_a_value":7,"symbol_b_value":3,"symbol_c_value":2,"symbol_a_image":"lantern","symbol_b_image":"onigiri","symbol_c_image":"cherry","expression":"A + B × C","answer":"13"}],"round_bonus_coins":2},{"id":3,"type":"fill_blank","title":"Unlock the Temple Doors","background":"cave_deep","coins":25,"mechanic_reason":"fill_blank at age 7-8 medium — direct division practice with small numbers builds fluency and confidence","success_message":"The doors swing open! You've mastered equal sharing, Pirate!","rounds":[{"instruction":"Solve the division","example":"12 ÷ 3 = ?","answer":"4"},{"instruction":"Solve the division","example":"15 ÷ 3 = ?","answer":"5"},{"instruction":"Solve the division","example":"18 ÷ 3 = ?","answer":"6"},{"instruction":"Solve the division","example":"16 ÷ 4 = ?","answer":"4"},{"instruction":"Solve the division","example":"20 ÷ 4 = ?","answer":"5"}],"round_bonus_coins":2},{"id":4,"type":"fill_blank","title":"Navigate the Inner Halls","background":"jungle_path","coins":30,"mechanic_reason":"fill_blank at age 7-8 medium — repeating division mechanic with slightly harder numbers deepens pattern recognition","success_message":"You're getting closer to the Monkey-Samurai's treasure room!","rounds":[{"instruction":"Solve the division","example":"24 ÷ 4 = ?","answer":"6"},{"instruction":"Solve the division","example":"21 ÷ 3 = ?","answer":"7"},{"instruction":"Solve the division","example":"28 ÷ 4 = ?","answer":"7"},{"instruction":"Solve the division","example":"27 ÷ 3 = ?","answer":"9"},{"instruction":"Solve the division","example":"32 ÷ 4 = ?","answer":"8"}],"round_bonus_coins":2},{"id":5,"type":"fill_blank","title":"Face the Samurai's Final Test","background":"jungle_temple","coins":35,"mechanic_reason":"fill_blank at age 7-8 medium — third round of division reinforces mastery and builds automaticity before finale","success_message":"The Monkey-Samurai bows in defeat! You've proven your division mastery!","rounds":[{"instruction":"Solve the division","example":"36 ÷ 4 = ?","answer":"9"},{"instruction":"Solve the division","example":"30 ÷ 5 = ?","answer":"6"},{"instruction":"Solve the division","example":"35 ÷ 5 = ?","answer":"7"},{"instruction":"Solve the division","example":"40 ÷ 5 = ?","answer":"8"},{"instruction":"Solve the division","example":"45 ÷ 5 = ?","answer":"9"}],"round_bonus_coins":2},{"id":6,"type":"multi_choice","title":"Claim the Blade of Light","background":"cherry_throne_room","coins":50,"mechanic_reason":"multi_choice at age 7-8 medium — finale uses quick recognition to celebrate mastery and test understanding without pressure","success_message":"AMAZING! You've won the Blade of Light, Pirate!","rounds":[{"instruction":"Which answer solves 12 ÷ 3?","options":[{"id":"A","label":"3"},{"id":"B","label":"4"},{"id":"C","label":"5"}],"correct_option":"B"},{"instruction":"Which answer solves 20 ÷ 4?","options":[{"id":"A","label":"4"},{"id":"B","label":"5"},{"id":"C","label":"6"}],"correct_option":"B"},{"instruction":"Which answer solves 18 ÷ 3?","options":[{"id":"A","label":"5"},{"id":"B","label":"6"},{"id":"C","label":"7"}],"correct_option":"B"},{"instruction":"Which answer solves 24 ÷ 4?","options":[{"id":"A","label":"5"},{"id":"B","label":"6"},{"id":"C","label":"7"}],"correct_option":"B"},{"instruction":"Which answer solves 30 ÷ 5?","options":[{"id":"A","label":"5"},{"id":"B","label":"6"},{"id":"C","label":"7"}],"correct_option":"B"}],"round_bonus_coins":2,"artifact":{"emoji":"⚔️","name":"Blade of Light","description":"splits any problem into perfect equal parts with one swift strike"}}],"images_needed":{"backgrounds":["cherry_temple_entrance","cave_entrance","cave_deep","jungle_path","jungle_temple","cherry_throne_room"],"items":["cherry","onigiri","lantern","lotus","katana"],"targets":["basket_woven","bowl_wooden","torii_gate","pond","sword_rack"],"artifact":{"key":"blade_of_light","emoji":"⚔️","name":"Blade of Light"}},"tutor_notes":{"block1_script":"Pirate, division is like being the fairest captain on the seven seas — everyone gets an equal share of the treasure! When you divide 12 cherries into 3 baskets, you're making sure each basket gets exactly 4. No one gets more, no one gets less. That's the magic of division — perfect fairness every time.","block2_hint":"If you're stuck on 18 ÷ 3, try thinking: 'How many groups of 3 fit into 18?' You can even use your fingers — count by 3s until you reach 18. Each time you count, that's one group!","block3_tips":["Draw circles for each group and fill them one by one — like dealing cards to players","Skip count backwards from the big number by the small number until you reach zero","Remember your multiplication facts backwards — if 4 × 3 = 12, then 12 ÷ 3 = 4"],"block5_abstraction":"Division is the superpower of equal sharing. When you master it, you can split any amount into perfect groups — whether it's candy between friends, time between activities, or treasure between pirates. The Blade of Light represents this power: one swift calculation, and everything is divided fairly. In the real world, division helps us share resources, plan schedules, and make sure everyone gets their fair part. It's math that creates fairness and balance in the world.","weak_point_focus":"If Pirate struggles with larger divisions like 30 ÷ 5, go back to visual models. Use the drag_drop mechanic from Stage 1 with bigger numbers — let them physically see 30 items going into 5 groups. Once the pattern clicks visually, the abstract numbers will make sense. Division is sharing, and sharing is something every kid understands when they can see it happen."}};
   const BACKGROUND_MAP = {"2":"assets/backgrounds/2.webp","3":"assets/backgrounds/3.webp","4":"assets/backgrounds/4.webp","5":"assets/backgrounds/5.webp","ChatGPT Image 28 апр. 2026 г., 12_58_43":"assets/backgrounds/ChatGPT Image 28 апр. 2026 г., 12_58_43.png","ChatGPT Image 28 апр. 2026 г., 13_00_15":"assets/backgrounds/ChatGPT Image 28 апр. 2026 г., 13_00_15.png","ChatGPT Image 28 апр. 2026 г., 13_01_41":"assets/backgrounds/ChatGPT Image 28 апр. 2026 г., 13_01_41.png","ChatGPT Image 28 апр. 2026 г., 13_05_07":"assets/backgrounds/ChatGPT Image 28 апр. 2026 г., 13_05_07.png","ChatGPT Image 28 апр. 2026 г., 13_06_32":"assets/backgrounds/ChatGPT Image 28 апр. 2026 г., 13_06_32.png","ChatGPT Image 28 апр. 2026 г., 13_07_57":"assets/backgrounds/ChatGPT Image 28 апр. 2026 г., 13_07_57.png","ChatGPT Image 28 апр. 2026 г., 13_08_45":"assets/backgrounds/ChatGPT Image 28 апр. 2026 г., 13_08_45.png","ChatGPT Image 28 апр. 2026 г., 13_12_20":"assets/backgrounds/ChatGPT Image 28 апр. 2026 г., 13_12_20.png","cave":"assets/backgrounds/cave.webp","door":"assets/backgrounds/door.webp","second":"assets/backgrounds/second.webp","shop":"assets/backgrounds/shop.webp","three":"assets/backgrounds/three.webp"};
   const CHARACTER_MAP = {"boy_blue":"assets/characters/boy_blue.webp","boy_brown":"assets/characters/boy_brown.webp","boy_green":"assets/characters/boy_green.webp","elf_blue":"assets/characters/elf_blue.webp","elf_green":"assets/characters/elf_green.webp","elf_red":"assets/characters/elf_red.webp","fairy_green":"assets/characters/fairy_green.webp","fairy_purple":"assets/characters/fairy_purple.webp","fairy_red":"assets/characters/fairy_red.webp","girl_blue":"assets/characters/girl_blue.webp","girl_brown":"assets/characters/girl_brown.webp","girl_green":"assets/characters/girl_green.webp","pirate_blue":"assets/characters/pirate_blue.webp","pirate_brown":"assets/characters/pirate_brown.webp","pirate_green":"assets/characters/pirate_green.webp","wizard_blue":"assets/characters/wizard_blue.webp","wizard_green":"assets/characters/wizard_green.webp","wizard_red":"assets/characters/wizard_red.webp"};
   const ITEMS_MAP = {"artifact":"assets/items/artifact.png","bamboo":"assets/items/bamboo.png","banana":"assets/items/banana.png","bubble":"assets/items/bubble.png","butterfly":"assets/items/butterfly.png","candy":"assets/items/candy.png","cherry":"assets/items/cherry.png","cookie":"assets/items/cookie.png","coral":"assets/items/coral.png","crab_blue":"assets/items/crab_blue.png","hibiscus":"assets/items/hibiscus.png","jellyfish":"assets/items/jellyfish.png","leaf":"assets/items/leaf.png","lollipop":"assets/items/lollipop.png","mushroom":"assets/items/mushroom.png","pawprint":"assets/items/pawprint.png","pearl_blue":"assets/items/pearl_blue.png","pearl_red":"assets/items/pearl_red.png","samurai_monkey":"assets/items/samurai_monkey.png","shell_blue":"assets/items/shell_blue.png","shell_red":"assets/items/shell_red.png","spore":"assets/items/spore.png","starfish":"assets/items/starfish.png","stone_blue":"assets/items/stone_blue.png"};
   const TARGETS_MAP = {"bag_cloth":"assets/targets/bag_cloth.png","basket_wood":"assets/targets/basket_wood.png","basket_woven":"assets/targets/basket_woven.png","bowl_stone":"assets/targets/bowl_stone.png","bowl_wood":"assets/targets/bowl_wood.png","cauldron":"assets/targets/cauldron.png","chest_open":"assets/targets/chest_open.png","totem_1":"assets/targets/totem_1.png","totem_2":"assets/targets/totem_2.png","totem_3":"assets/targets/totem_3.png"};
-  const ARTIFACT_MAP = {"boots_jump":"assets/artifacts/boots_jump.png","cloak_invisible":"assets/artifacts/cloak_invisible.png","crown":"assets/artifacts/crown.webp","dron":"assets/artifacts/dron.webp","egg":"assets/artifacts/egg.webp","glasses":"assets/artifacts/glasses.webp","glasses_mind":"assets/artifacts/glasses_mind.png","lizard":"assets/artifacts/lizard.webp","sword":"assets/artifacts/sword.webp","sword_light":"assets/artifacts/sword_light.png"};
+  const ARTIFACT_MAP = {"boots_jump":"assets/artifacts/boots_jump.png","cloak_invisible":"assets/artifacts/cloak_invisible.png","crown":"assets/artifacts/crown.webp","dron":"assets/artifacts/dron.webp","egg":"assets/artifacts/egg.webp","glasses":"assets/artifacts/glasses.webp","glasses_mind":"assets/artifacts/glasses_mind.png","lizard":"assets/artifacts/lizard.webp","ring_ice":"assets/artifacts/ring_ice.webp","sword":"assets/artifacts/sword.webp","sword_light":"assets/artifacts/sword_light.png"};
+  function buildShopItemsFromArtifacts(){
+    const keys = Object.keys(ARTIFACT_MAP || {});
+    const sorted = keys.sort((a, b) => titleFromKey(a).localeCompare(titleFromKey(b)));
+    const cheap = [35, 45, 60, 75];
+    const mid = [95, 120, 145, 170];
+    const high = [210, 260, 320, 420];
+    return sorted.map((key, i) => {
+      const bucket = i % 3 === 0 ? cheap : (i % 3 === 1 ? mid : high);
+      const price = bucket[Math.floor(i / 3) % bucket.length];
+      return {
+        id: key,
+        name: titleFromKey(key),
+        img: artifactPathByKey(key),
+        price,
+      };
+    });
+  }
+  const SHOP_ITEMS = buildShopItemsFromArtifacts();
 
   const $ = (id) => document.getElementById(id);
   const izone = $("izone");
@@ -965,7 +1581,7 @@
     stageIndex: 0,
     stagePracticeDone: 0,
     stagePracticeTarget: PRACTICE_TARGET,
-    totalCoins: 0,
+    totalCoins: Number(LESSON.meta?.start_coins || 0),
     stageSolved: false,
     selectedSortId: null,
     drag: null,
@@ -1012,6 +1628,7 @@
     const t = resolveEngineType(stage.type);
     if(t === "drag_drop") return "Drag items into the correct baskets.";
     if(t === "drag_sort") return "Select an item, then place it into the next slot.";
+    if(t === "drag_group") return "Sort the numbers into the correct groups.";
     if(t === "input") return "Type the correct number in each input field.";
     if(t === "choice") return "Choose the correct answer.";
     if(t === "tap_count") return "Tap as many times as the task says.";
@@ -1024,6 +1641,7 @@
     const t = resolveEngineType(stage.type);
     if(t === "drag_drop") return "Great! All baskets are complete!";
     if(t === "drag_sort") return "Perfect order!";
+    if(t === "drag_group") return "Great grouping!";
     if(t === "input") return "All answers are correct!";
     if(t === "choice") return "Correct choice!";
     if(t === "tap_count") return "Nice counting!";
@@ -1158,10 +1776,68 @@
     return "assets/artifacts/" + key + ".png";
   }
 
+  const PRELOADED_ASSETS = new Set();
+
+  function preloadImage(src){
+    const url = String(src || "").trim();
+    if(!url || PRELOADED_ASSETS.has(url)) return;
+    PRELOADED_ASSETS.add(url);
+    const img = new Image();
+    img.decoding = "async";
+    img.loading = "eager";
+    img.src = url;
+  }
+
+  function collectStageAssetUrls(stage, stageIndex){
+    const urls = new Set();
+    if(!stage) return urls;
+    urls.add(backgroundPath(resolveStageBackground(stage, stageIndex)));
+    const charKey = LESSON.meta?.character_key || LESSON.character?.image_key || "";
+    if(charKey) urls.add(characterPath(charKey));
+    if(stage.image_key) urls.add(imagePathByKey(stage.image_key, "item"));
+    if(stage.goal_image_key) urls.add(imagePathByKey(stage.goal_image_key, "target"));
+    if(stage.bowl_image_key) urls.add(imagePathByKey(stage.bowl_image_key, "target"));
+    (stage.totem_targets || []).forEach((k) => urls.add(imagePathByKey(k, "target")));
+    (stage.drop_zones || []).forEach((z) => {
+      const kind = z.image_kind === "item" ? "item" : "target";
+      urls.add(imagePathByKey(z.image_key, kind));
+    });
+    (stage.draggables || []).forEach((d) => urls.add(imagePathByKey(d.image_key, "item")));
+    (stage.items || []).forEach((it) => urls.add(imagePathByKey(it.image_key, "item")));
+    if(stage.left_path?.image_key){
+      const lk = stage.left_path.image_kind === "target" ? "target" : "item";
+      urls.add(imagePathByKey(stage.left_path.image_key, lk));
+    }
+    if(stage.right_path?.image_key){
+      const rk = stage.right_path.image_kind === "target" ? "target" : "item";
+      urls.add(imagePathByKey(stage.right_path.image_key, rk));
+    }
+    return urls;
+  }
+
+  function warmupStageAssets(index){
+    const current = STAGES[index];
+    const next = STAGES[Math.min(index + 1, STAGES.length - 1)];
+    collectStageAssetUrls(current, index).forEach(preloadImage);
+    collectStageAssetUrls(next, Math.min(index + 1, STAGES.length - 1)).forEach(preloadImage);
+  }
+
   function titleFromKey(key){
     return String(key || "Mystery Artifact")
       .replace(/[_-]+/g, " ")
       .replace(/w/g, (c) => c.toUpperCase());
+  }
+
+  function ensureRingIceInventory(){
+    const hasRing = state.earnedArtifacts.some((a) => a && a.key === "ring_ice");
+    if(hasRing) return;
+    state.earnedArtifacts.unshift({
+      key: "ring_ice",
+      name: "Ring of Ice",
+      image: "assets/characters/ring_ice.webp",
+      emoji: "🧊",
+      description: "A legacy artifact from the previous island.",
+    });
   }
 
   function posStyle(x, y){
@@ -1201,8 +1877,34 @@
     const out = { ...base };
     const pass = [
       "instruction", "draggables", "drop_zones", "required_per_zone", "prefill_per_zone",
-      "inputs", "question", "options", "items", "correct_order", "target_count", "image_key",
-      "left_path", "right_path", "sequence", "round", "operator_tasks"
+      "inputs", "question", "options", "items", "correct_order", "target_count", "image_key", "answer",
+      "numbers_text", "group1_name", "group2_name", "group1_values", "group2_values",
+      "base_number", "parts_count",
+      "baseNumber", "partsCount",
+      "timer_example_a", "timer_example_b", "timer_example_c",
+      "timer_answer_a", "timer_answer_b", "timer_answer_c", "timer_seconds",
+      "timerExampleA", "timerExampleB", "timerExampleC",
+      "timerAnswerA", "timerAnswerB", "timerAnswerC", "timerSeconds",
+      "symbol_a", "symbol_b", "symbol_c", "symbol_expression",
+      "symbolA", "symbolB", "symbolC", "symbolExpression",
+      "symbol_item_a", "symbol_item_b", "symbol_item_c",
+      "symbolItemA", "symbolItemB", "symbolItemC",
+      "unknown_a", "unknown_b", "unknown_equation",
+      "unknownA", "unknownB", "unknownEquation",
+      "unknown_item_a", "unknown_item_b", "unknown_item_c",
+      "unknownItemA", "unknownItemB", "unknownItemC",
+      "pair_a", "pair_b", "pair_c", "pair_d", "correct_pair_1", "correct_pair_2",
+      "pairA", "pairB", "pairC", "pairD", "correctPair1", "correctPair2",
+      "left_expression", "right_expression", "correct_side",
+      "leftExpression", "rightExpression", "correctSide",
+      "left_path", "right_path", "sequence", "round", "operator_tasks",
+      "tap_step", "counter_start", "counter_goal", "counter_suffix",
+      "tap_mode", "totem_targets", "bowl_image_key", "per_target_goal",
+      "number_start", "number_end", "goal_image_key",
+      "sequence_board", "hide_instruction_label", "input_style",
+      "totem_cycle", "tap_target_order",
+      "balance_left", "balance_right", "balance_answer", "balance_options",
+      "post_story_text"
     ];
     for(const k of pass){
       if(round[k] !== undefined) out[k] = round[k];
@@ -1211,6 +1913,36 @@
     if(round.coins != null) out.coins = round.coins;
     if(round.success_message) out.success_message = round.success_message;
     if(round.title) out.title = round.title;
+
+    // Compatibility bridge: many generated lessons use "example" for fill_blank rows.
+    // The input renderer expects inputs: [{ prompt, answer }].
+    if(
+      (resolveEngineType(out.type) === "input") &&
+      !Array.isArray(out.inputs) &&
+      (round.example != null || round.prompt != null || round.answer != null)
+    ){
+      const promptText = round.prompt ?? round.example ?? out.prompt ?? "";
+      out.inputs = [{ prompt: String(promptText), answer: round.answer ?? out.answer ?? "" }];
+    }
+
+    // Compatibility bridge: generated multi_choice often sends "correct_option"
+    // while renderer expects option objects with correct: true.
+    if(
+      resolveEngineType(out.type) === "choice" &&
+      Array.isArray(round.options) &&
+      round.options.length
+    ){
+      const correctId = String(round.correct_option ?? round.correctOption ?? "").trim().toUpperCase();
+      out.options = round.options.map((opt, idx) => {
+        const id = String(opt.id ?? String.fromCharCode(65 + idx)).trim().toUpperCase();
+        const isCorrect = (opt.correct === true) || (String(opt.correct).toLowerCase() === "true") || (correctId && id === correctId);
+        return { ...opt, id, correct: isCorrect };
+      });
+    }
+
+    if(resolveEngineType(out.type) === "choice" && !out.question){
+      out.question = round.question ?? round.prompt ?? round.instruction ?? out.question ?? "";
+    }
     return out;
   }
 
@@ -1257,7 +1989,7 @@
   function showRoundSuccess(onContinue){
     const overlay = document.createElement("div");
     overlay.className = "round-pop";
-    overlay.innerHTML = '<div class="round-pop-inner"><span class="round-check">✓</span><span class="round-plus">+2 🪙</span></div>';
+    overlay.innerHTML = '<div class="round-pop-inner"><span class="round-check">✓</span><span class="round-plus">Correct!</span></div>';
     document.body.appendChild(overlay);
     requestAnimationFrame(() => overlay.classList.add("on"));
     const t = setTimeout(() => {
@@ -1287,11 +2019,8 @@
 
     if(nRounds >= 2){
       if(state.stagePracticeDone < nRounds){
-        addCoins(bonus);
-        showRoundSuccess(() => {
-          state.stageSolved = false;
-          renderStage(state.stageIndex);
-        });
+        state.stageSolved = false;
+        renderStage(state.stageIndex);
         return;
       }
       addCoins(bonus);
@@ -1324,6 +2053,7 @@
     const img = document.createElement("img");
     img.className = className;
     img.src = imagePathByKey(imageKey, kind);
+    img.decoding = "async";
     img.alt = imageKey || "item";
     img.style.cssText += extraStyle;
     img.onerror = () => {
@@ -1352,6 +2082,7 @@
     const required = stage.required_per_zone || {};
     const prefill = stage.prefill_per_zone || {};
     const zones = stage.drop_zones || [];
+    const draggableById = Object.fromEntries((stage.draggables || []).map((d) => [String(d.id), d]));
 
     const divider = document.createElement("div");
     divider.className = "dd-divider";
@@ -1371,13 +2102,17 @@
         "game-img",
         z.image_key,
         "width:100%;height:100%;object-fit:contain;position:relative;opacity:1;filter:drop-shadow(0 6px 10px rgba(0,0,0,.35));",
-        "target"
+        z.image_kind === "item" ? "item" : "target"
       );
       zoneWrap.appendChild(img);
+      const need = Number(required[z.id] ?? 0);
+      const needBadge = document.createElement("div");
+      needBadge.className = "zone-need";
+      needBadge.textContent = String(need);
+      zoneWrap.appendChild(needBadge);
       lane.appendChild(zoneWrap);
       state.zoneCounts[z.id] = Number(prefill[z.id] ?? 0);
       zoneById[z.id] = zoneWrap;
-      const need = Number(required[z.id] ?? 0);
       const have = Number(prefill[z.id] ?? 0);
       if(have >= need && need > 0) zoneWrap.classList.add("done");
     });
@@ -1407,6 +2142,17 @@
           return;
         }
         const zoneId = zoneHit.dataset.zoneId;
+        const meta = draggableById[String(draggable.dataset.id)] || {};
+        if(meta.decoy === true){
+          draggable.style.cssText = draggable.dataset.start;
+          shake(draggable);
+          return;
+        }
+        if(Array.isArray(meta.accept_zone_ids) && meta.accept_zone_ids.length > 0 && !meta.accept_zone_ids.includes(zoneId)){
+          draggable.style.cssText = draggable.dataset.start;
+          shake(draggable);
+          return;
+        }
         const max = Number(required[zoneId] || 0);
         if(state.zoneCounts[zoneId] >= max){
           draggable.style.cssText = draggable.dataset.start;
@@ -1436,7 +2182,7 @@
     const row2Count = useTwoRows ? (total - cols) : 0;
     const xStart = 14;
     const xEnd = 86;
-    const rowY = useTwoRows ? [72, 86] : [80];
+    const rowY = useTwoRows ? [48, 60] : [50];
 
     const slotPos = [];
     for(let i = 0; i < row1Count; i++){
@@ -1458,7 +2204,7 @@
       slot.dataset.index = String(i);
       const p = slotPos[i] || { x: 50, y: 80 };
       slot.style.cssText += posStyle(p.x, p.y);
-      slot.innerHTML = "<div class='sort-slot-line'></div><div class='sort-slot-label'>#" + (i + 1) + "</div>";
+      slot.innerHTML = "<div class='sort-slot-line'></div>";
       slot.onclick = () => onSortSlotClick(stage, slot);
       slots.push(slot);
       lane.appendChild(slot);
@@ -1466,7 +2212,7 @@
 
     const items = stage.items || [];
     const itemSpots = buildScatterPositions(items.length, {
-      xMin: 10, xMax: 90, yMin: 10, yMax: useTwoRows ? 40 : 46, minDistance: 19,
+      xMin: 10, xMax: 90, yMin: useTwoRows ? 76 : 80, yMax: useTwoRows ? 90 : 92, minDistance: 19,
     });
 
     items.forEach((item, i) => {
@@ -1491,6 +2237,106 @@
     });
   }
 
+  function parseNumberList(value){
+    if(Array.isArray(value)) return value.map((v) => String(v).trim()).filter(Boolean);
+    return String(value || "")
+      .split(/[,\s]+/)
+      .map((v) => v.trim())
+      .filter(Boolean);
+  }
+
+  function renderDragGroup(stage){
+    const all = parseNumberList(stage.numbers_text || stage.numbersText || "");
+    const g1Name = String(stage.group1_name || stage.group1Name || "Group 1");
+    const g2Name = String(stage.group2_name || stage.group2Name || "Group 2");
+    const g1Set = new Set(parseNumberList(stage.group1_values || stage.group1Values || ""));
+    const g2Set = new Set(parseNumberList(stage.group2_values || stage.group2Values || ""));
+    const groupBoxes = [];
+    const acceptedCount = { g1: 0, g2: 0 };
+    const expectedTotal = g1Set.size + g2Set.size;
+
+    const mkGroup = (id, title, x) => {
+      const box = document.createElement("div");
+      box.className = "group-zone";
+      box.dataset.groupId = id;
+      box.style.cssText += posStyle(x, 38);
+      const t = document.createElement("div");
+      t.className = "group-zone-title";
+      t.textContent = title;
+      box.append(t);
+      lane.appendChild(box);
+      groupBoxes.push({ id, box });
+    };
+
+    mkGroup("g1", g1Name, 26);
+    mkGroup("g2", g2Name, 74);
+
+    const numberList = all.map((num, idx) => ({
+      num: String(num),
+      id: "gnum" + (idx + 1),
+    }));
+
+    const bottomSpots = buildScatterPositions(numberList.length, {
+      xMin: 10, xMax: 90, yMin: 78, yMax: 92, minDistance: 16,
+    });
+
+    numberList.forEach(({ num, id }, i) => {
+      const spot = bottomSpots[i] || { x: 14 + i * 10, y: 86 };
+      const chip = document.createElement("div");
+      chip.className = "group-token";
+      chip.style.cssText += posStyle(spot.x, spot.y);
+      chip.dataset.id = id;
+      chip.dataset.num = String(num);
+      chip.dataset.start = chip.style.cssText;
+      const img = makeImg("game-img", "banana", "");
+      const badge = document.createElement("div");
+      badge.className = "value-chip";
+      badge.textContent = String(num);
+      chip.appendChild(img);
+      chip.appendChild(badge);
+
+      enablePointerDrag(chip, (x, y) => {
+        const hit = groupBoxes.find(({ box }) => {
+          const r = box.getBoundingClientRect();
+          return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
+        });
+        if(!hit){
+          chip.style.cssText = chip.dataset.start;
+          shake(chip);
+          return;
+        }
+        const isCorrect = (hit.id === "g1" && g1Set.has(String(num))) || (hit.id === "g2" && g2Set.has(String(num)));
+        hit.box.classList.remove("group-zone-good", "group-zone-bad");
+        if(!isCorrect){
+          hit.box.classList.add("group-zone-bad");
+          setTimeout(() => hit.box.classList.remove("group-zone-bad"), 260);
+          chip.style.cssText = chip.dataset.start;
+          shake(chip);
+          return;
+        }
+
+        hit.box.classList.add("group-zone-good");
+        acceptedCount[hit.id] += 1;
+        const laneRect = lane.getBoundingClientRect();
+        const boxRect = hit.box.getBoundingClientRect();
+        const targetX = (boxRect.left - laneRect.left) + boxRect.width / 2;
+        const targetY = (boxRect.top - laneRect.top) + boxRect.height / 2;
+        chip.style.pointerEvents = "none";
+        chip.style.transition = "left .2s ease, top .2s ease, opacity .2s ease, transform .2s ease";
+        chip.style.left = targetX + "px";
+        chip.style.top = targetY + "px";
+        chip.style.transform = "translate(-50%,-50%) scale(.45)";
+        chip.style.opacity = "0";
+        setTimeout(() => chip.remove(), 220);
+        if((acceptedCount.g1 + acceptedCount.g2) >= expectedTotal){
+          markSuccess(stage);
+        }
+      });
+
+      lane.appendChild(chip);
+    });
+  }
+
   function onSortSlotClick(stage, slot){
     if(state.stageSolved || slot.dataset.filled === "1") return;
     if(!state.selectedSortId){
@@ -1510,12 +2356,15 @@
     itemEl.dataset.locked = "1";
     itemEl.classList.remove("selected");
     itemEl.style.pointerEvents = "none";
-    const shelfY = slot.offsetTop + 26;
-    itemEl.style.cssText += "left:" + (slot.offsetLeft + slot.offsetWidth/2) + "px;top:" + shelfY + "px;transform:translate(-50%,-100%) scale(.88);";
+    const laneRect = lane.getBoundingClientRect();
+    const slotRect = slot.getBoundingClientRect();
+    const centerX = (slotRect.left - laneRect.left) + (slotRect.width / 2);
+    const lineCenterY = (slotRect.top - laneRect.top) + slotRect.height - 24 - 3;
+    itemEl.style.cssText += "left:" + centerX + "px;top:" + lineCenterY + "px;transform:translate(-50%,-100%) scale(.72);";
     const badge = state.sortBadges[state.selectedSortId];
     if(badge){
-      badge.style.left = (slot.offsetLeft + slot.offsetWidth / 2) + "px";
-      badge.style.top = (slot.offsetTop - 8) + "px";
+      badge.style.left = centerX + "px";
+      badge.style.top = (lineCenterY - 52) + "px";
       badge.style.transform = "translate(-50%,-50%) scale(.9)";
     }
     slot.dataset.filled = "1";
@@ -1533,6 +2382,155 @@
     head.className = "eq-head";
     head.textContent = "🔐";
     card.appendChild(head);
+
+    if(stage.input_style === "sequence_inline"){
+      const board = document.createElement("div");
+      board.className = "seq-board";
+      (stage.inputs || []).forEach((entry) => {
+        const row = document.createElement("div");
+        row.className = "seq-row";
+        const promptParts = String(entry.prompt || "")
+          .replace(/,/g, " ")
+          .split(/(\?)/)
+          .map((s) => s.trim())
+          .filter(Boolean);
+        let blankAdded = false;
+        promptParts.forEach((part) => {
+          if(part === "?" && !blankAdded){
+            const input = document.createElement("input");
+            input.className = "seq-blank answer";
+            input.type = "number";
+            input.inputMode = "numeric";
+            input.autocomplete = "off";
+            input.dataset.answer = String(entry.answer ?? "");
+            input.addEventListener("keydown", (e) => {
+              if(e.key === "Enter") e.preventDefault();
+            });
+            row.appendChild(input);
+            blankAdded = true;
+          } else {
+            const span = document.createElement("span");
+            span.textContent = part;
+            row.appendChild(span);
+          }
+        });
+        if(!blankAdded){
+          const input = document.createElement("input");
+          input.className = "seq-blank answer";
+          input.type = "number";
+          input.inputMode = "numeric";
+          input.autocomplete = "off";
+          input.dataset.answer = String(entry.answer ?? "");
+          row.appendChild(input);
+        }
+        board.appendChild(row);
+      });
+      const btn = document.createElement("button");
+      btn.className = "seq-submit";
+      btn.type = "button";
+      btn.textContent = "NEXT";
+      btn.onclick = () => markSuccess(stage);
+      const evaluate = () => {
+        const blanks = [...board.querySelectorAll(".seq-blank")];
+        const allFilled = blanks.every((b) => String(b.value).trim() !== "");
+        if(!allFilled){
+          btn.classList.remove("show");
+          blanks.forEach((b) => b.classList.remove("ok"));
+          return;
+        }
+        const ok = blanks.every((b) => String(b.value).trim() === String(b.dataset.answer).trim());
+        if(ok){
+          blanks.forEach((b) => {
+            b.classList.add("ok");
+            b.disabled = true;
+          });
+          btn.classList.add("show");
+        }else{
+          btn.classList.remove("show");
+          blanks.forEach((b) => {
+            b.classList.remove("ok");
+            if(String(b.value).trim() !== String(b.dataset.answer).trim()){
+              b.classList.add("bad");
+              setTimeout(() => b.classList.remove("bad"), 220);
+            }
+          });
+        }
+      };
+      board.querySelectorAll(".seq-blank").forEach((b) => {
+        b.addEventListener("change", evaluate);
+        b.addEventListener("blur", evaluate);
+      });
+      card.appendChild(board);
+      card.appendChild(btn);
+      lane.appendChild(card);
+      return;
+    }
+
+    if(stage.sequence_board && Array.isArray(stage.sequence_board.rows)){
+      const rows = stage.sequence_board.rows;
+      const answers = Array.isArray(stage.sequence_board.answers) ? stage.sequence_board.answers : [];
+      let blankIdx = 0;
+      const board = document.createElement("div");
+      board.className = "seq-board";
+      rows.forEach((parts) => {
+        const row = document.createElement("div");
+        row.className = "seq-row";
+        (parts || []).forEach((part) => {
+          if(String(part) === "_"){
+            const input = document.createElement("input");
+            input.className = "seq-blank";
+            input.type = "number";
+            input.dataset.answer = String(answers[blankIdx] ?? "");
+            blankIdx += 1;
+            row.appendChild(input);
+          } else {
+            const span = document.createElement("span");
+            span.textContent = String(part);
+            row.appendChild(span);
+          }
+        });
+        board.appendChild(row);
+      });
+      const btn = document.createElement("button");
+      btn.className = "seq-submit";
+      btn.type = "button";
+      btn.textContent = "NEXT";
+      btn.onclick = () => markSuccess(stage);
+      const evaluate = () => {
+        const blanks = [...board.querySelectorAll(".seq-blank")];
+        const allFilled = blanks.every((b) => String(b.value).trim() !== "");
+        if(!allFilled){
+          btn.classList.remove("show");
+          blanks.forEach((b) => b.classList.remove("ok"));
+          return;
+        }
+        const ok = blanks.every((b) => String(b.value).trim() === String(b.dataset.answer).trim());
+        if(ok){
+          blanks.forEach((b) => {
+            b.classList.add("ok");
+            b.disabled = true;
+          });
+          btn.classList.add("show");
+        }else{
+          btn.classList.remove("show");
+          blanks.forEach((b) => {
+            b.classList.remove("ok");
+            if(String(b.value).trim() !== String(b.dataset.answer).trim()){
+              b.classList.add("bad");
+              setTimeout(() => b.classList.remove("bad"), 220);
+            }
+          });
+        }
+      };
+      board.querySelectorAll(".seq-blank").forEach((b) => {
+        b.addEventListener("change", evaluate);
+        b.addEventListener("blur", evaluate);
+      });
+      card.appendChild(board);
+      card.appendChild(btn);
+      lane.appendChild(card);
+      return;
+    }
 
     (stage.inputs || []).forEach((entry) => {
       const line = document.createElement("div");
@@ -1576,10 +2574,6 @@
   function renderChoice(stage){
     const box = document.createElement("div");
     box.className = "choice-box";
-    const sub = document.createElement("div");
-    sub.className = "choice-sub";
-    sub.textContent = stage.instruction || "Read the story and choose one correct equation.";
-    box.appendChild(sub);
     const q = document.createElement("div");
     q.className = "choice-q";
     const questionRaw = stage.question || "Choose the correct answer";
@@ -1593,9 +2587,13 @@
       btn.textContent = optLabel || ("Option " + (idxFromOption(stage.options, opt) + 1));
       btn.onclick = () => {
         if(state.stageSolved) return;
-        if(opt.correct){
+        const isCorrect = opt.correct === true || String(opt.correct).toLowerCase() === "true";
+        if(isCorrect){
           btn.classList.add("ok");
-          markSuccess(stage);
+          box.querySelectorAll(".choice-btn").forEach((b) => {
+            b.style.pointerEvents = "none";
+          });
+          setTimeout(() => markSuccess(stage), 140);
         }else{
           shake(btn);
         }
@@ -1610,105 +2608,763 @@
   }
 
   function renderTapCount(stage){
-    const target = Number(stage.target_count || 5);
-    let count = 0;
-    const wrap = document.createElement("div");
-    wrap.style.cssText =
-      "position:absolute;left:50%;top:38%;transform:translateX(-50%);text-align:center;z-index:12;";
-    const counter = document.createElement("div");
-    counter.textContent = "0 / " + target;
-    counter.style.cssText = "font-size:32px;font-weight:900;margin-bottom:12px;color:var(--sand);";
-    const img = makeImg("game-img", stage.image_key || "banana", "position:relative;cursor:pointer;");
-    img.style.width = "128px";
-    img.style.height = "128px";
+    const mode = String(stage.tap_mode || "").trim();
+    if(mode === "totems"){
+      if(stage.totem_cycle){
+        const targets = Array.isArray(stage.totem_targets) ? stage.totem_targets : ["totem_1", "totem_2", "totem_3"];
+        const orderRaw = Array.isArray(stage.tap_target_order) && stage.tap_target_order.length > 0
+          ? stage.tap_target_order
+          : [1, 2, 3];
+        const order = orderRaw
+          .map((n) => Number(n) - 1)
+          .filter((n) => Number.isInteger(n) && n >= 0 && n < targets.length);
+        const finalOrder = order.length > 0 ? order : [0];
+        const goal = Number(stage.target_count || 12);
+        let taps = 0;
+        let cycleIdx = 0;
+
+        const topRow = document.createElement("div");
+        topRow.style.cssText =
+          "position:absolute;left:50%;top:18%;transform:translateX(-50%);display:flex;gap:34px;justify-content:center;align-items:flex-end;z-index:12;";
+        const totemEls = [];
+        targets.forEach((key, idx) => {
+          const totem = makeImg(
+            "game-img",
+            key,
+            "position:relative;width:116px;height:136px;transition:transform .16s ease, filter .16s ease, opacity .16s ease;opacity:.92;",
+            "target"
+          );
+          totem.dataset.idx = String(idx);
+          totemEls.push(totem);
+          topRow.appendChild(totem);
+        });
+
+        const stone = makeImg(
+          "game-img",
+          stage.image_key || "stone_blue",
+          "position:absolute;left:50%;top:78%;transform:translate(-50%,-50%);cursor:pointer;z-index:12;width:134px;height:134px;"
+        );
+
+        function flyTo(targetEl){
+          const projectile = stone.cloneNode(true);
+          projectile.style.pointerEvents = "none";
+          projectile.style.transition = "left .24s ease, top .24s ease, transform .24s ease, opacity .24s ease";
+          projectile.style.zIndex = "13";
+          lane.appendChild(projectile);
+          const r = targetEl.getBoundingClientRect();
+          const laneR = lane.getBoundingClientRect();
+          const tx = r.left - laneR.left + r.width / 2;
+          const ty = r.top - laneR.top + r.height / 2 + 10;
+          projectile.style.left = tx + "px";
+          projectile.style.top = ty + "px";
+          projectile.style.transform = "translate(-50%,-50%) scale(.34)";
+          projectile.style.opacity = "0";
+          setTimeout(() => projectile.remove(), 260);
+        }
+
+        stone.addEventListener("click", () => {
+          if(state.stageSolved) return;
+          const idx = finalOrder[cycleIdx % finalOrder.length];
+          cycleIdx += 1;
+          taps += 1;
+          const targetEl = totemEls[idx];
+          if(targetEl){
+            flyTo(targetEl);
+            targetEl.style.filter = "drop-shadow(0 0 22px rgba(244,208,63,.9))";
+            targetEl.style.transform = "scale(1.06)";
+            setTimeout(() => {
+              targetEl.style.filter = "drop-shadow(0 6px 10px rgba(0,0,0,.35))";
+              targetEl.style.transform = "scale(1)";
+            }, 170);
+          }
+          if(taps >= goal) markSuccess(stage);
+        });
+
+        lane.appendChild(topRow);
+        lane.appendChild(stone);
+        return;
+      }
+
+      const targets = Array.isArray(stage.totem_targets) ? stage.totem_targets : ["totem_1", "totem_2", "totem_3"];
+      const perTarget = Number(stage.per_target_goal || 4);
+      const counts = targets.map(() => 0);
+      const row = document.createElement("div");
+      row.style.cssText =
+        "position:absolute;left:50%;top:28%;transform:translateX(-50%);display:flex;gap:16px;justify-content:center;align-items:flex-end;z-index:12;flex-wrap:wrap;";
+      const labels = [];
+      targets.forEach((key) => {
+        const col = document.createElement("div");
+        col.style.cssText = "display:flex;flex-direction:column;align-items:center;gap:6px;min-width:110px;";
+        const totem = makeImg("game-img", key, "position:relative;width:92px;height:112px;", "target");
+        const bowl = makeImg("game-img", stage.bowl_image_key || "bowl_wood", "position:relative;width:74px;height:74px;", "target");
+        const lbl = document.createElement("div");
+        lbl.textContent = "0 / " + perTarget;
+        lbl.style.cssText = "font-size:22px;font-weight:900;color:var(--sand);";
+        labels.push(lbl);
+        col.appendChild(totem);
+        col.appendChild(bowl);
+        col.appendChild(lbl);
+        row.appendChild(col);
+      });
+      const img = makeImg("game-img", stage.image_key || "stone_blue", "position:absolute;left:50%;top:78%;transform:translate(-50%,-50%);cursor:pointer;z-index:12;");
+      img.style.width = "132px";
+      img.style.height = "132px";
+      img.addEventListener("click", () => {
+        if(state.stageSolved) return;
+        const idx = counts.findIndex((n) => n < perTarget);
+        if(idx === -1) return;
+        counts[idx] += 1;
+        labels[idx].textContent = counts[idx] + " / " + perTarget;
+        const done = counts.every((n) => n >= perTarget);
+        if(done) markSuccess(stage);
+      });
+      lane.appendChild(row);
+      lane.appendChild(img);
+      return;
+    }
+
+    if(mode === "number_line"){
+      const start = Number(stage.number_start != null ? stage.number_start : -6);
+      const end = Number(stage.number_end != null ? stage.number_end : 0);
+      const step = Number(stage.tap_step || 2);
+      let value = start;
+      const wrap = document.createElement("div");
+      wrap.style.cssText =
+        "position:absolute;left:50%;top:30%;transform:translateX(-50%);text-align:center;z-index:12;min-width:380px;";
+      const counter = document.createElement("div");
+      counter.textContent = String(value);
+      counter.style.cssText = "font-size:36px;font-weight:900;margin-bottom:14px;color:var(--sand);";
+      const shaft = document.createElement("div");
+      shaft.style.cssText = "position:relative;margin:0 auto;width:120px;height:240px;border-radius:18px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.24);";
+      const monkey = makeImg("game-img", stage.image_key || "samurai_monkey", "position:absolute;left:50%;bottom:8px;transform:translateX(-50%);width:86px;height:86px;transition:bottom .22s ease;");
+      const goal = makeImg("game-img", stage.goal_image_key || "chest_open", "position:absolute;left:50%;top:8px;transform:translateX(-50%);width:72px;height:72px;", "target");
+      shaft.appendChild(goal);
+      shaft.appendChild(monkey);
+      const btn = makeImg("game-img", stage.image_key || "samurai_monkey", "position:relative;cursor:pointer;margin-top:16px;");
+      btn.style.width = "108px";
+      btn.style.height = "108px";
+      const applyPos = () => {
+        const progress = Math.max(0, Math.min(1, (value - start) / Math.max(1, end - start)));
+        const px = 8 + progress * 150;
+        monkey.style.bottom = px + "px";
+      };
+      applyPos();
+      btn.addEventListener("click", () => {
+        if(state.stageSolved) return;
+        value += step;
+        if(value > end) value = end;
+        counter.textContent = String(value);
+        applyPos();
+        if(value >= end) markSuccess(stage);
+      });
+      wrap.appendChild(counter);
+      wrap.appendChild(shaft);
+      wrap.appendChild(btn);
+      lane.appendChild(wrap);
+      return;
+    }
+
+    const step = Number(stage.tap_step || 1);
+    const start = Number(stage.counter_start != null ? stage.counter_start : 0);
+    const goal = Number(stage.counter_goal != null ? stage.counter_goal : stage.target_count || 5);
+    let value = start;
+    const box = document.createElement("div");
+    box.className = "choice-box";
+    box.style.top = "28%";
+    const q = document.createElement("div");
+    q.className = "choice-q";
+    q.textContent = stage.question || stage.prompt || ("Tap this item " + goal + " times");
+    box.appendChild(q);
+    const img = makeImg("game-img", stage.image_key || "shell_blue", "position:relative;cursor:pointer;margin:8px auto 6px;display:block;");
+    img.style.width = "138px";
+    img.style.height = "138px";
     img.addEventListener("click", () => {
       if(state.stageSolved) return;
-      count += 1;
-      counter.textContent = count + " / " + target;
-      if(count >= target) markSuccess(stage);
+      img.animate(
+        [
+          { transform: "scale(1)" },
+          { transform: "scale(0.9)" },
+          { transform: "scale(1.08)" },
+          { transform: "scale(1)" },
+        ],
+        { duration: 220, easing: "ease-out" }
+      );
+      value += step;
+      if(value > goal) value = goal;
+      if(value >= goal) markSuccess(stage);
     });
-    wrap.appendChild(counter);
-    wrap.appendChild(img);
-    lane.appendChild(wrap);
+    box.appendChild(img);
+    lane.appendChild(box);
   }
 
   function renderCorridorChoice(stage){
     const box = document.createElement("div");
     box.className = "choice-box";
-    const sub = document.createElement("div");
-    sub.className = "choice-sub";
-    sub.textContent = stage.instruction || "Read both options and tap the one that matches division.";
-    box.appendChild(sub);
+    const subText = String(stage.instruction || "").trim();
+    if(subText){
+      const sub = document.createElement("div");
+      sub.className = "choice-sub";
+      sub.textContent = subText;
+      box.appendChild(sub);
+    }
     const q = document.createElement("div");
     q.className = "choice-q";
     q.textContent = stage.question || "Choose a path";
     box.appendChild(q);
     const row = document.createElement("div");
     row.className = "corridor-row";
-    const left = stage.left_path || {};
-    const right = stage.right_path || {};
-    const emojiFor = (lbl) => {
-      const t = String(lbl || "").toLowerCase();
-      if(t.includes("basket") || t.includes("bag") || t.includes("crate")) return "🧺";
-      if(t.includes("banana")) return "🍌";
-      if(t.includes("apple")) return "🍎";
-      if(t.includes("cookie")) return "🍪";
-      if(t.includes("sticker")) return "⭐";
-      if(t.includes("wrong")) return "❌";
-      return "🧩";
-    };
-
-    const makeCorridorIcon = (pathObj) => {
-      const imageKey = pathObj.image_key;
-      const imageKind = pathObj.image_kind === "target" ? "target" : "item";
-      if(imageKey){
-        const img = document.createElement("img");
-        img.className = "corridor-icon";
-        img.src = imagePathByKey(imageKey, imageKind);
-        img.alt = imageKey;
-        img.onerror = () => {
-          img.replaceWith(Object.assign(document.createElement("div"), {
-            className: "corridor-emoji",
-            textContent: emojiFor(pathObj.label),
-          }));
-        };
-        return img;
+    const correctSideRaw = String(stage.correct_side || stage.correctSide || "").toLowerCase();
+    const left = stage.left_path || { label: stage.left_expression || stage.leftExpression || "Left" };
+    const right = stage.right_path || { label: stage.right_expression || stage.rightExpression || "Right" };
+    if(left.correct == null && right.correct == null){
+      if(correctSideRaw === "left" || correctSideRaw === "l"){
+        left.correct = true;
+        right.correct = false;
+      } else if(correctSideRaw === "right" || correctSideRaw === "r"){
+        left.correct = false;
+        right.correct = true;
       }
-      const em = document.createElement("div");
-      em.className = "corridor-emoji";
-      em.textContent = emojiFor(pathObj.label);
-      return em;
-    };
-
+    }
     [
       { path: left, key: "L" },
       { path: right, key: "R" },
     ].forEach(({ path }, i) => {
       const btn = document.createElement("button");
       btn.className = "choice-btn corridor-choice";
-      const icon = makeCorridorIcon(path);
       const label = document.createElement("div");
       label.className = "corridor-label";
       label.textContent = path.label || (i === 0 ? "Left" : "Right");
-      btn.appendChild(icon);
       btn.appendChild(label);
       btn.onclick = () => {
         if(state.stageSolved) return;
         if(path.correct){
           btn.classList.add("ok");
-          markSuccess(stage);
+          row.querySelectorAll(".choice-btn").forEach((b) => { b.style.pointerEvents = "none"; });
+          setTimeout(() => markSuccess(stage), 140);
         }else{
+          btn.classList.add("bad");
+          setTimeout(() => btn.classList.remove("bad"), 240);
           shake(btn);
         }
       };
       row.appendChild(btn);
     });
     box.appendChild(row);
-    const hint = document.createElement("div");
-    hint.className = "choice-hint";
-    hint.textContent = "Tap one path";
-    box.appendChild(hint);
     lane.appendChild(box);
+  }
+
+  function renderMatchPairs(stage){
+    const box = document.createElement("div");
+    box.className = "choice-box";
+    const q = document.createElement("div");
+    q.className = "choice-q";
+    q.textContent = stage.question || stage.prompt || "Find two correct pairs";
+    box.appendChild(q);
+
+    const row = document.createElement("div");
+    row.className = "corridor-row";
+    const items = [
+      { key: "A", text: stage.pair_a || stage.pairA || "A" },
+      { key: "B", text: stage.pair_b || stage.pairB || "B" },
+      { key: "C", text: stage.pair_c || stage.pairC || "C" },
+      { key: "D", text: stage.pair_d || stage.pairD || "D" },
+    ];
+    const correct = new Set([
+      String(stage.correct_pair_1 || stage.correctPair1 || "").toUpperCase(),
+      String(stage.correct_pair_2 || stage.correctPair2 || "").toUpperCase(),
+    ].filter(Boolean));
+    let found = 0;
+
+    items.forEach((it) => {
+      const btn = document.createElement("button");
+      btn.className = "choice-btn corridor-choice";
+      const label = document.createElement("div");
+      label.className = "corridor-label";
+      label.textContent = String(it.text);
+      btn.appendChild(label);
+      btn.onclick = () => {
+        if(state.stageSolved || btn.dataset.locked === "1") return;
+        if(correct.has(it.key)){
+          btn.classList.add("ok");
+          btn.dataset.locked = "1";
+          btn.style.pointerEvents = "none";
+          found += 1;
+          if(found >= 2){
+            row.querySelectorAll(".choice-btn").forEach((b) => { b.style.pointerEvents = "none"; });
+            setTimeout(() => markSuccess(stage), 140);
+          }
+        }else{
+          btn.classList.add("bad");
+          setTimeout(() => btn.classList.remove("bad"), 240);
+          shake(btn);
+        }
+      };
+      row.appendChild(btn);
+    });
+    box.appendChild(row);
+    lane.appendChild(box);
+  }
+
+  function renderBalanceScale(stage){
+    const wrap = document.createElement("div");
+    wrap.className = "balance-scale-wrap";
+    const scale = document.createElement("img");
+    scale.className = "balance-scale-img";
+    scale.src = "assets/scale_down.png";
+    scale.alt = "scale";
+    wrap.appendChild(scale);
+
+    const leftText = String(stage.left_expression || stage.leftExpression || stage.balance_left || "7 + ?");
+    const rightText = String(stage.right_expression || stage.rightExpression || stage.balance_right || "70");
+    const expected = String(stage.answer ?? stage.balance_answer ?? "");
+    const base = STAGES[state.stageIndex] || stage;
+    const rounds = Array.isArray(base.rounds) ? base.rounds : [];
+    const nRounds = rounds.length || 1;
+
+    let solved = false;
+    const revealNext = () => {
+      if(solved) return;
+      solved = true;
+      left.style.opacity = "0";
+      right.style.opacity = "0";
+      left.style.pointerEvents = "none";
+      right.style.pointerEvents = "none";
+      scale.style.opacity = "0.35";
+      setTimeout(() => {
+        scale.src = "assets/scale.png";
+        scale.style.opacity = "1";
+        scale.style.filter = "drop-shadow(0 0 28px rgba(244,208,63,.9)) drop-shadow(0 0 46px rgba(173,216,255,.55))";
+        scale.style.transform = "scale(1.04)";
+        setTimeout(() => {
+          scale.style.transform = "scale(1)";
+          scale.style.filter = "drop-shadow(0 14px 24px rgba(0,0,0,.35))";
+        }, 320);
+      }, 180);
+      const nextBtn = document.createElement("button");
+      nextBtn.className = "seq-submit show balance-next";
+      nextBtn.type = "button";
+      nextBtn.textContent = "NEXT";
+      nextBtn.onclick = () => {
+        if(state.stageSolved) return;
+        state.stageSolved = true;
+        state.stagePracticeDone += 1;
+        if(state.stagePracticeDone < nRounds){
+          state.stageSolved = false;
+          renderStage(state.stageIndex);
+          return;
+        }
+        const bonus = Number(base.round_bonus_coins != null ? base.round_bonus_coins : 2);
+        addCoins(bonus);
+        addCoins(Number(base.coins != null ? base.coins : stage.coins) || 0);
+        const msg = String(stage.success_message || "").trim()
+          ? stage.success_message
+          : englishSuccessFallback({ ...stage, type: resolveEngineType(stage.type) });
+        showSuccess(msg, () => advanceToNextStage(), "Round " + nRounds + "/" + nRounds + " — stage clear!");
+      };
+      wrap.appendChild(nextBtn);
+    };
+
+    const left = document.createElement("div");
+    left.className = "balance-side-text left";
+    const leftPill = document.createElement("span");
+    leftPill.className = "balance-pill";
+    if(leftText.includes("?")){
+      const parts = leftText.split("?");
+      const inp = document.createElement("input");
+      inp.className = "balance-answer-input";
+      inp.type = "number";
+      inp.inputMode = "numeric";
+      inp.autocomplete = "off";
+      const evaluate = () => {
+        const v = String(inp.value).trim();
+        if(v === "") return;
+        if(v === expected){
+          inp.classList.remove("bad");
+          inp.classList.add("ok");
+          inp.disabled = true;
+          revealNext();
+        }else{
+          inp.classList.remove("ok");
+          inp.classList.add("bad");
+          setTimeout(() => inp.classList.remove("bad"), 220);
+          shake(inp);
+        }
+      };
+      inp.addEventListener("change", evaluate);
+      inp.addEventListener("blur", evaluate);
+      leftPill.append(document.createTextNode(parts[0] || ""));
+      leftPill.appendChild(inp);
+      leftPill.append(document.createTextNode(parts.slice(1).join("?") || ""));
+    }else{
+      leftPill.textContent = leftText;
+    }
+    left.appendChild(leftPill);
+
+    const right = document.createElement("div");
+    right.className = "balance-side-text right";
+    const rightPill = document.createElement("span");
+    rightPill.className = "balance-pill";
+    rightPill.textContent = rightText;
+    right.appendChild(rightPill);
+
+    wrap.appendChild(left);
+    wrap.appendChild(right);
+    lane.appendChild(wrap);
+  }
+
+  function renderBuildNumber(stage){
+    const baseNumber = Number(stage.base_number ?? stage.baseNumber ?? 0);
+    const rawParts = Number(stage.parts_count ?? stage.partsCount ?? 2);
+    const partsCount = Math.max(2, Math.min(5, rawParts || 2));
+
+    const wrap = document.createElement("div");
+    wrap.className = "build-wrap";
+    const target = document.createElement("div");
+    target.className = "build-target";
+    target.textContent = String(baseNumber);
+    wrap.appendChild(target);
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("class", "build-arrow-layer");
+    svg.setAttribute("viewBox", "0 0 1000 1000");
+    const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+    const marker = document.createElementNS("http://www.w3.org/2000/svg", "marker");
+    marker.setAttribute("id", "buildArrowHead");
+    marker.setAttribute("markerWidth", "10");
+    marker.setAttribute("markerHeight", "10");
+    marker.setAttribute("refX", "8");
+    marker.setAttribute("refY", "5");
+    marker.setAttribute("orient", "auto");
+    const poly = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+    poly.setAttribute("points", "0 0, 10 5, 0 10");
+    poly.setAttribute("fill", "#f4d03f");
+    marker.appendChild(poly);
+    defs.appendChild(marker);
+    svg.appendChild(defs);
+    wrap.appendChild(svg);
+
+    const slots = document.createElement("div");
+    slots.className = "build-slots";
+    for(let i = 0; i < partsCount; i++){
+      const slot = document.createElement("div");
+      slot.className = "build-slot";
+      const input = document.createElement("input");
+      input.className = "build-slot-input";
+      input.type = "number";
+      input.inputMode = "numeric";
+      input.autocomplete = "off";
+      slot.appendChild(input);
+      slots.appendChild(slot);
+    }
+    wrap.appendChild(slots);
+    const slotCenters = [];
+    for(let i = 0; i < partsCount; i++){
+      const x = ((i + 1) * (1000 / (partsCount + 1)));
+      slotCenters.push(x);
+    }
+    slotCenters.forEach((x) => {
+      const idx = slotCenters.indexOf(x);
+      const spread = partsCount <= 1 ? 0 : ((idx / (partsCount - 1)) - 0.5) * 180;
+      const targetX = 500 + spread;
+      const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      line.setAttribute("x1", String(x));
+      line.setAttribute("y1", "690");
+      line.setAttribute("x2", String(targetX));
+      line.setAttribute("y2", "280");
+      line.setAttribute("stroke", "rgba(244,208,63,.9)");
+      line.setAttribute("stroke-width", "6");
+      line.setAttribute("stroke-linecap", "round");
+      line.setAttribute("marker-end", "url(#buildArrowHead)");
+      svg.appendChild(line);
+    });
+
+    const next = document.createElement("button");
+    next.className = "seq-submit show build-next";
+    next.type = "button";
+    next.textContent = "✓";
+    next.onclick = () => markSuccess(stage);
+    wrap.appendChild(next);
+
+    lane.appendChild(wrap);
+  }
+
+  function renderTimerChallenge(stage){
+    const card = document.createElement("div");
+    card.className = "timer-card";
+    const secondsTotal = Math.max(1, Number(stage.timer_seconds ?? stage.timerSeconds ?? 30));
+    let seconds = secondsTotal;
+    let running = false;
+    let timerId = null;
+
+    const panel = document.createElement("div");
+    panel.className = "timer-panel";
+    const leftWrap = document.createElement("div");
+    leftWrap.className = "timer-panel-left";
+    const timeLabel = document.createElement("div");
+    timeLabel.className = "timer-label";
+    timeLabel.textContent = "Time left";
+    const badge = document.createElement("div");
+    badge.className = "timer-badge";
+    badge.textContent = String(seconds);
+    const startBtn = document.createElement("button");
+    startBtn.className = "timer-start";
+    startBtn.type = "button";
+    startBtn.textContent = "START";
+    leftWrap.appendChild(timeLabel);
+    leftWrap.appendChild(badge);
+    panel.appendChild(leftWrap);
+    panel.appendChild(startBtn);
+
+    const rows = [
+      { tag: "A", ex: String(stage.timer_example_a ?? stage.timerExampleA ?? "6 + ? = 10"), ans: String(stage.timer_answer_a ?? stage.timerAnswerA ?? "4") },
+      { tag: "B", ex: String(stage.timer_example_b ?? stage.timerExampleB ?? "9 - ? = 4"), ans: String(stage.timer_answer_b ?? stage.timerAnswerB ?? "5") },
+      { tag: "C", ex: String(stage.timer_example_c ?? stage.timerExampleC ?? "3 × ? = 12"), ans: String(stage.timer_answer_c ?? stage.timerAnswerC ?? "4") },
+    ];
+    const inputs = [];
+    rows.forEach((r) => {
+      const row = document.createElement("div");
+      row.className = "timer-row";
+      const parts = r.ex.split("?");
+      row.appendChild(document.createTextNode(r.tag + ": " + (parts[0] || "")));
+      const inp = document.createElement("input");
+      inp.className = "timer-input";
+      inp.type = "number";
+      inp.inputMode = "numeric";
+      inp.autocomplete = "off";
+      inp.disabled = true;
+      inp.dataset.answer = r.ans;
+      inputs.push(inp);
+      row.appendChild(inp);
+      row.appendChild(document.createTextNode(parts.slice(1).join("?") || ""));
+      card.appendChild(row);
+    });
+
+    const stopTimer = () => {
+      if(timerId){
+        clearInterval(timerId);
+        timerId = null;
+      }
+      running = false;
+    };
+    const checkDone = () => {
+      const ok = inputs.every((i) => String(i.value).trim() === String(i.dataset.answer).trim());
+      if(ok){
+        stopTimer();
+        inputs.forEach((i) => { i.classList.add("ok"); i.disabled = true; });
+        setTimeout(() => markSuccess(stage), 140);
+      }
+    };
+
+    inputs.forEach((inp) => {
+      inp.addEventListener("change", () => {
+        if(!running) return;
+        if(String(inp.value).trim() === String(inp.dataset.answer).trim()){
+          inp.classList.remove("bad");
+          inp.classList.add("ok");
+        }else{
+          inp.classList.remove("ok");
+          inp.classList.add("bad");
+          setTimeout(() => inp.classList.remove("bad"), 220);
+        }
+        checkDone();
+      });
+    });
+
+    startBtn.onclick = () => {
+      if(running) return;
+      running = true;
+      seconds = secondsTotal;
+      badge.textContent = String(seconds);
+      startBtn.style.pointerEvents = "none";
+      startBtn.style.opacity = ".65";
+      inputs.forEach((i) => { i.disabled = false; i.focus({ preventScroll: true }); });
+      timerId = setInterval(() => {
+        seconds -= 1;
+        badge.textContent = String(Math.max(0, seconds));
+        if(seconds <= 0){
+          stopTimer();
+          inputs.forEach((i) => i.disabled = true);
+          startBtn.style.pointerEvents = "auto";
+          startBtn.style.opacity = "1";
+        }
+      }, 1000);
+    };
+
+    lane.appendChild(card);
+    lane.appendChild(panel);
+  }
+
+  function renderSymbolCalc(stage){
+    const wrap = document.createElement("div");
+    wrap.className = "symbol-wrap";
+
+    const defaultKeys = ["shell_blue", "banana", "stone_blue", "cherry", "mushroom", "pearl_blue"];
+    const fallbackA = stage.symbol_item_a || stage.symbolItemA || defaultKeys[0];
+    const fallbackB = stage.symbol_item_b || stage.symbolItemB || defaultKeys[1];
+    const fallbackC = stage.symbol_item_c || stage.symbolItemC || defaultKeys[2];
+    const uniq = [];
+    [fallbackA, fallbackB, fallbackC].forEach((k) => {
+      if(!uniq.includes(k)) uniq.push(k);
+    });
+    for(const k of defaultKeys){
+      if(uniq.length >= 3) break;
+      if(!uniq.includes(k)) uniq.push(k);
+    }
+    const itemA = uniq[0];
+    const itemB = uniq[1];
+    const itemC = uniq[2];
+
+    const rows = [
+      { key: "A", img: itemA, value: stage.symbol_a ?? stage.symbolA ?? 4 },
+      { key: "B", img: itemB, value: stage.symbol_b ?? stage.symbolB ?? 3 },
+      { key: "C", img: itemC, value: stage.symbol_c ?? stage.symbolC ?? 2 },
+    ];
+    rows.forEach((r) => {
+      const row = document.createElement("div");
+      row.className = "symbol-row";
+      const img = makeImg("symbol-item", r.img, "");
+      const txt = document.createElement("span");
+      txt.textContent = "= " + r.value;
+      row.appendChild(img);
+      row.appendChild(txt);
+      wrap.appendChild(row);
+    });
+
+    const card = document.createElement("div");
+    card.className = "symbol-calc-card";
+    const expr = document.createElement("div");
+    expr.className = "symbol-expr";
+    const exprRaw = String(stage.symbol_expression || stage.symbolExpression || "A + B × C");
+    const symbolMap = { A: itemA, B: itemB, C: itemC };
+    exprRaw
+      .split(/(\bA\b|\bB\b|\bC\b)/g)
+      .filter(Boolean)
+      .forEach((part) => {
+        const key = part.trim();
+        if(symbolMap[key]){
+          const img = makeImg("symbol-inline", symbolMap[key], "");
+          expr.appendChild(img);
+        }else{
+          const span = document.createElement("span");
+          span.textContent = part;
+          expr.appendChild(span);
+        }
+      });
+    const inp = document.createElement("input");
+    inp.className = "symbol-answer";
+    inp.type = "number";
+    inp.inputMode = "numeric";
+    inp.autocomplete = "off";
+    const expected = String(stage.answer ?? "");
+    const evaluate = () => {
+      const v = String(inp.value).trim();
+      if(v === "") return;
+      if(v === expected){
+        inp.classList.remove("bad");
+        inp.classList.add("ok");
+        inp.disabled = true;
+        setTimeout(() => markSuccess(stage), 140);
+      }else{
+        inp.classList.remove("ok");
+        inp.classList.add("bad");
+        setTimeout(() => inp.classList.remove("bad"), 220);
+        shake(inp);
+      }
+    };
+    inp.addEventListener("change", evaluate);
+    inp.addEventListener("blur", evaluate);
+    card.appendChild(expr);
+    card.appendChild(inp);
+    wrap.appendChild(card);
+    lane.appendChild(wrap);
+  }
+
+  function renderFindUnknown(stage){
+    const wrap = document.createElement("div");
+    wrap.className = "symbol-wrap";
+
+    const defaultKeys = ["shell_blue", "banana", "stone_blue", "cherry", "mushroom", "pearl_blue"];
+    const fallbackA = stage.unknown_item_a || stage.unknownItemA || defaultKeys[0];
+    const fallbackB = stage.unknown_item_b || stage.unknownItemB || defaultKeys[1];
+    const fallbackC = stage.unknown_item_c || stage.unknownItemC || defaultKeys[2];
+    const uniq = [];
+    [fallbackA, fallbackB, fallbackC].forEach((k) => {
+      if(!uniq.includes(k)) uniq.push(k);
+    });
+    for(const k of defaultKeys){
+      if(uniq.length >= 3) break;
+      if(!uniq.includes(k)) uniq.push(k);
+    }
+    const itemA = uniq[0];
+    const itemB = uniq[1];
+    const itemC = uniq[2];
+
+    const rowA = document.createElement("div");
+    rowA.className = "symbol-row";
+    rowA.appendChild(makeImg("symbol-item", itemA, ""));
+    rowA.appendChild(Object.assign(document.createElement("span"), { textContent: "= " + (stage.unknown_a ?? stage.unknownA ?? 4) }));
+    wrap.appendChild(rowA);
+
+    const rowB = document.createElement("div");
+    rowB.className = "symbol-row";
+    rowB.appendChild(makeImg("symbol-item", itemB, ""));
+    rowB.appendChild(Object.assign(document.createElement("span"), { textContent: "= " + (stage.unknown_b ?? stage.unknownB ?? 6) }));
+    wrap.appendChild(rowB);
+
+    const rowC = document.createElement("div");
+    rowC.className = "symbol-row";
+    rowC.appendChild(makeImg("symbol-item", itemC, ""));
+    rowC.appendChild(Object.assign(document.createElement("span"), { textContent: "= " }));
+    const cInput = document.createElement("input");
+    cInput.className = "symbol-answer";
+    cInput.style.width = "102px";
+    cInput.type = "number";
+    cInput.inputMode = "numeric";
+    cInput.autocomplete = "off";
+    rowC.appendChild(cInput);
+    wrap.appendChild(rowC);
+
+    const card = document.createElement("div");
+    card.className = "symbol-calc-card";
+    const expr = document.createElement("div");
+    expr.className = "symbol-expr";
+    const exprRaw = String(stage.unknown_equation || stage.unknownEquation || "A + B + C = 15");
+    const symbolMap = { A: itemA, B: itemB, C: itemC };
+    exprRaw
+      .split(/(\bA\b|\bB\b|\bC\b)/g)
+      .filter(Boolean)
+      .forEach((part) => {
+        const key = part.trim();
+        if(symbolMap[key]){
+          expr.appendChild(makeImg("symbol-inline", symbolMap[key], ""));
+        }else{
+          const span = document.createElement("span");
+          span.textContent = part;
+          expr.appendChild(span);
+        }
+      });
+    card.appendChild(expr);
+    wrap.appendChild(card);
+
+    const expected = String(stage.answer ?? "");
+    const evaluate = () => {
+      const v = String(cInput.value).trim();
+      if(v === "") return;
+      if(v === expected){
+        cInput.classList.remove("bad");
+        cInput.classList.add("ok");
+        cInput.disabled = true;
+        setTimeout(() => markSuccess(stage), 140);
+      }else{
+        cInput.classList.remove("ok");
+        cInput.classList.add("bad");
+        setTimeout(() => cInput.classList.remove("bad"), 220);
+        shake(cInput);
+      }
+    };
+    cInput.addEventListener("change", evaluate);
+    cInput.addEventListener("blur", evaluate);
+
+    lane.appendChild(wrap);
   }
 
   function renderAnimation(stage){
@@ -1731,6 +3387,7 @@
     layer.appendChild(text);
     const inputs = Array.isArray(stage.inputs) ? stage.inputs : [];
     const opTasks = Array.isArray(stage.operator_tasks) ? stage.operator_tasks : [];
+    const hasBalance = String(stage.balance_left || "").trim() && String(stage.balance_right || "").trim() && Array.isArray(stage.balance_options);
     const operatorDone = new Set();
     let card = null;
     let opsWrap = null;
@@ -1752,6 +3409,78 @@
         markSuccess(stage);
       }
     };
+    if(hasBalance){
+      counter.textContent = "Balance the chain";
+      task.appendChild(counter);
+      const card = document.createElement("div");
+      card.className = "balance-card";
+      const row = document.createElement("div");
+      row.className = "balance-row";
+      const left = document.createElement("div");
+      left.className = "balance-side";
+      left.textContent = String(stage.balance_left);
+      const eq = document.createElement("div");
+      eq.className = "balance-eq";
+      eq.textContent = "=";
+      const right = document.createElement("div");
+      right.className = "balance-side";
+      const blank = document.createElement("span");
+      blank.className = "balance-blank";
+      blank.textContent = "?";
+      const parts = String(stage.balance_right).split("?");
+      right.append(document.createTextNode(parts[0] || ""));
+      right.appendChild(blank);
+      right.append(document.createTextNode(parts.slice(1).join("?") || ""));
+      row.appendChild(left);
+      row.appendChild(eq);
+      row.appendChild(right);
+      card.appendChild(row);
+
+      const rack = document.createElement("div");
+      rack.className = "tile-rack";
+      const expected = Number(stage.balance_answer);
+      const placeValue = (val) => {
+        if(state.stageSolved) return;
+        blank.textContent = String(val);
+        if(Number(val) === expected){
+          blank.classList.add("ok");
+          [...rack.querySelectorAll(".num-tile")].forEach((n) => n.style.pointerEvents = "none");
+          setTimeout(() => markSuccess(stage), 180);
+        }else{
+          blank.classList.remove("ok");
+          blank.classList.add("bad");
+          setTimeout(() => blank.classList.remove("bad"), 200);
+          blank.textContent = "?";
+          shake(blank);
+        }
+      };
+      blank.addEventListener("dragover", (e) => e.preventDefault());
+      blank.addEventListener("drop", (e) => {
+        e.preventDefault();
+        const val = e.dataTransfer?.getData("text/plain");
+        placeValue(val);
+      });
+      (stage.balance_options || []).forEach((num) => {
+        const tile = document.createElement("div");
+        tile.className = "num-tile";
+        tile.textContent = String(num);
+        tile.draggable = true;
+        tile.addEventListener("dragstart", (e) => {
+          if(e.dataTransfer) e.dataTransfer.setData("text/plain", String(num));
+        });
+        tile.addEventListener("click", () => placeValue(num));
+        rack.appendChild(tile);
+      });
+      card.appendChild(rack);
+      const hint = document.createElement("div");
+      hint.className = "balance-hint";
+      hint.textContent = "Drag one number tile to the gap";
+      card.appendChild(hint);
+      task.appendChild(card);
+      layer.appendChild(task);
+      lane.appendChild(layer);
+      return;
+    }
     if(inputs.length > 0 || opTasks.length > 0){
       counter.textContent = "Solve all to unlock artifact";
       task.appendChild(counter);
@@ -1863,13 +3592,20 @@
     clearStage();
     const baseStage = STAGES[index];
     if(!baseStage) return;
+    warmupStageAssets(index);
     const stage = resolveCurrentTask(baseStage);
 
     const engType = resolveEngineType(stage.type);
     const engStage = { ...stage, type: engType };
-    const instruction = stage.instruction || stage.question || LESSON.story_hook || "";
+    const instruction = stage.title || stage.question || LESSON.story_hook || "";
     const cleanInstruction = String(instruction).trim() ? instruction : englishStageFallback(engStage);
-    $("instruction").textContent = cleanInstruction + "  (" + (state.stagePracticeDone + 1) + "/" + state.stagePracticeTarget + ")";
+    if(stage.hide_instruction_label){
+      $("instruction").textContent = "(" + (state.stagePracticeDone + 1) + "/" + state.stagePracticeTarget + ")";
+    }else{
+      $("instruction").textContent = cleanInstruction + "  (" + (state.stagePracticeDone + 1) + "/" + state.stagePracticeTarget + ")";
+    }
+    $("bg").fetchPriority = "high";
+    $("bg").decoding = "async";
     $("bg").src = backgroundPath(resolveStageBackground(stage, index));
     $("bg").onerror = () => {
       $("bg").src = "";
@@ -1878,6 +3614,13 @@
     setMessage("");
     if(engType === "drag_drop") renderDragDrop(stage);
     else if(engType === "drag_sort") renderDragSort(stage);
+    else if(engType === "drag_group") renderDragGroup(stage);
+    else if(engType === "match_pairs") renderMatchPairs(stage);
+    else if(engType === "balance_scale") renderBalanceScale(stage);
+    else if(engType === "build_number") renderBuildNumber(stage);
+    else if(engType === "timer_challenge") renderTimerChallenge(stage);
+    else if(engType === "symbol_calc") renderSymbolCalc(stage);
+    else if(engType === "find_unknown") renderFindUnknown(stage);
     else if(engType === "input") renderInput(stage);
     else if(engType === "choice") renderChoice(stage);
     else if(engType === "tap_count") renderTapCount(stage);
@@ -1941,7 +3684,76 @@
     };
     state.completionArtifact = reward;
     state.earnedArtifacts.push(reward);
+    showSuccess("The final challenge is complete!", () => {
+      openShopScreen();
+    }, "AMAZING! Your reward is ready.", "Go to shop");
+  }
+
+  function showEndingStoryScreen(){
+    const stage6 = STAGES[5] || {};
+    const text = String(
+      stage6.post_story_text ||
+      "The Monkey King is free! The King thanks you and gives you his Crown. But Doctor Krit is still out there — and the next island will be even more dangerous. Well done, hero!"
+    );
+    $("storyText").textContent = text;
+    $("successScreen").classList.remove("on");
+    $("stageBackBtn").classList.add("hidden");
+    $("stageSkipBtn").classList.add("hidden");
+    $("instruction").classList.add("hidden");
+    $("coinsLabel").parentElement.classList.add("hidden");
+    $("game").style.pointerEvents = "none";
+    $("storyScreen").classList.add("on");
+  }
+
+  function renderShop(){
+    const grid = $("shopGrid");
+    grid.innerHTML = "";
+    $("shopCoins").textContent = String(state.totalCoins);
+    SHOP_ITEMS.forEach((it) => {
+      const owned = state.earnedArtifacts.some((a) => a && a.key === it.id);
+      const card = document.createElement("div");
+      card.className = "shop-item";
+      const img = document.createElement("img");
+      img.src = it.img;
+      img.alt = it.name;
+      img.onerror = () => {
+        const fallback = artifactPathByKey(it.id);
+        if(fallback && fallback !== it.img){
+          img.src = fallback;
+        } else {
+          img.style.display = "none";
+        }
+      };
+      const name = document.createElement("div");
+      name.className = "shop-name";
+      name.textContent = it.name;
+      const price = document.createElement("div");
+      price.className = "shop-price";
+      price.textContent = "🪙 " + it.price;
+      const btn = document.createElement("button");
+      btn.className = "shop-buy";
+      const canBuy = state.totalCoins >= it.price && !owned;
+      btn.textContent = owned ? "Owned" : "Buy";
+      btn.disabled = !canBuy && !owned;
+      btn.onclick = () => {
+        if(state.totalCoins < it.price || owned) return;
+        state.totalCoins -= it.price;
+        state.earnedArtifacts.push({ key: it.id, name: it.name, image: it.img, description: "" });
+        $("coinsLabel").textContent = String(state.totalCoins);
+        renderShop();
+      };
+      card.append(img, name, price, btn);
+      grid.appendChild(card);
+    });
+  }
+
+  function openShopScreen(){
+    $("storyScreen").classList.remove("on");
     showCompletionScreen();
+    renderShop();
+    $("completionScreen").classList.remove("on");
+    $("shopBg").src = backgroundPath("shop");
+    $("shopScreen").classList.add("on");
   }
 
   function renderCompletionInventory(){
@@ -1949,17 +3761,37 @@
     row.innerHTML = "";
     const items = state.earnedArtifacts.slice(-12);
     for(const art of items){
-      const img = document.createElement("img");
-      img.className = "inventory-icon";
-      img.src = art.image;
-      img.alt = art.name || art.key || "artifact";
-      img.onerror = () => img.remove();
-      row.appendChild(img);
+      const wrap = document.createElement("div");
+      wrap.className = "inventory-icon";
+      if(art.image){
+        const img = document.createElement("img");
+        img.src = art.image;
+        img.alt = art.name || art.key || "artifact";
+        img.style.width = "100%";
+        img.style.height = "100%";
+        img.style.objectFit = "contain";
+        img.onerror = () => {
+          wrap.textContent = art.emoji || "🏆";
+          wrap.style.display = "flex";
+          wrap.style.alignItems = "center";
+          wrap.style.justifyContent = "center";
+          wrap.style.fontSize = "28px";
+        };
+        wrap.appendChild(img);
+      } else {
+        wrap.textContent = art.emoji || "🏆";
+        wrap.style.display = "flex";
+        wrap.style.alignItems = "center";
+        wrap.style.justifyContent = "center";
+        wrap.style.fontSize = "28px";
+      }
+      row.appendChild(wrap);
     }
     if(items.length === 0) row.textContent = "—";
   }
 
   function showCompletionScreen(){
+    ensureRingIceInventory();
     const art = state.completionArtifact || {};
     const charKey = LESSON.meta?.character_key || LESSON.character?.image_key || Object.keys(CHARACTER_MAP)[0] || "";
     const avatar = $("completionAvatar");
@@ -1968,8 +3800,8 @@
     avatar.onload = () => { avatar.style.display = "block"; };
 
     $("completionName").textContent = LESSON.meta?.student_name || "Hero";
-    $("completionLevel").textContent = "Level " + Math.max(1, Number(LESSON.meta?.lesson_number || 1) + 1);
-    $("completionCoins").textContent = "🪙 " + state.totalCoins + " coins earned!";
+    $("completionLevel").textContent = "Level 3";
+    $("completionCoins").textContent = "🪙 " + state.totalCoins + " coins remaining";
     $("completionBg").src = backgroundPath("stage1_generated");
     $("completionArtifactName").textContent = art.name || "Mystery Artifact";
     $("completionArtifactDesc").textContent = art.description || "A magical reward for your journey.";
@@ -2001,10 +3833,11 @@
     confetti(120);
   }
 
-  function showSuccess(msg, cb, learnText){
+  function showSuccess(msg, cb, learnText, buttonLabel){
     state.successCb = cb;
     $("successMsg").textContent = msg || "Well done!";
     $("successLearn").textContent = learnText || "Great progress today!";
+    $("successNextBtn").textContent = buttonLabel || "Next →";
     $("successScreen").classList.add("on");
     confetti();
   }
@@ -2063,7 +3896,12 @@
   }
 
   $("successNextBtn").addEventListener("click", nextStep);
-  $("completionReloadBtn").addEventListener("click", () => location.reload());
+  $("completionPlayAgainBtn").addEventListener("click", () => location.reload());
+  $("storyShopBtn").addEventListener("click", openShopScreen);
+  $("shopFinishBtn").addEventListener("click", () => {
+    $("shopScreen").classList.remove("on");
+    showCompletionScreen();
+  });
   $("completionBackBtn").addEventListener("click", () => {
     $("completionScreen").classList.remove("on");
     $("game").style.pointerEvents = "";
@@ -2071,7 +3909,7 @@
     $("stageSkipBtn").classList.remove("hidden");
     $("instruction").classList.remove("hidden");
     $("coinsLabel").parentElement.classList.remove("hidden");
-    $("introScreen").classList.remove("hidden");
+    showIntroScreen();
     state.stageIndex = 0;
     state.stagePracticeDone = 0;
   });
@@ -2083,7 +3921,7 @@
       renderStage(state.stageIndex);
       return;
     }
-    $("introScreen").classList.remove("hidden");
+    showIntroScreen();
   });
   $("stageSkipBtn").addEventListener("click", () => {
     state.stagePracticeDone = state.stagePracticeTarget;
@@ -2107,9 +3945,61 @@
     return lesson.story_hook || "";
   }
 
+  const introState = {
+    text: "",
+    idx: 0,
+    timer: null,
+    speedMs: 18
+  };
+
+  function stopIntroTyping(){
+    if(introState.timer){
+      clearTimeout(introState.timer);
+      introState.timer = null;
+    }
+  }
+
+  function renderIntroTyped(done){
+    const body = introState.text.slice(0, introState.idx);
+    $("introStory").innerHTML = "";
+    $("introStory").append(document.createTextNode(body));
+    if(!done){
+      const cur = document.createElement("span");
+      cur.className = "intro-cur";
+      $("introStory").append(cur);
+    }
+  }
+
+  function typeIntroStep(){
+    if(introState.idx >= introState.text.length){
+      renderIntroTyped(true);
+      $("introStartBtn").classList.add("show");
+      stopIntroTyping();
+      return;
+    }
+    introState.idx += 1;
+    renderIntroTyped(false);
+    introState.timer = setTimeout(typeIntroStep, introState.speedMs);
+  }
+
+  function playIntroTyping(text){
+    stopIntroTyping();
+    introState.text = text || "";
+    introState.idx = 0;
+    $("introStartBtn").classList.remove("show");
+    renderIntroTyped(false);
+    typeIntroStep();
+  }
+
+  function showIntroScreen(){
+    $("introScreen").classList.remove("hidden");
+    playIntroTyping(buildIntroNarrative(LESSON) || "A new mystery is waiting on the island.");
+  }
+
   setupPlayerAvatar();
+  $("coinsLabel").textContent = String(state.totalCoins);
   $("introBg").src = backgroundPath("second");
-  $("introStory").textContent = buildIntroNarrative(LESSON) || "A new mystery is waiting on the island.";
+  showIntroScreen();
   </script>
 </body>
 </html>

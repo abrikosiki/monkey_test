@@ -278,6 +278,12 @@ Final stage (id 6) if type is "animation":
   "description": "one line magical ability for kids"
 }
 
+SHOP UI RULE (strict, always):
+- After AMAZING and "Go to shop", the shop MUST open as a centered compact card/panel (not fullscreen content).
+- The shop card MUST stay within viewport height so that the "Finish Adventure" button is always visible at the bottom of the card.
+- If there are many products, only the products grid area scrolls inside the card; header and "Finish Adventure" stay fixed/visible.
+- Never render shop products as a full-screen stretched page that hides the finish button.
+
 ════════════════════════════════════════
 IMAGES
 ════════════════════════════════════════

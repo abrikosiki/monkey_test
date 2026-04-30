@@ -419,6 +419,13 @@ const server = http.createServer(async (req, res) => {
       }
       const payload = JSON.parse((await readBody(req)) || "{}");
       const draft = payload.draft;
+      if (draft && !draft.child && draft.childCode) {
+        try {
+          draft.child = await fetchChildRecord(draft.childCode);
+        } catch {
+          // Keep validation behavior below if child lookup fails.
+        }
+      }
       const draftErrors = validateDraft(draft);
       if (draftErrors.length) {
         sendJson(res, 422, { ok: false, error: "Draft is invalid", details: draftErrors });
