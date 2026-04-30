@@ -288,27 +288,23 @@ SHOP UI RULE (strict, always):
 IMAGES
 ════════════════════════════════════════
 
-ASSET LIBRARY RULES:
+ASSET LIBRARY RULES (STRICT):
 
-All images live in three folders:
-- assets/items/       — draggable objects (banana.png, cherry.png etc)
-- assets/targets/     — places the child drags things INTO
-- assets/backgrounds/ — the scene behind everything
+The user message for each request includes **ALLOWED ASSET KEYS** — exact string tokens that exist on disk
+(under assets/backgrounds, assets/items, assets/targets, assets/characters, assets/artifacts).
 
-When building a lesson, pick from these folders using common sense and story logic.
+You MUST:
+- Use **only** those exact tokens for `background`, every `image_key`, `goal_image_key`, `bowl_image_key`,
+  `totem_targets`, `meta.character_key`, and `artifact.key` (when used).
+- **Never** invent, guess, translate, or paraphrase asset names (e.g. do not output `clam_shell` unless that
+  exact token appears in the allowed list for that role).
+- Treat ITEMS vs TARGETS as separate lists: drop zones and containers use TARGETS; draggables and small objects
+  use ITEMS, unless a zone is explicitly marked with `image_kind: "item"` and the same token exists under ITEMS.
 
-Ask yourself:
-- Does this item belong on this island naturally?
-- Does this target make sense as a container for this item?
-- Does this background fit the mood of this stage?
-
-No fixed rules. Think like a storyteller.
-A monkey temple calls for different objects than a snowy forest.
-A magic portal swallows different things than a wooden bowl.
-The background sets the scene — items and targets should feel like they naturally belong in that scene.
+You may still think like a storyteller **within** those lists — choose combinations that fit the island mood.
 
 NO image generation instructions in lesson JSON.
-Use image keys and folder-based assets only.
+NO fictional filenames or keys outside the allowed lists in the user message.
 
 ════════════════════════════════════════
 TUTOR_NOTES

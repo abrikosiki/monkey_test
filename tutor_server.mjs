@@ -124,6 +124,181 @@ function toNumber(value, fallback = 0) {
   return Number.isFinite(n) ? n : fallback;
 }
 
+const IMAGE_FILE_EXTENSIONS = new Set([".webp", ".png", ".jpg", ".jpeg"]);
+
+function listAssetStems(relativeDir) {
+  const full = path.join(__dirname, relativeDir);
+  const out = [];
+  try {
+    for (const entry of fs.readdirSync(full, { withFileTypes: true })) {
+      if (!entry.isFile()) continue;
+      const ext = path.extname(entry.name).toLowerCase();
+      if (!IMAGE_FILE_EXTENSIONS.has(ext)) continue;
+      out.push(path.basename(entry.name, ext));
+    }
+  } catch {
+    // Missing or unreadable folder (e.g. empty deploy)
+  }
+  return out.sort((a, b) => a.localeCompare(b));
+}
+
+function buildAssetCatalog() {
+  const items = listAssetStems("assets/items");
+  const targets = listAssetStems("assets/targets");
+  const backgrounds = listAssetStems("assets/backgrounds");
+  const characters = listAssetStems("assets/characters");
+  const artifacts = listAssetStems("assets/artifacts");
+  return {
+    items,
+    targets,
+    backgrounds,
+    characters,
+    artifacts,
+    itemDefault: items[0] || "",
+    targetDefault: targets[0] || "",
+    bgDefault: backgrounds[0] || "",
+    charDefault: characters[0] || "",
+    artifactDefault: artifacts[0] || "",
+  };
+}
+
+function normAssetKeyStem(value) {
+  return String(value || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "");
+}
+
+/** Map invented keys to the closest allowed stem, else first allowed (deterministic). */
+function resolveToAllowedStems(preferred, stems) {
+  const list = Array.isArray(stems) ? stems : [];
+  if (!list.length) return String(preferred || "").trim();
+  const p = String(preferred || "").trim();
+  if (p && list.includes(p)) return p;
+  const wanted = normAssetKeyStem(p);
+  for (const k of list) {
+    if (normAssetKeyStem(k) === wanted) return k;
+  }
+  for (const k of list) {
+    const nk = normAssetKeyStem(k);
+    if (nk.length && wanted.length && (nk.includes(wanted) || wanted.includes(nk))) return k;
+  }
+  return list[0];
+}
+
+function formatAllowedKeySection(title, stems) {
+  if (!stems.length) {
+    return `${title}\n(no image files in this folder on the server — pick another section’s keys or repeat allowed keys from non-empty lists only)\n`;
+  }
+  return `${title}\n${stems.join(", ")}\n\n`;
+}
+
+function buildAssetKeyConstraintBlock(catalog) {
+  return [
+    "ALLOWED ASSET KEYS (STRICT — copy tokens exactly, character for character):",
+    "You MUST choose every background and image_key only from these lists. Do not invent, translate, abbreviate, or substitute similar English words.",
+    "",
+    formatAllowedKeySection("BACKGROUNDS — use only for stage field \"background\":", catalog.backgrounds),
+    formatAllowedKeySection("ITEMS — draggables, items[], tap/symbol/corridor PNGs (movable or symbolic objects):", catalog.items),
+    formatAllowedKeySection("TARGETS — drop_zones, goal_image_key, bowl_image_key, totem_targets (containers, bowls, chests, portals):", catalog.targets),
+    formatAllowedKeySection("CHARACTERS — meta.character_key only:", catalog.characters),
+    formatAllowedKeySection("ARTIFACTS — stage 6 artifact.key and images_needed.artifact.key:", catalog.artifacts),
+    "Rules:",
+    "- drop_zone.image_kind \"item\" only if that exact token also appears under ITEMS; otherwise omit image_kind or use a TARGET token.",
+    "- If you need a jungle/beach/cave mood, still pick ONLY background tokens from BACKGROUNDS above.",
+    "",
+  ].join("\n");
+}
+
+function clampVisualFields(obj, cat) {
+  if (!obj || typeof obj !== "object") return;
+  if (typeof obj.background === "string") {
+    obj.background = resolveToAllowedStems(obj.background, cat.backgrounds);
+  }
+  if (typeof obj.image_key === "string") {
+    obj.image_key = resolveToAllowedStems(obj.image_key, cat.items);
+  }
+  if (typeof obj.goal_image_key === "string") {
+    obj.goal_image_key = resolveToAllowedStems(obj.goal_image_key, cat.targets);
+  }
+  if (typeof obj.bowl_image_key === "string") {
+    obj.bowl_image_key = resolveToAllowedStems(obj.bowl_image_key, cat.targets);
+  }
+  for (const z of obj.drop_zones || []) {
+    if (!z || typeof z !== "object" || typeof z.image_key !== "string") continue;
+    const stems = z.image_kind === "item" ? cat.items : cat.targets;
+    z.image_key = resolveToAllowedStems(z.image_key, stems);
+  }
+  for (const d of obj.draggables || []) {
+    if (d && typeof d.image_key === "string") {
+      d.image_key = resolveToAllowedStems(d.image_key, cat.items);
+    }
+  }
+  for (const it of obj.items || []) {
+    if (it && typeof it.image_key === "string") {
+      it.image_key = resolveToAllowedStems(it.image_key, cat.items);
+    }
+  }
+  if (obj.left_path && typeof obj.left_path === "object" && typeof obj.left_path.image_key === "string") {
+    const stems = obj.left_path.image_kind === "item" ? cat.items : cat.targets;
+    obj.left_path.image_key = resolveToAllowedStems(obj.left_path.image_key, stems);
+  }
+  if (obj.right_path && typeof obj.right_path === "object" && typeof obj.right_path.image_key === "string") {
+    const stems = obj.right_path.image_kind === "item" ? cat.items : cat.targets;
+    obj.right_path.image_key = resolveToAllowedStems(obj.right_path.image_key, stems);
+  }
+  if (Array.isArray(obj.totem_targets)) {
+    obj.totem_targets = obj.totem_targets.map((k) =>
+      typeof k === "string" ? resolveToAllowedStems(k, cat.targets) : k,
+    );
+  }
+}
+
+function clampLessonAssetKeys(lesson, cat) {
+  if (!lesson || typeof lesson !== "object") return;
+  if (lesson.meta && typeof lesson.meta.character_key === "string") {
+    lesson.meta.character_key = resolveToAllowedStems(lesson.meta.character_key, cat.characters);
+  }
+  if (lesson.character && typeof lesson.character.image_key === "string") {
+    lesson.character.image_key = resolveToAllowedStems(lesson.character.image_key, cat.characters);
+  }
+  for (const stage of lesson.stages || []) {
+    clampVisualFields(stage, cat);
+    for (const round of stage.rounds || []) {
+      clampVisualFields(round, cat);
+    }
+    if (stage.type === "animation" && stage.artifact && typeof stage.artifact === "object" && typeof stage.artifact.key === "string") {
+      stage.artifact.key = resolveToAllowedStems(stage.artifact.key, cat.artifacts);
+    }
+  }
+  const im = lesson.images_needed;
+  if (!im || typeof im !== "object") return;
+  if (Array.isArray(im.library)) {
+    im.library = im.library.map((k) => (typeof k === "string" ? resolveToAllowedStems(k, cat.items) : k));
+  }
+  if (Array.isArray(im.backgrounds)) {
+    im.backgrounds = im.backgrounds.map((k) =>
+      typeof k === "string" ? resolveToAllowedStems(k, cat.backgrounds) : k,
+    );
+  }
+  if (Array.isArray(im.items)) {
+    im.items = im.items.map((k) => (typeof k === "string" ? resolveToAllowedStems(k, cat.items) : k));
+  }
+  if (Array.isArray(im.targets)) {
+    im.targets = im.targets.map((k) => (typeof k === "string" ? resolveToAllowedStems(k, cat.targets) : k));
+  }
+  if (im.artifact && typeof im.artifact === "object" && typeof im.artifact.key === "string") {
+    im.artifact.key = resolveToAllowedStems(im.artifact.key, cat.artifacts);
+  }
+  const unionJobKeys = [...new Set([...cat.items, ...cat.artifacts])].sort((a, b) => a.localeCompare(b));
+  if (Array.isArray(im.generate_with_dalle)) {
+    for (const job of im.generate_with_dalle) {
+      if (job && typeof job === "object" && typeof job.key === "string") {
+        job.key = resolveToAllowedStems(job.key, unionJobKeys.length ? unionJobKeys : cat.items);
+      }
+    }
+  }
+}
+
 function applyDraftToLessonStages(lesson, draft) {
   if (!lesson || !Array.isArray(lesson.stages) || !draft || !Array.isArray(draft.stages)) return lesson;
   const stageCount = Math.min(lesson.stages.length, draft.stages.length);
@@ -312,7 +487,8 @@ async function fetchChildRecord(code) {
   return normalizeChild(record);
 }
 
-function buildUserPromptFromDraft(draft) {
+function buildUserPromptFromDraft(draft, assetCatalog) {
+  const catalog = assetCatalog || buildAssetCatalog();
   const child = draft.child || {};
   const context = draft.context || {};
   const stageLines = (draft.stages || []).map((stage) => {
@@ -393,7 +569,7 @@ RULES:
 - Exactly 6 stages
 - Exactly 5 rounds per stage
 - Keep the tutor's mechanics and example math content
-- Tutor input includes only mechanics and math examples. Claude must invent story, villain, artifact, instructions, tutor notes, and asset choices by itself.
+- Tutor input includes mechanics and math examples only. Invent story, villain, artifact names (text), instructions, and tutor notes — but every visual key (backgrounds, image_key, character_key, artifact image key) MUST be copied exactly from the ALLOWED ASSET KEYS block below. Never invent asset filenames or keys.
 - Use child system data in meta and completion flow
 - For drag_drop, follow strict beach_lesson template: top draggable area + bottom target row, exactly 2 target PNGs per round, draggable count must match tutor screen_item_count, and use drag_drop backgrounds that are NOT cave_entrance/cave_deep/jungle_path/jungle_temple.
 - Global: tutor "Title text" is always the centered stage title.
@@ -414,6 +590,7 @@ RULES:
 - symbol_calc template: three upper rows with unique item PNG per symbol and shown numeric value; lower card expression replaces A/B/C letters with their mapped PNG icons; answer checked by tutor answer field; correct=green then next round, wrong=red.
 - find_unknown template: upper rows show PNG=A value, PNG=B value, and PNG=[input for C]; in one round all three PNGs are different; lower equation replaces A/B/C letters with mapped PNG icons; input is checked against tutor Answer for C; correct=green then next round, wrong=red.
 
+${buildAssetKeyConstraintBlock(catalog)}
 TUTOR STAGE INPUT:
 ${stageLines}
 `;
@@ -472,16 +649,18 @@ async function generateLessonFromDraft(draft) {
     throw new Error("ANTHROPIC_API_KEY is not set in environment/.env");
   }
 
+  const assetCatalog = buildAssetCatalog();
   const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
   const msg = await client.messages.create({
     model: "claude-sonnet-4-5",
     max_tokens: 7000,
     system: SYSTEM_PROMPT,
-    messages: [{ role: "user", content: buildUserPromptFromDraft(draft) }],
+    messages: [{ role: "user", content: buildUserPromptFromDraft(draft, assetCatalog) }],
   });
   const text = msg.content?.find((c) => c.type === "text")?.text || "";
   const lesson = parseClaudeJson(text);
   applyDraftToLessonStages(lesson, draft);
+  clampLessonAssetKeys(lesson, assetCatalog);
   const errors = validateLessonShape(lesson);
   if (errors.length) {
     const err = new Error("Generated lesson shape is invalid");
