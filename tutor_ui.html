@@ -79,7 +79,7 @@
             <button class="primary" id="generateBtn">Create Lesson</button>
           </div>
           <div class="actions" id="postGenerateActions" style="display:none">
-            <button class="secondary" id="downloadJsonBtn">Download JSON</button>
+            <button class="secondary" id="downloadHtmlBtn">Download HTML</button>
             <a class="button-link ghost" id="previewBtn" href="/lesson_game.html" target="_blank" rel="noopener">Open in Browser</a>
           </div>
         </div>
@@ -123,6 +123,7 @@
       lesson: null,
       mechanics: [],
       fixedBackgrounds: {},
+      generatedLessonUrl: "/lesson_game.html",
       autosaveTimer: null,
       autosavePending: false,
     };
@@ -659,7 +660,9 @@
         await saveDraft(true);
         const data = await post("/api/generate", { draft: state.draft });
         setAutosaveStatus("Building HTML...");
-        await post("/api/build-lesson");
+        const build = await post("/api/build-lesson");
+        state.generatedLessonUrl = build.generatedFileUrl || "/lesson_game.html";
+        $("previewBtn").href = state.generatedLessonUrl;
         state.lesson = data.lesson;
         renderLessonJson();
         $("postGenerateActions").style.display = "flex";
@@ -669,15 +672,19 @@
       }
     }
 
-    function downloadJson() {
-      if (!state.lesson) {
+    async function downloadHtml() {
+      if (!state.generatedLessonUrl) {
         return;
       }
-      const blob = new Blob([JSON.stringify(state.lesson, null, 2)], { type: "application/json" });
+      const response = await fetch(state.generatedLessonUrl);
+      if (!response.ok) return;
+      const html = await response.text();
+      const blob = new Blob([html], { type: "text/html" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "output_lesson.json";
+      const parts = String(state.generatedLessonUrl).split("/");
+      a.download = parts[parts.length - 1] || "lesson_game.html";
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -701,7 +708,7 @@
 
       $("fetchChildBtn").onclick = fetchChild;
       $("generateBtn").onclick = generateLesson;
-      $("downloadJsonBtn").onclick = downloadJson;
+      $("downloadHtmlBtn").onclick = downloadHtml;
 
       setInterval(() => {
         if (state.autosavePending) saveDraft(true);

@@ -11,6 +11,7 @@ const PREFERRED_PORT = Number(process.env.PORT || process.env.TUTOR_UI_PORT || 8
 const SYSTEM_PROMPT = fs.readFileSync(path.join(__dirname, "system_prompt.txt"), "utf-8");
 const UI_FILE = path.join(__dirname, "tutor_ui.html");
 const OUT_FILE = path.join(__dirname, "output_lesson.json");
+const GENERATED_LESSONS_DIR = path.join(__dirname, "generated_lessons");
 const DATA_DIR = path.join(__dirname, "tutor_data");
 const DRAFT_FILE = path.join(DATA_DIR, "current_draft.json");
 const CHILDREN_FILE = path.join(DATA_DIR, "children.json");
@@ -59,6 +60,7 @@ function loadDotEnv() {
 
 function ensureDataFiles() {
   fs.mkdirSync(DATA_DIR, { recursive: true });
+  fs.mkdirSync(GENERATED_LESSONS_DIR, { recursive: true });
   if (!fs.existsSync(CHILDREN_FILE)) {
     fs.writeFileSync(CHILDREN_FILE, JSON.stringify([
       {
@@ -93,6 +95,20 @@ function readJson(filePath, fallback) {
 function writeJson(filePath, value) {
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
   fs.writeFileSync(filePath, JSON.stringify(value, null, 2), "utf-8");
+}
+
+function slugify(value) {
+  return String(value || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function buildGeneratedHtmlFilename(lesson) {
+  const code = slugify(lesson?.meta?.student_code || "lesson");
+  const topic = slugify(lesson?.meta?.topic_key || lesson?.meta?.topic_label || "math");
+  const stamp = new Date().toISOString().replace(/[-:.TZ]/g, "").slice(0, 14);
+  return `${code}_${topic}_${stamp}.html`;
 }
 
 function stageTemplate(stageNumber) {
@@ -370,6 +386,18 @@ const server = http.createServer(async (req, res) => {
       return;
     }
 
+    if (req.method === "GET" && url.pathname.startsWith("/generated-lessons/")) {
+      const fileName = path.basename(url.pathname.replace("/generated-lessons/", ""));
+      const filePath = path.join(GENERATED_LESSONS_DIR, fileName);
+      if (!fs.existsSync(filePath)) {
+        sendJson(res, 404, { ok: false, error: "Generated lesson file not found" });
+        return;
+      }
+      res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+      res.end(fs.readFileSync(filePath, "utf-8"));
+      return;
+    }
+
     if (req.method === "GET" && url.pathname === "/output_lesson.json") {
       res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
       res.end(fs.readFileSync(OUT_FILE, "utf-8"));
@@ -454,8 +482,22 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (req.method === "POST" && url.pathname === "/api/build-lesson") {
-      const output = await runNodeScript(["builder.mjs", "output_lesson.json", "lesson_game.html"]);
-      sendJson(res, 200, { ok: true, output });
+      const lesson = readCurrentLesson();
+      if (!lesson) {
+        sendJson(res, 422, { ok: false, error: "No output_lesson.json yet. Create Lesson first." });
+        return;
+      }
+      const fileName = buildGeneratedHtmlFilename(lesson);
+      const outputRelativePath = path.join("generated_lessons", fileName);
+      const output = await runNodeScript(["builder.mjs", "output_lesson.json", outputRelativePath]);
+      const latestOutput = await runNodeScript(["builder.mjs", "output_lesson.json", "lesson_game.html"]);
+      sendJson(res, 200, {
+        ok: true,
+        output,
+        latestOutput,
+        generatedFileName: fileName,
+        generatedFileUrl: `/generated-lessons/${fileName}`,
+      });
       return;
     }
 
