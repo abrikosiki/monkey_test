@@ -514,6 +514,50 @@ function sendJson(res, status, data) {
   res.end(JSON.stringify(data));
 }
 
+function guessMimeType(filePath) {
+  const ext = path.extname(filePath).toLowerCase();
+  if (ext === ".png") return "image/png";
+  if (ext === ".webp") return "image/webp";
+  if (ext === ".jpg" || ext === ".jpeg") return "image/jpeg";
+  if (ext === ".gif") return "image/gif";
+  if (ext === ".svg") return "image/svg+xml";
+  if (ext === ".css") return "text/css; charset=utf-8";
+  if (ext === ".js") return "text/javascript; charset=utf-8";
+  if (ext === ".json") return "application/json; charset=utf-8";
+  if (ext === ".woff2") return "font/woff2";
+  if (ext === ".woff") return "font/woff";
+  if (ext === ".ttf") return "font/ttf";
+  return "application/octet-stream";
+}
+
+function resolveSafeAssetPath(urlPathname) {
+  const decoded = decodeURIComponent(urlPathname);
+  const rel = decoded.replace(/^\/+/, "");
+  const candidate = path.normalize(path.join(__dirname, rel));
+  const root = path.normalize(__dirname);
+  if (!candidate.startsWith(root)) return "";
+  if (!candidate.startsWith(path.join(root, "assets"))) return "";
+  return candidate;
+}
+
+function serveStaticAsset(req, res, url) {
+  const filePath = resolveSafeAssetPath(url.pathname);
+  if (!filePath || !fs.existsSync(filePath) || fs.statSync(filePath).isDirectory()) {
+    sendJson(res, 404, { ok: false, error: "Asset not found" });
+    return;
+  }
+  const mime = guessMimeType(filePath);
+  if (req.method === "HEAD") {
+    const size = fs.statSync(filePath).size;
+    res.writeHead(200, { "Content-Type": mime, "Content-Length": String(size), "Cache-Control": "public, max-age=3600" });
+    res.end();
+    return;
+  }
+  const buf = fs.readFileSync(filePath);
+  res.writeHead(200, { "Content-Type": mime, "Content-Length": String(buf.length), "Cache-Control": "public, max-age=3600" });
+  res.end(buf);
+}
+
 function readBody(req) {
   return new Promise((resolve, reject) => {
     let body = "";
@@ -542,6 +586,11 @@ const server = http.createServer(async (req, res) => {
     if (req.method === "GET" && url.pathname === "/lesson_game.html") {
       res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
       res.end(fs.readFileSync(path.join(__dirname, "lesson_game.html"), "utf-8"));
+      return;
+    }
+
+    if ((req.method === "GET" || req.method === "HEAD") && url.pathname.startsWith("/assets/")) {
+      serveStaticAsset(req, res, url);
       return;
     }
 
