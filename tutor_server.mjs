@@ -112,6 +112,123 @@ function buildGeneratedHtmlFilename(lesson) {
   return `${code}_${topic}_${stamp}.html`;
 }
 
+function splitValues(raw) {
+  return String(raw || "")
+    .split(/[,\s]+/)
+    .map((v) => v.trim())
+    .filter(Boolean);
+}
+
+function toNumber(value, fallback = 0) {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : fallback;
+}
+
+function applyDraftToLessonStages(lesson, draft) {
+  if (!lesson || !Array.isArray(lesson.stages) || !draft || !Array.isArray(draft.stages)) return lesson;
+  const stageCount = Math.min(lesson.stages.length, draft.stages.length);
+  for (let i = 0; i < stageCount; i++) {
+    const lStage = lesson.stages[i] || {};
+    const dStage = draft.stages[i] || {};
+    lStage.type = dStage.mechanic || lStage.type;
+    lStage.background = dStage.background || lStage.background;
+    const dExamples = Array.isArray(dStage.examples) ? dStage.examples : [];
+    if (!Array.isArray(lStage.rounds)) lStage.rounds = [];
+    const rounds = [];
+    for (let j = 0; j < Math.max(5, dExamples.length, lStage.rounds.length); j++) {
+      const ex = dExamples[j] || {};
+      const existing = lStage.rounds[j] || {};
+      const mech = dStage.mechanic || lStage.type;
+      const r = { ...existing };
+
+      if (ex.titleText && !lStage.title) lStage.title = ex.titleText;
+      if (ex.prompt) r.instruction = ex.prompt;
+
+      if (mech === "fill_blank" || mech === "pattern_input") {
+        r.example = ex.prompt || r.example || "";
+        r.prompt = ex.prompt || r.prompt || "";
+        r.answer = String(ex.answer ?? r.answer ?? "");
+      } else if (mech === "multi_choice") {
+        r.instruction = ex.prompt || r.instruction || "";
+        r.options = [
+          { id: "A", label: String(ex.choiceA ?? "") },
+          { id: "B", label: String(ex.choiceB ?? "") },
+          { id: "C", label: String(ex.choiceC ?? "") },
+        ];
+        r.correct_option = String(ex.correctOption || "A").toUpperCase();
+      } else if (mech === "corridor_choice") {
+        r.question = ex.prompt || r.question || "";
+        r.left_expression = ex.leftExpression || r.left_expression || "";
+        r.right_expression = ex.rightExpression || r.right_expression || "";
+        r.correct_side = String(ex.correctSide || "left").toLowerCase();
+      } else if (mech === "match_pairs") {
+        r.pair_a = ex.pairA || r.pair_a || "";
+        r.pair_b = ex.pairB || r.pair_b || "";
+        r.pair_c = ex.pairC || r.pair_c || "";
+        r.pair_d = ex.pairD || r.pair_d || "";
+        r.correct_pair_1 = String(ex.correctPair1 || "A").toUpperCase();
+        r.correct_pair_2 = String(ex.correctPair2 || "B").toUpperCase();
+      } else if (mech === "tap_count") {
+        r.question = ex.prompt || r.question || "Tap this item";
+        r.target_count = toNumber(ex.answer, toNumber(r.target_count, 2));
+      } else if (mech === "balance_scale") {
+        r.left_expression = ex.leftExpression || r.left_expression || "3 + ?";
+        r.right_expression = ex.rightExpression || r.right_expression || "7";
+        r.answer = String(ex.answer ?? r.answer ?? "");
+      } else if (mech === "build_number") {
+        r.base_number = toNumber(ex.baseNumber, toNumber(r.base_number, 24));
+        r.parts_count = toNumber(ex.partsCount, toNumber(r.parts_count, 3));
+      } else if (mech === "timer_challenge") {
+        r.timer_example_a = ex.timerExampleA || r.timer_example_a || "";
+        r.timer_example_b = ex.timerExampleB || r.timer_example_b || "";
+        r.timer_example_c = ex.timerExampleC || r.timer_example_c || "";
+        r.timer_answer_a = String(ex.timerAnswerA ?? r.timer_answer_a ?? "");
+        r.timer_answer_b = String(ex.timerAnswerB ?? r.timer_answer_b ?? "");
+        r.timer_answer_c = String(ex.timerAnswerC ?? r.timer_answer_c ?? "");
+        r.timer_seconds = toNumber(ex.timerSeconds, toNumber(r.timer_seconds, 30));
+      } else if (mech === "symbol_calc") {
+        r.symbol_a = toNumber(ex.symbolA, toNumber(r.symbol_a, 4));
+        r.symbol_b = toNumber(ex.symbolB, toNumber(r.symbol_b, 3));
+        r.symbol_c = toNumber(ex.symbolC, toNumber(r.symbol_c, 2));
+        r.symbol_expression = ex.symbolExpression || r.symbol_expression || "A + B × C";
+        r.answer = String(ex.answer ?? r.answer ?? "");
+      } else if (mech === "find_unknown") {
+        r.unknown_a = toNumber(ex.unknownA, toNumber(r.unknown_a, 4));
+        r.unknown_b = toNumber(ex.unknownB, toNumber(r.unknown_b, 6));
+        r.unknown_equation = ex.unknownEquation || r.unknown_equation || "A + B + C = 15";
+        r.answer = String(ex.answer ?? r.answer ?? "");
+      } else if (mech === "drag_group") {
+        r.numbers_text = ex.numbersText || r.numbers_text || "";
+        r.group1_name = ex.group1Name || r.group1_name || "Group 1";
+        r.group2_name = ex.group2Name || r.group2_name || "Group 2";
+        r.group1_values = ex.group1Values || r.group1_values || "";
+        r.group2_values = ex.group2Values || r.group2_values || "";
+      } else if (mech === "drag_sort") {
+        const nums = splitValues(ex.prompt || "");
+        const rule = splitValues(ex.answer || "");
+        if (nums.length) {
+          r.items = nums.map((t, idx) => ({ id: `i${idx + 1}`, value: t, text: t }));
+        }
+        if (rule.length) {
+          r.correct_order = rule;
+        }
+      } else if (mech === "drag_drop") {
+        r.screen_item_count = toNumber(ex.screenItemCount, toNumber(r.screen_item_count, 6));
+        r.target_count = toNumber(ex.targetCount, toNumber(r.target_count, 2));
+        if (Array.isArray(ex.zoneCounts) && ex.zoneCounts.length) {
+          r.zone_counts = ex.zoneCounts.map((v) => toNumber(v, 0));
+        }
+      }
+
+      rounds.push(r);
+      if (rounds.length >= 5) break;
+    }
+    lStage.rounds = rounds.slice(0, 5);
+    lesson.stages[i] = lStage;
+  }
+  return lesson;
+}
+
 function stageTemplate(stageNumber) {
   return {
     stageNumber,
@@ -364,6 +481,7 @@ async function generateLessonFromDraft(draft) {
   });
   const text = msg.content?.find((c) => c.type === "text")?.text || "";
   const lesson = parseClaudeJson(text);
+  applyDraftToLessonStages(lesson, draft);
   const errors = validateLessonShape(lesson);
   if (errors.length) {
     const err = new Error("Generated lesson shape is invalid");
@@ -434,8 +552,12 @@ const server = http.createServer(async (req, res) => {
         sendJson(res, 404, { ok: false, error: "Generated lesson file not found" });
         return;
       }
+      let html = fs.readFileSync(filePath, "utf-8");
+      if (!html.includes("<base href=\"/\">")) {
+        html = html.replace("<head>", "<head>\n  <base href=\"/\">");
+      }
       res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-      res.end(fs.readFileSync(filePath, "utf-8"));
+      res.end(html);
       return;
     }
 
