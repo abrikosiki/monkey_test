@@ -448,6 +448,19 @@ function buildDefaultDraft() {
 function normalizeChild(child) {
   if (!child) return null;
   const key = String(child.character_key || child.characterKey || "pirate_green");
+  const rawInventory = child.inventory || child.artifacts || child.owned_artifacts || [];
+  const inventory = Array.isArray(rawInventory)
+    ? rawInventory.map((v) => String(v || "").trim()).filter(Boolean)
+    : String(rawInventory || "")
+      .split(/[,\n;]/)
+      .map((v) => v.trim())
+      .filter(Boolean);
+  const freezeRing = Boolean(
+    child.freeze_ring ??
+    child.freezeRing ??
+    child.has_freeze_ring ??
+    child.hasFreezeRing,
+  );
   return {
     childCode: child.child_code || child.childCode,
     name: child.name || "Hero",
@@ -455,6 +468,8 @@ function normalizeChild(child) {
     level: Number(child.level || 1),
     characterKey: key,
     characterImagePath: `assets/characters/${key}.webp`,
+    inventory,
+    freezeRing,
   };
 }
 
@@ -556,6 +571,8 @@ CHILD FROM SYSTEM:
 - Level: ${child.level}
 - Character key: ${child.characterKey}
 - Character image path: ${child.characterImagePath}
+- Owned artifacts from profile inventory: ${(child.inventory || []).join(", ") || "none"}
+- Has freeze ring: ${child.freezeRing ? "yes" : "no"}
 
 LESSON CONTEXT:
 - Difficulty: ${context.difficulty}
@@ -660,6 +677,9 @@ async function generateLessonFromDraft(draft) {
   const text = msg.content?.find((c) => c.type === "text")?.text || "";
   const lesson = parseClaudeJson(text);
   applyDraftToLessonStages(lesson, draft);
+  lesson.meta = lesson.meta || {};
+  lesson.meta.child_inventory = Array.isArray(draft.child?.inventory) ? draft.child.inventory : [];
+  lesson.meta.has_freeze_ring = Boolean(draft.child?.freezeRing);
   clampLessonAssetKeys(lesson, assetCatalog);
   const errors = validateLessonShape(lesson);
   if (errors.length) {

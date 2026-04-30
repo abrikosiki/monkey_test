@@ -1720,6 +1720,51 @@ function buildHtml(
     });
   }
   const SHOP_ITEMS = buildShopItemsFromArtifacts();
+  function resolveArtifactKey(raw){
+    const value = String(raw || "").trim();
+    if(!value) return "";
+    if(ARTIFACT_MAP[value]) return value;
+    const fuzzy = fuzzyFindPath(ARTIFACT_MAP, value);
+    if(fuzzy){
+      const hit = Object.keys(ARTIFACT_MAP).find((k) => ARTIFACT_MAP[k] === fuzzy);
+      if(hit) return hit;
+    }
+    const wanted = normKey(value);
+    const keys = Object.keys(ARTIFACT_MAP);
+    const exact = keys.find((k) => normKey(k) === wanted);
+    if(exact) return exact;
+    return "";
+  }
+
+  function buildInitialOwnedArtifacts(){
+    const owned = [];
+    const seen = new Set();
+    const inventory = Array.isArray(LESSON.meta?.child_inventory) ? LESSON.meta.child_inventory : [];
+    for(const raw of inventory){
+      const key = resolveArtifactKey(raw);
+      if(!key || seen.has(key)) continue;
+      seen.add(key);
+      owned.push({
+        key,
+        name: titleFromKey(key),
+        image: artifactPathByKey(key),
+        description: "Owned before this lesson.",
+      });
+    }
+    if(LESSON.meta?.has_freeze_ring){
+      const ringKey = resolveArtifactKey("ring_ice") || "ring_ice";
+      if(!seen.has(ringKey)){
+        seen.add(ringKey);
+        owned.push({
+          key: ringKey,
+          name: titleFromKey(ringKey),
+          image: artifactPathByKey(ringKey),
+          description: "Owned before this lesson.",
+        });
+      }
+    }
+    return owned;
+  }
 
   const $ = (id) => document.getElementById(id);
   const izone = $("izone");
@@ -1737,7 +1782,7 @@ function buildHtml(
     animationTimers: [],
     successCb: null,
     sortBadges: {},
-    earnedArtifacts: [],
+    earnedArtifacts: buildInitialOwnedArtifacts(),
     completionArtifact: null,
   };
   const STAGES = buildStagePlan();
