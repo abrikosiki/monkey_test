@@ -15,6 +15,7 @@ const GENERATED_LESSONS_DIR = path.join(__dirname, "generated_lessons");
 const DATA_DIR = path.join(__dirname, "tutor_data");
 const DRAFT_FILE = path.join(DATA_DIR, "current_draft.json");
 const CHILDREN_FILE = path.join(DATA_DIR, "children.json");
+const generationJobs = new Map();
 
 const MECHANICS = [
   { id: "drag_drop", label: "Drag Drop", description: "Drag items into target zones." },
@@ -335,6 +336,46 @@ function readCurrentLesson() {
   return readJson(OUT_FILE, null);
 }
 
+async function generateLessonFromDraft(draft) {
+  if (draft && !draft.child && draft.childCode) {
+    try {
+      draft.child = await fetchChildRecord(draft.childCode);
+    } catch {
+      // Keep validation behavior below if child lookup fails.
+    }
+  }
+  const draftErrors = validateDraft(draft);
+  if (draftErrors.length) {
+    const err = new Error("Draft is invalid");
+    err.details = draftErrors;
+    throw err;
+  }
+
+  if (!process.env.ANTHROPIC_API_KEY) {
+    throw new Error("ANTHROPIC_API_KEY is not set in environment/.env");
+  }
+
+  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+  const msg = await client.messages.create({
+    model: "claude-sonnet-4-5",
+    max_tokens: 7000,
+    system: SYSTEM_PROMPT,
+    messages: [{ role: "user", content: buildUserPromptFromDraft(draft) }],
+  });
+  const text = msg.content?.find((c) => c.type === "text")?.text || "";
+  const lesson = parseClaudeJson(text);
+  const errors = validateLessonShape(lesson);
+  if (errors.length) {
+    const err = new Error("Generated lesson shape is invalid");
+    err.details = errors;
+    throw err;
+  }
+  fs.writeFileSync(OUT_FILE, JSON.stringify(lesson, null, 2), "utf-8");
+  draft.updatedAt = new Date().toISOString();
+  writeJson(DRAFT_FILE, draft);
+  return lesson;
+}
+
 async function runNodeScript(args) {
   return new Promise((resolve, reject) => {
     const child = spawn(process.execPath, args, { cwd: __dirname, stdio: ["ignore", "pipe", "pipe"] });
@@ -441,43 +482,35 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (req.method === "POST" && url.pathname === "/api/generate") {
-      if (!process.env.ANTHROPIC_API_KEY) {
-        sendJson(res, 400, { ok: false, error: "ANTHROPIC_API_KEY is not set in environment/.env" });
-        return;
-      }
       const payload = JSON.parse((await readBody(req)) || "{}");
       const draft = payload.draft;
-      if (draft && !draft.child && draft.childCode) {
+      const jobId = "gen_" + Date.now() + "_" + Math.random().toString(36).slice(2, 8);
+      generationJobs.set(jobId, { status: "pending", createdAt: Date.now() });
+      sendJson(res, 200, { ok: true, jobId });
+      (async () => {
         try {
-          draft.child = await fetchChildRecord(draft.childCode);
-        } catch {
-          // Keep validation behavior below if child lookup fails.
+          const lesson = await generateLessonFromDraft(draft);
+          generationJobs.set(jobId, { status: "succeeded", lesson, finishedAt: Date.now() });
+        } catch (err) {
+          generationJobs.set(jobId, {
+            status: "failed",
+            error: err.message || "Generation failed",
+            details: err.details || null,
+            finishedAt: Date.now(),
+          });
         }
-      }
-      const draftErrors = validateDraft(draft);
-      if (draftErrors.length) {
-        sendJson(res, 422, { ok: false, error: "Draft is invalid", details: draftErrors });
-        return;
-      }
+      })();
+      return;
+    }
 
-      const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-      const msg = await client.messages.create({
-        model: "claude-sonnet-4-5",
-        max_tokens: 16000,
-        system: SYSTEM_PROMPT,
-        messages: [{ role: "user", content: buildUserPromptFromDraft(draft) }],
-      });
-      const text = msg.content?.find((c) => c.type === "text")?.text || "";
-      const lesson = parseClaudeJson(text);
-      const errors = validateLessonShape(lesson);
-      if (errors.length) {
-        sendJson(res, 422, { ok: false, error: "Generated lesson shape is invalid", details: errors });
+    if (req.method === "GET" && url.pathname === "/api/generate-status") {
+      const jobId = String(url.searchParams.get("jobId") || "");
+      const job = generationJobs.get(jobId);
+      if (!job) {
+        sendJson(res, 404, { ok: false, error: "Generation job not found" });
         return;
       }
-      fs.writeFileSync(OUT_FILE, JSON.stringify(lesson, null, 2), "utf-8");
-      draft.updatedAt = new Date().toISOString();
-      writeJson(DRAFT_FILE, draft);
-      sendJson(res, 200, { ok: true, lesson });
+      sendJson(res, 200, { ok: true, ...job });
       return;
     }
 

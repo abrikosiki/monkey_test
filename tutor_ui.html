@@ -182,7 +182,11 @@
         body: JSON.stringify(body || {}),
       });
       const data = await res.json();
-      if (!res.ok || !data.ok) throw new Error(data.error || "Request failed");
+      if (!res.ok || !data.ok) {
+        const details = Array.isArray(data.details) ? data.details.join("; ") : "";
+        const msg = [data.error || "Request failed", details].filter(Boolean).join(" — ");
+        throw new Error(msg);
+      }
       return data;
     }
 
@@ -658,17 +662,37 @@
         syncContextInputsToDraft();
         setAutosaveStatus("Generating...");
         await saveDraft(true);
-        const data = await post("/api/generate", { draft: state.draft });
+        const start = await post("/api/generate", { draft: state.draft });
+        const jobId = start.jobId;
+        if (!jobId) throw new Error("Generation job did not start");
+        let result = null;
+        for (let i = 0; i < 180; i++) {
+          await new Promise((resolve) => setTimeout(resolve, 2000));
+          const status = await get("/api/generate-status?jobId=" + encodeURIComponent(jobId));
+          if (status.status === "pending") {
+            setAutosaveStatus("Generating... " + (i + 1) * 2 + "s");
+            continue;
+          }
+          if (status.status === "failed") {
+            const details = Array.isArray(status.details) ? status.details.join("; ") : "";
+            throw new Error([status.error || "Generation failed", details].filter(Boolean).join(" — "));
+          }
+          if (status.status === "succeeded") {
+            result = status;
+            break;
+          }
+        }
+        if (!result || !result.lesson) throw new Error("Generation timed out");
         setAutosaveStatus("Building HTML...");
         const build = await post("/api/build-lesson");
         state.generatedLessonUrl = build.generatedFileUrl || "/lesson_game.html";
         $("previewBtn").href = state.generatedLessonUrl;
-        state.lesson = data.lesson;
+        state.lesson = result.lesson;
         renderLessonJson();
         $("postGenerateActions").style.display = "flex";
         setAutosaveStatus("Lesson ready");
       } catch (err) {
-        setAutosaveStatus("Generation failed");
+        setAutosaveStatus("Generation failed: " + (err?.message || "Unknown error"));
       }
     }
 
