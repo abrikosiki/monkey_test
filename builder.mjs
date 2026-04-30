@@ -1866,15 +1866,25 @@ function buildHtml(
     return shuffle(positions);
   }
 
+  function firstMapPath(map){
+    const keys = Object.keys(map || {}).filter((k) => map[k]).sort();
+    if(!keys.length) return "";
+    return map[keys[0]];
+  }
+
   function imagePathByKey(key, kind = "item"){
     if(!key) return "";
     if(kind === "target"){
       const target = fuzzyFindPath(TARGETS_MAP, key);
       if(target) return target;
+      const fb = firstMapPath(TARGETS_MAP);
+      if(fb) return fb;
       return "assets/targets/" + key + ".png";
     }
     const item = fuzzyFindPath(ITEMS_MAP, key);
     if(item) return item;
+    const fbItem = firstMapPath(ITEMS_MAP);
+    if(fbItem) return fbItem;
     return "assets/items/" + key + ".png";
   }
 
@@ -1906,6 +1916,8 @@ function buildHtml(
       const stageFallback = fuzzyFindPath(BACKGROUND_MAP, "5");
       if(stageFallback) return stageFallback;
     }
+    const fbBg = firstMapPath(BACKGROUND_MAP);
+    if(fbBg) return fbBg;
     return "assets/backgrounds/" + bgKey + ".webp";
   }
 
