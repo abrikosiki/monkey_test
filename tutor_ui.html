@@ -48,6 +48,9 @@
     textarea{min-height:78px;resize:vertical}
     .child-card{display:flex;gap:14px;align-items:center;background:var(--panel-2);border:1px solid var(--line);border-radius:16px;padding:12px;margin-top:12px}
     .child-avatar{width:92px;height:112px;object-fit:contain;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12)}
+    .child-status{margin-top:10px;font-size:12px;padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:#122746}
+    .child-status.ok{border-color:#2f6f55;background:#123126;color:#b8f2d4}
+    .child-status.warn{border-color:#7a5f2f;background:#352b12;color:#ffe3ad}
     .meta-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
     .meta-chip{background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:9px 10px;font-size:12px}
     .stage-card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px}
@@ -96,6 +99,7 @@
               <div style="display:flex;gap:10px">
                 <input id="childCodeInput" placeholder="MONKEY-4821" />
                 <button class="ghost" id="fetchChildBtn" type="button">Fetch Child</button>
+                <button class="secondary" id="confirmChildBtn" type="button">Ready</button>
               </div>
             </div>
           </div>
@@ -199,7 +203,12 @@
     function syncDraftToInputs() {
       if (!state.draft) return;
       $("childCodeInput").value = state.draft.childCode || "";
+      const fetchedCode = state.draft.child?.childCode || "";
+      if (state.draft.confirmedChildCode !== fetchedCode) {
+        state.draft.confirmedChildCode = "";
+      }
       renderChildPreview();
+      updateChildConfirmationState();
     }
 
     function queueAutosave() {
@@ -263,6 +272,28 @@
       body.append(title, code, meta);
       card.append(img, body);
       root.appendChild(card);
+      const status = document.createElement("div");
+      const isConfirmed = state.draft?.confirmedChildCode && state.draft.confirmedChildCode === child.childCode;
+      status.className = `child-status ${isConfirmed ? "ok" : "warn"}`;
+      status.textContent = isConfirmed
+        ? `Confirmed child: ${child.childCode}`
+        : "Fetched but not confirmed. Click Ready to lock this child for generation.";
+      root.appendChild(status);
+    }
+
+    function updateChildConfirmationState() {
+      const childCodeInput = $("childCodeInput").value.trim();
+      const fetchedCode = state.draft?.child?.childCode || "";
+      const isConfirmed = !!(state.draft?.confirmedChildCode && state.draft.confirmedChildCode === fetchedCode && fetchedCode === childCodeInput);
+      const canConfirm = !!fetchedCode && fetchedCode === childCodeInput;
+      $("confirmChildBtn").disabled = !canConfirm || isConfirmed;
+      $("confirmChildBtn").textContent = isConfirmed ? "Confirmed" : "Ready";
+      $("generateBtn").disabled = !isConfirmed;
+      if (!isConfirmed) {
+        $("generateBtn").title = "Fetch child and click Готово first";
+      } else {
+        $("generateBtn").title = "";
+      }
     }
 
     function makeInput(label, value, onInput, opts = {}) {
@@ -640,11 +671,27 @@
         const data = await post("/api/child/fetch", { childCode });
         state.draft.childCode = childCode;
         state.draft.child = data.child;
+        state.draft.confirmedChildCode = "";
         renderChildPreview();
+        updateChildConfirmationState();
         queueAutosave();
       } catch (err) {
         setAutosaveStatus("Child fetch failed");
       }
+    }
+
+    function confirmChild() {
+      const childCode = $("childCodeInput").value.trim();
+      const fetchedCode = state.draft?.child?.childCode || "";
+      if (!childCode || !fetchedCode || childCode !== fetchedCode) {
+        setAutosaveStatus("Fetch matching child first");
+        return;
+      }
+      state.draft.confirmedChildCode = fetchedCode;
+      renderChildPreview();
+      updateChildConfirmationState();
+      queueAutosave();
+      setAutosaveStatus(`Child confirmed: ${fetchedCode}`);
     }
 
     async function loadCurrentLesson() {
@@ -660,6 +707,10 @@
     async function generateLesson() {
       try {
         syncContextInputsToDraft();
+        const childCode = $("childCodeInput").value.trim();
+        if (!state.draft?.confirmedChildCode || state.draft.confirmedChildCode !== childCode) {
+          throw new Error("Fetch child and click Ready before generation");
+        }
         setAutosaveStatus("Generating...");
         await saveDraft(true);
         const start = await post("/api/generate", { draft: state.draft });
@@ -728,11 +779,18 @@
       setAutosaveStatus("Ready");
 
       ["childCodeInput"]
-        .forEach((id) => $(id).addEventListener("input", queueAutosave));
+        .forEach((id) => $(id).addEventListener("input", () => {
+          if (state.draft) state.draft.confirmedChildCode = "";
+          queueAutosave();
+          renderChildPreview();
+          updateChildConfirmationState();
+        }));
 
       $("fetchChildBtn").onclick = fetchChild;
+      $("confirmChildBtn").onclick = confirmChild;
       $("generateBtn").onclick = generateLesson;
       $("downloadHtmlBtn").onclick = downloadHtml;
+      updateChildConfirmationState();
 
       setInterval(() => {
         if (state.autosavePending) saveDraft(true);
