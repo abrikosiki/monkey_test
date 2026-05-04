@@ -36,8 +36,8 @@ const MECHANICS = [
 
 const FIXED_BACKGROUNDS = {
   1: "stage1_generated",
-  2: "cave_entrance",
-  3: "cave_deep",
+  2: "2",
+  3: "3",
   4: "jungle_path",
   5: "jungle_temple",
   6: "stage6_generated",
@@ -67,9 +67,15 @@ function islandKeyToBackgroundPrefix(islandKey) {
   return k;
 }
 
+/** Shared cave passage art for stages 3–4 (same files in every lesson): assets/backgrounds/2.png then 3.png */
+const ISLAND_CAVE_STAGE_BACKGROUNDS = {
+  3: "2",
+  4: "3",
+};
+
 /**
  * Per-lesson stage backgrounds when an island pack is selected:
- * stages 1–2 = {prefix}1 and {prefix}2; 3–4 = fixed cave art (same for every lesson);
+ * stages 1–2 = {prefix}1 and {prefix}2; 3–4 = fixed cave art (keys "2" and "3" → 2.png, 3.png);
  * 5–6 = {prefix}3 and {prefix}4. Prefix matches PNG basename before the digit.
  */
 function getIslandStageBackgroundKeys(islandKey) {
@@ -78,8 +84,8 @@ function getIslandStageBackgroundKeys(islandKey) {
   return {
     1: `${prefix}1`,
     2: `${prefix}2`,
-    3: "cave_entrance",
-    4: "cave_deep",
+    3: ISLAND_CAVE_STAGE_BACKGROUNDS[3],
+    4: ISLAND_CAVE_STAGE_BACKGROUNDS[4],
     5: `${prefix}3`,
     6: `${prefix}4`,
   };

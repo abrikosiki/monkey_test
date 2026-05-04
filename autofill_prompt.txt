@@ -263,8 +263,8 @@ For EVERY lesson, stage backgrounds MUST follow this exact six-step pattern (set
 
   Stage 1 → {KEY}1
   Stage 2 → {KEY}2
-  Stage 3 → cave_entrance   (fixed cave — same for all islands)
-  Stage 4 → cave_deep       (fixed cave — same for all islands)
+  Stage 3 → 2   (fixed cave art — assets/backgrounds/2.png — same for all islands)
+  Stage 4 → 3   (fixed cave art — assets/backgrounds/3.png — same for all islands)
   Stage 5 → {KEY}3
   Stage 6 → {KEY}4
 
@@ -283,7 +283,7 @@ Allowed context.islandKey values (pick exactly ONE; align with tutor_prompt mood
 
 Exception — blue_crab_island: on disk the PNG prefix is literally "blue_crab _sland" (space before sland). Use these six backgrounds:
 
-  blue_crab _sland1, blue_crab _sland2, cave_entrance, cave_deep, blue_crab _sland3, blue_crab _sland4
+  blue_crab _sland1, blue_crab _sland2, 2, 3, blue_crab _sland3, blue_crab _sland4
 
 The long English island stories are defined in the lesson generator system prompt; your job is only to output the correct islandKey and matching per-stage "background" fields so art and story stay in sync.
 
