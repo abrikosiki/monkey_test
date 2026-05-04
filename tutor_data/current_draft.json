@@ -7,13 +7,14 @@
     "difficulty": "medium",
     "knows": "",
     "weakPoint": "",
-    "tutorNotes": ""
+    "tutorNotes": "",
+    "islandKey": "blue_crab_island"
   },
   "stages": [
     {
       "stageNumber": 1,
       "mechanic": "drag_drop",
-      "background": "stage1_generated",
+      "background": "blue_crab_island1",
       "examples": [
         {
           "roundNumber": 1,
@@ -270,7 +271,7 @@
     {
       "stageNumber": 2,
       "mechanic": "symbol_calc",
-      "background": "cave_entrance",
+      "background": "blue_crab_island2",
       "examples": [
         {
           "roundNumber": 1,
@@ -512,7 +513,7 @@
     {
       "stageNumber": 3,
       "mechanic": "fill_blank",
-      "background": "cave_deep",
+      "background": "2",
       "examples": [
         {
           "roundNumber": 1,
@@ -764,7 +765,7 @@
     {
       "stageNumber": 4,
       "mechanic": "fill_blank",
-      "background": "jungle_path",
+      "background": "3",
       "examples": [
         {
           "roundNumber": 1,
@@ -1016,7 +1017,7 @@
     {
       "stageNumber": 5,
       "mechanic": "fill_blank",
-      "background": "jungle_temple",
+      "background": "blue_crab_island3",
       "examples": [
         {
           "roundNumber": 1,
@@ -1268,7 +1269,7 @@
     {
       "stageNumber": 6,
       "mechanic": "multi_choice",
-      "background": "stage6_generated",
+      "background": "blue_crab_island4",
       "examples": [
         {
           "roundNumber": 1,

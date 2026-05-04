@@ -84,6 +84,39 @@ function getIslandStageBackgroundKeys(islandKey) {
   };
 }
 
+/** When draft omits islandKey / model skips meta.island_key, infer from stage tokens or story text. */
+function inferIslandKeyForLesson(lesson) {
+  const meta = lesson?.meta && typeof lesson.meta === "object" ? lesson.meta : {};
+  let k = String(meta.island_key || meta.islandKey || "").trim();
+  if (k) return k;
+  for (const canon of CANONICAL_ISLAND_KEYS) {
+    for (const st of lesson?.stages || []) {
+      const bg = String(st?.background || "").trim();
+      if (!bg) continue;
+      if (bg === canon) return canon;
+      if (bg.startsWith(canon) && /^[1-4]$/.test(bg.slice(canon.length))) return canon;
+    }
+  }
+  const parts = [
+    String(meta.lesson_id || ""),
+    String(lesson?.story?.island_name || ""),
+    String(lesson?.story?.villain || ""),
+    String(lesson?.story?.greeting || ""),
+    String(lesson?.story?.act1 || ""),
+    String(lesson?.story?.act2 || ""),
+  ];
+  const blob = parts.join(" ").toLowerCase();
+  if (/blue_crab|blue\s+crab|blue\s+island|синий\s+остров|синяя\s+обезьян|tide\s+pools?|clam\s+shells?|sapphire\s+sand/i.test(blob)) return "blue_crab_island";
+  if (/cherry_blossom|hanaydo|сакур|вишн|blossom|samurai/i.test(blob)) return "cherry_blossom_island";
+  if (/jelly_bay|jelly\s+bay|медуз|jellyfish/i.test(blob)) return "jelly_bay_island";
+  if (/snowy_peaks|snowy\s+peaks|снегов|пик/i.test(blob)) return "snowy_peaks_island";
+  if (/neon_city|neon\s+city|неон/i.test(blob)) return "neon_city_island";
+  if (/antigravity|антигравит/i.test(blob)) return "antigravity_island";
+  if (/mushroom_island|mushroom|грибн/i.test(blob)) return "mushroom_island";
+  if (/crystal_island|\bcrystal\b|кристалл/i.test(blob)) return "crystal_island";
+  return "";
+}
+
 function syncDraftStageBackgroundsFromIslandKey(draft) {
   if (!draft || typeof draft !== "object") return;
   const key = String(draft.context?.islandKey || "").trim();
@@ -99,7 +132,9 @@ function syncDraftStageBackgroundsFromIslandKey(draft) {
 }
 
 function applyIslandBackgroundsToLesson(lesson, draft) {
-  const key = String(draft?.context?.islandKey || "").trim();
+  const key = String(
+    draft?.context?.islandKey || lesson?.meta?.island_key || lesson?.meta?.islandKey || "",
+  ).trim();
   const map = getIslandStageBackgroundKeys(key);
   if (!map || !lesson?.stages?.length) return;
   for (let i = 0; i < lesson.stages.length; i++) {
@@ -285,6 +320,23 @@ function resolveToAllowedStems(preferred, stems) {
   return list[0];
 }
 
+/** Like resolveToAllowedStems but never picks an unrelated first catalog entry for unknown keys. */
+function resolveBackgroundStem(preferred, stems) {
+  const list = Array.isArray(stems) ? stems : [];
+  if (!list.length) return String(preferred || "").trim();
+  const p = String(preferred || "").trim();
+  if (p && list.includes(p)) return p;
+  const wanted = normAssetKeyStem(p);
+  for (const k of list) {
+    if (normAssetKeyStem(k) === wanted) return k;
+  }
+  for (const k of list) {
+    const nk = normAssetKeyStem(k);
+    if (wanted.length >= 3 && nk.length >= 3 && (nk.includes(wanted) || wanted.includes(nk))) return k;
+  }
+  return p;
+}
+
 function formatAllowedKeySection(title, stems) {
   if (!stems.length) {
     return `${title}\n(no image files in this folder on the server — pick another section’s keys or repeat allowed keys from non-empty lists only)\n`;
@@ -312,7 +364,7 @@ function buildAssetKeyConstraintBlock(catalog) {
 function clampVisualFields(obj, cat) {
   if (!obj || typeof obj !== "object") return;
   if (typeof obj.background === "string") {
-    obj.background = resolveToAllowedStems(obj.background, cat.backgrounds);
+    obj.background = resolveBackgroundStem(obj.background, cat.backgrounds);
   }
   if (typeof obj.image_key === "string") {
     obj.image_key = resolveToAllowedStems(obj.image_key, cat.items);
@@ -377,7 +429,7 @@ function clampLessonAssetKeys(lesson, cat) {
   }
   if (Array.isArray(im.backgrounds)) {
     im.backgrounds = im.backgrounds.map((k) =>
-      typeof k === "string" ? resolveToAllowedStems(k, cat.backgrounds) : k,
+      typeof k === "string" ? resolveBackgroundStem(k, cat.backgrounds) : k,
     );
   }
   if (Array.isArray(im.items)) {
@@ -1079,7 +1131,14 @@ async function generateLessonFromDraft(draft) {
     lesson.meta.start_coins = Number(ch.coins ?? lesson.meta.start_coins ?? 0);
     if (ch.characterKey) lesson.meta.character_key = ch.characterKey;
   }
-  const ik = String(draft?.context?.islandKey || "").trim();
+  let ik = String(draft?.context?.islandKey || "").trim();
+  if (!ik) {
+    ik = inferIslandKeyForLesson(lesson);
+    if (ik) {
+      draft.context = draft.context && typeof draft.context === "object" ? draft.context : {};
+      draft.context.islandKey = ik;
+    }
+  }
   if (ik) lesson.meta.island_key = ik;
   clampLessonAssetKeys(lesson, assetCatalog);
   /** After clamp — island backgrounds must win (clamp fuzzy-match can replace unknown stems). */
