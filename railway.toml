@@ -1,0 +1,6 @@
+# Railway: билд через Dockerfile из корня репозитория.
+# Переменные в Dashboard → сервис → Variables (те же, что в локальном .env).
+
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"

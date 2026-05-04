@@ -65,6 +65,31 @@
     .log{white-space:pre-wrap;background:var(--panel-2);border:1px solid var(--line);border-radius:16px;padding:12px;font-size:13px;color:#dbe9ff;max-height:240px;overflow:auto}
     .lesson-tools{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
     .json-box{margin-top:12px;background:#091425;border:1px solid var(--line);border-radius:16px;padding:12px;max-height:280px;overflow:auto;white-space:pre-wrap;font-size:12px}
+    .quick-flow{max-width:480px;margin:0 auto 32px;padding:0 12px}
+    .center-card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 10px 26px rgba(0,0,0,.18)}
+    .center-card h2{font-size:20px;margin-bottom:12px}
+    .find-row{display:flex;gap:10px;align-items:stretch}
+    .find-row input{font-size:16px;padding:14px 14px;flex:1;min-width:0}
+    .find-row button{flex-shrink:0;padding:14px 18px;font-size:15px}
+    .confirm-actions{display:flex;flex-direction:column;gap:10px;margin-top:16px}
+    .confirm-actions .primary{width:100%;padding:14px;font-size:15px}
+    .confirm-actions .ghost{width:100%;background:transparent;border:1px solid var(--line);padding:12px}
+    .textarea-lesson{min-height:120px;font-size:15px;line-height:1.45}
+    .btn-generate{width:100%;padding:16px;font-size:17px;margin-top:14px}
+    .hidden{display:none !important}
+    .progress-list{margin:16px 0 8px;padding:0;list-style:none;display:flex;flex-direction:column;gap:12px}
+    .progress-item{display:flex;align-items:center;gap:12px;font-size:15px;color:var(--muted);transition:color .25s ease}
+    .progress-item.active{color:var(--text)}
+    .progress-item.done{color:#9ae8c8}
+    .spin{display:inline-block;width:18px;text-align:center;animation:pulse .9s ease-in-out infinite}
+    @keyframes pulse{50%{opacity:.35}}
+    .check{width:18px;text-align:center;color:var(--teal);font-weight:900}
+    .download-lesson{width:100%;padding:16px;font-size:17px;margin-top:8px;text-decoration:none}
+    .expand-edit{margin-top:18px;text-align:center;font-size:15px}
+    .expand-edit button{background:none;border:none;color:var(--blue);cursor:pointer;font-weight:700;font-size:inherit;text-decoration:underline;padding:0}
+    .edit-panel{margin-top:24px;padding:0 18px 56px;max-width:1380px;margin-left:auto;margin-right:auto}
+    .edit-toolbar{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+    .edit-toolbar button{padding:12px 18px;font-size:15px}
     @media (max-width:1100px){.layout{grid-template-columns:1fr}.field-grid,.field-grid.three{grid-template-columns:1fr}}
   </style>
 </head>
@@ -78,43 +103,52 @@
         </div>
         <div class="stack" style="align-items:flex-end">
           <div class="status-pill" id="autosaveStatus">Ready</div>
-          <div class="actions">
-            <button class="primary" id="generateBtn">Create Lesson</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="quick-flow" id="quickFlow">
+      <div class="center-card" id="stepChildCard">
+        <h2>Find your student</h2>
+        <label class="muted" style="font-size:12px;display:block;margin-bottom:8px">Child code</label>
+        <div class="find-row">
+          <input id="childCodeInput" placeholder="MONKEY-4821" autocomplete="off" />
+          <button class="ghost" id="findChildBtn" type="button">Find</button>
+        </div>
+        <div id="childPreview" class="hint" style="margin-top:14px">Enter a child code and tap Find.</div>
+      </div>
+
+      <div class="center-card hidden" id="stepPromptCard">
+        <h2>What are we working on?</h2>
+        <label class="muted" style="font-size:12px;display:block;margin-bottom:8px">Lesson focus</label>
+        <textarea id="tutorPromptInput" class="textarea-lesson" placeholder="What are we working on today?&#10;e.g. division up to 30, confuses with subtraction,&#10;add word problems"></textarea>
+        <button class="primary btn-generate" id="quickGenerateBtn" type="button">✨ Generate Lesson</button>
+      </div>
+
+      <div class="center-card hidden" id="stepGenCard">
+        <h2 id="genCardTitle">Generating</h2>
+        <ul class="progress-list" id="progressList" aria-live="polite"></ul>
+        <div id="resultBlock" class="hidden">
+          <a class="button-link secondary download-lesson" id="downloadHtmlBtn" href="#">⬇ Download Lesson</a>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;justify-content:center">
+            <a class="button-link ghost" id="previewBtn" href="/lesson_game.html" target="_blank" rel="noopener">Open in browser</a>
           </div>
-          <div class="actions" id="postGenerateActions" style="display:none">
-            <button class="secondary" id="downloadHtmlBtn">Download HTML</button>
-            <a class="button-link ghost" id="previewBtn" href="/lesson_game.html" target="_blank" rel="noopener">Open in Browser</a>
+          <div class="expand-edit">
+            <button type="button" id="toggleEditBtn">Not happy with something? Edit the lesson →</button>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="layout">
-      <div class="stack">
-        <div class="card">
-          <h2>Child</h2>
-          <div class="field-grid">
-            <div class="full">
-              <label>Child code</label>
-              <div style="display:flex;gap:10px">
-                <input id="childCodeInput" placeholder="MONKEY-4821" />
-                <button class="ghost" id="fetchChildBtn" type="button">Fetch Child</button>
-                <button class="secondary" id="confirmChildBtn" type="button">Ready</button>
-              </div>
-            </div>
-          </div>
-          <div id="childPreview" class="hint">Enter a child code and fetch profile data.</div>
-        </div>
-
-        <div class="card">
-          <h2>Lesson Output</h2>
-          <div class="hint">Tutor fills only mechanics and math examples. Story, villain, artifact, assets, and all child-facing text are generated automatically.</div>
-          <div class="json-box" id="lessonJsonBox">No generated lesson loaded yet.</div>
-        </div>
+    <div class="edit-panel hidden" id="editPanel">
+      <div class="card edit-toolbar">
+        <button class="primary" id="regenerateStoryBtn" type="button">Regenerate story + Build HTML</button>
       </div>
-
-      <div class="stack">
-        <div id="stagesRoot"></div>
+      <div id="stagesRoot"></div>
+      <div class="card" style="margin-top:18px">
+        <h2>Lesson output (JSON)</h2>
+        <div class="hint" style="margin-bottom:8px">Story, assets, and child-facing text are generated from your draft.</div>
+        <div class="json-box" id="lessonJsonBox">No generated lesson loaded yet.</div>
       </div>
     </div>
   </div>
@@ -130,7 +164,17 @@
       generatedLessonUrl: "/lesson_game.html",
       autosaveTimer: null,
       autosavePending: false,
+      workflowStep: 1,
+      editExpanded: false,
+      generationRunning: false,
     };
+
+    const PROGRESS_STEPS = [
+      { key: "profile", label: "Loading child profile..." },
+      { key: "claude", label: "Claude is building the lesson..." },
+      { key: "assets", label: "Selecting assets..." },
+      { key: "html", label: "Building HTML..." },
+    ];
 
     const MECHANIC_HINTS = {
       drag_drop: "Use instruction + item/target hints + expected distribution.",
@@ -197,18 +241,82 @@
     function syncContextInputsToDraft() {
       if (!state.draft) return;
       state.draft.childCode = $("childCodeInput").value.trim();
+      if ($("tutorPromptInput")) {
+        state.draft.tutorPrompt = $("tutorPromptInput").value.trim();
+      }
       state.draft.updatedAt = new Date().toISOString();
     }
 
     function syncDraftToInputs() {
       if (!state.draft) return;
       $("childCodeInput").value = state.draft.childCode || "";
+      if ($("tutorPromptInput")) {
+        $("tutorPromptInput").value = state.draft.tutorPrompt || "";
+      }
       const fetchedCode = state.draft.child?.childCode || "";
       if (state.draft.confirmedChildCode !== fetchedCode) {
         state.draft.confirmedChildCode = "";
       }
       renderChildPreview();
       updateChildConfirmationState();
+    }
+
+    function isChildConfirmed() {
+      const d = state.draft;
+      const inputCode = $("childCodeInput").value.trim();
+      if (!d?.child || !d.confirmedChildCode) return false;
+      return d.confirmedChildCode === d.child.childCode && inputCode === d.child.childCode;
+    }
+
+    function deriveInitialWorkflowStep() {
+      if (state.lesson) return 3;
+      if (isChildConfirmed()) return 2;
+      return 1;
+    }
+
+    function updateWorkflowUI() {
+      const w = state.workflowStep;
+      $("stepChildCard").classList.toggle("hidden", w !== 1);
+      $("stepPromptCard").classList.toggle("hidden", w !== 2);
+      $("stepGenCard").classList.toggle("hidden", w !== 3);
+    }
+
+    function sleep(ms) {
+      return new Promise((r) => setTimeout(r, ms));
+    }
+
+    function renderProgressLines(activeIdx, doneMask) {
+      const ul = $("progressList");
+      ul.innerHTML = "";
+      PROGRESS_STEPS.forEach((step, i) => {
+        const li = document.createElement("li");
+        li.className = "progress-item";
+        const done = doneMask[i];
+        const active = activeIdx === i && !done;
+        if (done) li.classList.add("done");
+        else if (active) li.classList.add("active");
+        const mark = document.createElement("span");
+        if (done) mark.className = "check";
+        mark.textContent = done ? "✓" : active ? "⟳" : "·";
+        if (active && !done) mark.classList.add("spin");
+        const txt = document.createElement("span");
+        txt.textContent = step.label;
+        li.append(mark, txt);
+        ul.appendChild(li);
+      });
+    }
+
+    function showResultBlock() {
+      $("resultBlock").classList.remove("hidden");
+      $("progressList").classList.add("hidden");
+      $("genCardTitle").textContent = "Your lesson is ready";
+    }
+
+    function resetGenCardForRun() {
+      $("resultBlock").classList.add("hidden");
+      $("progressList").classList.remove("hidden");
+      $("genCardTitle").textContent = "Generating";
+      renderProgressLines(-1, [false, false, false, false]);
     }
 
     function queueAutosave() {
@@ -238,7 +346,7 @@
       const child = state.draft?.child;
       if (!child) {
         root.className = "hint";
-        root.textContent = "Enter a child code and fetch profile data.";
+        root.textContent = "Enter a child code and tap Find.";
         return;
       }
       root.className = "";
@@ -253,47 +361,75 @@
       body.style.flex = "1";
       const title = document.createElement("h3");
       title.textContent = child.name;
-      const code = document.createElement("div");
-      code.className = "muted";
-      code.textContent = child.childCode;
       const meta = document.createElement("div");
       meta.className = "meta-list";
-      [
-        `Level ${child.level}`,
-        `🪙 ${child.coins} coins`,
-        child.characterKey,
-        child.characterImagePath
-      ].forEach((text) => {
+      [`Level ${child.level}`, `🪙 ${child.coins} coins`].forEach((text) => {
         const chip = document.createElement("div");
         chip.className = "meta-chip";
         chip.textContent = text;
         meta.appendChild(chip);
       });
-      body.append(title, code, meta);
+      body.append(title, meta);
       card.append(img, body);
       root.appendChild(card);
-      const status = document.createElement("div");
-      const isConfirmed = state.draft?.confirmedChildCode && state.draft.confirmedChildCode === child.childCode;
-      status.className = `child-status ${isConfirmed ? "ok" : "warn"}`;
-      status.textContent = isConfirmed
-        ? `Confirmed child: ${child.childCode}`
-        : "Fetched but not confirmed. Click Ready to lock this child for generation.";
-      root.appendChild(status);
+
+      const isConfirmed = isChildConfirmed();
+      if (!isConfirmed) {
+        const actions = document.createElement("div");
+        actions.className = "confirm-actions";
+        const ok = document.createElement("button");
+        ok.type = "button";
+        ok.className = "primary";
+        ok.textContent = "Confirm — this is my student";
+        ok.disabled = !child.childCode || $("childCodeInput").value.trim() !== child.childCode;
+        ok.onclick = confirmChild;
+        const wrong = document.createElement("button");
+        wrong.type = "button";
+        wrong.className = "ghost";
+        wrong.textContent = "Wrong student";
+        wrong.onclick = wrongStudent;
+        actions.append(ok, wrong);
+        root.appendChild(actions);
+      }
     }
 
     function updateChildConfirmationState() {
-      const childCodeInput = $("childCodeInput").value.trim();
-      const fetchedCode = state.draft?.child?.childCode || "";
-      const isConfirmed = !!(state.draft?.confirmedChildCode && state.draft.confirmedChildCode === fetchedCode && fetchedCode === childCodeInput);
-      const canConfirm = !!fetchedCode && fetchedCode === childCodeInput;
-      $("confirmChildBtn").disabled = !canConfirm || isConfirmed;
-      $("confirmChildBtn").textContent = isConfirmed ? "Confirmed" : "Ready";
-      $("generateBtn").disabled = !isConfirmed;
-      if (!isConfirmed) {
-        $("generateBtn").title = "Fetch child and click Готово first";
-      } else {
-        $("generateBtn").title = "";
+      const canQuickGen =
+        state.workflowStep === 2 &&
+        isChildConfirmed() &&
+        $("tutorPromptInput")?.value.trim();
+      if ($("quickGenerateBtn")) {
+        $("quickGenerateBtn").disabled = !canQuickGen;
+        $("quickGenerateBtn").title = !isChildConfirmed()
+          ? "Confirm the student first"
+          : !canQuickGen
+            ? "Describe what you're working on"
+            : "";
       }
+      if (state.workflowStep === 1) renderChildPreview();
+    }
+
+    function wrongStudent() {
+      if (!state.draft) return;
+      state.draft.child = null;
+      state.draft.confirmedChildCode = "";
+      state.draft.tutorPrompt = "";
+      $("tutorPromptInput").value = "";
+      state.workflowStep = 1;
+      state.lesson = null;
+      state.generatedLessonUrl = "/lesson_game.html";
+      state.editExpanded = false;
+      $("editPanel").classList.add("hidden");
+      $("toggleEditBtn").textContent = "Not happy with something? Edit the lesson →";
+      $("resultBlock").classList.add("hidden");
+      $("progressList").classList.remove("hidden");
+      renderLessonJson();
+      $("previewBtn").href = "/lesson_game.html";
+      renderChildPreview();
+      updateWorkflowUI();
+      updateChildConfirmationState();
+      queueAutosave();
+      setAutosaveStatus("Choose another student");
     }
 
     function makeInput(label, value, onInput, opts = {}) {
@@ -672,11 +808,14 @@
         state.draft.childCode = childCode;
         state.draft.child = data.child;
         state.draft.confirmedChildCode = "";
+        state.workflowStep = 1;
+        updateWorkflowUI();
         renderChildPreview();
         updateChildConfirmationState();
         queueAutosave();
+        setAutosaveStatus("Student loaded");
       } catch (err) {
-        setAutosaveStatus("Child fetch failed");
+        setAutosaveStatus("Child fetch failed: " + (err?.message || "Unknown error"));
       }
     }
 
@@ -684,70 +823,149 @@
       const childCode = $("childCodeInput").value.trim();
       const fetchedCode = state.draft?.child?.childCode || "";
       if (!childCode || !fetchedCode || childCode !== fetchedCode) {
-        setAutosaveStatus("Fetch matching child first");
+        setAutosaveStatus("Find a matching student first");
         return;
       }
       state.draft.confirmedChildCode = fetchedCode;
+      state.workflowStep = 2;
       renderChildPreview();
       updateChildConfirmationState();
+      updateWorkflowUI();
       queueAutosave();
-      setAutosaveStatus(`Child confirmed: ${fetchedCode}`);
+      setAutosaveStatus(`Confirmed: ${fetchedCode}`);
     }
 
-    async function loadCurrentLesson() {
+    async function pollGenerateJob(jobId) {
+      let result = null;
+      for (let i = 0; i < 180; i++) {
+        await sleep(2000);
+        const status = await get("/api/generate-status?jobId=" + encodeURIComponent(jobId));
+        if (status.status === "pending") {
+          setAutosaveStatus("Generating... " + (i + 1) * 2 + "s");
+          continue;
+        }
+        if (status.status === "failed") {
+          const details = Array.isArray(status.details) ? status.details.join("; ") : "";
+          throw new Error([status.error || "Generation failed", details].filter(Boolean).join(" — "));
+        }
+        if (status.status === "succeeded") {
+          result = status;
+          break;
+        }
+      }
+      if (!result || !result.lesson) throw new Error("Generation timed out");
+      return result;
+    }
+
+    async function runQuickLessonPipeline() {
+      const tutorPrompt = $("tutorPromptInput").value.trim();
+      if (!tutorPrompt) {
+        setAutosaveStatus("Describe what you're working on");
+        return;
+      }
+      if (!isChildConfirmed()) {
+        setAutosaveStatus("Confirm your student first");
+        return;
+      }
+      state.generationRunning = true;
+      state.workflowStep = 3;
+      state.editExpanded = false;
+      $("editPanel").classList.add("hidden");
+      $("toggleEditBtn").textContent = "Not happy with something? Edit the lesson →";
+      updateWorkflowUI();
+      resetGenCardForRun();
+
       try {
-        const data = await get("/api/current-lesson");
-        state.lesson = data.lesson;
+        syncContextInputsToDraft();
+        renderProgressLines(0, [false, false, false, false]);
+        await sleep(100);
+        renderProgressLines(0, [true, false, false, false]);
+
+        renderProgressLines(1, [true, false, false, false]);
+        const child = state.draft.child;
+        const af = await post("/api/autofill", {
+          child: {
+            name: child.name,
+            age: child.age,
+            level: child.level,
+            coins: child.coins,
+            character_key: child.characterKey,
+            child_code: child.childCode,
+          },
+          tutor_prompt: tutorPrompt,
+        });
+        state.draft = af.draft;
+        $("tutorPromptInput").value = state.draft.tutorPrompt || tutorPrompt;
+        await saveDraft(true);
+
+        const start = await post("/api/generate", { draft: state.draft });
+        const jobId = start.jobId;
+        if (!jobId) throw new Error("Generation job did not start");
+        const result = await pollGenerateJob(jobId);
+        state.lesson = result.lesson;
         renderLessonJson();
-        if (state.lesson) $("postGenerateActions").style.display = "flex";
+
+        renderProgressLines(1, [true, true, false, false]);
+        await sleep(400);
+        renderProgressLines(2, [true, true, true, false]);
+        await sleep(200);
+
+        setAutosaveStatus("Building HTML...");
+        renderProgressLines(3, [true, true, true, false]);
+        const build = await post("/api/build-lesson");
+        state.generatedLessonUrl = build.generatedFileUrl || "/lesson_game.html";
+        $("previewBtn").href = state.generatedLessonUrl;
+
+        renderProgressLines(3, [true, true, true, true]);
+        showResultBlock();
+        setAutosaveStatus("Lesson ready");
       } catch (err) {
+        setAutosaveStatus("Failed: " + (err?.message || "Unknown error"));
+        state.workflowStep = 2;
+        updateWorkflowUI();
+        $("genCardTitle").textContent = "Something went wrong";
+        $("resultBlock").classList.add("hidden");
+        $("progressList").classList.remove("hidden");
+      } finally {
+        state.generationRunning = false;
+        updateChildConfirmationState();
       }
     }
 
-    async function generateLesson() {
+    async function regenerateStoryAndBuild() {
       try {
         syncContextInputsToDraft();
         const childCode = $("childCodeInput").value.trim();
         if (!state.draft?.confirmedChildCode || state.draft.confirmedChildCode !== childCode) {
-          throw new Error("Fetch child and click Ready before generation");
+          throw new Error("Confirm the student in the draft before regenerating");
         }
         setAutosaveStatus("Generating...");
+        $("regenerateStoryBtn").disabled = true;
         await saveDraft(true);
         const start = await post("/api/generate", { draft: state.draft });
         const jobId = start.jobId;
         if (!jobId) throw new Error("Generation job did not start");
-        let result = null;
-        for (let i = 0; i < 180; i++) {
-          await new Promise((resolve) => setTimeout(resolve, 2000));
-          const status = await get("/api/generate-status?jobId=" + encodeURIComponent(jobId));
-          if (status.status === "pending") {
-            setAutosaveStatus("Generating... " + (i + 1) * 2 + "s");
-            continue;
-          }
-          if (status.status === "failed") {
-            const details = Array.isArray(status.details) ? status.details.join("; ") : "";
-            throw new Error([status.error || "Generation failed", details].filter(Boolean).join(" — "));
-          }
-          if (status.status === "succeeded") {
-            result = status;
-            break;
-          }
-        }
-        if (!result || !result.lesson) throw new Error("Generation timed out");
+        const result = await pollGenerateJob(jobId);
+        state.lesson = result.lesson;
+        renderLessonJson();
         setAutosaveStatus("Building HTML...");
         const build = await post("/api/build-lesson");
         state.generatedLessonUrl = build.generatedFileUrl || "/lesson_game.html";
         $("previewBtn").href = state.generatedLessonUrl;
-        state.lesson = result.lesson;
-        renderLessonJson();
-        $("postGenerateActions").style.display = "flex";
+        state.workflowStep = 3;
+        updateWorkflowUI();
+        showResultBlock();
+        $("quickFlow").classList.remove("hidden");
         setAutosaveStatus("Lesson ready");
       } catch (err) {
         setAutosaveStatus("Generation failed: " + (err?.message || "Unknown error"));
+      } finally {
+        $("regenerateStoryBtn").disabled = false;
       }
     }
 
-    async function downloadHtml() {
+    async function downloadHtml(ev) {
+      if (ev) ev.preventDefault();
       if (!state.generatedLessonUrl) {
         return;
       }
@@ -773,23 +991,46 @@
       state.mechanics = data.mechanics;
       state.fixedBackgrounds = data.fixedBackgrounds;
       syncDraftToInputs();
+      state.workflowStep = deriveInitialWorkflowStep();
       renderStages();
       renderLessonJson();
-      if (state.lesson) $("postGenerateActions").style.display = "flex";
+      updateWorkflowUI();
+      if (state.workflowStep === 3 && state.lesson) {
+        showResultBlock();
+        $("previewBtn").href = state.generatedLessonUrl || "/lesson_game.html";
+      } else {
+        $("resultBlock").classList.add("hidden");
+        $("progressList").classList.remove("hidden");
+      }
       setAutosaveStatus("Ready");
 
-      ["childCodeInput"]
-        .forEach((id) => $(id).addEventListener("input", () => {
-          if (state.draft) state.draft.confirmedChildCode = "";
-          queueAutosave();
-          renderChildPreview();
-          updateChildConfirmationState();
-        }));
+      $("childCodeInput").addEventListener("input", () => {
+        if (state.draft) state.draft.confirmedChildCode = "";
+        state.workflowStep = 1;
+        updateWorkflowUI();
+        queueAutosave();
+        renderChildPreview();
+        updateChildConfirmationState();
+      });
 
-      $("fetchChildBtn").onclick = fetchChild;
-      $("confirmChildBtn").onclick = confirmChild;
-      $("generateBtn").onclick = generateLesson;
+      $("tutorPromptInput").addEventListener("input", () => {
+        queueAutosave();
+        updateChildConfirmationState();
+      });
+
+      $("findChildBtn").onclick = fetchChild;
+      $("quickGenerateBtn").onclick = runQuickLessonPipeline;
       $("downloadHtmlBtn").onclick = downloadHtml;
+      $("regenerateStoryBtn").onclick = regenerateStoryAndBuild;
+      $("toggleEditBtn").onclick = () => {
+        state.editExpanded = !state.editExpanded;
+        $("editPanel").classList.toggle("hidden", !state.editExpanded);
+        $("toggleEditBtn").textContent = state.editExpanded
+          ? "Hide lesson editor"
+          : "Not happy with something? Edit the lesson →";
+        if (state.editExpanded) renderStages();
+      };
+
       updateChildConfirmationState();
 
       setInterval(() => {

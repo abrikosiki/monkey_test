@@ -124,6 +124,38 @@ function toNumber(value, fallback = 0) {
   return Number.isFinite(n) ? n : fallback;
 }
 
+function hasCyrillic(value) {
+  return /[\u0400-\u04FF]/.test(String(value || ""));
+}
+
+function enforceEnglishText(lesson) {
+  if (!lesson || typeof lesson !== "object") return;
+  const story = lesson.story || (lesson.story = {});
+  if (hasCyrillic(story.island_name)) story.island_name = "Blue Island";
+  if (hasCyrillic(story.villain)) story.villain = "Blue Crab Monkey";
+  if (hasCyrillic(story.artifact_name)) story.artifact_name = "Mind Glasses";
+  if (hasCyrillic(story.artifact_power)) story.artifact_power = "Reveals hidden numbers instantly.";
+  if (hasCyrillic(story.greeting)) story.greeting = "Welcome, hero! Let's start the adventure.";
+  if (hasCyrillic(story.act1)) story.act1 = "You arrive on a glowing island where math puzzles guard the treasure.";
+  if (hasCyrillic(story.act2)) story.act2 = "A silly monkey villain mixed everything up, so the island needs your help.";
+  if (hasCyrillic(story.act3)) story.act3 = "Solve every challenge to restore balance and unlock the artifact.";
+  if (hasCyrillic(story.goal)) story.goal = "Use math to make fair choices and complete the mission.";
+  for (const stage of lesson.stages || []) {
+    if (!stage || typeof stage !== "object") continue;
+    if (hasCyrillic(stage.title)) stage.title = `Stage ${Number(stage.id || stage._stageNo || 1)} Challenge`;
+    if (hasCyrillic(stage.success_message)) stage.success_message = "Great job! You solved this round.";
+    for (const round of stage.rounds || []) {
+      if (!round || typeof round !== "object") continue;
+      if (hasCyrillic(round.instruction)) round.instruction = "Solve the task to continue.";
+      if (hasCyrillic(round.question)) round.question = "Choose the correct answer.";
+    }
+  }
+  const imgArtifact = lesson.images_needed?.artifact;
+  if (imgArtifact && typeof imgArtifact === "object" && hasCyrillic(imgArtifact.name)) {
+    imgArtifact.name = "Mind Glasses";
+  }
+}
+
 const IMAGE_FILE_EXTENSIONS = new Set([".webp", ".png", ".jpg", ".jpeg"]);
 
 function listAssetStems(relativeDir) {
@@ -382,7 +414,12 @@ function applyDraftToLessonStages(lesson, draft) {
         const nums = splitValues(ex.prompt || "");
         const rule = splitValues(ex.answer || "");
         if (nums.length) {
-          r.items = nums.map((t, idx) => ({ id: `i${idx + 1}`, value: t, text: t }));
+          r.items = nums.map((t, idx) => ({
+            id: `i${idx + 1}`,
+            value: t,
+            text: t,
+            image_key: r.items?.[idx]?.image_key || lStage.image_key || "banana",
+          }));
         }
         if (rule.length) {
           r.correct_order = rule;
@@ -445,31 +482,68 @@ function buildDefaultDraft() {
   };
 }
 
+/** Совмещает старую схему (child_code, character_key) и схему Monkey Game (code, char_img, character_type+outfit). */
+function deriveCharacterKeyStem(child) {
+  if (!child || typeof child !== "object") return "pirate_green";
+  if (child.character_key || child.characterKey) {
+    return String(child.character_key || child.characterKey).trim() || "pirate_green";
+  }
+  if (child.char_img != null && String(child.char_img).trim() !== "") {
+    const raw = String(child.char_img).trim();
+    const base = raw.split(/[/\\]/).pop().replace(/\.(webp|png|jpg|jpeg|gif)$/i, "");
+    return base || "pirate_green";
+  }
+  const ct = String(child.character_type || "boy").replace(/\s+/g, "_");
+  const ot = String(child.outfit || "brown").replace(/\s+/g, "_");
+  return `${ct}_${ot}`.toLowerCase() || "pirate_green";
+}
+
+function parseInventoryList(child) {
+  const raw = child.inventory ?? child.artifacts ?? child.owned_artifacts ?? [];
+  if (Array.isArray(raw)) {
+    return raw.map((v) => (v == null ? "" : String(v).trim())).filter(Boolean);
+  }
+  if (raw && typeof raw === "object" && !Array.isArray(raw)) {
+    return Object.values(raw)
+      .map((v) => (v == null ? "" : String(v).trim()))
+      .filter(Boolean);
+  }
+  return String(raw || "")
+    .split(/[,\n;]/)
+    .map((v) => v.trim())
+    .filter(Boolean);
+}
+
 function normalizeChild(child) {
   if (!child) return null;
-  const key = String(child.character_key || child.characterKey || "pirate_green");
-  const rawInventory = child.inventory || child.artifacts || child.owned_artifacts || [];
-  const inventory = Array.isArray(rawInventory)
-    ? rawInventory.map((v) => String(v || "").trim()).filter(Boolean)
-    : String(rawInventory || "")
-      .split(/[,\n;]/)
-      .map((v) => v.trim())
-      .filter(Boolean);
+  const key = deriveCharacterKeyStem(child);
+  const inventory = parseInventoryList(child);
   const freezeRing = Boolean(
     child.freeze_ring ??
     child.freezeRing ??
     child.has_freeze_ring ??
     child.hasFreezeRing,
   );
+  const rawAge = child.age ?? child.age_years ?? child.ageYears;
+  const ageNum = Number(rawAge);
+  const age = Number.isFinite(ageNum) && ageNum > 0 ? ageNum : undefined;
+  const rawLevel = Number(child.level);
+  const level = Number.isFinite(rawLevel) ? rawLevel : 1;
+  const publicCode =
+    child.child_code ||
+    child.childCode ||
+    child.code ||
+    "";
   return {
-    childCode: child.child_code || child.childCode,
+    childCode: String(publicCode || "").trim(),
     name: child.name || "Hero",
-    coins: Number(child.coins || 0),
-    level: Number(child.level || 1),
+    coins: Number(child.coins ?? 0),
+    level,
     characterKey: key,
     characterImagePath: `assets/characters/${key}.webp`,
     inventory,
     freezeRing,
+    ...(age != null ? { age } : {}),
   };
 }
 
@@ -480,24 +554,56 @@ async function fetchChildRecord(code) {
   const supabaseUrl = process.env.SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
   const table = process.env.SUPABASE_CHILDREN_TABLE || "children";
+  /** Колонка с публичным кодом ребёнка: в новой схеме Monkey Game это `code`, в старой — `child_code`. */
+  const lookupColumn = process.env.SUPABASE_CHILD_LOOKUP_COLUMN || "code";
 
   if (supabaseUrl && serviceKey) {
-    const url = `${supabaseUrl}/rest/v1/${table}?child_code=eq.${encodeURIComponent(childCode)}&select=*`;
+    const base = String(supabaseUrl).replace(/\/+$/, "");
+    const url = `${base}/rest/v1/${encodeURIComponent(table)}?${encodeURIComponent(lookupColumn)}=eq.${encodeURIComponent(childCode)}&select=*`;
     const res = await fetch(url, {
       headers: {
         apikey: serviceKey,
         Authorization: `Bearer ${serviceKey}`,
+        Accept: "application/json",
       },
     });
-    if (!res.ok) throw new Error(`Supabase lookup failed (${res.status})`);
-    const rows = await res.json();
-    const record = Array.isArray(rows) ? rows[0] : null;
-    if (!record) throw new Error(`Child ${childCode} not found`);
-    return normalizeChild(record);
+    const text = await res.text();
+    if (!res.ok) {
+      let detail = text;
+      try {
+        const j = JSON.parse(text);
+        detail = j.message || j.error_description || j.details || text;
+      } catch {
+        /* keep raw text */
+      }
+      throw new Error(`Supabase ${res.status}: ${detail}`);
+    }
+    let rows;
+    try {
+      rows = JSON.parse(text || "[]");
+    } catch {
+      throw new Error("Supabase returned invalid JSON");
+    }
+    if (!Array.isArray(rows)) {
+      throw new Error(`Supabase returned unexpected response for ${childCode}`);
+    }
+    const record = rows[0] || null;
+    if (!record) {
+      throw new Error(
+        `Ребёнок с кодом «${childCode}» не найден. Проверь код в таблице ${table}, колонку ${lookupColumn}, и что строка есть в той же базе, что в SUPABASE_URL.`,
+      );
+    }
+    const normalized = normalizeChild(record);
+    if (!normalized.childCode) {
+      normalized.childCode = childCode;
+    }
+    return normalized;
   }
 
   const local = readJson(CHILDREN_FILE, []);
-  const record = Array.isArray(local) ? local.find((item) => String(item.child_code) === childCode) : null;
+  const record = Array.isArray(local)
+    ? local.find((item) => String(item.child_code || item.code) === childCode)
+    : null;
   if (!record) throw new Error(`Child ${childCode} not found in local tutor_data/children.json`);
   return normalizeChild(record);
 }
@@ -581,6 +687,7 @@ LESSON CONTEXT:
 
 RULES:
 - English only
+- Use English alphabet only (no Cyrillic letters in any text field)
 - Return ONLY valid JSON
 - Use root fields: meta, story, stages, images_needed, tutor_notes
 - Exactly 6 stages
@@ -634,6 +741,231 @@ function validateDraft(draft) {
   return errors;
 }
 
+const MECHANIC_IDS = new Set(MECHANICS.map((m) => m.id));
+
+function coerceMechanic(id, fallback) {
+  const s = String(id || "").trim();
+  if (MECHANIC_IDS.has(s)) return s;
+  return fallback;
+}
+
+/** Ensures 6 stages × 5 examples with backgrounds and safe mechanics. */
+function normalizeAutofillStages(rawStages) {
+  const list = Array.isArray(rawStages) ? rawStages : [];
+  const stages = [];
+  for (let i = 0; i < 6; i++) {
+    const stageNumber = i + 1;
+    const incoming = list[i] || {};
+    let mechanic = coerceMechanic(incoming.mechanic, stageTemplate(stageNumber).mechanic);
+    if (stageNumber === 6) {
+      const solo = new Set(["multi_choice", "fill_blank", "tap_count"]);
+      if (!solo.has(mechanic)) mechanic = "multi_choice";
+    }
+    const examplesIn = Array.isArray(incoming.examples) ? incoming.examples : [];
+    const examples = [];
+    for (let r = 0; r < 5; r++) {
+      const base = exampleTemplate(stageNumber, r + 1);
+      const ex = examplesIn[r] && typeof examplesIn[r] === "object" ? examplesIn[r] : {};
+      examples.push({
+        ...base,
+        ...ex,
+        roundNumber: r + 1,
+      });
+    }
+    stages.push({
+      stageNumber,
+      mechanic,
+      background: FIXED_BACKGROUNDS[stageNumber] || incoming.background || stageTemplate(stageNumber).background,
+      examples,
+    });
+  }
+  return stages;
+}
+
+function mergeAutofillDraftPayload(parsed, childCode, normalizedChild, tutorPrompt) {
+  const tc = parsed.tutorContext && typeof parsed.tutorContext === "object" ? parsed.tutorContext : {};
+  const stages = normalizeAutofillStages(parsed.stages);
+  const prevCtx = readJson(DRAFT_FILE, buildDefaultDraft()).context || {};
+  return {
+    draftId: parsed.draftId || "current",
+    childCode: String(parsed.childCode || childCode || "").trim() || childCode,
+    confirmedChildCode: childCode,
+    child: normalizedChild,
+    tutorPrompt: tutorPrompt ?? parsed.tutorPrompt ?? "",
+    context: {
+      ...prevCtx,
+      difficulty: prevCtx.difficulty || "medium",
+      topicLabel: parsed.context?.topicLabel || prevCtx.topicLabel || "Tutor-made lesson",
+      topicKey: parsed.context?.topicKey || prevCtx.topicKey || "custom_math_lesson",
+      knows: tc.knows ?? parsed.context?.knows ?? prevCtx.knows ?? "",
+      weakPoint: tc.weakPoint ?? parsed.context?.weakPoint ?? prevCtx.weakPoint ?? "",
+      notes: tc.notes ?? parsed.context?.notes ?? prevCtx.notes ?? "",
+    },
+    stages,
+    status: "draft",
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+function buildAutofillSystemPrompt(childBlock, tutorPrompt) {
+  const name = childBlock.name ?? "Student";
+  const age = Number(childBlock.age);
+  const ageStr = Number.isFinite(age) ? String(age) : "7";
+  const level = Number(childBlock.level ?? 1);
+  const coins = Number(childBlock.coins ?? 0);
+  const ck = childBlock.character_key || childBlock.characterKey || "pirate_green";
+  return `You are an expert math tutor assistant for children age 5-9.
+You receive a child profile and a short tutor instruction.
+You must generate a complete lesson draft in exact JSON format.
+
+The lesson has 6 stages. Each stage has exactly 5 examples.
+You choose the mechanics. You write all the math examples.
+
+CHILD:
+- name: ${name}
+- age: ${ageStr}
+- level: ${level}
+- coins: ${coins}
+- character_key: ${ck}
+
+TUTOR INSTRUCTION: ${tutorPrompt}
+
+OUTPUT: valid JSON matching this exact draft structure:
+
+{
+  "childCode": "string",
+  "child": { "name": "", "age": 0, "level": 0, "coins": 0, "character_key": "" },
+  "tutorContext": {
+    "knows": "infer from tutor instruction and age",
+    "weakPoint": "infer from tutor instruction",
+    "notes": ""
+  },
+  "stages": [
+    {
+      "stageNumber": 1,
+      "mechanic": "drag_drop",
+      "examples": [
+        {
+          "roundNumber": 1,
+          "titleText": "string",
+          "screenItemCount": 6,
+          "targetCount": 2,
+          "zoneCounts": [3, 3]
+        }
+      ]
+    }
+  ]
+}
+
+Include every field required by each mechanic you choose (same shape as the tutor draft examples: prompts, answers, choices, expressions, etc.). Do not omit fields that mechanic needs.
+
+MECHANIC SELECTION RULES:
+- Stage 1: always drag_drop or tap_count (easiest start)
+- Final stage (stage 6): solo-style practice — use only multi_choice, fill_blank, or tap_count
+- Never same mechanic two stages in a row
+- Minimum 3 different mechanics in the lesson
+- Age 5-6: only drag_drop, tap_count, multi_choice, fill_blank, drag_group
+- Age 7-8: all mechanics except timer_challenge is rare
+- Age 9+: all mechanics
+
+EXAMPLE PROGRESSION per stage (rounds 1→5):
+- Round 1: simplest version, builds confidence
+- Round 2: same structure, slightly bigger numbers
+- Round 3: add one new variable
+- Round 4: twist or partial challenge
+- Round 5: hardest version or unexpected angle
+
+MATH RULES:
+- Examples must match child age and level
+- Numbers must be appropriate: age 5-6 → up to 10, age 7-8 → up to 50, age 9 → up to 100
+- Always include at least one reverse/inverse example per stage
+- Examples must directly address the tutor instruction topic
+
+Return ONLY valid JSON. No markdown. Start with {`;
+}
+
+function inferChildAgeForAutofill(childPayload, normalizedChild) {
+  const raw =
+    childPayload?.age ??
+    childPayload?.age_years ??
+    normalizedChild?.age ??
+    normalizedChild?.ageYears;
+  const n = Number(raw);
+  if (Number.isFinite(n) && n >= 4 && n <= 12) return n;
+  const lvl = Number(normalizedChild?.level ?? childPayload?.level ?? 1);
+  return Math.min(9, Math.max(5, 5 + Math.floor(lvl / 2)));
+}
+
+async function generateAutofillDraft(body) {
+  const tutorPrompt = String(body?.tutor_prompt ?? body?.tutorPrompt ?? "").trim();
+  if (!tutorPrompt) {
+    const err = new Error("tutor_prompt is required");
+    err.details = ["Provide a short description of what to work on"];
+    throw err;
+  }
+
+  const childPayload = body?.child && typeof body.child === "object" ? body.child : {};
+  const childCode = String(childPayload.child_code || childPayload.childCode || body.childCode || "").trim();
+  if (!childCode) {
+    const err = new Error("child.childCode or child_code is required");
+    err.details = [];
+    throw err;
+  }
+
+  let normalizedChild = normalizeChild({
+    ...childPayload,
+    child_code: childCode,
+    character_key: childPayload.character_key || childPayload.characterKey,
+  });
+
+  try {
+    const dbChild = await fetchChildRecord(childCode);
+    normalizedChild = { ...normalizedChild, ...dbChild, childCode };
+  } catch {
+    // Use payload-only child if local/remote lookup fails
+    normalizedChild = {
+      ...normalizedChild,
+      childCode,
+      name: normalizedChild.name || childPayload.name || "Student",
+      coins: Number(childPayload.coins ?? normalizedChild.coins ?? 0),
+      level: Number(childPayload.level ?? normalizedChild.level ?? 1),
+      characterKey: childPayload.character_key || childPayload.characterKey || normalizedChild.characterKey || "pirate_green",
+      characterImagePath: normalizedChild.characterImagePath || `assets/characters/${childPayload.character_key || childPayload.characterKey || "pirate_green"}.webp`,
+    };
+  }
+
+  const age = inferChildAgeForAutofill(childPayload, normalizedChild);
+  normalizedChild = { ...normalizedChild, age };
+
+  if (!process.env.ANTHROPIC_API_KEY) {
+    throw new Error("ANTHROPIC_API_KEY is not set in environment/.env");
+  }
+
+  const childBlock = {
+    name: normalizedChild.name,
+    age,
+    level: normalizedChild.level,
+    coins: normalizedChild.coins,
+    character_key: normalizedChild.characterKey,
+  };
+
+  const system = buildAutofillSystemPrompt(childBlock, tutorPrompt);
+  const userMsg = `Generate the lesson draft JSON now for child code ${childCode}.`;
+
+  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+  const msg = await client.messages.create({
+    model: "claude-sonnet-4-5",
+    max_tokens: 16384,
+    system,
+    messages: [{ role: "user", content: userMsg }],
+  });
+  const text = msg.content?.find((c) => c.type === "text")?.text || "";
+  const parsed = parseClaudeJson(text);
+  const draft = mergeAutofillDraftPayload(parsed, childCode, normalizedChild, tutorPrompt);
+  writeJson(DRAFT_FILE, draft);
+  return draft;
+}
+
 function validateLessonShape(lesson) {
   const errors = [];
   if (!lesson || typeof lesson !== "object") errors.push("Lesson must be a JSON object");
@@ -677,6 +1009,7 @@ async function generateLessonFromDraft(draft) {
   const text = msg.content?.find((c) => c.type === "text")?.text || "";
   const lesson = parseClaudeJson(text);
   applyDraftToLessonStages(lesson, draft);
+  enforceEnglishText(lesson);
   lesson.meta = lesson.meta || {};
   lesson.meta.child_inventory = Array.isArray(draft.child?.inventory) ? draft.child.inventory : [];
   lesson.meta.has_freeze_ring = Boolean(draft.child?.freezeRing);
@@ -848,6 +1181,21 @@ const server = http.createServer(async (req, res) => {
       draft.updatedAt = new Date().toISOString();
       writeJson(DRAFT_FILE, draft);
       sendJson(res, 200, { ok: true, savedAt: draft.updatedAt });
+      return;
+    }
+
+    if (req.method === "POST" && url.pathname === "/api/autofill") {
+      try {
+        const payload = JSON.parse((await readBody(req)) || "{}");
+        const draft = await generateAutofillDraft(payload);
+        sendJson(res, 200, { ok: true, draft });
+      } catch (err) {
+        sendJson(res, 422, {
+          ok: false,
+          error: err.message || "Autofill failed",
+          details: err.details || null,
+        });
+      }
       return;
     }
 

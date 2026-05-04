@@ -5,10 +5,14 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node tutor_server.mjs",
     "assets": "node generate_assets.mjs output_lesson.json",
     "build:lesson": "node builder.mjs output_lesson.json lesson_game.html",
     "build:all": "npm run assets && npm run build:lesson",
     "tutor:web": "node tutor_server.mjs"
+  },
+  "engines": {
+    "node": ">=18"
   },
   "keywords": [],
   "author": "",
