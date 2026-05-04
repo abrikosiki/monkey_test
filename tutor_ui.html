@@ -87,6 +87,8 @@
     .download-lesson{width:100%;padding:16px;font-size:17px;margin-top:8px;text-decoration:none}
     .expand-edit{margin-top:18px;text-align:center;font-size:15px}
     .expand-edit button{background:none;border:none;color:var(--blue);cursor:pointer;font-weight:700;font-size:inherit;text-decoration:underline;padding:0}
+    .back-to-prompt{margin-top:16px}
+    .back-to-prompt button{width:100%;padding:12px;font-size:15px}
     .edit-panel{margin-top:24px;padding:0 18px 56px;max-width:1380px;margin-left:auto;margin-right:auto}
     .edit-toolbar{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
     .edit-toolbar button{padding:12px 18px;font-size:15px}
@@ -135,6 +137,9 @@
           </div>
           <div class="expand-edit">
             <button type="button" id="toggleEditBtn">Not happy with something? Edit the lesson →</button>
+          </div>
+          <div class="back-to-prompt">
+            <button type="button" class="ghost" id="backToPromptBtn">← Назад — сгенерировать другой урок</button>
           </div>
         </div>
       </div>
@@ -431,6 +436,17 @@
             : "";
       }
       if (state.workflowStep === 1) renderChildPreview();
+    }
+
+    function backToLessonPrompt() {
+      state.workflowStep = 2;
+      state.editExpanded = false;
+      $("editPanel").classList.add("hidden");
+      $("toggleEditBtn").textContent = "Not happy with something? Edit the lesson →";
+      clearSessionLessonReady();
+      updateWorkflowUI();
+      updateChildConfirmationState();
+      setAutosaveStatus("Измени промпт и сгенерируй снова");
     }
 
     function wrongStudent() {
@@ -1066,6 +1082,8 @@
           : "Not happy with something? Edit the lesson →";
         if (state.editExpanded) renderStages();
       };
+
+      $("backToPromptBtn").onclick = backToLessonPrompt;
 
       updateChildConfirmationState();
 
