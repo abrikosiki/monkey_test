@@ -43,6 +43,74 @@ const FIXED_BACKGROUNDS = {
   6: "stage6_generated",
 };
 
+/** Logical keys in draft.context.islandKey / meta.island_key (tutor + autofill). */
+const CANONICAL_ISLAND_KEYS = [
+  "cherry_blossom_island",
+  "jelly_bay_island",
+  "snowy_peaks_island",
+  "neon_city_island",
+  "blue_crab_island",
+  "antigravity_island",
+  "mushroom_island",
+  "crystal_island",
+];
+
+/** When PNG filenames use a different prefix than the logical island key (legacy assets). */
+const ISLAND_KEY_TO_BG_PREFIX = {
+  blue_crab_island: "blue_crab _sland",
+};
+
+function islandKeyToBackgroundPrefix(islandKey) {
+  const k = String(islandKey || "").trim().replace(/\s+/g, "_");
+  if (!k) return "";
+  if (ISLAND_KEY_TO_BG_PREFIX[k]) return ISLAND_KEY_TO_BG_PREFIX[k];
+  return k;
+}
+
+/**
+ * Per-lesson stage backgrounds when an island pack is selected:
+ * stages 1–2 = {prefix}1 and {prefix}2; 3–4 = fixed cave art (same for every lesson);
+ * 5–6 = {prefix}3 and {prefix}4. Prefix matches PNG basename before the digit.
+ */
+function getIslandStageBackgroundKeys(islandKey) {
+  const prefix = islandKeyToBackgroundPrefix(islandKey);
+  if (!prefix) return null;
+  return {
+    1: `${prefix}1`,
+    2: `${prefix}2`,
+    3: "cave_entrance",
+    4: "cave_deep",
+    5: `${prefix}3`,
+    6: `${prefix}4`,
+  };
+}
+
+function syncDraftStageBackgroundsFromIslandKey(draft) {
+  if (!draft || typeof draft !== "object") return;
+  const key = String(draft.context?.islandKey || "").trim();
+  const map = getIslandStageBackgroundKeys(key);
+  if (!map) return;
+  const stages = Array.isArray(draft.stages) ? draft.stages : [];
+  for (let i = 0; i < stages.length; i++) {
+    const row = stages[i];
+    if (!row || typeof row !== "object") continue;
+    const sn = Number(row.stageNumber) || i + 1;
+    if (map[sn]) row.background = map[sn];
+  }
+}
+
+function applyIslandBackgroundsToLesson(lesson, draft) {
+  const key = String(draft?.context?.islandKey || "").trim();
+  const map = getIslandStageBackgroundKeys(key);
+  if (!map || !lesson?.stages?.length) return;
+  for (let i = 0; i < lesson.stages.length; i++) {
+    const st = lesson.stages[i];
+    if (!st || typeof st !== "object") continue;
+    const sn = Number(st.id ?? st._stageNo ?? i + 1) || i + 1;
+    if (map[sn]) st.background = map[sn];
+  }
+}
+
 function loadDotEnv() {
   try {
     const text = fs.readFileSync(path.join(__dirname, ".env"), "utf-8");
@@ -475,6 +543,7 @@ function buildDefaultDraft() {
       difficulty: "medium",
       topicLabel: "Tutor-made lesson",
       topicKey: "custom_math_lesson",
+      islandKey: "",
     },
     stages: Array.from({ length: 6 }, (_, idx) => stageTemplate(idx + 1)),
     status: "draft",
@@ -684,6 +753,7 @@ LESSON CONTEXT:
 - Difficulty: ${context.difficulty}
 - Topic label: ${context.topicLabel}
 - Topic key: ${context.topicKey}
+- Island key (canonical story + stage backgrounds): ${String(context.islandKey || "").trim() || "(none — lesson generator will still require one island from the system prompt list)"}
 
 RULES:
 - English only
@@ -695,7 +765,7 @@ RULES:
 - Keep the tutor's mechanics and example math content
 - Tutor input includes mechanics and math examples only. Invent story, villain, artifact names (text), instructions, and tutor notes — but every visual key (backgrounds, image_key, character_key, artifact image key) MUST be copied exactly from the ALLOWED ASSET KEYS block below. Never invent asset filenames or keys.
 - Use child system data in meta and completion flow
-- For drag_drop, follow strict beach_lesson template: top draggable area + bottom target row, exactly 2 target PNGs per round, draggable count must match tutor screen_item_count, and use drag_drop backgrounds that are NOT cave_entrance/cave_deep/jungle_path/jungle_temple.
+- For drag_drop, follow strict beach_lesson template: top draggable area + bottom target row, exactly 2 target PNGs per round, draggable count must match tutor screen_item_count. Each stage's background MUST be exactly the tutor draft "background" token for that stage (island sequence + fixed caves — copy it character-for-character from TUTOR STAGE INPUT).
 - Global: tutor "Title text" is always the centered stage title.
 - Global: never show intermediate '+2' round popup; after correct round move directly to next round.
 - Opening screen story must be highly engaging for kids 5-9: cinematic island intro, silly-not-scary monkey villain with a specific ridiculous action causing the math problem, personal hero mission by child name, and clear artifact treasure with magical power.
@@ -750,8 +820,9 @@ function coerceMechanic(id, fallback) {
 }
 
 /** Ensures 6 stages × 5 examples with backgrounds and safe mechanics. */
-function normalizeAutofillStages(rawStages) {
+function normalizeAutofillStages(rawStages, islandKey) {
   const list = Array.isArray(rawStages) ? rawStages : [];
+  const islandBg = getIslandStageBackgroundKeys(String(islandKey || "").trim());
   const stages = [];
   for (let i = 0; i < 6; i++) {
     const stageNumber = i + 1;
@@ -768,10 +839,12 @@ function normalizeAutofillStages(rawStages) {
         roundNumber: r + 1,
       });
     }
+    const defaultBg =
+      FIXED_BACKGROUNDS[stageNumber] ?? stageTemplate(stageNumber).background;
     const row = {
       stageNumber,
       mechanic,
-      background: FIXED_BACKGROUNDS[stageNumber] || incoming.background || stageTemplate(stageNumber).background,
+      background: islandBg ? islandBg[stageNumber] : incoming.background || defaultBg,
       examples,
     };
     if (incoming.mechanic_reason != null && String(incoming.mechanic_reason).trim() !== "") {
@@ -784,9 +857,18 @@ function normalizeAutofillStages(rawStages) {
 
 function mergeAutofillDraftPayload(parsed, childCode, normalizedChild, tutorPrompt) {
   const tc = parsed.tutorContext && typeof parsed.tutorContext === "object" ? parsed.tutorContext : {};
-  const stages = normalizeAutofillStages(parsed.stages);
   const prevCtx = readJson(DRAFT_FILE, buildDefaultDraft()).context || {};
-  return {
+  const islandKeyRaw =
+    parsed.context?.islandKey ??
+    parsed.context?.island_key ??
+    parsed.islandKey ??
+    tc.islandKey ??
+    "";
+  const islandKey = String(islandKeyRaw || prevCtx.islandKey || "")
+    .trim()
+    .replace(/\s+/g, "_");
+  const stages = normalizeAutofillStages(parsed.stages, islandKey);
+  const out = {
     draftId: parsed.draftId || "current",
     childCode: String(parsed.childCode || childCode || "").trim() || childCode,
     confirmedChildCode: childCode,
@@ -800,11 +882,14 @@ function mergeAutofillDraftPayload(parsed, childCode, normalizedChild, tutorProm
       knows: tc.knows ?? parsed.context?.knows ?? prevCtx.knows ?? "",
       weakPoint: tc.weakPoint ?? parsed.context?.weakPoint ?? prevCtx.weakPoint ?? "",
       notes: tc.notes ?? parsed.context?.notes ?? prevCtx.notes ?? "",
+      islandKey: islandKey || prevCtx.islandKey || "",
     },
     stages,
     status: "draft",
     updatedAt: new Date().toISOString(),
   };
+  syncDraftStageBackgroundsFromIslandKey(out);
+  return out;
 }
 
 function buildAutofillSystemPrompt(childBlock, tutorPrompt) {
@@ -963,6 +1048,9 @@ async function generateLessonFromDraft(draft) {
     lesson.meta.start_coins = Number(ch.coins ?? lesson.meta.start_coins ?? 0);
     if (ch.characterKey) lesson.meta.character_key = ch.characterKey;
   }
+  const ik = String(draft?.context?.islandKey || "").trim();
+  if (ik) lesson.meta.island_key = ik;
+  applyIslandBackgroundsToLesson(lesson, draft);
   clampLessonAssetKeys(lesson, assetCatalog);
   const errors = validateLessonShape(lesson);
   if (errors.length) {
@@ -1181,6 +1269,7 @@ const server = http.createServer(async (req, res) => {
         lesson: readCurrentLesson(),
         mechanics: MECHANICS,
         fixedBackgrounds: FIXED_BACKGROUNDS,
+        canonicalIslandKeys: CANONICAL_ISLAND_KEYS,
       });
       return;
     }
@@ -1229,6 +1318,7 @@ const server = http.createServer(async (req, res) => {
         sendJson(res, 422, { ok: false, error: "Draft payload is required" });
         return;
       }
+      syncDraftStageBackgroundsFromIslandKey(draft);
       draft.updatedAt = new Date().toISOString();
       writeJson(DRAFT_FILE, draft);
       sendJson(res, 200, { ok: true, savedAt: draft.updatedAt });

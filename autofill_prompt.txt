@@ -254,6 +254,40 @@ Stages 1→6 must escalate like the overall lesson (easier early, harder late).
 Within each stage, rounds 1→5 must also escalate (never make round 3 easier than round 2).
 
 ════════════════════════════════════════
+ISLAND KEY & STAGE BACKGROUNDS (required every time)
+════════════════════════════════════════
+
+Each lesson is set on ONE island. Art files use the island key as the PNG basename prefix before a digit (no extension in JSON), e.g. neon_city_island → neon_city_island1 … neon_city_island4.
+
+For EVERY lesson, stage backgrounds MUST follow this exact six-step pattern (set each stage object's "background" string exactly — these are real asset keys on disk):
+
+  Stage 1 → {KEY}1
+  Stage 2 → {KEY}2
+  Stage 3 → cave_entrance   (fixed cave — same for all islands)
+  Stage 4 → cave_deep       (fixed cave — same for all islands)
+  Stage 5 → {KEY}3
+  Stage 6 → {KEY}4
+
+Where {KEY} is context.islandKey (snake_case, no digits on the end).
+
+Allowed context.islandKey values (pick exactly ONE; align with tutor_prompt mood or rotate for variety):
+
+  cherry_blossom_island
+  jelly_bay_island
+  snowy_peaks_island
+  neon_city_island
+  blue_crab_island
+  antigravity_island
+  mushroom_island
+  crystal_island
+
+Exception — blue_crab_island: on disk the PNG prefix is literally "blue_crab _sland" (space before sland). Use these six backgrounds:
+
+  blue_crab _sland1, blue_crab _sland2, cave_entrance, cave_deep, blue_crab _sland3, blue_crab _sland4
+
+The long English island stories are defined in the lesson generator system prompt; your job is only to output the correct islandKey and matching per-stage "background" fields so art and story stay in sync.
+
+════════════════════════════════════════
 OUTPUT FORMAT
 ════════════════════════════════════════
 
@@ -263,6 +297,14 @@ Return valid JSON only. No markdown. Start with {
   "tutorContext": {
     "knows": "inferred from child age and tutor_prompt",
     "weakPoint": "inferred from tutor_prompt",
+    "notes": ""
+  },
+  "context": {
+    "topicLabel": "short human label for the math focus",
+    "topicKey": "snake_case topic id e.g. number_division",
+    "islandKey": "one of the eight allowed island keys above",
+    "knows": "optional duplicate of tutorContext.knows",
+    "weakPoint": "optional duplicate of tutorContext.weakPoint",
     "notes": ""
   },
   "stages": [
@@ -284,6 +326,7 @@ Return valid JSON only. No markdown. Start with {
 }
 
 Each stage object must include "mechanic_reason" (string).
+Each stage object must include "background" (string) exactly matching the six-step pattern for context.islandKey (see ISLAND KEY section).
 
 Include ONLY the fields relevant to the mechanic used in that stage for each example round.
 Do not include unused mechanic fields in a round object.
@@ -308,5 +351,7 @@ QUALITY CHECKLIST — verify before output
 □ All 6 stages address the tutor_prompt topic?
 □ Word problems included if tutor_prompt requested them?
 □ mechanic_reason present on every stage?
+□ context.islandKey is exactly one of the eight allowed tokens?
+□ Each stage's "background" matches the island + cave sequence for that islandKey?
 □ Only relevant fields per mechanic, no extras?
 □ Valid JSON — no trailing commas, no markdown, no comments?
