@@ -1213,12 +1213,12 @@ function serveStaticAsset(req, res, url) {
   const mime = guessMimeType(filePath);
   if (req.method === "HEAD") {
     const size = fs.statSync(filePath).size;
-    res.writeHead(200, { "Content-Type": mime, "Content-Length": String(size), "Cache-Control": "public, max-age=3600" });
+    res.writeHead(200, { "Content-Type": mime, "Content-Length": String(size), "Cache-Control": "no-store" });
     res.end();
     return;
   }
   const buf = fs.readFileSync(filePath);
-  res.writeHead(200, { "Content-Type": mime, "Content-Length": String(buf.length), "Cache-Control": "public, max-age=3600" });
+  res.writeHead(200, { "Content-Type": mime, "Content-Length": String(buf.length), "Cache-Control": "no-store" });
   res.end(buf);
 }
 
@@ -1324,7 +1324,7 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (req.method === "GET" && url.pathname === "/lesson_game.html") {
-      res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+      res.writeHead(200, { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" });
       res.end(fs.readFileSync(path.join(__dirname, "lesson_game.html"), "utf-8"));
       return;
     }
@@ -1345,7 +1345,7 @@ const server = http.createServer(async (req, res) => {
       if (!html.includes("<base href=\"/\">")) {
         html = html.replace("<head>", "<head>\n  <base href=\"/\">");
       }
-      res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+      res.writeHead(200, { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" });
       res.end(html);
       return;
     }
@@ -1482,7 +1482,7 @@ const server = http.createServer(async (req, res) => {
         output,
         latestOutput,
         generatedFileName: fileName,
-        generatedFileUrl: `/generated-lessons/${fileName}`,
+        generatedFileUrl: `/generated-lessons/${fileName}?v=${Date.now()}`,
       });
       return;
     }
