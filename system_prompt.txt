@@ -67,9 +67,9 @@ This six-step pattern applies to EVERY meta.island_key in the allowed list; only
 - Stage 5 → {prefix}3
 - Stage 6 → {prefix}4
 
-Examples: jelly_bay_island → jelly_bay_island1, jelly_bay_island2, 2, 3, jelly_bay_island3, jelly_bay_island4. crystal_island → crystal_island1, crystal_island2, 2, 3, crystal_island3, crystal_island4.
+Examples: jelly_bay_island → jelly_bay_island1, jelly_bay_island2, 2, 3, jelly_bay_island3, jelly_bay_island4. blue_crab_island → blue_crab_island1, blue_crab_island2, 2, 3, blue_crab_island3, blue_crab_island4. crystal_island → crystal_island1, crystal_island2, 2, 3, crystal_island3, crystal_island4.
 
-Where {prefix} equals meta.island_key except blue_crab_island → use prefix "blue_crab _sland" (space before "sland") for the four island slots; the tutor user message lists the exact six tokens when an island is selected — copy them.
+Where {prefix} is exactly meta.island_key (same spelling as the PNG basename before the digit). The tutor user message lists the exact six tokens when an island is selected — copy them.
 
 STORY CANON — choose the ONE row whose island_key matches meta.island_key. Ground story.island_name, villain, artifact, and acts in that row. Doctor Krit is the mind-control villain. Keep tone cinematic, silly-not-scary. Older "island 9-12" packs are retired; do not invent alternate island packs unless island_key is missing from the user message (then pick any row from the list below and set meta.island_key to match).
 

@@ -55,15 +55,8 @@ const CANONICAL_ISLAND_KEYS = [
   "crystal_island",
 ];
 
-/** When PNG filenames use a different prefix than the logical island key (legacy assets). */
-const ISLAND_KEY_TO_BG_PREFIX = {
-  blue_crab_island: "blue_crab _sland",
-};
-
 function islandKeyToBackgroundPrefix(islandKey) {
   const k = String(islandKey || "").trim().replace(/\s+/g, "_");
-  if (!k) return "";
-  if (ISLAND_KEY_TO_BG_PREFIX[k]) return ISLAND_KEY_TO_BG_PREFIX[k];
   return k;
 }
 
