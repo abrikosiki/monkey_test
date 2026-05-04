@@ -34,13 +34,9 @@ const MECHANICS = [
   { id: "find_unknown", label: "Find Unknown", description: "Find C from equation with known A and B." },
 ];
 
-const FIXED_BACKGROUNDS = {
-  1: "stage1_generated",
-  2: "2",
-  3: "3",
-  4: "jungle_path",
-  5: "jungle_temple",
-  6: "stage6_generated",
+const DEFAULT_STAGE_BACKGROUNDS = {
+  3: "2",
+  4: "3",
 };
 
 /** Logical keys in draft.context.islandKey / meta.island_key (tutor + autofill). */
@@ -82,6 +78,12 @@ function getIslandStageBackgroundKeys(islandKey) {
     5: `${prefix}3`,
     6: `${prefix}4`,
   };
+}
+
+function stageBackgroundFor(stageNumber, islandKey) {
+  const islandMap = getIslandStageBackgroundKeys(islandKey);
+  if (islandMap && islandMap[stageNumber]) return islandMap[stageNumber];
+  return DEFAULT_STAGE_BACKGROUNDS[stageNumber] || "";
 }
 
 /** When draft omits islandKey / model skips meta.island_key, infer from stage tokens or story text. */
@@ -561,11 +563,11 @@ function applyDraftToLessonStages(lesson, draft) {
   return lesson;
 }
 
-function stageTemplate(stageNumber) {
+function stageTemplate(stageNumber, islandKey = "") {
   return {
     stageNumber,
     mechanic: stageNumber === 1 ? "drag_drop" : stageNumber === 6 ? "balance_scale" : "fill_blank",
-    background: FIXED_BACKGROUNDS[stageNumber],
+    background: stageBackgroundFor(stageNumber, islandKey),
     examples: Array.from({ length: 5 }, (_, idx) => exampleTemplate(stageNumber, idx + 1)),
   };
 }
@@ -587,6 +589,7 @@ function exampleTemplate(stageNumber, roundNumber) {
 }
 
 function buildDefaultDraft() {
+  const defaultIslandKey = "blue_crab_island";
   return {
     draftId: "current",
     childCode: "MONKEY-4821",
@@ -595,9 +598,9 @@ function buildDefaultDraft() {
       difficulty: "medium",
       topicLabel: "Tutor-made lesson",
       topicKey: "custom_math_lesson",
-      islandKey: "",
+      islandKey: defaultIslandKey,
     },
-    stages: Array.from({ length: 6 }, (_, idx) => stageTemplate(idx + 1)),
+    stages: Array.from({ length: 6 }, (_, idx) => stageTemplate(idx + 1, defaultIslandKey)),
     status: "draft",
     updatedAt: new Date().toISOString(),
   };
@@ -907,12 +910,11 @@ function normalizeAutofillStages(rawStages, islandKey) {
         roundNumber: r + 1,
       });
     }
-    const defaultBg =
-      FIXED_BACKGROUNDS[stageNumber] ?? stageTemplate(stageNumber).background;
+    const defaultBg = stageBackgroundFor(stageNumber, islandKey);
     const row = {
       stageNumber,
       mechanic,
-      background: islandBg ? islandBg[stageNumber] : incoming.background || defaultBg,
+      background: islandBg ? islandBg[stageNumber] : (incoming.background || defaultBg),
       examples,
     };
     if (incoming.mechanic_reason != null && String(incoming.mechanic_reason).trim() !== "") {
@@ -1359,7 +1361,7 @@ const server = http.createServer(async (req, res) => {
         draft: readJson(DRAFT_FILE, buildDefaultDraft()),
         lesson: readCurrentLesson(),
         mechanics: MECHANICS,
-        fixedBackgrounds: FIXED_BACKGROUNDS,
+        fixedBackgrounds: DEFAULT_STAGE_BACKGROUNDS,
         canonicalIslandKeys: CANONICAL_ISLAND_KEYS,
       });
       return;

@@ -1871,8 +1871,6 @@
     if(/_island[1-4]$/.test(k)) return "assets/backgrounds/" + k + ".PNG";
     const mapped = fuzzyFindPath(BACKGROUND_MAP, k);
     if(mapped) return mapped;
-    if(k === "stage1_generated") return "assets/backgrounds/2.png";
-    if(k === "stage6_generated") return "assets/backgrounds/3.png";
     return "assets/backgrounds/" + k + ".png";
   }
 
@@ -3816,13 +3814,7 @@
     if (fromIslandMeta) return fromIslandMeta;
     const fromLesson = String(stage?.background || "").trim();
     if (fromLesson) return fromLesson;
-    if(index === 0) return "stage1_generated";
-    if(index === 1) return "2";
-    if(index === 2) return "3";
-    if(index === 3) return "4";
-    if(index === 4) return "5";
-    if(index === 5) return "stage6_generated";
-    return "stage1_generated";
+    return (index === 2) ? "2" : (index === 3 ? "3" : "");
   }
 
   function setupPlayerAvatar(){
@@ -3986,7 +3978,7 @@
     const startLevel = Number(LESSON.meta?.student_level ?? 0);
     $("completionLevel").textContent = "Level " + (startLevel + 1);
     $("completionCoins").textContent = "🪙 " + state.totalCoins + " coins remaining";
-    $("completionBg").src = backgroundPath("stage1_generated");
+    $("completionBg").src = backgroundPath(resolveStageBackground(STAGES[0] || {}, 0));
     $("completionArtifactName").textContent = art.name || "Mystery Artifact";
     $("completionArtifactDesc").textContent = art.description || "A magical reward for your journey.";
 
