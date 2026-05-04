@@ -757,10 +757,6 @@ function normalizeAutofillStages(rawStages) {
     const stageNumber = i + 1;
     const incoming = list[i] || {};
     let mechanic = coerceMechanic(incoming.mechanic, stageTemplate(stageNumber).mechanic);
-    if (stageNumber === 6) {
-      const solo = new Set(["multi_choice", "fill_blank", "tap_count"]);
-      if (!solo.has(mechanic)) mechanic = "multi_choice";
-    }
     const examplesIn = Array.isArray(incoming.examples) ? incoming.examples : [];
     const examples = [];
     for (let r = 0; r < 5; r++) {
@@ -772,12 +768,16 @@ function normalizeAutofillStages(rawStages) {
         roundNumber: r + 1,
       });
     }
-    stages.push({
+    const row = {
       stageNumber,
       mechanic,
       background: FIXED_BACKGROUNDS[stageNumber] || incoming.background || stageTemplate(stageNumber).background,
       examples,
-    });
+    };
+    if (incoming.mechanic_reason != null && String(incoming.mechanic_reason).trim() !== "") {
+      row.mechanic_reason = String(incoming.mechanic_reason).trim();
+    }
+    stages.push(row);
   }
   return stages;
 }
@@ -808,80 +808,21 @@ function mergeAutofillDraftPayload(parsed, childCode, normalizedChild, tutorProm
 }
 
 function buildAutofillSystemPrompt(childBlock, tutorPrompt) {
-  const name = childBlock.name ?? "Student";
+  const name = String(childBlock.name ?? "Student");
   const age = Number(childBlock.age);
   const ageStr = Number.isFinite(age) ? String(age) : "7";
-  const level = Number(childBlock.level ?? 1);
+  const level = Number(childBlock.level ?? 0);
   const coins = Number(childBlock.coins ?? 0);
-  const ck = childBlock.character_key || childBlock.characterKey || "pirate_green";
-  return `You are an expert math tutor assistant for children age 5-9.
-You receive a child profile and a short tutor instruction.
-You must generate a complete lesson draft in exact JSON format.
-
-The lesson has 6 stages. Each stage has exactly 5 examples.
-You choose the mechanics. You write all the math examples.
-
-CHILD:
-- name: ${name}
-- age: ${ageStr}
-- level: ${level}
-- coins: ${coins}
-- character_key: ${ck}
-
-TUTOR INSTRUCTION: ${tutorPrompt}
-
-OUTPUT: valid JSON matching this exact draft structure:
-
-{
-  "childCode": "string",
-  "child": { "name": "", "age": 0, "level": 0, "coins": 0, "character_key": "" },
-  "tutorContext": {
-    "knows": "infer from tutor instruction and age",
-    "weakPoint": "infer from tutor instruction",
-    "notes": ""
-  },
-  "stages": [
-    {
-      "stageNumber": 1,
-      "mechanic": "drag_drop",
-      "examples": [
-        {
-          "roundNumber": 1,
-          "titleText": "string",
-          "screenItemCount": 6,
-          "targetCount": 2,
-          "zoneCounts": [3, 3]
-        }
-      ]
-    }
-  ]
-}
-
-Include every field required by each mechanic you choose (same shape as the tutor draft examples: prompts, answers, choices, expressions, etc.). Do not omit fields that mechanic needs.
-
-MECHANIC SELECTION RULES:
-- Stage 1: always drag_drop or tap_count (easiest start)
-- Final stage (stage 6): solo-style practice — use only multi_choice, fill_blank, or tap_count
-- Never same mechanic two stages in a row
-- Minimum 3 different mechanics in the lesson
-- Age 5-6: only drag_drop, tap_count, multi_choice, fill_blank, drag_group
-- Age 7-8: all mechanics except timer_challenge is rare
-- Age 9+: all mechanics
-
-EXAMPLE PROGRESSION per stage (rounds 1→5):
-- Round 1: simplest version, builds confidence
-- Round 2: same structure, slightly bigger numbers
-- Round 3: add one new variable
-- Round 4: twist or partial challenge
-- Round 5: hardest version or unexpected angle
-
-MATH RULES:
-- Examples must match child age and level
-- Numbers must be appropriate: age 5-6 → up to 10, age 7-8 → up to 50, age 9 → up to 100
-- Always include at least one reverse/inverse example per stage
-- Examples must directly address the tutor instruction topic
-
-Return ONLY valid JSON. No markdown. Start with {`;
+  const ck = String(childBlock.character_key || childBlock.characterKey || "pirate_green");
+  const tplPath = path.join(__dirname, "autofill_prompt.txt");
+  const tpl = fs.readFileSync(tplPath, "utf-8");
+  return tpl
+    .replace(/\{\{NAME\}\}/g, name)
+    .replace(/\{\{AGE\}\}/g, ageStr)
+    .replace(/\{\{LEVEL\}\}/g, String(level))
+    .replace(/\{\{COINS\}\}/g, String(coins))
+    .replace(/\{\{CHARACTER_KEY\}\}/g, ck)
+    .replace(/\{\{TUTOR_PROMPT\}\}/g, tutorPrompt);
 }
 
 function inferChildAgeForAutofill(childPayload, normalizedChild) {
@@ -950,7 +891,7 @@ async function generateAutofillDraft(body) {
   };
 
   const system = buildAutofillSystemPrompt(childBlock, tutorPrompt);
-  const userMsg = `Generate the lesson draft JSON now for child code ${childCode}.`;
+  const userMsg = `Generate the lesson draft JSON for child code ${childCode}. Output tutorContext + stages only (6 unique mechanics, 5 rounds each); fields must match each chosen mechanic.`;
 
   const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
   const msg = await client.messages.create({

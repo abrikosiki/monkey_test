@@ -767,6 +767,15 @@
         head.append(titleWrap, picker);
         card.appendChild(head);
 
+        if (stage.mechanic_reason) {
+          const why = document.createElement("div");
+          why.className = "hint";
+          why.style.marginTop = "10px";
+          why.style.lineHeight = "1.45";
+          why.textContent = "Mechanic choice: " + stage.mechanic_reason;
+          card.appendChild(why);
+        }
+
         const chips = document.createElement("div");
         chips.className = "chips";
         [
