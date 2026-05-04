@@ -125,6 +125,9 @@
         <label class="muted" style="font-size:12px;display:block;margin-bottom:8px">Lesson focus</label>
         <textarea id="tutorPromptInput" class="textarea-lesson" placeholder="What are we working on today?&#10;e.g. division up to 30, confuses with subtraction,&#10;add word problems"></textarea>
         <button class="primary btn-generate" id="quickGenerateBtn" type="button">✨ Generate Lesson</button>
+        <div class="back-to-prompt">
+          <button type="button" class="ghost" id="backToStudentBtn">← Back — student lookup</button>
+        </div>
       </div>
 
       <div class="center-card hidden" id="stepGenCard">
@@ -139,7 +142,7 @@
             <button type="button" id="toggleEditBtn">Not happy with something? Edit the lesson →</button>
           </div>
           <div class="back-to-prompt">
-            <button type="button" class="ghost" id="backToPromptBtn">← Назад — сгенерировать другой урок</button>
+            <button type="button" class="ghost" id="backToPromptBtn">← Back — generate another lesson</button>
           </div>
         </div>
       </div>
@@ -446,7 +449,21 @@
       clearSessionLessonReady();
       updateWorkflowUI();
       updateChildConfirmationState();
-      setAutosaveStatus("Измени промпт и сгенерируй снова");
+      setAutosaveStatus("Change the prompt and generate again");
+    }
+
+    function backToStudentLookup() {
+      if (!state.draft) return;
+      state.draft.confirmedChildCode = "";
+      state.workflowStep = 1;
+      state.editExpanded = false;
+      $("editPanel").classList.add("hidden");
+      $("toggleEditBtn").textContent = "Not happy with something? Edit the lesson →";
+      updateWorkflowUI();
+      renderChildPreview();
+      updateChildConfirmationState();
+      queueAutosave();
+      setAutosaveStatus("Find your student or confirm again");
     }
 
     function wrongStudent() {
@@ -1084,6 +1101,7 @@
       };
 
       $("backToPromptBtn").onclick = backToLessonPrompt;
+      $("backToStudentBtn").onclick = backToStudentLookup;
 
       updateChildConfirmationState();
 
