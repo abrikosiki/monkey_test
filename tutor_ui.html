@@ -268,10 +268,34 @@
       return d.confirmedChildCode === d.child.childCode && inputCode === d.child.childCode;
     }
 
+    const SESSION_SHOW_READY = "monkey_tutor_show_ready";
+
+    /** Шаг 3 только если только что сгенерировали в этой вкладке — не из-за старого output_lesson.json на сервере. */
     function deriveInitialWorkflowStep() {
-      if (state.lesson) return 3;
+      try {
+        if (
+          state.lesson &&
+          sessionStorage.getItem(SESSION_SHOW_READY) === "1"
+        ) {
+          return 3;
+        }
+      } catch (_) {
+        /* sessionStorage недоступен */
+      }
       if (isChildConfirmed()) return 2;
       return 1;
+    }
+
+    function markSessionLessonReady() {
+      try {
+        sessionStorage.setItem(SESSION_SHOW_READY, "1");
+      } catch (_) {}
+    }
+
+    function clearSessionLessonReady() {
+      try {
+        sessionStorage.removeItem(SESSION_SHOW_READY);
+      } catch (_) {}
     }
 
     function updateWorkflowUI() {
@@ -418,6 +442,7 @@
       state.workflowStep = 1;
       state.lesson = null;
       state.generatedLessonUrl = "/lesson_game.html";
+      clearSessionLessonReady();
       state.editExpanded = false;
       $("editPanel").classList.add("hidden");
       $("toggleEditBtn").textContent = "Not happy with something? Edit the lesson →";
@@ -918,6 +943,7 @@
 
         renderProgressLines(3, [true, true, true, true]);
         showResultBlock();
+        markSessionLessonReady();
         setAutosaveStatus("Lesson ready");
       } catch (err) {
         setAutosaveStatus("Failed: " + (err?.message || "Unknown error"));
@@ -955,6 +981,7 @@
         state.workflowStep = 3;
         updateWorkflowUI();
         showResultBlock();
+        markSessionLessonReady();
         $("quickFlow").classList.remove("hidden");
         setAutosaveStatus("Lesson ready");
       } catch (err) {

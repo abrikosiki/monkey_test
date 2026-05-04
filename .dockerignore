@@ -7,3 +7,6 @@ node_modules
 .cursor
 *.log
 npm-debug.log*
+
+# Не класть в образ «чужой» сгенерированный урок — иначе у всех открывается экран «Урок готов».
+output_lesson.json
