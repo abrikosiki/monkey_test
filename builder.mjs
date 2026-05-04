@@ -2019,19 +2019,16 @@ function buildHtml(
   }
 
   function backgroundPath(bgKey){
-    if(!bgKey) return "";
-    const mapped = fuzzyFindPath(BACKGROUND_MAP, bgKey);
+    const k = String(bgKey || "").trim();
+    if(!k) return "";
+    if(k === "2") return "assets/backgrounds/2.png";
+    if(k === "3") return "assets/backgrounds/3.png";
+    if(/_island[1-4]$/.test(k)) return "assets/backgrounds/" + k + ".PNG";
+    const mapped = fuzzyFindPath(BACKGROUND_MAP, k);
     if(mapped) return mapped;
-    if(bgKey === "stage1_generated"){
-      const stageFallback = fuzzyFindPath(BACKGROUND_MAP, "2");
-      if(stageFallback) return stageFallback;
-    }
-    if(bgKey === "stage6_generated"){
-      const stageFallback = fuzzyFindPath(BACKGROUND_MAP, "5");
-      if(stageFallback) return stageFallback;
-    }
-    const base = "assets/backgrounds/" + String(bgKey).trim();
-    return base + ".png";
+    if(k === "stage1_generated") return "assets/backgrounds/2.png";
+    if(k === "stage6_generated") return "assets/backgrounds/3.png";
+    return "assets/backgrounds/" + k + ".png";
   }
 
   function characterPath(charKey){
