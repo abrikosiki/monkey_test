@@ -3736,13 +3736,15 @@
   }
 
   function resolveStageBackground(stage, index){
+    const fromLesson = String(stage?.background || "").trim();
+    if (fromLesson) return fromLesson;
     if(index === 0) return "stage1_generated";
     if(index === 1) return "2";
     if(index === 2) return "3";
     if(index === 3) return "4";
     if(index === 4) return "5";
     if(index === 5) return "stage6_generated";
-    return stage.background || "stage1_generated";
+    return "stage1_generated";
   }
 
   function setupPlayerAvatar(){

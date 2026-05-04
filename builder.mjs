@@ -25,6 +25,13 @@ function sanitizeLesson(raw) {
   return lesson;
 }
 
+/** Basename without extension; handles .PNG vs .png (path.basename(name, ".png") fails on .PNG). */
+function assetStem(fileName) {
+  const extRaw = path.extname(fileName);
+  if (!extRaw) return fileName;
+  return fileName.slice(0, -extRaw.length);
+}
+
 async function buildBackgroundMap(projectRoot) {
   const backgroundsDir = path.join(projectRoot, "assets", "backgrounds");
   const map = {};
@@ -36,7 +43,7 @@ async function buildBackgroundMap(projectRoot) {
       if (!entry.isFile()) continue;
       const ext = path.extname(entry.name).toLowerCase();
       if (!allowed.has(ext)) continue;
-      const key = path.basename(entry.name, ext);
+      const key = assetStem(entry.name);
       map[key] = `assets/backgrounds/${entry.name}`;
     }
   } catch {
@@ -57,7 +64,7 @@ async function buildCharacterMap(projectRoot) {
       if (!entry.isFile()) continue;
       const ext = path.extname(entry.name).toLowerCase();
       if (!allowed.has(ext)) continue;
-      const key = path.basename(entry.name, ext);
+      const key = assetStem(entry.name);
       map[key] = `assets/characters/${entry.name}`;
     }
   } catch {
@@ -78,7 +85,7 @@ async function buildItemsMap(projectRoot) {
       if (!entry.isFile()) continue;
       const ext = path.extname(entry.name).toLowerCase();
       if (!allowed.has(ext)) continue;
-      const key = path.basename(entry.name, ext);
+      const key = assetStem(entry.name);
       map[key] = `assets/items/${entry.name}`;
     }
   } catch {
@@ -99,7 +106,7 @@ async function buildTargetsMap(projectRoot) {
       if (!entry.isFile()) continue;
       const ext = path.extname(entry.name).toLowerCase();
       if (!allowed.has(ext)) continue;
-      const key = path.basename(entry.name, ext);
+      const key = assetStem(entry.name);
       map[key] = `assets/targets/${entry.name}`;
     }
   } catch {
@@ -120,7 +127,7 @@ async function buildArtifactsMap(projectRoot) {
       if (!entry.isFile()) continue;
       const ext = path.extname(entry.name).toLowerCase();
       if (!allowed.has(ext)) continue;
-      const key = path.basename(entry.name, ext);
+      const key = assetStem(entry.name);
       map[key] = `assets/artifacts/${entry.name}`;
     }
   } catch {

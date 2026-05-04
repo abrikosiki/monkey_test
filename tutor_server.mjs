@@ -238,9 +238,10 @@ function listAssetStems(relativeDir) {
   try {
     for (const entry of fs.readdirSync(full, { withFileTypes: true })) {
       if (!entry.isFile()) continue;
-      const ext = path.extname(entry.name).toLowerCase();
+      const extRaw = path.extname(entry.name);
+      const ext = extRaw.toLowerCase();
       if (!IMAGE_FILE_EXTENSIONS.has(ext)) continue;
-      out.push(path.basename(entry.name, ext));
+      out.push(extRaw ? entry.name.slice(0, -extRaw.length) : entry.name);
     }
   } catch {
     // Missing or unreadable folder (e.g. empty deploy)
