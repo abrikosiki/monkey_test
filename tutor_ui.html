@@ -122,6 +122,11 @@
 
       <div class="center-card hidden" id="stepPromptCard">
         <h2>What are we working on?</h2>
+        <label class="muted" style="font-size:12px;display:block;margin-bottom:8px">Island (story + backgrounds)</label>
+        <select id="islandSelect" aria-label="Island for this lesson">
+          <option value="">Choose an island…</option>
+        </select>
+        <p class="hint" style="margin-top:6px;margin-bottom:14px">Sets the lesson art sequence and the island story Doctor Krit arc.</p>
         <label class="muted" style="font-size:12px;display:block;margin-bottom:8px">Lesson focus</label>
         <textarea id="tutorPromptInput" class="textarea-lesson" placeholder="What are we working on today?&#10;e.g. division up to 30, confuses with subtraction,&#10;add word problems"></textarea>
         <button class="primary btn-generate" id="quickGenerateBtn" type="button">✨ Generate Lesson</button>
@@ -164,11 +169,25 @@
   <script>
     const $ = (id) => document.getElementById(id);
     const clone = (v) => JSON.parse(JSON.stringify(v));
+    const ISLAND_LABELS = {
+      cherry_blossom_island: "Cherry Blossom Island",
+      jelly_bay_island: "Jelly Bay Island",
+      snowy_peaks_island: "Snowy Peaks Island",
+      neon_city_island: "Neon City Island",
+      blue_crab_island: "Blue Crab Island",
+      antigravity_island: "Antigravity Island",
+      mushroom_island: "Mushroom Island",
+      crystal_island: "Crystal Island",
+    };
+
+    const FALLBACK_ISLAND_KEYS = Object.keys(ISLAND_LABELS);
+
     const state = {
       draft: null,
       lesson: null,
       mechanics: [],
       fixedBackgrounds: {},
+      canonicalIslandKeys: FALLBACK_ISLAND_KEYS,
       generatedLessonUrl: "/lesson_game.html",
       autosaveTimer: null,
       autosavePending: false,
@@ -252,7 +271,34 @@
       if ($("tutorPromptInput")) {
         state.draft.tutorPrompt = $("tutorPromptInput").value.trim();
       }
+      if (!state.draft.context || typeof state.draft.context !== "object") {
+        state.draft.context = {};
+      }
+      if ($("islandSelect")) {
+        state.draft.context.islandKey = $("islandSelect").value.trim();
+      }
       state.draft.updatedAt = new Date().toISOString();
+    }
+
+    function fillIslandSelectOptions() {
+      const sel = $("islandSelect");
+      if (!sel) return;
+      const keys = state.canonicalIslandKeys?.length ? state.canonicalIslandKeys : FALLBACK_ISLAND_KEYS;
+      const fromDraft = String(state.draft?.context?.islandKey || "").trim();
+      const preserve = fromDraft || sel.value;
+      sel.innerHTML = "";
+      const opt0 = document.createElement("option");
+      opt0.value = "";
+      opt0.textContent = "Choose an island…";
+      sel.appendChild(opt0);
+      for (const key of keys) {
+        const o = document.createElement("option");
+        o.value = key;
+        o.textContent = ISLAND_LABELS[key] || key;
+        sel.appendChild(o);
+      }
+      const ik = preserve;
+      sel.value = keys.includes(ik) ? ik : "";
     }
 
     function syncDraftToInputs() {
@@ -261,6 +307,7 @@
       if ($("tutorPromptInput")) {
         $("tutorPromptInput").value = state.draft.tutorPrompt || "";
       }
+      fillIslandSelectOptions();
       const fetchedCode = state.draft.child?.childCode || "";
       if (state.draft.confirmedChildCode !== fetchedCode) {
         state.draft.confirmedChildCode = "";
@@ -426,17 +473,21 @@
     }
 
     function updateChildConfirmationState() {
+      const islandPicked = $("islandSelect")?.value?.trim();
       const canQuickGen =
         state.workflowStep === 2 &&
         isChildConfirmed() &&
+        islandPicked &&
         $("tutorPromptInput")?.value.trim();
       if ($("quickGenerateBtn")) {
         $("quickGenerateBtn").disabled = !canQuickGen;
         $("quickGenerateBtn").title = !isChildConfirmed()
           ? "Confirm the student first"
-          : !canQuickGen
-            ? "Describe what you're working on"
-            : "";
+          : !islandPicked
+            ? "Choose an island"
+            : !$("tutorPromptInput")?.value.trim()
+              ? "Describe what you're working on"
+              : "";
       }
       if (state.workflowStep === 1) renderChildPreview();
     }
@@ -471,7 +522,10 @@
       state.draft.child = null;
       state.draft.confirmedChildCode = "";
       state.draft.tutorPrompt = "";
+      if (!state.draft.context || typeof state.draft.context !== "object") state.draft.context = {};
+      state.draft.context.islandKey = "";
       $("tutorPromptInput").value = "";
+      if ($("islandSelect")) $("islandSelect").value = "";
       state.workflowStep = 1;
       state.lesson = null;
       state.generatedLessonUrl = "/lesson_game.html";
@@ -926,6 +980,11 @@
 
     async function runQuickLessonPipeline() {
       const tutorPrompt = $("tutorPromptInput").value.trim();
+      const islandKey = $("islandSelect")?.value?.trim() || "";
+      if (!islandKey) {
+        setAutosaveStatus("Choose an island");
+        return;
+      }
       if (!tutorPrompt) {
         setAutosaveStatus("Describe what you're working on");
         return;
@@ -960,6 +1019,7 @@
             child_code: child.childCode,
           },
           tutor_prompt: tutorPrompt,
+          island_key: islandKey,
         });
         state.draft = af.draft;
         $("tutorPromptInput").value = state.draft.tutorPrompt || tutorPrompt;
@@ -1059,6 +1119,9 @@
       state.lesson = data.lesson;
       state.mechanics = data.mechanics;
       state.fixedBackgrounds = data.fixedBackgrounds;
+      if (Array.isArray(data.canonicalIslandKeys) && data.canonicalIslandKeys.length) {
+        state.canonicalIslandKeys = data.canonicalIslandKeys;
+      }
       syncDraftToInputs();
       state.workflowStep = deriveInitialWorkflowStep();
       renderStages();
@@ -1083,6 +1146,11 @@
       });
 
       $("tutorPromptInput").addEventListener("input", () => {
+        queueAutosave();
+        updateChildConfirmationState();
+      });
+
+      $("islandSelect")?.addEventListener("change", () => {
         queueAutosave();
         updateChildConfirmationState();
       });

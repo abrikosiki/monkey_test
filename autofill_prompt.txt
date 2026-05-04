@@ -287,6 +287,8 @@ Exception — blue_crab_island: on disk the PNG prefix is literally "blue_crab _
 
 The long English island stories are defined in the lesson generator system prompt; your job is only to output the correct islandKey and matching per-stage "background" fields so art and story stay in sync.
 
+If the user message includes a "TUTOR-SELECTED ISLAND" block, context.islandKey MUST be exactly that token (no substitutions) and backgrounds MUST match that key's six-step pattern.
+
 ════════════════════════════════════════
 OUTPUT FORMAT
 ════════════════════════════════════════

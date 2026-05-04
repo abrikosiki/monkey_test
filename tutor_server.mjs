@@ -975,8 +975,18 @@ async function generateAutofillDraft(body) {
     character_key: normalizedChild.characterKey,
   };
 
+  const forcedIsland = String(body?.island_key ?? body?.islandKey ?? "").trim().replace(/\s+/g, "_");
+  if (forcedIsland && !CANONICAL_ISLAND_KEYS.includes(forcedIsland)) {
+    const err = new Error("Invalid island_key");
+    err.details = [`Must be one of: ${CANONICAL_ISLAND_KEYS.join(", ")}`];
+    throw err;
+  }
+
   const system = buildAutofillSystemPrompt(childBlock, tutorPrompt);
-  const userMsg = `Generate the lesson draft JSON for child code ${childCode}. Output tutorContext + stages only (6 unique mechanics, 5 rounds each); fields must match each chosen mechanic.`;
+  let userMsg = `Generate the lesson draft JSON for child code ${childCode}. Output tutorContext, context (topicLabel, topicKey, islandKey, knows, weakPoint, notes), and stages (6 unique mechanics, 5 rounds each); fields must match each chosen mechanic.`;
+  if (forcedIsland) {
+    userMsg += `\n\nTUTOR-SELECTED ISLAND (mandatory — do not change):\n- context.islandKey MUST be exactly: "${forcedIsland}"\n- Set every stage "background" to the six-step pattern for this island (see ISLAND KEY section in system prompt).\n`;
+  }
 
   const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
   const msg = await client.messages.create({
@@ -988,6 +998,11 @@ async function generateAutofillDraft(body) {
   const text = msg.content?.find((c) => c.type === "text")?.text || "";
   const parsed = parseClaudeJson(text);
   const draft = mergeAutofillDraftPayload(parsed, childCode, normalizedChild, tutorPrompt);
+  if (forcedIsland) {
+    draft.context = draft.context && typeof draft.context === "object" ? draft.context : {};
+    draft.context.islandKey = forcedIsland;
+    syncDraftStageBackgroundsFromIslandKey(draft);
+  }
   writeJson(DRAFT_FILE, draft);
   return draft;
 }
