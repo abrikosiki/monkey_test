@@ -92,6 +92,114 @@ DIFFICULTY RULES (parsed from tutor_prompt):
                 numbers: up to 100, complex expressions allowed
 
 ════════════════════════════════════════
+MECHANIC FIELD REFERENCE — what each mechanic needs in JSON
+════════════════════════════════════════
+
+Every example object MUST include: "roundNumber" (1–5), "titleText" (short stage card title for that round).
+
+Then add ONLY the fields listed for that stage's mechanic. Types: strings unless noted as number or array.
+
+--- drag_drop ---
+Game: child drags item tokens into bottom target zones; each zone needs a fixed count of correct drops.
+Per round REQUIRED fields:
+  • screenItemCount (number) — total draggable items on screen
+  • targetCount (number) — how many drop zones (usually 2)
+  • zoneCounts (array of numbers, length = targetCount) — how many correct items belong in each zone; sum should equal screenItemCount for a clean “share equally” puzzle, or your intentional split
+Optional: prompt if you use a one-line story; keep titleText as the main visible title.
+
+--- drag_sort ---
+Game: numbers appear as tokens; child orders them (e.g. ascending).
+Per round REQUIRED fields:
+  • prompt (string) — comma/space separated values shown as tokens, e.g. "2, 5, 3, 8, 1"
+  • answer (string) — rule or ordered list the engine expects, e.g. "ascending" or "1,2,3,5,8"
+
+--- drag_group ---
+Game: child sorts listed numbers into two named groups (e.g. even / odd).
+Per round REQUIRED fields:
+  • numbersText (string) — all numbers that appear, e.g. "2, 3, 6, 9, 4, 8"
+  • group1Name, group2Name (strings) — labels for the two bins
+  • group1Values, group2Values (strings) — comma-separated correct values per group; every number in numbersText must appear in exactly one group
+
+--- pattern_input ---
+Game: child types the missing term in a visible sequence.
+Per round REQUIRED fields:
+  • prompt (string) — sequence with missing slot, e.g. "2, 4, 6, ?"
+  • answer (string) — correct missing value
+
+--- fill_blank ---
+Game: one equation or phrase with a blank; child types the answer.
+Per round REQUIRED fields:
+  • prompt (string) — the problem text including the blank, e.g. "12 ÷ 3 ="
+  • answer (string) — exact correct value (digits only unless you intentionally use words)
+
+--- multi_choice ---
+Game: three tap options A/B/C; exactly one correct.
+Per round REQUIRED fields:
+  • prompt (string) — task text in the play area
+  • choiceA, choiceB, choiceC (strings) — option labels
+  • correctOption (string) — exactly one of: "A", "B", "C"
+
+--- corridor_choice ---
+Game: child picks left or right path comparing two math expressions.
+Per round REQUIRED fields:
+  • prompt (string) — short story question, e.g. "Which side is bigger?"
+  • leftExpression, rightExpression (strings) — math only, e.g. "3 × 4" vs "2 × 5"
+  • correctSide (string) — exactly "left" or "right"
+
+--- match_pairs ---
+Game: four statements A–D; exactly two are correct; child finds both.
+Per round REQUIRED fields:
+  • pairA, pairB, pairC, pairD (strings) — four lines (can be equations with =)
+  • correctPair1, correctPair2 (strings) — each is one of "A","B","C","D"; must be two DIFFERENT letters for the two true statements
+
+--- tap_count ---
+Game: child taps one on-screen item exactly N times.
+Per round REQUIRED fields:
+  • prompt (string) — instruction, e.g. "Tap the banana 6 times"
+  • answer (string or number) — required tap count as digits, e.g. "6"
+
+--- balance_scale ---
+Game: left bowl has an expression with ?; child types what replaces ? to balance the right side.
+Per round REQUIRED fields:
+  • leftExpression (string) — include "?" for unknown, e.g. "3 × ?"
+  • rightExpression (string) — fixed side, e.g. "12"
+  • answer (string) — value that replaces ?
+
+--- build_number ---
+Game: child builds the base number from part cards; tutor sets base and how many parts.
+Per round REQUIRED fields:
+  • baseNumber (number) — target whole number
+  • partsCount (number) — 2, 3, or 4 (how many part slots)
+Optional: readyFlag (boolean) — usually false at generation time
+
+--- timer_challenge ---
+Game: three quick problems A/B/C with answers under a time limit.
+Per round REQUIRED fields:
+  • timerExampleA, timerExampleB, timerExampleC (strings) — problem text
+  • timerAnswerA, timerAnswerB, timerAnswerC (strings) — correct answers
+  • timerSeconds (number) — seconds allowed, often 30
+
+--- symbol_calc ---
+Game: A, B, C shown as values; expression uses letters; child computes final value.
+Per round REQUIRED fields:
+  • symbolA, symbolB, symbolC (numbers)
+  • symbolExpression (string) — uses A, B, C and operators, e.g. "A × B + C"
+  • answer (string) — numeric result matching the expression
+
+--- find_unknown ---
+Game: A and B known; equation involves C; child solves for C.
+Per round REQUIRED fields:
+  • unknownA, unknownB (numbers)
+  • unknownEquation (string) — must mention C, e.g. "A × B + C = 30"
+  • answer (string) — numeric value of C
+
+GENERAL RULES FOR ALL MECHANICS:
+  • titleText is always the centered round/stage title shown to the child.
+  • Use English only in all strings.
+  • Numbers in prompts/answers must match age and difficulty rules above.
+  • Do not invent extra keys for a mechanic; do not omit required keys.
+
+════════════════════════════════════════
 EXAMPLE DESIGN PRINCIPLES
 ════════════════════════════════════════
 
