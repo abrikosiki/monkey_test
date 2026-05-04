@@ -954,6 +954,15 @@ async function generateLessonFromDraft(draft) {
   lesson.meta = lesson.meta || {};
   lesson.meta.child_inventory = Array.isArray(draft.child?.inventory) ? draft.child.inventory : [];
   lesson.meta.has_freeze_ring = Boolean(draft.child?.freezeRing);
+  if (draft.child) {
+    const ch = draft.child;
+    lesson.meta.student_code = ch.childCode || lesson.meta.student_code;
+    lesson.meta.student_name = ch.name || lesson.meta.student_name;
+    lesson.meta.student_level = Number(ch.level ?? lesson.meta.student_level ?? 0);
+    lesson.meta.student_coins = Number(ch.coins ?? lesson.meta.student_coins ?? 0);
+    lesson.meta.start_coins = Number(ch.coins ?? lesson.meta.start_coins ?? 0);
+    if (ch.characterKey) lesson.meta.character_key = ch.characterKey;
+  }
   clampLessonAssetKeys(lesson, assetCatalog);
   const errors = validateLessonShape(lesson);
   if (errors.length) {
@@ -1043,6 +1052,82 @@ function readBody(req) {
   });
 }
 
+async function patchChildLessonComplete(payload) {
+  const code = String(payload.code || "").trim();
+  if (!code) {
+    const err = new Error("code is required");
+    err.details = [];
+    throw err;
+  }
+  const finalCoins = Number(payload.finalCoins);
+  const newLevel = Number(payload.newLevel);
+  if (!Number.isFinite(finalCoins) || finalCoins < 0) {
+    const err = new Error("finalCoins must be a non-negative number");
+    err.details = [];
+    throw err;
+  }
+  if (!Number.isFinite(newLevel) || newLevel < 0) {
+    const err = new Error("newLevel must be a non-negative number");
+    err.details = [];
+    throw err;
+  }
+  const inventory = Array.isArray(payload.inventory) ? payload.inventory : [];
+
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+  const table = process.env.SUPABASE_CHILDREN_TABLE || "children";
+  const lookupColumn = process.env.SUPABASE_CHILD_LOOKUP_COLUMN || "code";
+
+  if (!supabaseUrl || !serviceKey) {
+    throw new Error("Supabase is not configured (SUPABASE_URL / key)");
+  }
+
+  const base = String(supabaseUrl).replace(/\/+$/, "");
+  const patchUrl = `${base}/rest/v1/${encodeURIComponent(table)}?${encodeURIComponent(lookupColumn)}=eq.${encodeURIComponent(code)}`;
+
+  const row = {
+    coins: Math.round(finalCoins),
+    level: Math.round(newLevel),
+    inventory,
+    updated_at: new Date().toISOString(),
+  };
+
+  const res = await fetch(patchUrl, {
+    method: "PATCH",
+    headers: {
+      apikey: serviceKey,
+      Authorization: `Bearer ${serviceKey}`,
+      "Content-Type": "application/json",
+      Prefer: "return=representation",
+    },
+    body: JSON.stringify(row),
+  });
+
+  const text = await res.text();
+  if (!res.ok) {
+    throw new Error(`Supabase PATCH ${res.status}: ${text}`);
+  }
+  let rows;
+  try {
+    rows = JSON.parse(text || "[]");
+  } catch {
+    rows = [];
+  }
+  if (!Array.isArray(rows) || rows.length === 0) {
+    throw new Error(`No row updated for code «${code}». Check code and ${lookupColumn} in Supabase.`);
+  }
+  return { updated: rows[0] };
+}
+
+function corsLessonCompleteHeaders() {
+  const origin = process.env.CORS_ORIGIN || "*";
+  return {
+    "Access-Control-Allow-Origin": origin,
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+  };
+}
+
 loadDotEnv();
 ensureDataFiles();
 
@@ -1109,6 +1194,31 @@ const server = http.createServer(async (req, res) => {
       const payload = JSON.parse((await readBody(req)) || "{}");
       const child = await fetchChildRecord(payload.childCode);
       sendJson(res, 200, { ok: true, child });
+      return;
+    }
+
+    if (req.method === "OPTIONS" && url.pathname === "/api/lesson-complete") {
+      res.writeHead(204, corsLessonCompleteHeaders());
+      res.end();
+      return;
+    }
+
+    if (req.method === "POST" && url.pathname === "/api/lesson-complete") {
+      try {
+        const payload = JSON.parse((await readBody(req)) || "{}");
+        const result = await patchChildLessonComplete(payload);
+        res.writeHead(200, {
+          "Content-Type": "application/json; charset=utf-8",
+          ...corsLessonCompleteHeaders(),
+        });
+        res.end(JSON.stringify({ ok: true, ...result }));
+      } catch (err) {
+        res.writeHead(422, {
+          "Content-Type": "application/json; charset=utf-8",
+          ...corsLessonCompleteHeaders(),
+        });
+        res.end(JSON.stringify({ ok: false, error: err.message || "Update failed" }));
+      }
       return;
     }
 

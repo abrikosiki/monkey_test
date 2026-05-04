@@ -1626,7 +1626,8 @@
     stageIndex: 0,
     stagePracticeDone: 0,
     stagePracticeTarget: PRACTICE_TARGET,
-    totalCoins: Number(LESSON.meta?.start_coins || 0),
+    totalCoins: Number(LESSON.meta?.start_coins ?? LESSON.meta?.student_coins ?? LESSON.meta?.coins_balance ?? 0),
+    profileSynced: false,
     stageSolved: false,
     selectedSortId: null,
     drag: null,
@@ -1860,7 +1861,7 @@
       urls.add(imagePathByKey(z.image_key, kind));
     });
     (stage.draggables || []).forEach((d) => urls.add(imagePathByKey(d.image_key, "item")));
-    (stage.items || []).forEach((it) => urls.add(imagePathByKey(it.image_key, "item")));
+    (stage.items || []).forEach((it) => urls.add(imagePathByKey(it?.image_key || stage.image_key || "banana", "item")));
     if(stage.left_path?.image_key){
       const lk = stage.left_path.image_kind === "target" ? "target" : "item";
       urls.add(imagePathByKey(stage.left_path.image_key, lk));
@@ -1902,6 +1903,50 @@
   }
 
   function setMessage(_text){}
+
+  function lessonApiBase(){
+    try{
+      const b = document.querySelector("base");
+      if(b && b.href) return new URL(b.href, window.location.href).origin;
+    } catch {}
+    return window.location.origin;
+  }
+
+  function collectInventorySlugsForSync(){
+    const set = new Set();
+    const add = (x) => {
+      const s = String(x || "").trim().toLowerCase().replace(/\s+/g, "_");
+      if(s) set.add(s);
+    };
+    for(const raw of LESSON.meta?.child_inventory || []) add(raw);
+    for(const a of state.earnedArtifacts){
+      if(a && a.key) add(a.key);
+    }
+    return Array.from(set);
+  }
+
+  async function syncLessonProgressToServer(){
+    const code = LESSON.meta?.student_code;
+    if(!code || state.profileSynced) return;
+    const startLevel = Number(LESSON.meta?.student_level ?? 0);
+    const payload = {
+      code,
+      finalCoins: state.totalCoins,
+      newLevel: startLevel + 1,
+      inventory: collectInventorySlugsForSync(),
+    };
+    try{
+      const res = await fetch(lessonApiBase() + "/api/lesson-complete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json().catch(() => ({}));
+      if(res.ok && data.ok) state.profileSynced = true;
+    } catch(e) {
+      console.warn("lesson-complete", e);
+    }
+  }
 
   function addCoins(amount){
     if(!amount) return;
@@ -2274,7 +2319,8 @@
 
     items.forEach((item, i) => {
       const spot = itemSpots[i];
-      const el = makeImg("game-img sort-item", item.image_key, posStyle(spot.x, spot.y));
+      const key = item?.image_key || stage.image_key || "banana";
+      const el = makeImg("game-img sort-item", key, posStyle(spot.x, spot.y));
       el.dataset.id = item.id;
       el.dataset.value = String(item.value);
       const badge = document.createElement("div");
@@ -3857,7 +3903,8 @@
     avatar.onload = () => { avatar.style.display = "block"; };
 
     $("completionName").textContent = LESSON.meta?.student_name || "Hero";
-    $("completionLevel").textContent = "Level 3";
+    const startLevel = Number(LESSON.meta?.student_level ?? 0);
+    $("completionLevel").textContent = "Level " + (startLevel + 1);
     $("completionCoins").textContent = "🪙 " + state.totalCoins + " coins remaining";
     $("completionBg").src = backgroundPath("stage1_generated");
     $("completionArtifactName").textContent = art.name || "Mystery Artifact";
@@ -3958,6 +4005,7 @@
   $("shopFinishBtn").addEventListener("click", () => {
     $("shopScreen").classList.remove("on");
     showCompletionScreen();
+    syncLessonProgressToServer();
   });
   $("completionBackBtn").addEventListener("click", () => {
     $("completionScreen").classList.remove("on");

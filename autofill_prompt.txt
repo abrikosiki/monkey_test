@@ -125,6 +125,27 @@ Math topic coherence:
   multiplication in a different way across all 6 stages.
 
 ════════════════════════════════════════
+ROUND DIVERSITY — STRICT (within each stage)
+════════════════════════════════════════
+
+Across the 5 rounds in ONE stage you must NOT repeat the same exercise.
+Every round must differ clearly:
+
+  • Different numbers / quantities (never copy-paste the same prompt text twice).
+  • Round 1 is easiest; each next round increases difficulty or adds a twist.
+  • At least two rounds must change problem structure (not only swap operands).
+  • Wrong answers and distractors must change between rounds.
+
+Forbidden: five rounds that are the same template with only one number changed.
+
+════════════════════════════════════════
+STAGE VS ROUND DIFFICULTY (lesson arc)
+════════════════════════════════════════
+
+Stages 1→6 must escalate like the overall lesson (easier early, harder late).
+Within each stage, rounds 1→5 must also escalate (never make round 3 easier than round 2).
+
+════════════════════════════════════════
 OUTPUT FORMAT
 ════════════════════════════════════════
 
@@ -171,6 +192,8 @@ QUALITY CHECKLIST — verify before output
 □ Difficulty level parsed correctly from tutor_prompt?
 □ Mechanics match age and difficulty rules?
 □ Round 5 in every stage is hardest or most unexpected?
+□ Within each stage, all 5 rounds are clearly different (no duplicate tasks)?
+□ Rounds escalate 1→5 inside every stage?
 □ At least one inverse/reverse round per stage?
 □ Wrong answer options are plausible mistakes, not random?
 □ All numbers fit child age and difficulty range?
