@@ -257,7 +257,19 @@ Within each stage, rounds 1→5 must also escalate (never make round 3 easier th
 ISLAND KEY & STAGE BACKGROUNDS (required every time)
 ════════════════════════════════════════
 
-Each lesson is set on ONE island. Art files use the island key as the PNG basename prefix before a digit (no extension in JSON), e.g. neon_city_island → neon_city_island1 … neon_city_island4.
+Each lesson is set on ONE island. Art files use the island key as the PNG basename prefix before a digit (no extension in JSON).
+
+UNIVERSAL RULE — same six-step background sequence for EVERY allowed island key. Only the island prefix changes (cherry_blossom_island, jelly_bay_island, snowy_peaks_island, neon_city_island, blue_crab_island, antigravity_island, mushroom_island, crystal_island). Stages 3–4 are always the shared cave keys "2" then "3" for all islands. The only filename exception is blue_crab_island → prefix "blue_crab _sland" (space before sland) for the four island slots.
+
+Concrete examples (stage 1…6 backgrounds):
+  • cherry_blossom_island → cherry_blossom_island1, cherry_blossom_island2, 2, 3, cherry_blossom_island3, cherry_blossom_island4
+  • jelly_bay_island → jelly_bay_island1, jelly_bay_island2, 2, 3, jelly_bay_island3, jelly_bay_island4
+  • snowy_peaks_island → snowy_peaks_island1, snowy_peaks_island2, 2, 3, snowy_peaks_island3, snowy_peaks_island4
+  • neon_city_island → neon_city_island1, neon_city_island2, 2, 3, neon_city_island3, neon_city_island4
+  • antigravity_island → antigravity_island1, antigravity_island2, 2, 3, antigravity_island3, antigravity_island4
+  • mushroom_island → mushroom_island1, mushroom_island2, 2, 3, mushroom_island3, mushroom_island4
+  • crystal_island → crystal_island1, crystal_island2, 2, 3, crystal_island3, crystal_island4
+  • blue_crab_island → blue_crab _sland1, blue_crab _sland2, 2, 3, blue_crab _sland3, blue_crab _sland4
 
 For EVERY lesson, stage backgrounds MUST follow this exact six-step pattern (set each stage object's "background" string exactly — these are real asset keys on disk):
 
@@ -268,7 +280,7 @@ For EVERY lesson, stage backgrounds MUST follow this exact six-step pattern (set
   Stage 5 → {KEY}3
   Stage 6 → {KEY}4
 
-Where {KEY} is context.islandKey (snake_case, no digits on the end).
+Where {KEY} is context.islandKey (snake_case, no digits on the end). Replace {KEY} with your chosen key from the list below — the pattern does not change per island except the prefix (and blue crab prefix as noted).
 
 Allowed context.islandKey values (pick exactly ONE; align with tutor_prompt mood or rotate for variety):
 
@@ -280,10 +292,6 @@ Allowed context.islandKey values (pick exactly ONE; align with tutor_prompt mood
   antigravity_island
   mushroom_island
   crystal_island
-
-Exception — blue_crab_island: on disk the PNG prefix is literally "blue_crab _sland" (space before sland). Use these six backgrounds:
-
-  blue_crab _sland1, blue_crab _sland2, 2, 3, blue_crab _sland3, blue_crab _sland4
 
 The long English island stories are defined in the lesson generator system prompt; your job is only to output the correct islandKey and matching per-stage "background" fields so art and story stay in sync.
 

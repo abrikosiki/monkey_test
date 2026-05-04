@@ -58,13 +58,18 @@ ISLAND KEY (technical — ties story + PNG backgrounds):
 - Optional legacy "meta"."island_number" is ignored for lore; island_key is authoritative.
 
 STAGE "background" TOKENS (must match tutor draft stage list in the user message — copy exact strings):
+This six-step pattern applies to EVERY meta.island_key in the allowed list; only the four island-specific tokens change (prefix + digit 1,2,3,4). Stages 3–4 are always "2" then "3" for all islands.
+
 - Stage 1 → {prefix}1
 - Stage 2 → {prefix}2
 - Stage 3 → 2   (fixed assets/backgrounds/2.png — same every lesson)
 - Stage 4 → 3   (fixed assets/backgrounds/3.png — same every lesson)
 - Stage 5 → {prefix}3
 - Stage 6 → {prefix}4
-Where {prefix} is the same string as meta.island_key (e.g. neon_city_island + "1" → neon_city_island1). The only exception: for blue_crab_island the on-disk background stems use the prefix "blue_crab _sland" (space before "sland") — the tutor draft already lists the exact tokens; copy them.
+
+Examples: jelly_bay_island → jelly_bay_island1, jelly_bay_island2, 2, 3, jelly_bay_island3, jelly_bay_island4. crystal_island → crystal_island1, crystal_island2, 2, 3, crystal_island3, crystal_island4.
+
+Where {prefix} equals meta.island_key except blue_crab_island → use prefix "blue_crab _sland" (space before "sland") for the four island slots; the tutor user message lists the exact six tokens when an island is selected — copy them.
 
 STORY CANON — choose the ONE row whose island_key matches meta.island_key. Ground story.island_name, villain, artifact, and acts in that row. Doctor Krit is the mind-control villain. Keep tone cinematic, silly-not-scary. Older "island 9-12" packs are retired; do not invent alternate island packs unless island_key is missing from the user message (then pick any row from the list below and set meta.island_key to match).
 
@@ -130,7 +135,7 @@ DIFFICULTY RULES (pool to pick from):
 - hard:   add key_lock, match_pairs, balance_scale, build_number, timer_challenge (if age allows)
 
 LESSON MIX RULES (6 stages):
-- Exactly 6 stages. Stage backgrounds in game: 1 & 6 can be unique scene art; 2-5 are usually fixed progression scenes — set "background" keys consistently.
+- Exactly 6 stages. When meta.island_key is set, each stage "background" MUST follow the six-token island pattern (see STAGE "background" TOKENS above) — same rule for every allowed island; do not invent a different progression.
 - Stage 1: ONLY drag_drop OR tap_count — easiest welcome
 - Stages 2-5: mix from allowed pool for age+difficulty
 - Stage 6: finale — combine 2-3 micro-tasks in one stage OR one rich mechanic; type "animation" for celebration after last challenge OR embed sub-sequence in stage 6 description
@@ -177,7 +182,7 @@ DRAG_DROP (all lessons — engine rules, do not fight the layout in JSON):
 - Sum of required_per_zone MAY be less than total draggables (extra items are allowed as distractors to increase challenge).
 
 DRAG_SORT (strict template):
-- Background follows stage order rule (stage 2→background 2, stage 3→background 3, stage 4→background 4, stage 5→background 5; stage 1 has special intro rule).
+- Stage "background" must match the tutor-required token for that stage id (island pattern: {prefix}1, {prefix}2, 2, 3, {prefix}3, {prefix}4 when island_key is set).
 - "Numbers in correct order" = list of values shown on draggable item tokens.
 - Use one draggable PNG per number; each draggable must show its own numeric badge.
 - Draggable items start in the LOWER band of the interactive area.
@@ -345,7 +350,7 @@ SELF-CHECK
 
 □ 6 stages?
 □ meta.island_key set to one allowed token when the tutor draft specifies an island?
-□ Each stage "background" matches the tutor draft list for that stage id?
+□ Each stage "background" matches the tutor draft list for that stage id (same six-token island pattern for whichever meta.island_key is set)?
 □ story.act1, act2, act3, goal present?
 □ story.greeting, act1, act2, act3, goal each include meta.student_name at least once?
 □ mechanic_reason on every stage?

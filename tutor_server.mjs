@@ -684,6 +684,18 @@ async function fetchChildRecord(code) {
   return normalizeChild(record);
 }
 
+function formatRequiredStageBackgroundsBlock(islandKey) {
+  const map = getIslandStageBackgroundKeys(String(islandKey || "").trim());
+  if (!map) return "";
+  const lines = [1, 2, 3, 4, 5, 6].map((n) => `- Stage id ${n} → background: "${map[n]}"`);
+  return [
+    "REQUIRED STAGE BACKGROUNDS (mandatory — set each stages[i].background to EXACTLY these strings, same order as stage id 1→6):",
+    ...lines,
+    "This six-token pattern is the SAME for every island key; only the four island tokens change with the prefix. Stages 3–4 are always the shared cave keys \"2\" and \"3\".",
+    "",
+  ].join("\n");
+}
+
 function buildUserPromptFromDraft(draft, assetCatalog) {
   const catalog = assetCatalog || buildAssetCatalog();
   const child = draft.child || {};
@@ -762,6 +774,7 @@ LESSON CONTEXT:
 - Topic key: ${context.topicKey}
 - Island key (canonical story + stage backgrounds): ${String(context.islandKey || "").trim() || "(none — lesson generator will still require one island from the system prompt list)"}
 
+${formatRequiredStageBackgroundsBlock(context.islandKey)}
 RULES:
 - English only
 - Use English alphabet only (no Cyrillic letters in any text field)
@@ -1072,8 +1085,9 @@ async function generateLessonFromDraft(draft) {
   }
   const ik = String(draft?.context?.islandKey || "").trim();
   if (ik) lesson.meta.island_key = ik;
-  applyIslandBackgroundsToLesson(lesson, draft);
   clampLessonAssetKeys(lesson, assetCatalog);
+  /** After clamp — island backgrounds must win (clamp fuzzy-match can replace unknown stems). */
+  applyIslandBackgroundsToLesson(lesson, draft);
   const errors = validateLessonShape(lesson);
   if (errors.length) {
     const err = new Error("Generated lesson shape is invalid");
