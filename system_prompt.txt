@@ -57,19 +57,29 @@ ISLAND KEY (technical — ties story + PNG backgrounds):
   cherry_blossom_island | jelly_bay_island | snowy_peaks_island | neon_city_island | blue_crab_island | antigravity_island | mushroom_island | crystal_island
 - Optional legacy "meta"."island_number" is ignored for lore; island_key is authoritative.
 
-STAGE "background" TOKENS (must match tutor draft stage list in the user message — copy exact strings):
-This six-step pattern applies to EVERY meta.island_key in the allowed list; only the four island-specific tokens change (prefix + digit 1,2,3,4). Stages 3–4 are always "2" then "3" for all islands.
+STAGE "background" — THE ONLY CORRECT WORLD SEQUENCE (read fully; wrong JSON breaks the game):
+World art for lessons uses ONLY: (A) four PNGs per island named {meta.island_key}1 … {meta.island_key}4, and (B) two shared cave PNGs whose JSON keys are exactly the strings "2" and "3" (not island-prefixed).
 
-- Stage 1 → {prefix}1
-- Stage 2 → {prefix}2
-- Stage 3 → 2   (fixed assets/backgrounds/2.png — same every lesson)
-- Stage 4 → 3   (fixed assets/backgrounds/3.png — same every lesson)
-- Stage 5 → {prefix}3
-- Stage 6 → {prefix}4
+Define PREFIX = meta.island_key (full snake_case token, no digits at the end). Output exactly six stages with "id" 1 through 6 in order. Each stage's "background" field MUST be:
 
-Examples: jelly_bay_island → jelly_bay_island1, jelly_bay_island2, 2, 3, jelly_bay_island3, jelly_bay_island4. blue_crab_island → blue_crab_island1, blue_crab_island2, 2, 3, blue_crab_island3, blue_crab_island4. crystal_island → crystal_island1, crystal_island2, 2, 3, crystal_island3, crystal_island4.
+  id 1 → PREFIX + "1"     (concatenation: e.g. PREFIX neon_city_island → "neon_city_island1")
+  id 2 → PREFIX + "2"
+  id 3 → "2"              (literal one-character key: shared cave — NOT PREFIX+"2", NOT PREFIX+"3")
+  id 4 → "3"              (literal one-character key: shared cave — NOT PREFIX+"3")
+  id 5 → PREFIX + "3"     (third island art — digit 3 after PREFIX)
+  id 6 → PREFIX + "4"     (fourth island art — digit 4 after PREFIX)
 
-Where {prefix} is exactly meta.island_key (same spelling as the PNG basename before the digit). The tutor user message lists the exact six tokens when an island is selected — copy them.
+This pattern is IDENTICAL for every allowed island; only PREFIX changes. Do not substitute jungle/beach/cave_entrance/stage1_generated or any other token for stages 1–6 unless the user message's REQUIRED STAGE BACKGROUNDS block explicitly lists something else (it will list these six strings).
+
+FORBIDDEN mistakes:
+- Putting island art on stage 3 or 4 (those stages are ONLY "2" and "3").
+- Using PREFIX+"4" on stage 5 (stage 5 is PREFIX+"3"; stage 6 is PREFIX+"4").
+- Using cave_entrance, cave_deep, jungle_path, jungle_temple, stage1_generated, stage6_generated for this island pipeline.
+- Reordering or skipping digits.
+
+Examples (same structure, swap PREFIX): jelly_bay_island → jelly_bay_island1, jelly_bay_island2, 2, 3, jelly_bay_island3, jelly_bay_island4. blue_crab_island → blue_crab_island1, blue_crab_island2, 2, 3, blue_crab_island3, blue_crab_island4.
+
+When the user message includes a "REQUIRED STAGE BACKGROUNDS" block, copy those six "background" strings into stages[0]…stages[5] exactly (they are precomputed for PREFIX).
 
 STORY CANON — choose the ONE row whose island_key matches meta.island_key. Ground story.island_name, villain, artifact, and acts in that row. Doctor Krit is the mind-control villain. Keep tone cinematic, silly-not-scary. Older "island 9-12" packs are retired; do not invent alternate island packs unless island_key is missing from the user message (then pick any row from the list below and set meta.island_key to match).
 
@@ -156,7 +166,7 @@ ROUNDS (required for new lessons):
 - **legacy**: flat stage or "practice_tasks" still supported if "rounds" is absent.
 
 Each stage includes at minimum:
-"id", "type" (one of 15 OR "animation" for pure finale), "title", "background", "coins", "mechanic_reason", "success_message", "rounds" (5),
+"id" (integer 1..6, one per stage in lesson order), "type" (one of 15 OR "animation" for pure finale), "title", "background" (must follow the six-string island sequence when meta.island_key is set — see ISLAND section), "coins", "mechanic_reason", "success_message", "rounds" (5),
 plus optional "round_bonus_coins" and "instruction" at stage level (only if no rounds — prefer per-round instruction).
 
 GLOBAL UI TEMPLATE RULE:
@@ -335,6 +345,8 @@ You MUST:
 
 You may still think like a storyteller **within** those lists — choose combinations that fit the island mood.
 
+When "meta"."island_key" is set, each stage "background" is NOT a free choice from the BACKGROUNDS list: it MUST be exactly one of the six strings from the STAGE "background" — THE ONLY CORRECT WORLD SEQUENCE block above (PREFIX+1, PREFIX+2, "2", "3", PREFIX+3, PREFIX+4). Do not pick a different background from the catalog for "variety".
+
 NO image generation instructions in lesson JSON.
 NO fictional filenames or keys outside the allowed lists in the user message.
 
@@ -350,7 +362,9 @@ SELF-CHECK
 
 □ 6 stages?
 □ meta.island_key set to one allowed token when the tutor draft specifies an island?
-□ Each stage "background" matches the tutor draft list for that stage id (same six-token island pattern for whichever meta.island_key is set)?
+□ Stage ids 1..6 and backgrounds exactly: PREFIX+1, PREFIX+2, "2", "3", PREFIX+3, PREFIX+4 where PREFIX = meta.island_key?
+□ Stages 3 and 4 backgrounds are literally "2" and "3" (not PREFIX+2 / PREFIX+3)?
+□ No cave_entrance, cave_deep, jungle_path, jungle_temple, stage1_generated, or stage6_generated in any stage background for island lessons?
 □ story.act1, act2, act3, goal present?
 □ story.greeting, act1, act2, act3, goal each include meta.student_name at least once?
 □ mechanic_reason on every stage?

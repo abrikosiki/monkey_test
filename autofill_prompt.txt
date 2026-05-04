@@ -254,35 +254,44 @@ Stages 1→6 must escalate like the overall lesson (easier early, harder late).
 Within each stage, rounds 1→5 must also escalate (never make round 3 easier than round 2).
 
 ════════════════════════════════════════
-ISLAND KEY & STAGE BACKGROUNDS (required every time)
+ISLAND KEY & STAGE BACKGROUNDS (NON-NEGOTIABLE — read entire block)
 ════════════════════════════════════════
 
-Each lesson is set on ONE island. Art files use the island key as the PNG basename prefix before a digit (no extension in JSON).
+WHAT EXISTS (world / lesson scenery):
+- The game only uses the island art packs you ship: eight island keys, each with FOUR backgrounds named exactly {islandKey}1, {islandKey}2, {islandKey}3, {islandKey}4 (no file extension in JSON).
+- PLUS two SHARED cave screens used on EVERY lesson for the middle of the arc: background keys exactly the single character "2" then exactly "3" (files 2.png and 3.png). These are NOT island-specific and MUST NOT get an island prefix.
 
-UNIVERSAL RULE — same six-step background sequence for EVERY allowed island key. Only the island prefix changes (cherry_blossom_island, jelly_bay_island, snowy_peaks_island, neon_city_island, blue_crab_island, antigravity_island, mushroom_island, crystal_island). Stages 3–4 are always the shared cave keys "2" then "3" for all islands. The PNG basename prefix always equals context.islandKey (e.g. blue_crab_island → blue_crab_island1 … blue_crab_island4).
+ONE LESSON = ONE ISLAND:
+- Pick exactly ONE value for context.islandKey from the allowed list below. Call that string PREFIX (same characters as islandKey, no trailing digits).
 
-Concrete examples (stage 1…6 backgrounds):
-  • cherry_blossom_island → cherry_blossom_island1, cherry_blossom_island2, 2, 3, cherry_blossom_island3, cherry_blossom_island4
-  • jelly_bay_island → jelly_bay_island1, jelly_bay_island2, 2, 3, jelly_bay_island3, jelly_bay_island4
-  • snowy_peaks_island → snowy_peaks_island1, snowy_peaks_island2, 2, 3, snowy_peaks_island3, snowy_peaks_island4
-  • neon_city_island → neon_city_island1, neon_city_island2, 2, 3, neon_city_island3, neon_city_island4
-  • antigravity_island → antigravity_island1, antigravity_island2, 2, 3, antigravity_island3, antigravity_island4
-  • mushroom_island → mushroom_island1, mushroom_island2, 2, 3, mushroom_island3, mushroom_island4
-  • crystal_island → crystal_island1, crystal_island2, 2, 3, crystal_island3, crystal_island4
-  • blue_crab_island → blue_crab_island1, blue_crab_island2, 2, 3, blue_crab_island3, blue_crab_island4
+THE ONLY VALID BACKGROUND SEQUENCE (six stages, in this exact order):
+Let PREFIX = context.islandKey. Then each stage object MUST have "background" set as follows — character-for-character, same spelling as the keys that exist on disk:
 
-For EVERY lesson, stage backgrounds MUST follow this exact six-step pattern (set each stage object's "background" string exactly — these are real asset keys on disk):
+  stageNumber 1 → background = PREFIX + "1"        (example: neon_city_island → "neon_city_island1")
+  stageNumber 2 → background = PREFIX + "2"
+  stageNumber 3 → background = "2"               (literal string one character: two — shared cave, NOT PREFIX+2)
+  stageNumber 4 → background = "3"               (literal string one character: three — shared cave, NOT PREFIX+3)
+  stageNumber 5 → background = PREFIX + "3"    (island shot #3 — digit 3 after PREFIX)
+  stageNumber 6 → background = PREFIX + "4"    (island shot #4 — digit 4 after PREFIX)
 
-  Stage 1 → {KEY}1
-  Stage 2 → {KEY}2
-  Stage 3 → 2   (fixed cave art — assets/backgrounds/2.png — same for all islands)
-  Stage 4 → 3   (fixed cave art — assets/backgrounds/3.png — same for all islands)
-  Stage 5 → {KEY}3
-  Stage 6 → {KEY}4
+COMMON MISTAKES — DO NOT DO ANY OF THESE:
+- Do NOT use PREFIX+"3" or PREFIX+"4" on stages 3–4; stages 3–4 are ONLY "2" and "3".
+- Do NOT put island art on stage 3 or 4 (no PREFIX digits there).
+- Do NOT output old keys such as cave_entrance, cave_deep, jungle_path, jungle_temple, stage1_generated, stage6_generated for these lessons unless the ALLOWED ASSET list literally contains nothing else (it contains the island keys — use them).
+- Do NOT reorder the six backgrounds. Stage 1 must be …1, stage 2 must be …2, then "2", then "3", then …3, then …4.
+- Do NOT invent a different prefix than context.islandKey (no synonyms, no translated names).
 
-Where {KEY} is context.islandKey (snake_case, no digits on the end). Replace {KEY} with your chosen key from the list below — the pattern does not change per island except that prefix string.
+FULL EXAMPLES (copy the pattern; swap only PREFIX for your context.islandKey):
+  cherry_blossom_island → cherry_blossom_island1, cherry_blossom_island2, 2, 3, cherry_blossom_island3, cherry_blossom_island4
+  jelly_bay_island      → jelly_bay_island1, jelly_bay_island2, 2, 3, jelly_bay_island3, jelly_bay_island4
+  snowy_peaks_island    → snowy_peaks_island1, snowy_peaks_island2, 2, 3, snowy_peaks_island3, snowy_peaks_island4
+  neon_city_island      → neon_city_island1, neon_city_island2, 2, 3, neon_city_island3, neon_city_island4
+  blue_crab_island      → blue_crab_island1, blue_crab_island2, 2, 3, blue_crab_island3, blue_crab_island4
+  antigravity_island    → antigravity_island1, antigravity_island2, 2, 3, antigravity_island3, antigravity_island4
+  mushroom_island       → mushroom_island1, mushroom_island2, 2, 3, mushroom_island3, mushroom_island4
+  crystal_island        → crystal_island1, crystal_island2, 2, 3, crystal_island3, crystal_island4
 
-Allowed context.islandKey values (pick exactly ONE; align with tutor_prompt mood or rotate for variety):
+Allowed context.islandKey (exactly one per lesson):
 
   cherry_blossom_island
   jelly_bay_island
@@ -293,9 +302,14 @@ Allowed context.islandKey values (pick exactly ONE; align with tutor_prompt mood
   mushroom_island
   crystal_island
 
-The long English island stories are defined in the lesson generator system prompt; your job is only to output the correct islandKey and matching per-stage "background" fields so art and story stay in sync.
+OUTPUT CHECK BEFORE YOU SEND JSON:
+- stages.length === 6 and stageNumbers are 1..6 in order.
+- For each n in 1..6, stages[n-1].background === the string from the table row for that stageNumber and your context.islandKey.
+- Stages 3 and 4 backgrounds must literally be "2" and "3" (with quotes in JSON: "2", "3").
 
-If the user message includes a "TUTOR-SELECTED ISLAND" block, context.islandKey MUST be exactly that token (no substitutions) and backgrounds MUST match that key's six-step pattern.
+Island story text is generated later by the lesson system prompt; here you only output correct context.islandKey and the six "background" strings.
+
+If the user message includes "TUTOR-SELECTED ISLAND", context.islandKey MUST equal that exact token and the six backgrounds MUST be the six strings for that island from the pattern above.
 
 ════════════════════════════════════════
 OUTPUT FORMAT
@@ -336,7 +350,7 @@ Return valid JSON only. No markdown. Start with {
 }
 
 Each stage object must include "mechanic_reason" (string).
-Each stage object must include "background" (string) exactly matching the six-step pattern for context.islandKey (see ISLAND KEY section).
+Each stage object must include "background" (string): for stageNumber N use exactly the string defined in "ISLAND KEY & STAGE BACKGROUNDS" for that N and context.islandKey (stages 3–4 must be "2" then "3", never PREFIX+2 on stage 3).
 
 Include ONLY the fields relevant to the mechanic used in that stage for each example round.
 Do not include unused mechanic fields in a round object.
@@ -362,6 +376,7 @@ QUALITY CHECKLIST — verify before output
 □ Word problems included if tutor_prompt requested them?
 □ mechanic_reason present on every stage?
 □ context.islandKey is exactly one of the eight allowed tokens?
-□ Each stage's "background" matches the island + cave sequence for that islandKey?
+□ Six stages in order 1..6; backgrounds are PREFIX+"1", PREFIX+"2", "2", "3", PREFIX+"3", PREFIX+"4" for PREFIX=context.islandKey (not PREFIX+digit on stages 3–4)?
+□ None of the six backgrounds use legacy keys cave_entrance, cave_deep, jungle_path, jungle_temple, stage1_generated, or stage6_generated?
 □ Only relevant fields per mechanic, no extras?
 □ Valid JSON — no trailing commas, no markdown, no comments?

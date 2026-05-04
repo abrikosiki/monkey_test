@@ -682,9 +682,10 @@ function formatRequiredStageBackgroundsBlock(islandKey) {
   if (!map) return "";
   const lines = [1, 2, 3, 4, 5, 6].map((n) => `- Stage id ${n} → background: "${map[n]}"`);
   return [
-    "REQUIRED STAGE BACKGROUNDS (mandatory — set each stages[i].background to EXACTLY these strings, same order as stage id 1→6):",
+    "REQUIRED STAGE BACKGROUNDS (mandatory — set each stages[i].\"background\" to EXACTLY these strings; stages[i].\"id\" must be 1..6 in order):",
     ...lines,
-    "This six-token pattern is the SAME for every island key; only the four island tokens change with the prefix. Stages 3–4 are always the shared cave keys \"2\" and \"3\".",
+    "Rule: PREFIX = meta.island_key. Stages 1–2 and 5–6 are PREFIX+1, PREFIX+2, PREFIX+3, PREFIX+4. Stages 3–4 are ONLY the shared cave keys \"2\" then \"3\" (never PREFIX+2 on stage 3).",
+    "Forbidden for these stages: cave_entrance, cave_deep, jungle_path, jungle_temple, stage1_generated, stage6_generated.",
     "",
   ].join("\n");
 }
@@ -768,6 +769,8 @@ LESSON CONTEXT:
 - Island key (canonical story + stage backgrounds): ${String(context.islandKey || "").trim() || "(none — lesson generator will still require one island from the system prompt list)"}
 
 ${formatRequiredStageBackgroundsBlock(context.islandKey)}
+If an island key is set above, every stage "background" in your JSON MUST match the REQUIRED STAGE BACKGROUNDS list — no other background tokens for stages 1–6.
+
 RULES:
 - English only
 - Use English alphabet only (no Cyrillic letters in any text field)
