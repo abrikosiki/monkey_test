@@ -116,7 +116,8 @@ function inferIslandKeyForLesson(lesson) {
   if (/antigravity|антигравит/i.test(blob)) return "antigravity_island";
   if (/mushroom_island|mushroom|грибн/i.test(blob)) return "mushroom_island";
   if (/crystal_island|\bcrystal\b|кристалл/i.test(blob)) return "crystal_island";
-  return "";
+  // Final safety: never leave lesson without island_key pipeline.
+  return "blue_crab_island";
 }
 
 function syncDraftStageBackgroundsFromIslandKey(draft) {

@@ -1739,7 +1739,7 @@ function buildHtml(
     if(/antigravity|антигравит/i.test(blob)) return "antigravity_island";
     if(/mushroom_island|mushroom|грибн/i.test(blob)) return "mushroom_island";
     if(/crystal_island|\\bcrystal\\b|кристалл/i.test(blob)) return "crystal_island";
-    return "";
+    return "blue_crab_island";
   }
   function normalizeLessonIslandPipeline(lesson){
     if(!lesson || typeof lesson !== "object") return;
