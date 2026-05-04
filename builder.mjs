@@ -1806,6 +1806,8 @@ function buildHtml(
     const keys = Object.keys(map);
     const exactNorm = keys.find((k) => normKey(k) === wanted);
     if(exactNorm) return map[exactNorm];
+    // Short keys like "2" / "3" must not substring-match e.g. crystal_island2.
+    if(wanted.length <= 2) return "";
     const includes = keys.find((k) => {
       const nk = normKey(k);
       return nk.includes(wanted) || wanted.includes(nk);
@@ -1969,9 +1971,8 @@ function buildHtml(
       const stageFallback = fuzzyFindPath(BACKGROUND_MAP, "5");
       if(stageFallback) return stageFallback;
     }
-    const fbBg = firstMapPath(BACKGROUND_MAP);
-    if(fbBg) return fbBg;
-    return "assets/backgrounds/" + bgKey + ".webp";
+    const base = "assets/backgrounds/" + String(bgKey).trim();
+    return base + ".png";
   }
 
   function characterPath(charKey){
@@ -2200,6 +2201,9 @@ function buildHtml(
     if(resolveEngineType(out.type) === "choice" && !out.question){
       out.question = round.question ?? round.prompt ?? round.instruction ?? out.question ?? "";
     }
+    if (base && base.background != null && String(base.background).trim() !== "") {
+      out.background = base.background;
+    }
     return out;
   }
 
@@ -2222,6 +2226,7 @@ function buildHtml(
         type: task.type || baseStage.type,
         coins: task.coins ?? baseStage.coins,
         success_message: task.success_message || baseStage.success_message,
+        background: baseStage.background,
       };
     }
     state.stagePracticeTarget = 1;
@@ -3864,7 +3869,7 @@ function buildHtml(
     }
     $("bg").fetchPriority = "high";
     $("bg").decoding = "async";
-    $("bg").src = backgroundPath(resolveStageBackground(stage, index));
+    $("bg").src = backgroundPath(resolveStageBackground(baseStage, index));
     $("bg").onerror = () => {
       $("bg").src = "";
       $("game").style.background = "radial-gradient(circle at 20% 20%, #204a66, #0b1426)";
@@ -3890,14 +3895,33 @@ function buildHtml(
     updateStageControls();
   }
 
+  /** When meta.island_key is set, backgrounds are always PREFIX+1, PREFIX+2, "2", "3", PREFIX+3, PREFIX+4 (same as tutor server). */
+  function islandPackBackgroundForIndex(islandKey, index){
+    const prefix = String(islandKey || "").trim().replace(/\s+/g, "_");
+    if (!prefix) return "";
+    const sn = index + 1;
+    if (sn === 1) return prefix + "1";
+    if (sn === 2) return prefix + "2";
+    if (sn === 3) return "2";
+    if (sn === 4) return "3";
+    if (sn === 5) return prefix + "3";
+    if (sn === 6) return prefix + "4";
+    return "";
+  }
+
   function resolveStageBackground(stage, index){
+    const metaIsland = String(LESSON.meta?.island_key || LESSON.meta?.islandKey || "").trim();
+    const fromIslandMeta = islandPackBackgroundForIndex(metaIsland, index);
+    if (fromIslandMeta) return fromIslandMeta;
+    const fromLesson = String(stage?.background || "").trim();
+    if (fromLesson) return fromLesson;
     if(index === 0) return "stage1_generated";
     if(index === 1) return "2";
     if(index === 2) return "3";
     if(index === 3) return "4";
     if(index === 4) return "5";
     if(index === 5) return "stage6_generated";
-    return stage.background || "stage1_generated";
+    return "stage1_generated";
   }
 
   function setupPlayerAvatar(){

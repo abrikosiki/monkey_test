@@ -1651,6 +1651,7 @@
     const keys = Object.keys(map);
     const exactNorm = keys.find((k) => normKey(k) === wanted);
     if(exactNorm) return map[exactNorm];
+    if(wanted.length <= 2) return "";
     const includes = keys.find((k) => {
       const nk = normKey(k);
       return nk.includes(wanted) || wanted.includes(nk);
@@ -1814,9 +1815,8 @@
       const stageFallback = fuzzyFindPath(BACKGROUND_MAP, "5");
       if(stageFallback) return stageFallback;
     }
-    const fbBg = firstMapPath(BACKGROUND_MAP);
-    if(fbBg) return fbBg;
-    return "assets/backgrounds/" + bgKey + ".webp";
+    const base = "assets/backgrounds/" + String(bgKey).trim();
+    return base + ".png";
   }
 
   function characterPath(charKey){
