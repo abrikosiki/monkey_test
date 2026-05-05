@@ -713,14 +713,14 @@
         setAutosaveStatus("Черновик должен содержать 6 этапов");
         return;
       }
-      const saved = await saveDraft(true);
-      if (!saved) return;
       state.manualMechanicsMode = true;
       state.editExpanded = true;
       $("quickFlow").classList.add("hidden");
       $("editPanel").classList.remove("hidden");
       renderStages();
       refreshManualMechanicsJumpNav();
+      // Save in background, but do not block opening editor on transient save issues.
+      saveDraft(true).catch(() => {});
       setAutosaveStatus(
         "Редактор: выберите механику и поля для каждого этапа → затем «Regenerate story + Build HTML»",
       );
