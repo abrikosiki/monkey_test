@@ -1561,8 +1561,12 @@ function buildHtml(
       inset:0;
       z-index:260;
       display:flex;
+      flex-direction:column;
       align-items:center;
-      justify-content:center;
+      justify-content:flex-start;
+      padding-top:max(8px, env(safe-area-inset-top, 0px));
+      padding-bottom:max(12px, env(safe-area-inset-bottom, 0px));
+      box-sizing:border-box;
       background:#101522;
     }
     .intro-screen.hidden{display:none}
@@ -1577,27 +1581,65 @@ function buildHtml(
       width:116%;
       height:116%;
       object-fit:cover;
-      filter:blur(28px);
+      /* Was ~28px (~60% strength); 50/60 → sharper backdrop */
+      filter:blur(23px);
       opacity:.92;
+    }
+    .intro-layout{
+      position:relative;
+      z-index:2;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      width:100%;
+      max-width:none;
+      gap:clamp(8px,1.8vh,20px);
+    }
+    .intro-title-img{
+      display:block;
+      width:auto;
+      /* ×3 from post–asset-tweak size (was max ~1008×308); story text stays small */
+      max-width:min(96vw,3024px);
+      height:auto;
+      max-height:clamp(270px,58.8vh,924px);
+      object-fit:contain;
+      pointer-events:none;
+      filter:drop-shadow(0 18px 44px rgba(0,0,0,.5));
+      margin-top:-8vh;
     }
     .intro-panel{
       position:relative;
       z-index:2;
-      width:min(940px,92vw);
-      padding:26px 28px 24px;
+      width:min(560px,78vw);
+      max-width:100%;
+      padding:22px 24px 20px;
       text-align:center;
       background:rgba(5,15,30,.82);
       border:2px solid rgba(244,208,63,.45);
       border-radius:22px;
       box-shadow:0 24px 58px rgba(0,0,0,.55);
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+      min-height:min(28vh,320px);
+      margin-top:clamp(4px,1.5vh,12px);
+    }
+    .intro-story-wrap{
+      flex:1;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      min-height:0;
+      padding:8px 0 4px;
     }
     .intro-story{
+      width:100%;
+      max-width:min(48ch,100%);
+      margin:0 auto;
       min-height:120px;
       font-size:clamp(14px,1.45vw,17px);
       color:#c8e8c8;
       line-height:1.7;
-      max-width:860px;
-      margin:0 auto 12px;
     }
     .intro-cur{
       display:inline-block;
@@ -1610,6 +1652,8 @@ function buildHtml(
     }
     .intro-start{
       display:none;
+      align-self:center;
+      flex-shrink:0;
       padding:13px 50px;
       font-family:'Fredoka One',cursive;
       font-size:20px;
@@ -1640,9 +1684,14 @@ function buildHtml(
     <div class="intro-bg-wrap">
       <img class="intro-bg" id="introBg" alt="">
     </div>
-    <div class="intro-panel">
-      <div class="intro-story" id="introStory"></div>
-      <button class="intro-start" id="introStartBtn">BEGIN ADVENTURE</button>
+    <div class="intro-layout">
+      <img class="intro-title-img" id="introTitleImg" src="assets/backgrounds/title.png" alt="" decoding="async" fetchpriority="high" onerror="this.style.display='none'">
+      <div class="intro-panel">
+        <div class="intro-story-wrap">
+          <div class="intro-story" id="introStory"></div>
+        </div>
+        <button class="intro-start" id="introStartBtn">BEGIN ADVENTURE</button>
+      </div>
     </div>
   </div>
   <div class="game" id="game">
