@@ -1,0 +1,672 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prototype — Box & Keys (layout = index stage 4)</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+
+    /* Full-screen plate like #game (bg separate layer) */
+    #protoGame{
+      position:fixed;
+      inset:0;
+      overflow:hidden;
+      background:#0a0a1a;
+    }
+    #protoGame .proto-bg-layer{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      z-index:0;
+      pointer-events:none;
+    }
+
+    /* Copied verbatim from index.html (game HUD strip) */
+    .izone{
+      position:absolute;
+      right:0;
+      top:0;
+      bottom:0;
+      width:55%;
+      z-index:5;
+    }
+
+    /*
+      index combines .stage2-wrap,…,.stage4-wrap { position:absolute;inset:0;display:none;z-index:14 }
+      here only stage 4 is shown — same geometry as index when stage 4 is active
+    */
+    #protoGame .stage4-wrap{
+      position:absolute;
+      inset:0;
+      display:block;
+      z-index:14;
+      padding:20px 24px 16px;
+    }
+
+    /* —— Below: same rules as index.html for stage 4 —— */
+    .chest-zone{
+      position:absolute;
+      left:50%;
+      top:3%;
+      transform:translateX(-50%);
+      width:min(62vw,700px);
+      height:min(42vh,360px);
+    }
+    .chest-img{
+      position:absolute;
+      left:50%;
+      top:50%;
+      transform:translate(-50%,-50%);
+      width:min(58vw,640px);
+      max-height:100%;
+      object-fit:contain;
+      filter:drop-shadow(0 16px 22px rgba(0,0,0,.5));
+      transition:transform .42s ease;
+    }
+    .chest-img.open-pop{
+      animation:chestPop .62s cubic-bezier(.22,1,.36,1);
+    }
+    @keyframes chestPop{
+      0%{ transform:translate(-50%,-50%) scale(1); }
+      55%{ transform:translate(-50%,-50%) scale(1.13); }
+      100%{ transform:translate(-50%,-50%) scale(1); }
+    }
+    .locks-row{
+      position:absolute;
+      left:50%;
+      top:48%;
+      transform:translateX(-50%);
+      display:flex;
+      gap:clamp(10px,1.6vw,19px);
+      z-index:18;
+    }
+    /* −20% vs index defaults (×0.8) */
+    .lock-box{
+      width:clamp(128px,14.4vw,176px);
+      padding:8px 8px 6px;
+      border-radius:11px;
+      background:linear-gradient(170deg,rgba(57,44,26,.84),rgba(28,20,10,.82));
+      border:2px solid rgba(244,201,112,.48);
+      box-shadow:inset 0 1px 0 rgba(255,241,191,.38),0 8px 16px rgba(0,0,0,.45);
+    }
+    .lock-box.ok{
+      border-color:#75ff8d;
+      box-shadow:inset 0 1px 0 rgba(223,255,226,.4),0 0 18px rgba(117,255,141,.75),0 0 30px rgba(117,255,141,.45);
+    }
+    .lock-box.click-pop{
+      animation:lockClick .22s ease;
+    }
+    @keyframes lockClick{
+      0%{ transform:scale(1); }
+      50%{ transform:scale(1.08); }
+      100%{ transform:scale(1); }
+    }
+    .lock-title{
+      font-family:'Fredoka One',cursive;
+      font-size:11px;
+      color:#ffd57f;
+      text-align:center;
+      margin-bottom:6px;
+      text-shadow:0 1px 0 rgba(43,27,6,.75);
+    }
+    .lock-slots{
+      display:flex;
+      gap:6px;
+      justify-content:center;
+    }
+    .lock-slot{
+      position:relative;
+      width:clamp(53px,5.6vw,66px);
+      height:clamp(66px,7.2vw,82px);
+      border-radius:10px;
+      border:2px dashed rgba(255,217,131,.56);
+      background:linear-gradient(180deg,rgba(12,8,3,.45),rgba(34,23,10,.38));
+      box-shadow:inset 0 0 0 1px rgba(255,243,202,.13),inset 0 6px 10px rgba(0,0,0,.2);
+    }
+    .lock-slot::before{
+      content:'';
+      position:absolute;
+      left:50%;
+      top:50%;
+      width:21px;
+      height:21px;
+      transform:translate(-50%,-50%);
+      border-radius:50%;
+      border:2px solid rgba(255,220,138,.42);
+      box-shadow:inset 0 0 0 1px rgba(58,37,11,.55);
+    }
+    .lock-slot.full{
+      border-style:solid;
+      border-color:rgba(255,226,143,.98);
+      background:linear-gradient(180deg,rgba(95,66,22,.46),rgba(52,35,12,.38));
+      box-shadow:inset 0 0 0 1px rgba(255,245,214,.24),0 0 16px rgba(255,206,102,.46);
+    }
+    .lock-slot.full::before{
+      opacity:0;
+    }
+    .keys-area{
+      position:absolute;
+      left:6%;
+      right:6%;
+      bottom:9%;
+      height:21%;
+      z-index:20;
+    }
+    .stage4-key{
+      position:absolute;
+      width:clamp(98px,9.2vw,126px);
+      height:clamp(98px,9.2vw,126px);
+      object-fit:contain;
+      cursor:grab;
+      filter:drop-shadow(0 9px 12px rgba(0,0,0,.45));
+      transition:transform .15s;
+    }
+    .stage4-key:hover{
+      transform:translateY(-4px) scale(1.05);
+    }
+    .stage4-key.used{
+      cursor:grab;
+    }
+    .stage4-key.shake{
+      animation:stoneShake .28s ease;
+    }
+    @keyframes stoneShake{
+      0%,100%{ transform:translateX(0); }
+      25%{ transform:translateX(-6px); }
+      50%{ transform:translateX(7px); }
+      75%{ transform:translateX(-4px); }
+    }
+    .key-badge{
+      position:absolute;
+      pointer-events:none;
+      z-index:22;
+    }
+    .key-val{
+      position:absolute;
+      right:-2px;
+      top:-6px;
+      min-width:34px;
+      height:34px;
+      padding:0 9px;
+      border-radius:999px;
+      background:radial-gradient(circle at 30% 30%,#fff6c7 0%,#ffd667 52%,#e5a227 100%);
+      border:2px solid rgba(84,56,8,.85);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-family:'Fredoka One',cursive;
+      font-size:18px;
+      color:#2c1f08;
+      text-shadow:0 1px 0 rgba(255,255,255,.45);
+      box-shadow:0 5px 10px rgba(0,0,0,.28);
+    }
+
+    .proto-hint{
+      position:fixed;
+      left:50%;
+      bottom:8px;
+      transform:translateX(-50%);
+      max-width:min(520px,92vw);
+      text-align:center;
+      font-size:11px;
+      font-weight:700;
+      color:rgba(255,232,178,.85);
+      z-index:100;
+      font-family:system-ui,sans-serif;
+      pointer-events:none;
+      text-shadow:0 1px 4px rgba(0,0,0,.75);
+    }
+    .proto-round{
+      position:absolute;
+      left:50%;
+      top:1%;
+      transform:translateX(-50%);
+      z-index:24;
+      font-family:'Fredoka One',cursive;
+      font-size:clamp(13px,1.8vw,17px);
+      color:#ffd57f;
+      text-shadow:0 2px 8px rgba(0,0,0,.65),0 0 18px rgba(244,208,63,.35);
+      pointer-events:none;
+      white-space:nowrap;
+    }
+  </style>
+</head>
+<body>
+  <!-- DOM mirrors index.html: #game > .izone > .stage4-wrap > chest-zone | locks-row | keys-area -->
+  <div id="protoGame">
+    <img class="proto-bg-layer" src="assets/backgrounds/3.png" alt="">
+    <div class="izone" id="izone">
+      <div class="stage4-wrap" id="stage4Wrap">
+        <div class="proto-round" id="protoRoundLbl">Round 1 / 5</div>
+        <div class="chest-zone">
+          <img class="chest-img" id="stage4Chest" src="assets/items/box_close.png" alt="locked box">
+        </div>
+        <div class="locks-row" id="stage4Locks">
+          <div class="lock-box" data-lock="1">
+            <div class="lock-title">Lock 1 = 15</div>
+            <div class="lock-slots">
+              <div class="lock-slot" data-lock="1" data-slot="0"></div>
+              <div class="lock-slot" data-lock="1" data-slot="1"></div>
+            </div>
+          </div>
+          <div class="lock-box" data-lock="2">
+            <div class="lock-title">Lock 2 = 15</div>
+            <div class="lock-slots">
+              <div class="lock-slot" data-lock="2" data-slot="0"></div>
+              <div class="lock-slot" data-lock="2" data-slot="1"></div>
+            </div>
+          </div>
+          <div class="lock-box" data-lock="3">
+            <div class="lock-title">Lock 3 = 15</div>
+            <div class="lock-slots">
+              <div class="lock-slot" data-lock="3" data-slot="0"></div>
+              <div class="lock-slot" data-lock="3" data-slot="1"></div>
+            </div>
+          </div>
+        </div>
+        <div class="keys-area" id="stage4Keys"></div>
+      </div>
+    </div>
+  </div>
+  <p class="proto-hint">
+    Five rounds — chest opens only after round 5. Round 1: 4+11 / 15 / 9+6 (=15). Drag keys off slots to fix mistakes. Rounds 2–5 use new numbers each time.
+  </p>
+
+  <script>
+  const KEY_SRC = 'assets/items/key.webp';
+
+  /** Index-style horizontal positions for six keys */
+  const KEY_GRID_X = ['6%', '22%', '38%', '54%', '70%', '86%'];
+
+  /**
+   * Round config: target sum = Lock 1 pair, Lock 2 single key, Lock 3 pair.
+   * keys: six values left→right on the grid (one decoy each round).
+   */
+  const ROUNDS = [
+    {
+      target: 15,
+      keys: [4, 11, 15, 6, 9, 0],
+      dual1: [4, 11],
+      dual3: [9, 6],
+    },
+    {
+      target: 12,
+      keys: [2, 10, 12, 7, 5, 1],
+      dual1: [2, 10],
+      dual3: [7, 5],
+    },
+    {
+      target: 18,
+      keys: [11, 7, 18, 12, 6, 4],
+      dual1: [11, 7],
+      dual3: [12, 6],
+    },
+    {
+      target: 20,
+      keys: [13, 7, 20, 14, 6, 8],
+      dual1: [13, 7],
+      dual3: [14, 6],
+    },
+    {
+      target: 24,
+      keys: [15, 9, 24, 16, 8, 5],
+      dual1: [15, 9],
+      dual3: [16, 8],
+    },
+  ];
+
+  const G = {
+    roundIndex: 0,
+    solved: { 1: false, 2: false, 3: false },
+    slots: { 1: [null, null], 2: [null, null], 3: [null, null] },
+  };
+
+  function roundCfg(){
+    return ROUNDS[G.roundIndex] || ROUNDS[0];
+  }
+
+  function sort2(a, b){
+    return a < b ? [a, b] : [b, a];
+  }
+
+  function pairMatches(gotA, gotB, wantPair){
+    const g = sort2(Number(gotA), Number(gotB));
+    const w = sort2(wantPair[0], wantPair[1]);
+    return g[0] === w[0] && g[1] === w[1];
+  }
+
+  function updateLockTitles(){
+    const T = roundCfg().target;
+    document.querySelectorAll('.lock-box').forEach(function (box){
+      const n = box.getAttribute('data-lock');
+      const el = box.querySelector('.lock-title');
+      if (el) el.textContent = 'Lock ' + n + ' = ' + T;
+    });
+    const lbl = document.getElementById('protoRoundLbl');
+    if (lbl) lbl.textContent = 'Round ' + (G.roundIndex + 1) + ' / ' + ROUNDS.length;
+  }
+
+  function openChest(){
+    const chest = document.getElementById('stage4Chest');
+    if (!chest) return;
+    chest.src = 'assets/items/box_open.png';
+    chest.classList.remove('open-pop');
+    void chest.offsetWidth;
+    chest.classList.add('open-pop');
+  }
+
+  function closeChest(){
+    const chest = document.getElementById('stage4Chest');
+    if (!chest) return;
+    chest.src = 'assets/items/box_close.png';
+    chest.classList.remove('open-pop');
+  }
+
+  function resetLocksVisual(){
+    G.solved = { 1: false, 2: false, 3: false };
+    G.slots = { 1: [null, null], 2: [null, null], 3: [null, null] };
+    document.querySelectorAll('.lock-box').forEach(function (el){ el.classList.remove('ok', 'click-pop'); });
+    document.querySelectorAll('.lock-slot').forEach(function (slot){
+      slot.classList.remove('full');
+      slot.dataset.keyId = '';
+      slot.dataset.value = '';
+      slot.innerHTML = '';
+    });
+  }
+
+  function startNextRound(){
+    G.roundIndex += 1;
+    if (G.roundIndex >= ROUNDS.length) return;
+    closeChest();
+    resetLocksVisual();
+    updateLockTitles();
+    buildKeysForRound();
+  }
+
+  function onAllLocksSolved(){
+    const finalRound = G.roundIndex >= ROUNDS.length - 1;
+    if (finalRound){
+      setTimeout(openChest, 400);
+      return;
+    }
+    setTimeout(startNextRound, 650);
+  }
+
+  function syncKeyBadge(keyEl){
+    const badgeId = keyEl && keyEl.dataset && keyEl.dataset.badgeId;
+    if (!badgeId) return;
+    const badge = document.getElementById(badgeId);
+    if (!badge) return;
+    badge.style.left = keyEl.style.left;
+    badge.style.top = keyEl.style.top;
+    badge.style.width = keyEl.style.width || 'clamp(98px,9.2vw,126px)';
+    badge.style.height = keyEl.style.height || 'clamp(98px,9.2vw,126px)';
+  }
+
+  function setKeyBack(keyEl){
+    keyEl.classList.remove('used');
+    keyEl.style.left = keyEl.dataset.ox;
+    keyEl.style.top = keyEl.dataset.oy;
+    keyEl.style.width = '';
+    keyEl.style.height = '';
+    keyEl.style.transform = '';
+    const badge = keyEl.dataset.badgeId ? document.getElementById(keyEl.dataset.badgeId) : null;
+    if (badge) badge.style.opacity = '1';
+    syncKeyBadge(keyEl);
+  }
+
+  function clearLockSlots(lockNum){
+    G.slots[lockNum] = [null, null];
+    document.querySelectorAll('.lock-slot[data-lock="' + lockNum + '"]').forEach(function (slot){
+      slot.classList.remove('full');
+      slot.dataset.keyId = '';
+      slot.dataset.value = '';
+      slot.innerHTML = '';
+    });
+  }
+
+  function failLock(lockNum, keys){
+    keys.forEach(function (k){
+      if (!k) return;
+      k.classList.add('shake');
+      setTimeout(function (){ k.classList.remove('shake'); }, 280);
+      setKeyBack(k);
+    });
+    clearLockSlots(lockNum);
+  }
+
+  function unlockLock(lockNum){
+    if (G.solved[lockNum]) return;
+    G.solved[lockNum] = true;
+    const boxEl = document.querySelector('.lock-box[data-lock="' + lockNum + '"]');
+    if (boxEl){
+      boxEl.classList.add('ok', 'click-pop');
+      setTimeout(function (){ boxEl.classList.remove('click-pop'); }, 220);
+    }
+
+    const all = [1, 2, 3].every(function (n){ return G.solved[n]; });
+    if (all) onAllLocksSolved();
+  }
+
+  function evaluateLock(lockNum){
+    if (G.solved[lockNum]) return;
+    const cfg = roundCfg();
+    const T = cfg.target;
+    const pair = G.slots[lockNum];
+    if (!pair) return;
+
+    if (lockNum === 2){
+      const occupied = pair.filter(Boolean);
+      if (occupied.length === 0) return;
+      if (occupied.length >= 2){
+        failLock(2, pair);
+        return;
+      }
+      const v = Number(occupied[0].dataset.value);
+      if (v === T) unlockLock(2);
+      else failLock(2, pair);
+      return;
+    }
+
+    if (!pair[0] || !pair[1]) return;
+    const a = Number(pair[0].dataset.value);
+    const b = Number(pair[1].dataset.value);
+    const sum = a + b;
+    if (sum !== T){
+      failLock(lockNum, pair);
+      return;
+    }
+    if (lockNum === 1){
+      if (pairMatches(a, b, cfg.dual1)) unlockLock(1);
+      else failLock(1, pair);
+      return;
+    }
+    if (lockNum === 3){
+      if (pairMatches(a, b, cfg.dual3)) unlockLock(3);
+      else failLock(3, pair);
+    }
+  }
+
+  function buildKeysForRound(){
+    const area = document.getElementById('stage4Keys');
+    if (!area) return;
+    area.innerHTML = '';
+    const cfg = roundCfg();
+    const ri = G.roundIndex;
+    cfg.keys.forEach(function (val, i){
+      const id = 'rk_' + ri + '_' + i + '_' + val;
+      const left = KEY_GRID_X[i];
+      const img = document.createElement('img');
+      img.className = 'stage4-key';
+      img.id = id;
+      img.src = KEY_SRC;
+      img.alt = 'Key ' + val;
+      img.dataset.value = String(val);
+      img.style.left = left;
+      img.style.top = '35%';
+      img.dataset.ox = left;
+      img.dataset.oy = '35%';
+
+      const wrap = document.createElement('div');
+      wrap.className = 'key-badge';
+      wrap.id = 'badge-' + id;
+      wrap.style.left = left;
+      wrap.style.top = '35%';
+      wrap.style.width = 'clamp(98px,9.2vw,126px)';
+      wrap.style.height = 'clamp(98px,9.2vw,126px)';
+      const badgeVal = document.createElement('div');
+      badgeVal.className = 'key-val';
+      badgeVal.textContent = String(val);
+      img.dataset.badgeId = wrap.id;
+      wrap.appendChild(badgeVal);
+      area.appendChild(img);
+      area.appendChild(wrap);
+      syncKeyBadge(img);
+    });
+  }
+
+  function initRound(){
+    G.roundIndex = 0;
+    closeChest();
+    resetLocksVisual();
+    updateLockTitles();
+    buildKeysForRound();
+  }
+
+  let keyDrag = null;
+  let keyClone = null;
+  let keySX = 0;
+  let keySY = 0;
+  let keyOX = 0;
+  let keyOY = 0;
+
+  /** Lift key out of a lock slot so player can fix a mistake or move it. */
+  function detachPlacedKey(keyEl){
+    let touchedLock = null;
+    document.querySelectorAll('.lock-slot').forEach(function (slot){
+      if (slot.dataset.keyId !== keyEl.id) return;
+      touchedLock = Number(slot.dataset.lock);
+      slot.classList.remove('full');
+      slot.dataset.keyId = '';
+      slot.dataset.value = '';
+      const si = Number(slot.dataset.slot);
+      if (G.slots[touchedLock]) G.slots[touchedLock][si] = null;
+    });
+    if (touchedLock != null){
+      G.solved[touchedLock] = false;
+      const boxEl = document.querySelector('.lock-box[data-lock="' + touchedLock + '"]');
+      if (boxEl) boxEl.classList.remove('ok', 'click-pop');
+    }
+    keyEl.classList.remove('used');
+    keyEl.style.width = '';
+    keyEl.style.height = '';
+    syncKeyBadge(keyEl);
+    const allSolved = [1, 2, 3].every(function (n){ return G.solved[n]; });
+    const chestStayOpen =
+      allSolved && G.roundIndex >= ROUNDS.length - 1;
+    if (!chestStayOpen) closeChest();
+  }
+
+  function stage4DragStart(e){
+    const t = e.touches ? e.touches[0] : e;
+    const els = document.elementsFromPoint(t.clientX, t.clientY);
+    let found = null;
+    for (let i = 0; i < els.length; i++){
+      if (els[i].classList && els[i].classList.contains('stage4-key')){
+        found = els[i];
+        break;
+      }
+    }
+    if (!found) return;
+    e.preventDefault();
+    if (found.classList.contains('used')){
+      detachPlacedKey(found);
+    }
+    keyDrag = found;
+    keySX = t.clientX;
+    keySY = t.clientY;
+    const r = found.getBoundingClientRect();
+    keyOX = r.left;
+    keyOY = r.top;
+    keyClone = found.cloneNode(true);
+    keyClone.style.cssText =
+      'position:fixed;left:' + keyOX + 'px;top:' + keyOY + 'px;width:' + r.width + 'px;height:' + r.height + 'px;pointer-events:none;z-index:9999;transform:scale(1.1);filter:drop-shadow(0 8px 16px rgba(0,0,0,.7));transition:none;';
+    document.body.appendChild(keyClone);
+    found.style.opacity = '0.35';
+    const badge = found.dataset.badgeId ? document.getElementById(found.dataset.badgeId) : null;
+    if (badge) badge.style.opacity = '0';
+  }
+
+  function onDragMove(e){
+    if (!keyClone) return;
+    e.preventDefault();
+    const t = e.touches ? e.touches[0] : e;
+    keyClone.style.left = keyOX + t.clientX - keySX + 'px';
+    keyClone.style.top = keyOY + t.clientY - keySY + 'px';
+  }
+
+  function onDragEnd(e){
+    if (!keyDrag) return;
+    const t = e.changedTouches ? e.changedTouches[0] : e;
+    if (keyClone){
+      keyClone.remove();
+      keyClone = null;
+    }
+    keyDrag.style.opacity = '1';
+    let matchedSlot = null;
+    document.querySelectorAll('.lock-slot').forEach(function (slot){
+      if (slot.classList.contains('full')) return;
+      const r = slot.getBoundingClientRect();
+      if (t.clientX >= r.left && t.clientX <= r.right && t.clientY >= r.top && t.clientY <= r.bottom){
+        matchedSlot = slot;
+      }
+    });
+    if (!matchedSlot){
+      setKeyBack(keyDrag);
+      keyDrag = null;
+      return;
+    }
+    const lockNum = Number(matchedSlot.dataset.lock);
+    if (G.solved[lockNum]){
+      setKeyBack(keyDrag);
+      keyDrag = null;
+      return;
+    }
+    const slotIndex = Number(matchedSlot.dataset.slot);
+    G.slots[lockNum][slotIndex] = keyDrag;
+    const slotRect = matchedSlot.getBoundingClientRect();
+    const areaRect = document.getElementById('stage4Keys').getBoundingClientRect();
+    const w = Math.min(slotRect.width * 0.9, 96);
+    const h = Math.min(slotRect.height * 0.9, 96);
+    keyDrag.style.width = w + 'px';
+    keyDrag.style.height = h + 'px';
+    keyDrag.style.left = slotRect.left - areaRect.left + (slotRect.width - w) / 2 + 'px';
+    keyDrag.style.top = slotRect.top - areaRect.top + (slotRect.height - h) / 2 + 'px';
+    keyDrag.classList.add('used');
+    const badge = keyDrag.dataset.badgeId ? document.getElementById(keyDrag.dataset.badgeId) : null;
+    if (badge) badge.style.opacity = '1';
+    syncKeyBadge(keyDrag);
+    matchedSlot.classList.add('full');
+    matchedSlot.dataset.keyId = keyDrag.id;
+    matchedSlot.dataset.value = keyDrag.dataset.value;
+
+    evaluateLock(lockNum);
+
+    keyDrag = null;
+  }
+
+  document.addEventListener('mousedown', stage4DragStart);
+  document.addEventListener('touchstart', stage4DragStart, { passive: false });
+  document.addEventListener('mousemove', onDragMove);
+  document.addEventListener('touchmove', onDragMove, { passive: false });
+  document.addEventListener('mouseup', onDragEnd);
+  document.addEventListener('touchend', onDragEnd);
+  document.addEventListener('touchcancel', onDragEnd);
+
+  initRound();
+  </script>
+</body>
+</html>

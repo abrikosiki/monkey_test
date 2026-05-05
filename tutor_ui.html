@@ -87,6 +87,12 @@
     .download-lesson{width:100%;padding:16px;font-size:17px;margin-top:8px;text-decoration:none}
     .expand-edit{margin-top:18px;text-align:center;font-size:15px}
     .expand-edit button{background:none;border:none;color:var(--blue);cursor:pointer;font-weight:700;font-size:inherit;text-decoration:underline;padding:0}
+    .btn-manual-mechanics{width:100%;margin-top:12px;padding:14px 16px;font-size:15px}
+    .edit-toolbar-inner{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;width:100%}
+    .manual-stage-jump{display:none;flex-wrap:wrap;gap:6px;align-items:center}
+    .manual-stage-jump.visible{display:flex}
+    .manual-stage-jump .jump-label{font-size:12px;color:var(--muted);margin-right:2px}
+    #editPanel .stage-card{scroll-margin-top:96px}
     .back-to-prompt{margin-top:16px}
     .back-to-prompt button{width:100%;padding:12px;font-size:15px}
     .edit-panel{margin-top:24px;padding:0 18px 56px;max-width:1380px;margin-left:auto;margin-right:auto}
@@ -129,6 +135,12 @@
         <p class="hint" style="margin-top:6px;margin-bottom:14px">Sets the lesson art sequence and the island story Doctor Krit arc.</p>
         <label class="muted" style="font-size:12px;display:block;margin-bottom:8px">Lesson focus</label>
         <textarea id="tutorPromptInput" class="textarea-lesson" placeholder="What are we working on today?&#10;e.g. division up to 30, confuses with subtraction,&#10;add word problems"></textarea>
+        <button type="button" class="ghost btn-manual-mechanics" id="openManualMechanicsBtn" disabled>
+          ✏️ Ручной режим: выбрать механики и заполнить все 6 этапов
+        </button>
+        <p class="hint" style="margin-top:8px;margin-bottom:0;line-height:1.4">
+          Открывает полную форму редакторa (остров и ученик уже должны быть выбраны). Промпт для ИИ не обязателен — можно сразу настроить этапы и затем нажать «Regenerate story + Build HTML» внизу.
+        </p>
         <button class="primary btn-generate" id="quickGenerateBtn" type="button">✨ Generate Lesson</button>
         <div class="back-to-prompt">
           <button type="button" class="ghost" id="backToStudentBtn">← Back — student lookup</button>
@@ -155,7 +167,13 @@
 
     <div class="edit-panel hidden" id="editPanel">
       <div class="card edit-toolbar">
-        <button class="primary" id="regenerateStoryBtn" type="button">Regenerate story + Build HTML</button>
+        <div class="edit-toolbar-inner">
+          <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+            <button type="button" class="ghost hidden" id="backFromManualEditBtn">← Назад к промпту</button>
+            <div class="manual-stage-jump" id="manualStageJump" aria-label="Jump to stage"></div>
+          </div>
+          <button class="primary" id="regenerateStoryBtn" type="button">Regenerate story + Build HTML</button>
+        </div>
       </div>
       <div id="stagesRoot"></div>
       <div class="card" style="margin-top:18px">
@@ -194,6 +212,7 @@
       workflowStep: 1,
       editExpanded: false,
       generationRunning: false,
+      manualMechanicsMode: false,
     };
 
     const PROGRESS_STEPS = [
@@ -213,6 +232,7 @@
       corridor_choice: "Task text + left example + right example + correct side.",
       match_pairs: "Set A/B/C/D and choose the two correct pairs.",
       tap_count: "Use instruction + answer count + item hints.",
+      key_lock: "Title + six key numbers + three card sums and two keys per card (pairs must match sums).",
       balance_scale: "Use left/right expressions + answer + option tiles.",
       build_number: "Set base number and required parts count; no single correct answer.",
       timer_challenge: "3 example lines (A/B/C), answer per line, and seconds.",
@@ -230,6 +250,61 @@
       corridor_choice: () => ({ titleText: "Choose side", prompt: "Which side is correct?", answer: "", screenItemCount: "", targetCount: "", zoneCounts: [], options: [], leftExpression: "8 ÷ 2", rightExpression: "10 ÷ 2", correctSide: "right", note: "", numbersText: "", group1Name: "", group1Values: "", group2Name: "", group2Values: "", choiceA: "", choiceB: "", choiceC: "", correctOption: "A", pairA: "", pairB: "", pairC: "", pairD: "", correctPair1: "A", correctPair2: "B", baseNumber: "", partsCount: "", readyFlag: false, timerExampleA: "", timerExampleB: "", timerExampleC: "", timerAnswerA: "", timerAnswerB: "", timerAnswerC: "", timerSeconds: 30, symbolA: "", symbolB: "", symbolC: "", symbolExpression: "", unknownA: "", unknownB: "", unknownEquation: "" }),
       match_pairs: () => ({ titleText: "Find two correct pairs", prompt: "", answer: "", screenItemCount: "", targetCount: "", zoneCounts: [], options: [], leftExpression: "", rightExpression: "", correctSide: "", note: "", numbersText: "", group1Name: "", group1Values: "", group2Name: "", group2Values: "", choiceA: "", choiceB: "", choiceC: "", correctOption: "A", pairA: "2+2 = 4", pairB: "3+3 = 5", pairC: "5+1 = 6", pairD: "9-2 = 8", correctPair1: "A", correctPair2: "C", baseNumber: "", partsCount: "", readyFlag: false, timerExampleA: "", timerExampleB: "", timerExampleC: "", timerAnswerA: "", timerAnswerB: "", timerAnswerC: "", timerSeconds: 30, symbolA: "", symbolB: "", symbolC: "", symbolExpression: "", unknownA: "", unknownB: "", unknownEquation: "" }),
       tap_count: () => ({ titleText: "Tap the item", prompt: "Tap this item 4 times", answer: "4", screenItemCount: "", targetCount: "", zoneCounts: [], options: [], leftExpression: "", rightExpression: "", correctSide: "", note: "", numbersText: "", group1Name: "", group1Values: "", group2Name: "", group2Values: "", choiceA: "", choiceB: "", choiceC: "", correctOption: "A", pairA: "", pairB: "", pairC: "", pairD: "", correctPair1: "A", correctPair2: "B", baseNumber: "", partsCount: "", readyFlag: false, timerExampleA: "", timerExampleB: "", timerExampleC: "", timerAnswerA: "", timerAnswerB: "", timerAnswerC: "", timerSeconds: 30, symbolA: "", symbolB: "", symbolC: "", symbolExpression: "", unknownA: "", unknownB: "", unknownEquation: "" }),
+      key_lock: () => ({
+        titleText: "Match keys to the locks",
+        prompt: "",
+        answer: "",
+        screenItemCount: "",
+        targetCount: "",
+        zoneCounts: [],
+        options: [],
+        leftExpression: "",
+        rightExpression: "",
+        correctSide: "",
+        note: "",
+        numbersText: "",
+        group1Name: "",
+        group1Values: "",
+        group2Name: "",
+        group2Values: "",
+        choiceA: "",
+        choiceB: "",
+        choiceC: "",
+        correctOption: "A",
+        pairA: "",
+        pairB: "",
+        pairC: "",
+        pairD: "",
+        correctPair1: "A",
+        correctPair2: "B",
+        baseNumber: "",
+        partsCount: "",
+        readyFlag: false,
+        timerExampleA: "",
+        timerExampleB: "",
+        timerExampleC: "",
+        timerAnswerA: "",
+        timerAnswerB: "",
+        timerAnswerC: "",
+        timerSeconds: 30,
+        symbolA: "",
+        symbolB: "",
+        symbolC: "",
+        symbolExpression: "",
+        unknownA: "",
+        unknownB: "",
+        unknownEquation: "",
+        keysSixText: "4, 11, 15, 6, 9, 0",
+        lock1Sum: 15,
+        lock1KeyA: 4,
+        lock1KeyB: 11,
+        lock2Sum: 18,
+        lock2KeyA: 12,
+        lock2KeyB: 6,
+        lock3Sum: 24,
+        lock3KeyA: 15,
+        lock3KeyB: 9,
+      }),
       balance_scale: () => ({ titleText: "Balance the scale", prompt: "", answer: "4", screenItemCount: "", targetCount: "", zoneCounts: [], options: [], leftExpression: "3 + ?", rightExpression: "7", correctSide: "", note: "", numbersText: "", group1Name: "", group1Values: "", group2Name: "", group2Values: "", choiceA: "", choiceB: "", choiceC: "", correctOption: "A", pairA: "", pairB: "", pairC: "", pairD: "", correctPair1: "A", correctPair2: "B", baseNumber: "", partsCount: "", readyFlag: false, timerExampleA: "", timerExampleB: "", timerExampleC: "", timerAnswerA: "", timerAnswerB: "", timerAnswerC: "", timerSeconds: 30, symbolA: "", symbolB: "", symbolC: "", symbolExpression: "", unknownA: "", unknownB: "", unknownEquation: "" }),
       build_number: () => ({ titleText: "Build the number", prompt: "", answer: "", screenItemCount: "", targetCount: "", zoneCounts: [], options: [], leftExpression: "", rightExpression: "", correctSide: "", note: "", numbersText: "", group1Name: "", group1Values: "", group2Name: "", group2Values: "", choiceA: "", choiceB: "", choiceC: "", correctOption: "A", pairA: "", pairB: "", pairC: "", pairD: "", correctPair1: "A", correctPair2: "B", baseNumber: 24, partsCount: 3, readyFlag: false, timerExampleA: "", timerExampleB: "", timerExampleC: "", timerAnswerA: "", timerAnswerB: "", timerAnswerC: "", timerSeconds: 30, symbolA: "", symbolB: "", symbolC: "", symbolExpression: "", unknownA: "", unknownB: "", unknownEquation: "" }),
       timer_challenge: () => ({ titleText: "Solve fast", prompt: "", answer: "", screenItemCount: "", targetCount: "", zoneCounts: [], options: [], leftExpression: "", rightExpression: "", correctSide: "", note: "", numbersText: "", group1Name: "", group1Values: "", group2Name: "", group2Values: "", choiceA: "", choiceB: "", choiceC: "", correctOption: "A", pairA: "", pairB: "", pairC: "", pairD: "", correctPair1: "A", correctPair2: "B", baseNumber: "", partsCount: "", readyFlag: false, timerExampleA: "8 ÷ 2", timerExampleB: "7 + 3", timerExampleC: "9 - 4", timerAnswerA: "4", timerAnswerB: "10", timerAnswerC: "5", timerSeconds: 30, symbolA: "", symbolB: "", symbolC: "", symbolExpression: "", unknownA: "", unknownB: "", unknownEquation: "" }),
@@ -407,16 +482,19 @@
     }
 
     async function saveDraft(silent = false) {
-      if (!state.draft) return;
+      if (!state.draft) return false;
       syncContextInputsToDraft();
       try {
         const data = await post("/api/drafts/save", { draft: state.draft });
+        if (data.draft && typeof data.draft === "object") state.draft = data.draft;
         state.autosavePending = false;
         setAutosaveStatus(`Saved ${new Date(data.savedAt).toLocaleTimeString()}`);
         if (!silent) log("Draft saved.");
+        return true;
       } catch (err) {
         setAutosaveStatus("Save failed");
         log("Draft save failed: " + err.message);
+        return false;
       }
     }
 
@@ -489,13 +567,26 @@
               ? "Describe what you're working on"
               : "";
       }
+      const canManual =
+        state.workflowStep === 2 && isChildConfirmed() && !!islandPicked;
+      if ($("openManualMechanicsBtn")) {
+        $("openManualMechanicsBtn").disabled = !canManual;
+        $("openManualMechanicsBtn").title = !isChildConfirmed()
+          ? "Подтвердите ученика"
+          : !islandPicked
+            ? "Выберите остров"
+            : "Открыть форму всех 6 этапов и механик";
+      }
       if (state.workflowStep === 1) renderChildPreview();
     }
 
     function backToLessonPrompt() {
       state.workflowStep = 2;
       state.editExpanded = false;
+      state.manualMechanicsMode = false;
       $("editPanel").classList.add("hidden");
+      $("quickFlow").classList.remove("hidden");
+      refreshManualMechanicsJumpNav();
       $("toggleEditBtn").textContent = "Not happy with something? Edit the lesson →";
       clearSessionLessonReady();
       updateWorkflowUI();
@@ -508,7 +599,10 @@
       state.draft.confirmedChildCode = "";
       state.workflowStep = 1;
       state.editExpanded = false;
+      state.manualMechanicsMode = false;
       $("editPanel").classList.add("hidden");
+      $("quickFlow").classList.remove("hidden");
+      refreshManualMechanicsJumpNav();
       $("toggleEditBtn").textContent = "Not happy with something? Edit the lesson →";
       updateWorkflowUI();
       renderChildPreview();
@@ -531,7 +625,10 @@
       state.generatedLessonUrl = "/lesson_game.html";
       clearSessionLessonReady();
       state.editExpanded = false;
+      state.manualMechanicsMode = false;
       $("editPanel").classList.add("hidden");
+      $("quickFlow").classList.remove("hidden");
+      refreshManualMechanicsJumpNav();
       $("toggleEditBtn").textContent = "Not happy with something? Edit the lesson →";
       $("resultBlock").classList.add("hidden");
       $("progressList").classList.remove("hidden");
@@ -542,6 +639,79 @@
       updateChildConfirmationState();
       queueAutosave();
       setAutosaveStatus("Choose another student");
+    }
+
+    function refreshManualMechanicsJumpNav() {
+      const host = $("manualStageJump");
+      const backBtn = $("backFromManualEditBtn");
+      if (!host || !backBtn) return;
+      if (state.manualMechanicsMode) {
+        backBtn.classList.remove("hidden");
+        host.classList.add("visible");
+        host.innerHTML = "";
+        const lab = document.createElement("span");
+        lab.className = "jump-label";
+        lab.textContent = "К этапу:";
+        host.appendChild(lab);
+        for (let n = 1; n <= 6; n++) {
+          const b = document.createElement("button");
+          b.type = "button";
+          b.className = "ghost small";
+          b.textContent = String(n);
+          b.title = "Прокрутить к этапу " + n;
+          b.addEventListener("click", () => {
+            const el = document.getElementById("tutorStage" + n);
+            if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+          host.appendChild(b);
+        }
+      } else {
+        backBtn.classList.add("hidden");
+        host.classList.remove("visible");
+        host.innerHTML = "";
+      }
+    }
+
+    async function openManualMechanicsEditor() {
+      if (!state.draft) return;
+      syncContextInputsToDraft();
+      if (!isChildConfirmed()) {
+        setAutosaveStatus("Сначала подтвердите ученика");
+        return;
+      }
+      const islandPicked = $("islandSelect")?.value?.trim();
+      if (!islandPicked) {
+        setAutosaveStatus("Выберите остров");
+        return;
+      }
+      if (!Array.isArray(state.draft.stages) || state.draft.stages.length !== 6) {
+        setAutosaveStatus("Черновик должен содержать 6 этапов");
+        return;
+      }
+      const saved = await saveDraft(true);
+      if (!saved) return;
+      state.manualMechanicsMode = true;
+      state.editExpanded = true;
+      $("quickFlow").classList.add("hidden");
+      $("editPanel").classList.remove("hidden");
+      renderStages();
+      refreshManualMechanicsJumpNav();
+      setAutosaveStatus(
+        "Редактор: выберите механику и поля для каждого этапа → затем «Regenerate story + Build HTML»",
+      );
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function backFromManualMechanicsEditor() {
+      state.manualMechanicsMode = false;
+      state.editExpanded = false;
+      $("editPanel").classList.add("hidden");
+      $("quickFlow").classList.remove("hidden");
+      refreshManualMechanicsJumpNav();
+      updateWorkflowUI();
+      updateChildConfirmationState();
+      setAutosaveStatus("Ready");
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
     function makeInput(label, value, onInput, opts = {}) {
@@ -593,6 +763,8 @@
       if (mechanic === "drag_sort") return `Title: ${example.titleText || "?"} | numbers in order: ${example.prompt || "?"} | rule: ${example.answer || "?"}`;
       if (mechanic === "match_pairs") return `Title: ${example.titleText || "?"} | A:${example.pairA || "?"} B:${example.pairB || "?"} C:${example.pairC || "?"} D:${example.pairD || "?"} | correct: ${example.correctPair1 || "?"}, ${example.correctPair2 || "?"}`;
       if (mechanic === "tap_count") return `Title: ${example.titleText || "?"} | task: ${example.prompt || "?"} | taps: ${example.answer || "?"}`;
+      if (mechanic === "key_lock")
+        return `Title: ${example.titleText || "?"} | keys: ${example.keysSixText || "?"} | L1=${example.lock1Sum || "?"} [${example.lock1KeyA},${example.lock1KeyB}] L2=${example.lock2Sum || "?"} [${example.lock2KeyA},${example.lock2KeyB}] L3=${example.lock3Sum || "?"} [${example.lock3KeyA},${example.lock3KeyB}]`;
       if (mechanic === "build_number") return `Title: ${example.titleText || "?"} | base number: ${example.baseNumber || "?"} | parts: ${example.partsCount || "?"} | ready: ${example.readyFlag ? "yes" : "no"}`;
       if (mechanic === "timer_challenge") return `Title: ${example.titleText || "?"} | A:${example.timerExampleA || "?"}->${example.timerAnswerA || "?"} | B:${example.timerExampleB || "?"}->${example.timerAnswerB || "?"} | C:${example.timerExampleC || "?"}->${example.timerAnswerC || "?"} | ${example.timerSeconds || "?"}s`;
       if (mechanic === "symbol_calc") return `Title: ${example.titleText || "?"} | A=${example.symbolA || "?"} B=${example.symbolB || "?"} C=${example.symbolC || "?"} | ${example.symbolExpression || "?"} = ${example.answer || "?"}`;
@@ -646,6 +818,16 @@
         unknownA: "",
         unknownB: "",
         unknownEquation: "",
+        keysSixText: "",
+        lock1Sum: "",
+        lock1KeyA: "",
+        lock1KeyB: "",
+        lock2Sum: "",
+        lock2KeyA: "",
+        lock2KeyB: "",
+        lock3Sum: "",
+        lock3KeyA: "",
+        lock3KeyB: "",
         note: "",
       };
       const factory = MECHANIC_TEMPLATES[mechanic];
@@ -743,6 +925,21 @@
           makeInput("Task text inside the interactive zone", example.prompt, (v) => example.prompt = v, { type: "textarea", full: true }),
           makeInput("How many taps", example.answer, (v) => example.answer = v),
         );
+      } else if (mechanic === "key_lock") {
+        add(
+          ...base,
+          makeInput("Optional round hint", example.prompt, (v) => example.prompt = v, { type: "textarea", full: true }),
+          makeInput("Six key numbers (comma, left → right)", example.keysSixText, (v) => example.keysSixText = v, { type: "textarea", full: true }),
+          makeInput("Card 1 — sum on card", example.lock1Sum, (v) => example.lock1Sum = v),
+          makeInput("Card 1 — key A", example.lock1KeyA, (v) => example.lock1KeyA = v),
+          makeInput("Card 1 — key B", example.lock1KeyB, (v) => example.lock1KeyB = v),
+          makeInput("Card 2 — sum on card", example.lock2Sum, (v) => example.lock2Sum = v),
+          makeInput("Card 2 — key A", example.lock2KeyA, (v) => example.lock2KeyA = v),
+          makeInput("Card 2 — key B", example.lock2KeyB, (v) => example.lock2KeyB = v),
+          makeInput("Card 3 — sum on card", example.lock3Sum, (v) => example.lock3Sum = v),
+          makeInput("Card 3 — key A", example.lock3KeyA, (v) => example.lock3KeyA = v),
+          makeInput("Card 3 — key B", example.lock3KeyB, (v) => example.lock3KeyB = v),
+        );
       } else if (mechanic === "build_number") {
         const doneWrap = document.createElement("div");
         doneWrap.className = "field full";
@@ -833,6 +1030,7 @@
       (state.draft?.stages || []).forEach((stage) => {
         const card = document.createElement("div");
         card.className = "stage-card";
+        card.id = "tutorStage" + stage.stageNumber;
         const head = document.createElement("div");
         head.className = "stage-head";
         const titleWrap = document.createElement("div");
@@ -914,6 +1112,7 @@
         card.appendChild(addBtn);
         root.appendChild(card);
       });
+      refreshManualMechanicsJumpNav();
     }
 
     function renderLessonJson() {
@@ -996,7 +1195,10 @@
       state.generationRunning = true;
       state.workflowStep = 3;
       state.editExpanded = false;
+      state.manualMechanicsMode = false;
+      refreshManualMechanicsJumpNav();
       $("editPanel").classList.add("hidden");
+      $("quickFlow").classList.remove("hidden");
       $("toggleEditBtn").textContent = "Not happy with something? Edit the lesson →";
       updateWorkflowUI();
       resetGenCardForRun();
@@ -1080,11 +1282,14 @@
         const build = await post("/api/build-lesson");
         state.generatedLessonUrl = build.generatedFileUrl || "/lesson_game.html";
         $("previewBtn").href = state.generatedLessonUrl;
+        state.manualMechanicsMode = false;
         state.workflowStep = 3;
         updateWorkflowUI();
         showResultBlock();
         markSessionLessonReady();
         $("quickFlow").classList.remove("hidden");
+        $("editPanel").classList.add("hidden");
+        refreshManualMechanicsJumpNav();
         setAutosaveStatus("Lesson ready");
       } catch (err) {
         setAutosaveStatus("Generation failed: " + (err?.message || "Unknown error"));
@@ -1166,7 +1371,15 @@
           ? "Hide lesson editor"
           : "Not happy with something? Edit the lesson →";
         if (state.editExpanded) renderStages();
+        else refreshManualMechanicsJumpNav();
       };
+
+      $("openManualMechanicsBtn").onclick = () => {
+        openManualMechanicsEditor().catch((err) => {
+          setAutosaveStatus(err?.message || "Не удалось открыть редактор");
+        });
+      };
+      $("backFromManualEditBtn").onclick = backFromManualMechanicsEditor;
 
       $("backToPromptBtn").onclick = backToLessonPrompt;
       $("backToStudentBtn").onclick = backToStudentLookup;

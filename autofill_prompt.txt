@@ -62,6 +62,7 @@ Available mechanics:
   corridor_choice — choose left or right path
   match_pairs     — find two correct pairs from four options
   tap_count       — tap a target exactly N times
+  key_lock        — three locks with sums, six keys, two keys per lock
   balance_scale   — make both sides of equation equal
   build_number    — compose a number from parts
   timer_challenge — solve 3 examples within time limit
@@ -88,7 +89,7 @@ DIFFICULTY RULES (parsed from tutor_prompt):
                numbers: age 5–6 up to 10, age 7–9 up to 50
 
   level 7–10 → add: symbol_calc, find_unknown,
-                timer_challenge, match_pairs
+                timer_challenge, match_pairs, key_lock
                 numbers: up to 100, complex expressions allowed
 
 ════════════════════════════════════════
@@ -157,6 +158,14 @@ Game: child taps one on-screen item exactly N times.
 Per round REQUIRED fields:
   • prompt (string) — instruction, e.g. "Tap the banana 6 times"
   • answer (string or number) — required tap count as digits, e.g. "6"
+
+--- key_lock ---
+Game: three lock cards each show a target sum and have two slots; six draggable keys with numbers; child places the correct pair on each lock.
+Per round REQUIRED fields:
+  • keysSixText (string) — six integers separated by commas, left-to-right order on the key strip, e.g. "4, 11, 15, 6, 9, 0"
+  • lock1Sum, lock2Sum, lock3Sum (numbers) — shown on cards; each must equal the sum of that card’s correct pair
+  • lock1KeyA, lock1KeyB, lock2KeyA, lock2KeyB, lock3KeyA, lock3KeyB (numbers) — the two keys that belong on that card (order does not matter for the child; must use values from keysSixText)
+Optional: prompt — short hint line for that round
 
 --- balance_scale ---
 Game: left bowl has an expression with ?; child types what replaces ? to balance the right side.

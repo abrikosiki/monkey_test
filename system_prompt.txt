@@ -117,7 +117,7 @@ MECHANICS — Claude CHOOSES per stage (15 types)
 - pattern_input   — continue number sequence (use type "input" with sequence prompts OR dedicated fields)
 - fill_blank      — single input field, simple question
 - multi_choice    — three options (use type "choice" with exactly 3 options)
-- key_lock        — match keys to locks (pairs)
+- key_lock        — three sum cards, six numbered keys, two keys per lock (pairs + sums)
 - corridor_choice — left or right path
 - match_pairs     — connect pairs (describe pairs in JSON)
 - number_line     — show/mark number on number line
@@ -258,6 +258,15 @@ TAP_COUNT (strict template):
 - When required taps are reached, immediately open next round.
 - No +2 coin popup between rounds.
 - Round 5 completion proceeds to AMAZING/stage-complete flow.
+
+KEY_LOCK (strict template):
+- Type MUST be "key_lock".
+- Always **three** lock cards; each card shows its own sum (`lock_sum_1`, `lock_sum_2`, `lock_sum_3`) and has **two** slots (player places two keys).
+- Always **six** draggable keys with numeric badges; order left→right from `key_lock_keys` array (exactly six integers per round).
+- Each round MUST include correct pairs as arrays: `pair_1`, `pair_2`, `pair_3` — each `[a,b]` must match two values from `key_lock_keys`, and `a + b` MUST equal the corresponding `lock_sum_N`.
+- Wrong pair OR wrong sum: shake keys and clear that lock's slots (engine behavior).
+- Rounds 1–(n−1): when all three locks are solved, advance to next round immediately (no chest, no +2 popup).
+- Final round only: open chest (`assets/items/box_open.png`), show NEXT button; NEXT completes the stage per normal AMAZING flow.
 
 BALANCE_SCALE (strict template):
 - Use scale art in interactive zone: start state is "assets/scale_down.png".

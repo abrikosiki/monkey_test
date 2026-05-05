@@ -812,6 +812,169 @@ function buildHtml(
     .balance-next{
       margin-top:6px;
     }
+    .kl-root{
+      position:absolute;
+      inset:0;
+      z-index:14;
+      padding:12px 10px 10px;
+    }
+    .kl-round-lbl{
+      position:absolute;
+      left:50%;
+      top:1%;
+      transform:translateX(-50%);
+      z-index:24;
+      font-family:'Fredoka One',cursive;
+      font-size:clamp(11px,1.55vw,15px);
+      color:#ffd57f;
+      text-shadow:0 2px 8px rgba(0,0,0,.65),0 0 14px rgba(244,208,63,.35);
+      pointer-events:none;
+      white-space:nowrap;
+    }
+    .kl-chest-zone{
+      position:absolute;
+      left:50%;
+      top:2%;
+      transform:translateX(-50%);
+      width:min(54vw,380px);
+      height:min(36vh,260px);
+    }
+    .kl-chest-img{
+      position:absolute;
+      left:50%;
+      top:50%;
+      transform:translate(-50%,-50%);
+      width:min(52vw,360px);
+      max-height:100%;
+      object-fit:contain;
+      filter:drop-shadow(0 12px 18px rgba(0,0,0,.48));
+      transition:transform .42s ease;
+    }
+    .kl-chest-img.open-pop{
+      animation:klChestPop .62s cubic-bezier(.22,1,.36,1);
+    }
+    @keyframes klChestPop{
+      0%{ transform:translate(-50%,-50%) scale(1); }
+      55%{ transform:translate(-50%,-50%) scale(1.11); }
+      100%{ transform:translate(-50%,-50%) scale(1); }
+    }
+    .kl-locks-row{
+      position:absolute;
+      left:50%;
+      top:46%;
+      transform:translateX(-50%);
+      display:flex;
+      gap:clamp(6px,1.2vw,12px);
+      z-index:18;
+    }
+    .kl-lock-box{
+      width:clamp(104px,11vw,148px);
+      padding:7px 6px 5px;
+      border-radius:10px;
+      background:linear-gradient(170deg,rgba(57,44,26,.84),rgba(28,20,10,.82));
+      border:2px solid rgba(244,201,112,.48);
+      box-shadow:inset 0 1px 0 rgba(255,241,191,.38),0 6px 12px rgba(0,0,0,.42);
+    }
+    .kl-lock-box.ok{
+      border-color:#75ff8d;
+      box-shadow:inset 0 1px 0 rgba(223,255,226,.4),0 0 14px rgba(117,255,141,.65),0 0 26px rgba(117,255,141,.4);
+    }
+    .kl-lock-box.click-pop{
+      animation:klLockPop .22s ease;
+    }
+    @keyframes klLockPop{
+      0%{ transform:scale(1); }
+      50%{ transform:scale(1.06); }
+      100%{ transform:scale(1); }
+    }
+    .kl-lock-title{
+      font-family:'Fredoka One',cursive;
+      font-size:10px;
+      color:#ffd57f;
+      text-align:center;
+      margin-bottom:5px;
+      text-shadow:0 1px 0 rgba(43,27,6,.75);
+    }
+    .kl-lock-slots{
+      display:flex;
+      gap:5px;
+      justify-content:center;
+    }
+    .kl-lock-slot{
+      position:relative;
+      width:clamp(44px,4.8vw,54px);
+      height:clamp(56px,6vw,68px);
+      border-radius:9px;
+      border:2px dashed rgba(255,217,131,.56);
+      background:linear-gradient(180deg,rgba(12,8,3,.45),rgba(34,23,10,.38));
+      box-shadow:inset 0 0 0 1px rgba(255,243,202,.13),inset 0 5px 8px rgba(0,0,0,.2);
+    }
+    .kl-lock-slot::before{
+      content:'';
+      position:absolute;
+      left:50%;
+      top:50%;
+      width:17px;
+      height:17px;
+      transform:translate(-50%,-50%);
+      border-radius:50%;
+      border:2px solid rgba(255,220,138,.42);
+      box-shadow:inset 0 0 0 1px rgba(58,37,11,.55);
+    }
+    .kl-lock-slot.full{
+      border-style:solid;
+      border-color:rgba(255,226,143,.98);
+      background:linear-gradient(180deg,rgba(95,66,22,.46),rgba(52,35,12,.38));
+      box-shadow:inset 0 0 0 1px rgba(255,245,214,.24),0 0 12px rgba(255,206,102,.42);
+    }
+    .kl-lock-slot.full::before{ opacity:0; }
+    .kl-keys-area{
+      position:absolute;
+      left:4%;
+      right:4%;
+      bottom:7%;
+      height:22%;
+      z-index:20;
+    }
+    .kl-key{
+      position:absolute;
+      width:clamp(72px,7vw,96px);
+      height:clamp(72px,7vw,96px);
+      object-fit:contain;
+      cursor:grab;
+      filter:drop-shadow(0 7px 10px rgba(0,0,0,.42));
+      transition:transform .15s;
+      touch-action:none;
+    }
+    .kl-key:hover{ transform:translateY(-3px) scale(1.04); }
+    .kl-key.used{ cursor:grab; }
+    .kl-key.shake{ animation:klStoneShake .28s ease; }
+    @keyframes klStoneShake{
+      0%,100%{ transform:translate(0,0); }
+      25%{ transform:translate(-3px,2px); }
+      50%{ transform:translate(3px,-2px); }
+      75%{ transform:translate(-2px,-2px); }
+    }
+    .kl-key-badge{
+      position:absolute;
+      pointer-events:none;
+      z-index:21;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .kl-key-val{
+      position:absolute;
+      left:50%;
+      top:18%;
+      transform:translate(-50%,-50%);
+      font-family:'Fredoka One',cursive;
+      font-size:clamp(15px,1.65vw,19px);
+      color:#fff7dc;
+      pointer-events:none;
+      text-shadow:0 1px 4px rgba(0,0,0,.75);
+    }
+    .kl-next{margin-top:8px}
     .build-wrap{
       position:absolute;
       left:50%;
@@ -1854,6 +2017,7 @@ function buildHtml(
     sortBadges: {},
     earnedArtifacts: buildInitialOwnedArtifacts(),
     completionArtifact: null,
+    keyLockAbort: null,
   };
   const STAGES = buildStagePlan();
 
@@ -1898,6 +2062,7 @@ function buildHtml(
     if(t === "choice") return "Choose the correct answer.";
     if(t === "tap_count") return "Tap as many times as the task says.";
     if(t === "corridor_choice") return "Pick the path that fits the math story.";
+    if(t === "key_lock") return "Drag two keys onto each lock so the numbers match the sums.";
     if(t === "animation") return "Watch the final animation sequence.";
     return "Complete the task to continue.";
   }
@@ -1911,6 +2076,7 @@ function buildHtml(
     if(t === "choice") return "Correct choice!";
     if(t === "tap_count") return "Nice counting!";
     if(t === "corridor_choice") return "Right path!";
+    if(t === "key_lock") return "The box is open!";
     if(t === "animation") return "Level complete!";
     return "Success!";
   }
@@ -2207,6 +2373,12 @@ function buildHtml(
   }
 
   function clearStage(){
+    if(state.keyLockAbort){
+      try{
+        state.keyLockAbort.abort();
+      }catch(_e){ /* noop */ }
+      state.keyLockAbort = null;
+    }
     izone.innerHTML = "";
     lane = document.createElement("div");
     lane.className = "right-lane";
@@ -2252,6 +2424,11 @@ function buildHtml(
       "sequence_board", "hide_instruction_label", "input_style",
       "totem_cycle", "tap_target_order",
       "balance_left", "balance_right", "balance_answer", "balance_options",
+      "key_lock_keys", "keyLockKeys", "keys_six", "keysSixText",
+      "lock_sum_1", "lock_sum_2", "lock_sum_3",
+      "lockSum1", "lockSum2", "lockSum3",
+      "pair_1", "pair_2", "pair_3", "pair1", "pair2", "pair3",
+      "lock1_sum", "lock2_sum", "lock3_sum",
       "post_story_text"
     ];
     for(const k of pass){
@@ -3365,6 +3542,381 @@ function buildHtml(
     lane.appendChild(wrap);
   }
 
+  function parseKeyLockRound(stage){
+    const splitNums = (raw) => String(raw || "")
+      .split(/[\s,]+/)
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .map(Number)
+      .filter((n) => Number.isFinite(n));
+    let keys = stage.key_lock_keys ?? stage.keyLockKeys;
+    if(!Array.isArray(keys) || keys.length < 6){
+      keys = splitNums(stage.keysSixText ?? stage.keys_six ?? "");
+    }
+    keys = keys.map((n) => Number(n)).filter((n) => Number.isFinite(n));
+    while(keys.length < 6) keys.push(0);
+    keys = keys.slice(0, 6);
+    const sums = [1, 2, 3].map((i) => {
+      const raw = stage["lock_sum_" + i] ?? stage["lockSum" + i] ?? stage["lock" + i + "_sum"];
+      const n = Number(raw);
+      return Number.isFinite(n) ? n : 0;
+    });
+    const pairs = [1, 2, 3].map((i) => {
+      const p = stage["pair_" + i] ?? stage["pair" + i];
+      if(Array.isArray(p) && p.length >= 2){
+        return [Number(p[0]), Number(p[1])];
+      }
+      const a = Number(stage["lock" + i + "KeyA"] ?? stage["lock_" + i + "_key_a"]);
+      const b = Number(stage["lock" + i + "KeyB"] ?? stage["lock_" + i + "_key_b"]);
+      return [Number.isFinite(a) ? a : 0, Number.isFinite(b) ? b : 0];
+    });
+    return { keys, sums, pairs };
+  }
+
+  function renderKeyLock(stage){
+    const KEY_SRC = "assets/items/key.webp";
+    const KEY_GRID_X = ["6%", "22%", "38%", "54%", "70%", "86%"];
+    const cfg = parseKeyLockRound(stage);
+    const base = STAGES[state.stageIndex] || stage;
+    const rounds = Array.isArray(base.rounds) ? base.rounds : [];
+    const nRounds = rounds.length || 1;
+    const roundIdx = state.stagePracticeDone;
+    const isFinalRound = roundIdx >= nRounds - 1;
+
+    const G = {
+      solved: { 1: false, 2: false, 3: false },
+      slots: { 1: [null, null], 2: [null, null], 3: [null, null] },
+    };
+
+    const wrap = document.createElement("div");
+    wrap.className = "kl-root key-lock-stage";
+    lane.appendChild(wrap);
+
+    const lbl = document.createElement("div");
+    lbl.className = "kl-round-lbl";
+    lbl.textContent = "Round " + (roundIdx + 1) + " / " + nRounds;
+    wrap.appendChild(lbl);
+
+    const chestZone = document.createElement("div");
+    chestZone.className = "kl-chest-zone";
+    const chest = document.createElement("img");
+    chest.className = "kl-chest-img";
+    chest.src = "assets/items/box_close.png";
+    chest.alt = "locked box";
+    chestZone.appendChild(chest);
+    wrap.appendChild(chestZone);
+
+    const locksRow = document.createElement("div");
+    locksRow.className = "kl-locks-row";
+    for(let lockNum = 1; lockNum <= 3; lockNum++){
+      const sumShown = cfg.sums[lockNum - 1];
+      const box = document.createElement("div");
+      box.className = "kl-lock-box";
+      box.dataset.lock = String(lockNum);
+      const title = document.createElement("div");
+      title.className = "kl-lock-title";
+      title.textContent = "Lock " + lockNum + " = " + sumShown;
+      box.appendChild(title);
+      const slotsEl = document.createElement("div");
+      slotsEl.className = "kl-lock-slots";
+      for(let si = 0; si < 2; si++){
+        const slot = document.createElement("div");
+        slot.className = "kl-lock-slot";
+        slot.dataset.lock = String(lockNum);
+        slot.dataset.slot = String(si);
+        slotsEl.appendChild(slot);
+      }
+      box.appendChild(slotsEl);
+      locksRow.appendChild(box);
+    }
+    wrap.appendChild(locksRow);
+
+    const keysArea = document.createElement("div");
+    keysArea.className = "kl-keys-area";
+    wrap.appendChild(keysArea);
+
+    let roundAdvanceScheduled = false;
+    let finaleUiScheduled = false;
+
+    function sort2(a, b){
+      return a < b ? [a, b] : [b, a];
+    }
+    function pairMatches(gotA, gotB, wantPair){
+      const g = sort2(Number(gotA), Number(gotB));
+      const w = sort2(Number(wantPair[0]), Number(wantPair[1]));
+      return g[0] === w[0] && g[1] === w[1];
+    }
+
+    function openChest(){
+      chest.src = "assets/items/box_open.png";
+      chest.classList.remove("open-pop");
+      void chest.offsetWidth;
+      chest.classList.add("open-pop");
+    }
+    function closeChest(){
+      chest.src = "assets/items/box_close.png";
+      chest.classList.remove("open-pop");
+    }
+
+    function setKeyBack(keyEl){
+      keyEl.classList.remove("used");
+      keyEl.style.left = keyEl.dataset.ox;
+      keyEl.style.top = keyEl.dataset.oy;
+      keyEl.style.width = "";
+      keyEl.style.height = "";
+      keyEl.style.transform = "";
+      const badge = keyEl.dataset.badgeId ? document.getElementById(keyEl.dataset.badgeId) : null;
+      if(badge) badge.style.opacity = "1";
+      syncKeyBadge(keyEl);
+    }
+
+    function syncKeyBadge(keyEl){
+      const badgeId = keyEl && keyEl.dataset && keyEl.dataset.badgeId;
+      if(!badgeId) return;
+      const badge = document.getElementById(badgeId);
+      if(!badge) return;
+      badge.style.left = keyEl.style.left;
+      badge.style.top = keyEl.style.top;
+      badge.style.width = keyEl.style.width || "clamp(72px,7vw,96px)";
+      badge.style.height = keyEl.style.height || "clamp(72px,7vw,96px)";
+    }
+
+    function clearLockSlots(lockNum){
+      G.slots[lockNum] = [null, null];
+      wrap.querySelectorAll('.kl-lock-slot[data-lock="' + lockNum + '"]').forEach((slot) => {
+        slot.classList.remove("full");
+        slot.dataset.keyId = "";
+        slot.dataset.value = "";
+        slot.innerHTML = "";
+      });
+    }
+
+    function failLock(lockNum, keys){
+      keys.forEach((k) => {
+        if(!k) return;
+        k.classList.add("shake");
+        setTimeout(() => k.classList.remove("shake"), 280);
+        setKeyBack(k);
+      });
+      clearLockSlots(lockNum);
+    }
+
+    function unlockLock(lockNum){
+      if(G.solved[lockNum]) return;
+      G.solved[lockNum] = true;
+      const boxEl = wrap.querySelector('.kl-lock-box[data-lock="' + lockNum + '"]');
+      if(boxEl){
+        boxEl.classList.add("ok", "click-pop");
+        setTimeout(() => boxEl.classList.remove("click-pop"), 220);
+      }
+      const all = [1, 2, 3].every((n) => G.solved[n]);
+      if(all) onAllLocksSolved();
+    }
+
+    function evaluateLock(lockNum){
+      if(G.solved[lockNum]) return;
+      const pair = G.slots[lockNum];
+      if(!pair || !pair[0] || !pair[1]) return;
+      const a = Number(pair[0].dataset.value);
+      const b = Number(pair[1].dataset.value);
+      const targetSum = cfg.sums[lockNum - 1];
+      const wantPair = cfg.pairs[lockNum - 1];
+      if(a + b !== targetSum){
+        failLock(lockNum, pair);
+        return;
+      }
+      if(!pairMatches(a, b, wantPair)){
+        failLock(lockNum, pair);
+        return;
+      }
+      unlockLock(lockNum);
+    }
+
+    function onAllLocksSolved(){
+      if(isFinalRound){
+        if(finaleUiScheduled) return;
+        finaleUiScheduled = true;
+        setTimeout(openChest, 400);
+        setTimeout(() => {
+          if(wrap.querySelector(".kl-finale-next")) return;
+          const nextBtn = document.createElement("button");
+          nextBtn.className = "seq-submit show kl-next kl-finale-next";
+          nextBtn.type = "button";
+          nextBtn.textContent = "NEXT";
+          nextBtn.onclick = () => {
+            if(state.stageSolved) return;
+            markSuccess(stage);
+          };
+          wrap.appendChild(nextBtn);
+        }, 520);
+        return;
+      }
+      if(roundAdvanceScheduled) return;
+      roundAdvanceScheduled = true;
+      setTimeout(() => markSuccess(stage), 650);
+    }
+
+    function detachPlacedKey(keyEl){
+      let touchedLock = null;
+      wrap.querySelectorAll(".kl-lock-slot").forEach((slot) => {
+        if(slot.dataset.keyId !== keyEl.id) return;
+        touchedLock = Number(slot.dataset.lock);
+        slot.classList.remove("full");
+        slot.dataset.keyId = "";
+        slot.dataset.value = "";
+        slot.innerHTML = "";
+        const si = Number(slot.dataset.slot);
+        if(G.slots[touchedLock]) G.slots[touchedLock][si] = null;
+      });
+      if(touchedLock != null){
+        G.solved[touchedLock] = false;
+        const boxEl = wrap.querySelector('.kl-lock-box[data-lock="' + touchedLock + '"]');
+        if(boxEl) boxEl.classList.remove("ok", "click-pop");
+      }
+      keyEl.classList.remove("used");
+      keyEl.style.width = "";
+      keyEl.style.height = "";
+      syncKeyBadge(keyEl);
+      const allSolved = [1, 2, 3].every((n) => G.solved[n]);
+      const chestStayOpen = allSolved && isFinalRound;
+      if(!chestStayOpen) closeChest();
+    }
+
+    cfg.keys.forEach((val, i) => {
+      const id = "klk_" + state.stageIndex + "_" + roundIdx + "_" + i + "_" + val;
+      const left = KEY_GRID_X[i] || "50%";
+      const img = document.createElement("img");
+      img.className = "kl-key";
+      img.id = id;
+      img.src = KEY_SRC;
+      img.alt = "Key " + val;
+      img.dataset.value = String(val);
+      img.style.left = left;
+      img.style.top = "38%";
+      img.dataset.ox = left;
+      img.dataset.oy = "38%";
+      const badge = document.createElement("div");
+      badge.className = "kl-key-badge";
+      badge.id = "badge-" + id;
+      badge.style.left = left;
+      badge.style.top = "38%";
+      badge.style.width = "clamp(72px,7vw,96px)";
+      badge.style.height = "clamp(72px,7vw,96px)";
+      const badgeVal = document.createElement("div");
+      badgeVal.className = "kl-key-val";
+      badgeVal.textContent = String(val);
+      img.dataset.badgeId = badge.id;
+      badge.appendChild(badgeVal);
+      keysArea.appendChild(img);
+      keysArea.appendChild(badge);
+      syncKeyBadge(img);
+    });
+
+    let keyDrag = null;
+    let keyClone = null;
+    let keySX = 0;
+    let keySY = 0;
+    let keyOX = 0;
+    let keyOY = 0;
+
+    function onDragMove(e){
+      if(!keyClone) return;
+      e.preventDefault();
+      const t = e.touches ? e.touches[0] : e;
+      keyClone.style.left = keyOX + t.clientX - keySX + "px";
+      keyClone.style.top = keyOY + t.clientY - keySY + "px";
+    }
+
+    function onDragEnd(e){
+      if(!keyDrag) return;
+      const t = e.changedTouches ? e.changedTouches[0] : e;
+      if(keyClone){
+        keyClone.remove();
+        keyClone = null;
+      }
+      keyDrag.style.opacity = "1";
+      let matchedSlot = null;
+      wrap.querySelectorAll(".kl-lock-slot").forEach((slot) => {
+        if(slot.classList.contains("full")) return;
+        const r = slot.getBoundingClientRect();
+        if(t.clientX >= r.left && t.clientX <= r.right && t.clientY >= r.top && t.clientY <= r.bottom){
+          matchedSlot = slot;
+        }
+      });
+      if(!matchedSlot){
+        setKeyBack(keyDrag);
+        keyDrag = null;
+        return;
+      }
+      const lockNum = Number(matchedSlot.dataset.lock);
+      if(G.solved[lockNum]){
+        setKeyBack(keyDrag);
+        keyDrag = null;
+        return;
+      }
+      const slotIndex = Number(matchedSlot.dataset.slot);
+      G.slots[lockNum][slotIndex] = keyDrag;
+      const slotRect = matchedSlot.getBoundingClientRect();
+      const areaRect = keysArea.getBoundingClientRect();
+      const w = Math.min(slotRect.width * 0.88, 84);
+      const h = Math.min(slotRect.height * 0.88, 84);
+      keyDrag.style.width = w + "px";
+      keyDrag.style.height = h + "px";
+      keyDrag.style.left = slotRect.left - areaRect.left + (slotRect.width - w) / 2 + "px";
+      keyDrag.style.top = slotRect.top - areaRect.top + (slotRect.height - h) / 2 + "px";
+      keyDrag.classList.add("used");
+      const bd = keyDrag.dataset.badgeId ? document.getElementById(keyDrag.dataset.badgeId) : null;
+      if(bd) bd.style.opacity = "1";
+      syncKeyBadge(keyDrag);
+      matchedSlot.classList.add("full");
+      matchedSlot.dataset.keyId = keyDrag.id;
+      matchedSlot.dataset.value = keyDrag.dataset.value;
+      evaluateLock(lockNum);
+      keyDrag = null;
+    }
+
+    function stageKeyDragStart(e){
+      const t = e.touches ? e.touches[0] : e;
+      const els = document.elementsFromPoint(t.clientX, t.clientY);
+      let found = null;
+      for(let i = 0; i < els.length; i++){
+        const el = els[i];
+        if(el.classList && el.classList.contains("kl-key") && wrap.contains(el)){
+          found = el;
+          break;
+        }
+      }
+      if(!found) return;
+      e.preventDefault();
+      if(found.classList.contains("used")){
+        detachPlacedKey(found);
+      }
+      keyDrag = found;
+      keySX = t.clientX;
+      keySY = t.clientY;
+      const r = found.getBoundingClientRect();
+      keyOX = r.left;
+      keyOY = r.top;
+      keyClone = found.cloneNode(true);
+      keyClone.style.cssText =
+        "position:fixed;left:" + keyOX + "px;top:" + keyOY + "px;width:" + r.width + "px;height:" + r.height + "px;pointer-events:none;z-index:9999;transform:scale(1.08);filter:drop-shadow(0 8px 16px rgba(0,0,0,.7));transition:none;";
+      document.body.appendChild(keyClone);
+      found.style.opacity = "0.35";
+      const badge = found.dataset.badgeId ? document.getElementById(found.dataset.badgeId) : null;
+      if(badge) badge.style.opacity = "0";
+    }
+
+    state.keyLockAbort = new AbortController();
+    const sig = state.keyLockAbort.signal;
+    document.addEventListener("mousedown", stageKeyDragStart, { signal: sig, passive: false });
+    document.addEventListener("touchstart", stageKeyDragStart, { signal: sig, passive: false });
+    document.addEventListener("mousemove", onDragMove, { signal: sig, passive: false });
+    document.addEventListener("touchmove", onDragMove, { signal: sig, passive: false });
+    document.addEventListener("mouseup", onDragEnd, { signal: sig });
+    document.addEventListener("touchend", onDragEnd, { signal: sig });
+    document.addEventListener("touchcancel", onDragEnd, { signal: sig });
+  }
+
   function renderBuildNumber(stage){
     const baseNumber = Number(stage.base_number ?? stage.baseNumber ?? 0);
     const rawParts = Number(stage.parts_count ?? stage.partsCount ?? 2);
@@ -3970,6 +4522,7 @@ function buildHtml(
     else if(engType === "drag_group") renderDragGroup(stage);
     else if(engType === "match_pairs") renderMatchPairs(stage);
     else if(engType === "balance_scale") renderBalanceScale(stage);
+    else if(engType === "key_lock") renderKeyLock(stage);
     else if(engType === "build_number") renderBuildNumber(stage);
     else if(engType === "timer_challenge") renderTimerChallenge(stage);
     else if(engType === "symbol_calc") renderSymbolCalc(stage);

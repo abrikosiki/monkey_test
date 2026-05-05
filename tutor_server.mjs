@@ -32,6 +32,7 @@ const MECHANICS = [
   { id: "corridor_choice", label: "Left Or Right", description: "Choose correct side between two examples." },
   { id: "match_pairs", label: "Find Two Pairs", description: "Pick two correct pairs from A/B/C/D options." },
   { id: "tap_count", label: "Tap Count", description: "Tap target N times." },
+  { id: "key_lock", label: "Key Lock Box", description: "Three sum locks and six numbered keys." },
   { id: "balance_scale", label: "Balance Scale", description: "Make both sides equal." },
   { id: "build_number", label: "Build Number", description: "Build a number from parts." },
   { id: "timer_challenge", label: "Timer Challenge", description: "Solve as many as possible in 30 sec." },
@@ -473,6 +474,17 @@ function applyDraftToLessonStages(lesson, draft) {
         if (Array.isArray(ex.zoneCounts) && ex.zoneCounts.length) {
           r.zone_counts = ex.zoneCounts.map((v) => toNumber(v, 0));
         }
+      } else if (mech === "key_lock") {
+        const rawKeys = splitValues(ex.keysSixText || ex.keys_six_text || "");
+        const nums = rawKeys.map((v) => toNumber(v, NaN)).filter((n) => Number.isFinite(n));
+        r.key_lock_keys = nums.slice(0, 6);
+        while (r.key_lock_keys.length < 6) r.key_lock_keys.push(0);
+        r.lock_sum_1 = toNumber(ex.lock1Sum, toNumber(r.lock_sum_1, 0));
+        r.lock_sum_2 = toNumber(ex.lock2Sum, toNumber(r.lock_sum_2, 0));
+        r.lock_sum_3 = toNumber(ex.lock3Sum, toNumber(r.lock_sum_3, 0));
+        r.pair_1 = [toNumber(ex.lock1KeyA, 0), toNumber(ex.lock1KeyB, 0)];
+        r.pair_2 = [toNumber(ex.lock2KeyA, 0), toNumber(ex.lock2KeyB, 0)];
+        r.pair_3 = [toNumber(ex.lock3KeyA, 0), toNumber(ex.lock3KeyB, 0)];
       }
 
       rounds.push(r);
@@ -715,6 +727,13 @@ function buildUserPromptFromDraft(draft, assetCatalog) {
         example.unknownA != null ? `unknown_a=${example.unknownA}` : "",
         example.unknownB != null ? `unknown_b=${example.unknownB}` : "",
         example.unknownEquation ? `unknown_equation=${example.unknownEquation}` : "",
+        example.keysSixText ? `keys_six=${example.keysSixText}` : "",
+        example.lock1Sum != null && example.lock1Sum !== "" ? `lock_sum_1=${example.lock1Sum}` : "",
+        example.lock2Sum != null && example.lock2Sum !== "" ? `lock_sum_2=${example.lock2Sum}` : "",
+        example.lock3Sum != null && example.lock3Sum !== "" ? `lock_sum_3=${example.lock3Sum}` : "",
+        example.lock1KeyA != null && example.lock1KeyA !== "" ? `lock1_keys=${example.lock1KeyA},${example.lock1KeyB}` : "",
+        example.lock2KeyA != null && example.lock2KeyA !== "" ? `lock2_keys=${example.lock2KeyA},${example.lock2KeyB}` : "",
+        example.lock3KeyA != null && example.lock3KeyA !== "" ? `lock3_keys=${example.lock3KeyA},${example.lock3KeyB}` : "",
         example.note ? `note=${example.note}` : "",
       ].filter(Boolean);
       return `  - ${parts.join(" ; ")}`;
@@ -770,6 +789,7 @@ RULES:
 - corridor_choice template: task text in centered card; left/right examples are math text only (no placeholder icons); correct side from tutor field; correct=green then next round, wrong=red.
 - match_pairs template: render A/B/C/D options as four tappable choices; exactly two correct options from tutor settings; correct=green+lock, wrong=red; once both correct are found, advance immediately to next round.
 - tap_count template: centered card with task text and one tappable item PNG; required taps from tutor field; each tap has short pulse animation; on completion move immediately to next round (no 'Correct' interstitial, no +2 popup).
+- key_lock template: three lock cards each showing lock_sum_N on the card and two slots; six draggable keys with badges from tutor keys_six order; correct pair per lock from tutor pair_N must sum to that lock_sum_N; rounds 1–(n−1): after all three locks solved advance immediately to next round; final round: open chest then NEXT completes stage (no +2 between rounds).
 - balance_scale template: use scale_down first, expressions in framed pills near bowls, left includes ? input and right is fixed value/expression, correct input triggers magical transform to scale, expressions disappear, NEXT button appears, NEXT jumps directly to next round.
 - build_number template: large base-number card in upper-middle, N empty input cards below (N from tutor parts count, clamp 2..5), arrows from lower cards to base card, tutor checkmark immediately advances to next round.
 - timer_challenge template: main card has 3 rows A/B/C with ? inputs; timer and START are shown in a separate panel below the card; time from tutor seconds field; correct rows glow green, wrong rows red; when all 3 correct -> immediate next round, no interstitial popup.
@@ -1341,7 +1361,7 @@ const server = http.createServer(async (req, res) => {
       syncDraftStageBackgroundsFromIslandKey(draft);
       draft.updatedAt = new Date().toISOString();
       writeJson(DRAFT_FILE, draft);
-      sendJson(res, 200, { ok: true, savedAt: draft.updatedAt });
+      sendJson(res, 200, { ok: true, savedAt: draft.updatedAt, draft });
       return;
     }
 
