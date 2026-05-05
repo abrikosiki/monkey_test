@@ -747,7 +747,7 @@
       if (document.activeElement && typeof document.activeElement.blur === "function") {
         document.activeElement.blur();
       }
-      const fields = root.querySelectorAll("input, textarea, select");
+      const fields = root.querySelectorAll("input, textarea");
       fields.forEach((el) => {
         el.dispatchEvent(new Event("change", { bubbles: true }));
       });
@@ -1114,9 +1114,11 @@
           picker.appendChild(option);
         }
         picker.value = stage.mechanic || "";
+        picker.dataset.role = "mechanic-picker";
         picker.addEventListener("change", () => {
           const v = String(picker.value || "").trim();
           if (!v) return;
+          if (v === stage.mechanic) return;
           const oldStages = Array.isArray(state.draft?.stages) ? state.draft.stages : [];
           const nextExamples = Array.from(
             { length: Math.max(1, stage.examples?.length || 5) },
