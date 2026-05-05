@@ -537,7 +537,7 @@ function stageTemplate(stageNumber, islandKey = "") {
 function exampleTemplate(stageNumber, roundNumber) {
   return {
     roundNumber,
-    instruction: `Round ${roundNumber} instruction seed`,
+    instruction: "",
     prompt: "",
     answer: "",
     options: [],

@@ -871,8 +871,7 @@
         lock3KeyB: "",
         note: "",
       };
-      const factory = MECHANIC_TEMPLATES[mechanic];
-      return { ...base, ...(factory ? factory() : {}) };
+      return { ...base };
     }
 
     function ensureExampleShape(example, mechanic) {
