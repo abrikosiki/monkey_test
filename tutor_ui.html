@@ -1333,13 +1333,18 @@
     async function regenerateStoryAndBuild() {
       try {
         syncContextInputsToDraft();
-        const childCode = $("childCodeInput").value.trim();
-        if (!state.draft?.confirmedChildCode || state.draft.confirmedChildCode !== childCode) {
+        const draftChildCode = String(state.draft?.confirmedChildCode || "").trim();
+        const profileChildCode = String(state.draft?.child?.childCode || "").trim();
+        const fallbackCode = draftChildCode || profileChildCode;
+        if (!fallbackCode) {
           throw new Error("Confirm the student in the draft before regenerating");
         }
+        if (!state.draft.confirmedChildCode) state.draft.confirmedChildCode = fallbackCode;
+        if (!state.draft.childCode) state.draft.childCode = fallbackCode;
         setAutosaveStatus("Generating...");
         $("regenerateStoryBtn").disabled = true;
-        await saveDraft(true);
+        const saved = await saveDraft(true);
+        if (!saved) throw new Error("Draft save failed");
         const start = await post("/api/generate", { draft: state.draft });
         const jobId = start.jobId;
         if (!jobId) throw new Error("Generation job did not start");

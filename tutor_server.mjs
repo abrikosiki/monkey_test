@@ -384,13 +384,15 @@ function applyDraftToLessonStages(lesson, draft) {
     lStage.type = dStage.mechanic || lStage.type;
     lStage.background = dStage.background || lStage.background;
     const dExamples = Array.isArray(dStage.examples) ? dStage.examples : [];
+    const stageTitleFromDraft = String(dExamples[0]?.titleText || "").trim();
+    if (stageTitleFromDraft) lStage.title = stageTitleFromDraft;
     if (!Array.isArray(lStage.rounds)) lStage.rounds = [];
     const rounds = [];
     for (let j = 0; j < Math.max(5, dExamples.length, lStage.rounds.length); j++) {
       const ex = dExamples[j] || {};
       const existing = lStage.rounds[j] || {};
       const mech = dStage.mechanic || lStage.type;
-      const r = { ...existing };
+      const r = {};
 
       if (ex.titleText && !lStage.title) lStage.title = ex.titleText;
       if (ex.prompt) r.instruction = ex.prompt;
@@ -462,7 +464,7 @@ function applyDraftToLessonStages(lesson, draft) {
             id: `i${idx + 1}`,
             value: t,
             text: t,
-            image_key: r.items?.[idx]?.image_key || lStage.image_key || "banana",
+            image_key: existing.items?.[idx]?.image_key || lStage.image_key || "banana",
           }));
         }
         if (rule.length) {
