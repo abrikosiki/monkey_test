@@ -4504,7 +4504,7 @@ function buildHtml(
     const engStage = { ...stage, type: engType };
     const playerSide = $("playerSide");
     if(playerSide){
-      playerSide.classList.toggle("stage-boss-hidden", index === STAGES.length - 1);
+      playerSide.classList.toggle("stage-boss-hidden", engType === "animation");
     }
     const instruction = stage.title || stage.question || LESSON.story_hook || "";
     const cleanInstruction = String(instruction).trim() ? instruction : englishStageFallback(engStage);
