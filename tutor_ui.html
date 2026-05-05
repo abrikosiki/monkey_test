@@ -93,6 +93,31 @@
     .manual-stage-jump.visible{display:flex}
     .manual-stage-jump .jump-label{font-size:12px;color:var(--muted);margin-right:2px}
     #editPanel .stage-card{scroll-margin-top:96px}
+    .keylock-editor{
+      grid-column:1/-1;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      background:#0b1730;
+      border:1px solid #2f4d7a;
+      border-radius:12px;
+      padding:10px;
+    }
+    .keylock-card-row{
+      display:grid;
+      grid-template-columns:minmax(170px,220px) 36px minmax(150px,1fr) minmax(150px,1fr);
+      gap:8px;
+      align-items:end;
+    }
+    .keylock-arrow{
+      align-self:center;
+      justify-self:center;
+      color:#9db7de;
+      font-size:17px;
+      font-weight:800;
+      letter-spacing:1px;
+      margin-bottom:2px;
+    }
     .back-to-prompt{margin-top:16px}
     .back-to-prompt button{width:100%;padding:12px;font-size:15px}
     .edit-panel{margin-top:24px;padding:0 18px 56px;max-width:1380px;margin-left:auto;margin-right:auto}
@@ -232,7 +257,7 @@
       corridor_choice: "Task text + left example + right example + correct side.",
       match_pairs: "Set A/B/C/D and choose the two correct pairs.",
       tap_count: "Use instruction + answer count + item hints.",
-      key_lock: "Title + six key numbers + three card sums and two keys per card (pairs must match sums).",
+      key_lock: "Title + three card sums; each card has two key values (A/B) that form the correct pair.",
       balance_scale: "Use left/right expressions + answer + option tiles.",
       build_number: "Set base number and required parts count; no single correct answer.",
       timer_challenge: "3 example lines (A/B/C), answer per line, and seconds.",
@@ -731,10 +756,12 @@
         field.type = opts.type;
       }
       field.value = value ?? "";
-      field.addEventListener("input", () => {
-        onInput(opts.type === "number" ? Number(field.value || 0) : field.value);
-        queueAutosave();
-      });
+      if (opts.type !== "select") {
+        field.addEventListener("input", () => {
+          onInput(opts.type === "number" ? Number(field.value || 0) : field.value);
+          queueAutosave();
+        });
+      }
       field.addEventListener("change", () => {
         onInput(opts.type === "number" ? Number(field.value || 0) : field.value);
         queueAutosave();
@@ -764,7 +791,7 @@
       if (mechanic === "match_pairs") return `Title: ${example.titleText || "?"} | A:${example.pairA || "?"} B:${example.pairB || "?"} C:${example.pairC || "?"} D:${example.pairD || "?"} | correct: ${example.correctPair1 || "?"}, ${example.correctPair2 || "?"}`;
       if (mechanic === "tap_count") return `Title: ${example.titleText || "?"} | task: ${example.prompt || "?"} | taps: ${example.answer || "?"}`;
       if (mechanic === "key_lock")
-        return `Title: ${example.titleText || "?"} | keys: ${example.keysSixText || "?"} | L1=${example.lock1Sum || "?"} [${example.lock1KeyA},${example.lock1KeyB}] L2=${example.lock2Sum || "?"} [${example.lock2KeyA},${example.lock2KeyB}] L3=${example.lock3Sum || "?"} [${example.lock3KeyA},${example.lock3KeyB}]`;
+        return `Title: ${example.titleText || "?"} | L1=${example.lock1Sum || "?"} [${example.lock1KeyA},${example.lock1KeyB}] L2=${example.lock2Sum || "?"} [${example.lock2KeyA},${example.lock2KeyB}] L3=${example.lock3Sum || "?"} [${example.lock3KeyA},${example.lock3KeyB}]`;
       if (mechanic === "build_number") return `Title: ${example.titleText || "?"} | base number: ${example.baseNumber || "?"} | parts: ${example.partsCount || "?"} | ready: ${example.readyFlag ? "yes" : "no"}`;
       if (mechanic === "timer_challenge") return `Title: ${example.titleText || "?"} | A:${example.timerExampleA || "?"}->${example.timerAnswerA || "?"} | B:${example.timerExampleB || "?"}->${example.timerAnswerB || "?"} | C:${example.timerExampleC || "?"}->${example.timerAnswerC || "?"} | ${example.timerSeconds || "?"}s`;
       if (mechanic === "symbol_calc") return `Title: ${example.titleText || "?"} | A=${example.symbolA || "?"} B=${example.symbolB || "?"} C=${example.symbolC || "?"} | ${example.symbolExpression || "?"} = ${example.answer || "?"}`;
@@ -926,20 +953,41 @@
           makeInput("How many taps", example.answer, (v) => example.answer = v),
         );
       } else if (mechanic === "key_lock") {
-        add(
-          ...base,
-          makeInput("Optional round hint", example.prompt, (v) => example.prompt = v, { type: "textarea", full: true }),
-          makeInput("Six key numbers (comma, left → right)", example.keysSixText, (v) => example.keysSixText = v, { type: "textarea", full: true }),
-          makeInput("Card 1 — sum on card", example.lock1Sum, (v) => example.lock1Sum = v),
-          makeInput("Card 1 — key A", example.lock1KeyA, (v) => example.lock1KeyA = v),
-          makeInput("Card 1 — key B", example.lock1KeyB, (v) => example.lock1KeyB = v),
-          makeInput("Card 2 — sum on card", example.lock2Sum, (v) => example.lock2Sum = v),
-          makeInput("Card 2 — key A", example.lock2KeyA, (v) => example.lock2KeyA = v),
-          makeInput("Card 2 — key B", example.lock2KeyB, (v) => example.lock2KeyB = v),
-          makeInput("Card 3 — sum on card", example.lock3Sum, (v) => example.lock3Sum = v),
-          makeInput("Card 3 — key A", example.lock3KeyA, (v) => example.lock3KeyA = v),
-          makeInput("Card 3 — key B", example.lock3KeyB, (v) => example.lock3KeyB = v),
-        );
+        add(...base);
+        const flow = document.createElement("div");
+        flow.className = "keylock-editor";
+        const cardOrder = [2, 3, 1];
+        for (const n of cardOrder) {
+          const row = document.createElement("div");
+          row.className = "keylock-card-row";
+          row.appendChild(
+            makeInput(
+              `Card ${n} — sum on card`,
+              example[`lock${n}Sum`],
+              (v) => example[`lock${n}Sum`] = v,
+            ),
+          );
+          const arrow = document.createElement("div");
+          arrow.className = "keylock-arrow";
+          arrow.textContent = "↙ ↘";
+          row.appendChild(arrow);
+          row.appendChild(
+            makeInput(
+              `Card ${n} — key A`,
+              example[`lock${n}KeyA`],
+              (v) => example[`lock${n}KeyA`] = v,
+            ),
+          );
+          row.appendChild(
+            makeInput(
+              `Card ${n} — key B`,
+              example[`lock${n}KeyB`],
+              (v) => example[`lock${n}KeyB`] = v,
+            ),
+          );
+          flow.appendChild(row);
+        }
+        add(flow);
       } else if (mechanic === "build_number") {
         const doneWrap = document.createElement("div");
         doneWrap.className = "field full";

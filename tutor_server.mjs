@@ -475,16 +475,23 @@ function applyDraftToLessonStages(lesson, draft) {
           r.zone_counts = ex.zoneCounts.map((v) => toNumber(v, 0));
         }
       } else if (mech === "key_lock") {
-        const rawKeys = splitValues(ex.keysSixText || ex.keys_six_text || "");
-        const nums = rawKeys.map((v) => toNumber(v, NaN)).filter((n) => Number.isFinite(n));
-        r.key_lock_keys = nums.slice(0, 6);
-        while (r.key_lock_keys.length < 6) r.key_lock_keys.push(0);
         r.lock_sum_1 = toNumber(ex.lock1Sum, toNumber(r.lock_sum_1, 0));
         r.lock_sum_2 = toNumber(ex.lock2Sum, toNumber(r.lock_sum_2, 0));
         r.lock_sum_3 = toNumber(ex.lock3Sum, toNumber(r.lock_sum_3, 0));
         r.pair_1 = [toNumber(ex.lock1KeyA, 0), toNumber(ex.lock1KeyB, 0)];
         r.pair_2 = [toNumber(ex.lock2KeyA, 0), toNumber(ex.lock2KeyB, 0)];
         r.pair_3 = [toNumber(ex.lock3KeyA, 0), toNumber(ex.lock3KeyB, 0)];
+        const fromPairs = [...r.pair_1, ...r.pair_2, ...r.pair_3]
+          .map((v) => toNumber(v, NaN))
+          .filter((n) => Number.isFinite(n));
+        if (fromPairs.length >= 6) {
+          r.key_lock_keys = fromPairs.slice(0, 6);
+        } else {
+          const rawKeys = splitValues(ex.keysSixText || ex.keys_six_text || "");
+          const nums = rawKeys.map((v) => toNumber(v, NaN)).filter((n) => Number.isFinite(n));
+          r.key_lock_keys = nums.slice(0, 6);
+        }
+        while (r.key_lock_keys.length < 6) r.key_lock_keys.push(0);
       }
 
       rounds.push(r);
