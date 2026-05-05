@@ -1,5 +1,6 @@
 import fs from "fs/promises";
 import path from "path";
+import { applyIslandLessonCanon, CANONICAL_ISLAND_KEYS } from "./island_canon.mjs";
 
 function usage() {
   console.log("Usage: node builder.mjs <lesson.json> [output.html]");
@@ -296,6 +297,9 @@ function buildHtml(
       align-items:flex-start;
       gap:0;
       pointer-events:none;
+    }
+    .player-side.stage-boss-hidden{
+      display:none;
     }
     .p-frame{
       width:clamp(270px,27vw,480px);
@@ -1562,12 +1566,19 @@ function buildHtml(
       background:#101522;
     }
     .intro-screen.hidden{display:none}
-    .intro-bg{
+    .intro-bg-wrap{
       position:absolute;
       inset:0;
-      width:100%;
-      height:100%;
+      overflow:hidden;
+    }
+    .intro-bg{
+      position:absolute;
+      inset:-8%;
+      width:116%;
+      height:116%;
       object-fit:cover;
+      filter:blur(28px);
+      opacity:.92;
     }
     .intro-panel{
       position:relative;
@@ -1626,7 +1637,9 @@ function buildHtml(
 </head>
 <body>
   <div class="intro-screen" id="introScreen">
-    <img class="intro-bg" id="introBg" alt="">
+    <div class="intro-bg-wrap">
+      <img class="intro-bg" id="introBg" alt="">
+    </div>
     <div class="intro-panel">
       <div class="intro-story" id="introStory"></div>
       <button class="intro-start" id="introStartBtn">BEGIN ADVENTURE</button>
@@ -1640,7 +1653,7 @@ function buildHtml(
     <button class="stage-skip-btn" id="stageSkipBtn">⏭ Skip Stage 1</button>
     <div class="cpop" id="coinPopup">+0</div>
     <div class="instruction" id="instruction"></div>
-    <div class="player-side">
+    <div class="player-side" id="playerSide">
       <div class="p-frame" id="pFrame">
         <span id="pEmoji">🧍</span>
         <img id="pImg" alt="player">
@@ -1704,65 +1717,6 @@ function buildHtml(
 
   <script>
   const LESSON = ${payload};
-  function getIslandStageBackgroundMapForNormalize(islandKey){
-    const prefix = String(islandKey || "").trim().replace(/\s+/g, "_");
-    if(!prefix) return null;
-    return { 1: prefix + "1", 2: prefix + "2", 3: "2", 4: "3", 5: prefix + "3", 6: prefix + "4" };
-  }
-  const CANONICAL_ISLAND_KEYS = ["cherry_blossom_island","jelly_bay_island","snowy_peaks_island","neon_city_island","blue_crab_island","antigravity_island","mushroom_island","crystal_island"];
-  function inferIslandKeyFromLessonObj(lesson){
-    const meta = lesson && lesson.meta && typeof lesson.meta === "object" ? lesson.meta : {};
-    let k = String(meta.island_key || meta.islandKey || "").trim();
-    if(k) return k;
-    const stages = Array.isArray(lesson && lesson.stages) ? lesson.stages : [];
-    for(const canon of CANONICAL_ISLAND_KEYS){
-      for(const st of stages){
-        const bg = String(st && st.background != null ? st.background : "").trim();
-        if(!bg) continue;
-        if(bg === canon || (bg.startsWith(canon) && /^[1-4]$/.test(bg.slice(canon.length)))) return canon;
-      }
-    }
-    const parts = [
-      String(meta.lesson_id || "").toLowerCase(),
-      String(lesson && lesson.story && lesson.story.island_name ? lesson.story.island_name : ""),
-      String(lesson && lesson.story && lesson.story.villain ? lesson.story.villain : ""),
-      String(lesson && lesson.story && lesson.story.greeting ? lesson.story.greeting : ""),
-      String(lesson && lesson.story && lesson.story.act1 ? lesson.story.act1 : ""),
-      String(lesson && lesson.story && lesson.story.act2 ? lesson.story.act2 : ""),
-    ];
-    const blob = parts.join(" ").toLowerCase();
-    if(/blue_crab|blue\\s+crab|blue\\s+island|синий\\s+остров|синяя\\s+обезьян|tide\\s+pools?|clam\\s+shells?|sapphire\\s+sand/i.test(blob)) return "blue_crab_island";
-    if(/cherry_blossom|hanaydo|сакур|вишн|blossom|samurai/i.test(blob)) return "cherry_blossom_island";
-    if(/jelly_bay|jelly\\s+bay|медуз|jellyfish/i.test(blob)) return "jelly_bay_island";
-    if(/snowy_peaks|snowy\\s+peaks|снегов|пик/i.test(blob)) return "snowy_peaks_island";
-    if(/neon_city|neon\\s+city|неон/i.test(blob)) return "neon_city_island";
-    if(/antigravity|антигравит/i.test(blob)) return "antigravity_island";
-    if(/mushroom_island|mushroom|грибн/i.test(blob)) return "mushroom_island";
-    if(/crystal_island|\\bcrystal\\b|кристалл/i.test(blob)) return "crystal_island";
-    return "blue_crab_island";
-  }
-  function normalizeLessonIslandPipeline(lesson){
-    if(!lesson || typeof lesson !== "object") return;
-    const inferred = inferIslandKeyFromLessonObj(lesson);
-    if(!inferred) return;
-    const map = getIslandStageBackgroundMapForNormalize(inferred);
-    if(!map) return;
-    lesson.meta = lesson.meta || {};
-    if(!String(lesson.meta.island_key || lesson.meta.islandKey || "").trim()){
-      lesson.meta.island_key = inferred;
-    }
-    const useKey = String(lesson.meta.island_key || lesson.meta.islandKey || inferred).trim();
-    const map2 = getIslandStageBackgroundMapForNormalize(useKey);
-    if(!map2) return;
-    const stages = Array.isArray(lesson.stages) ? lesson.stages : [];
-    for(let i = 0; i < stages.length; i++){
-      const st = stages[i];
-      if(!st || typeof st !== "object") continue;
-      const sn = Number(st.id != null ? st.id : i + 1) || i + 1;
-      if(map2[sn]) st.background = map2[sn];
-    }
-  }
-  normalizeLessonIslandPipeline(LESSON);
   const BACKGROUND_MAP = ${bgPayload};
   const CHARACTER_MAP = ${charPayload};
   const ITEMS_MAP = ${itemsPayload};
@@ -2029,6 +1983,39 @@ function buildHtml(
     return "assets/backgrounds/" + k + ".png";
   }
 
+  /** Ordered URLs for stage BG img — disk map first, then common extensions (PNG casing varies). */
+  function stageBackgroundCandidates(stem){
+    const k = String(stem || "").trim();
+    if(!k) return [];
+    const primary = backgroundPath(k);
+    const base = "assets/backgrounds/" + k;
+    const extras = [".PNG", ".png", ".webp", ".jpg", ".jpeg"].map((ext) => base + ext);
+    return [...new Set([primary, ...extras].filter(Boolean))];
+  }
+
+  function setStageBackgroundImg(el, stem){
+    const urls = stageBackgroundCandidates(stem);
+    if(!urls.length){
+      el.removeAttribute("src");
+      el.onerror = null;
+      return;
+    }
+    let i = 0;
+    el.onerror = () => {
+      i += 1;
+      if(i >= urls.length){
+        el.onerror = null;
+        el.removeAttribute("src");
+        if(el.id === "bg"){
+          $("game").style.background = "radial-gradient(circle at 20% 20%, #204a66, #0b1426)";
+        }
+      }else{
+        el.src = urls[i];
+      }
+    };
+    el.src = urls[0];
+  }
+
   function characterPath(charKey){
     if(!charKey) return "";
     const mapped = fuzzyFindPath(CHARACTER_MAP, charKey);
@@ -2093,7 +2080,7 @@ function buildHtml(
   function titleFromKey(key){
     return String(key || "Mystery Artifact")
       .replace(/[_-]+/g, " ")
-      .replace(/\b\w/g, (c) => c.toUpperCase());
+      .replace(/\\b\\w/g, (c) => c.toUpperCase());
   }
 
   function ensureRingIceInventory(){
@@ -2125,7 +2112,7 @@ function buildHtml(
   function collectInventorySlugsForSync(){
     const set = new Set();
     const add = (x) => {
-      const s = String(x || "").trim().toLowerCase().replace(/\s+/g, "_");
+      const s = String(x || "").trim().toLowerCase().replace(/\\s+/g, "_");
       if(s) set.add(s);
     };
     for(const raw of LESSON.meta?.child_inventory || []) add(raw);
@@ -3914,6 +3901,10 @@ function buildHtml(
 
     const engType = resolveEngineType(stage.type);
     const engStage = { ...stage, type: engType };
+    const playerSide = $("playerSide");
+    if(playerSide){
+      playerSide.classList.toggle("stage-boss-hidden", index === STAGES.length - 1);
+    }
     const instruction = stage.title || stage.question || LESSON.story_hook || "";
     const cleanInstruction = String(instruction).trim() ? instruction : englishStageFallback(engStage);
     if(stage.hide_instruction_label){
@@ -3923,11 +3914,7 @@ function buildHtml(
     }
     $("bg").fetchPriority = "high";
     $("bg").decoding = "async";
-    $("bg").src = backgroundPath(resolveStageBackground(baseStage, index));
-    $("bg").onerror = () => {
-      $("bg").src = "";
-      $("game").style.background = "radial-gradient(circle at 20% 20%, #204a66, #0b1426)";
-    };
+    setStageBackgroundImg($("bg"), resolveStageBackground(baseStage, index));
     setMessage("");
     if(engType === "drag_drop") renderDragDrop(stage);
     else if(engType === "drag_sort") renderDragSort(stage);
@@ -3951,7 +3938,7 @@ function buildHtml(
 
   /** When meta.island_key is set, backgrounds are always PREFIX+1, PREFIX+2, "2", "3", PREFIX+3, PREFIX+4 (same as tutor server). */
   function islandPackBackgroundForIndex(islandKey, index){
-    const prefix = String(islandKey || "").trim().replace(/\s+/g, "_");
+    const prefix = String(islandKey || "").trim().replace(/\\s+/g, "_");
     if (!prefix) return "";
     const sn = index + 1;
     if (sn === 1) return prefix + "1";
@@ -4008,9 +3995,12 @@ function buildHtml(
     const reward = {
       key,
       image: artifactPathByKey(key),
-      emoji: artifactFromJson.emoji || LESSON.story?.artifact_emoji || "🏆",
-      name: artifactFromJson.name || LESSON.story?.artifact_name || titleFromKey(key),
-      description: artifactFromJson.description || "A magical reward for your adventure.",
+      emoji: LESSON.story?.artifact_emoji || artifactFromJson.emoji || "🏆",
+      name: LESSON.story?.artifact_name || titleFromKey(key) || artifactFromJson.name,
+      description:
+        LESSON.story?.artifact_power ||
+        artifactFromJson.description ||
+        "A magical reward for your adventure.",
     };
     state.completionArtifact = reward;
     state.earnedArtifacts.push(reward);
@@ -4133,7 +4123,8 @@ function buildHtml(
     const startLevel = Number(LESSON.meta?.student_level ?? 0);
     $("completionLevel").textContent = "Level " + (startLevel + 1);
     $("completionCoins").textContent = "🪙 " + state.totalCoins + " coins remaining";
-    $("completionBg").src = backgroundPath(resolveStageBackground(STAGES[0] || {}, 0));
+    $("completionBg").decoding = "async";
+    setStageBackgroundImg($("completionBg"), resolveStageBackground(STAGES[0] || {}, 0));
     $("completionArtifactName").textContent = art.name || "Mystery Artifact";
     $("completionArtifactDesc").textContent = art.description || "A magical reward for your journey.";
 
@@ -4330,7 +4321,8 @@ function buildHtml(
 
   setupPlayerAvatar();
   $("coinsLabel").textContent = String(state.totalCoins);
-  $("introBg").src = backgroundPath("second");
+  $("introBg").decoding = "async";
+  setStageBackgroundImg($("introBg"), resolveStageBackground(STAGES[0] || {}, 0));
   showIntroScreen();
   </script>
 </body>
@@ -4350,6 +4342,20 @@ async function main() {
   const rawText = await fs.readFile(inputPath, "utf-8");
   const json = JSON.parse(rawText);
   const lesson = sanitizeLesson(json);
+  const ik = String(lesson.meta?.island_key || "")
+    .trim()
+    .replace(/\s+/g, "_");
+  if (!CANONICAL_ISLAND_KEYS.includes(ik)) {
+    throw new Error(
+      `Lesson JSON needs meta.island_key as one of the eight tutor islands (got: ${JSON.stringify(lesson.meta?.island_key)})`,
+    );
+  }
+  lesson.meta = lesson.meta || {};
+  lesson.meta.island_key = ik;
+  applyIslandLessonCanon(lesson, {
+    child: { name: lesson.meta?.student_name },
+    context: { islandKey: ik },
+  });
   const backgroundMap = await buildBackgroundMap(process.cwd());
   const characterMap = await buildCharacterMap(process.cwd());
   const itemsMap = await buildItemsMap(process.cwd());

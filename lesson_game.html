@@ -142,6 +142,9 @@
       gap:0;
       pointer-events:none;
     }
+    .player-side.stage-boss-hidden{
+      display:none;
+    }
     .p-frame{
       width:clamp(270px,27vw,480px);
       height:clamp(345px,39vw,630px);
@@ -1407,12 +1410,19 @@
       background:#101522;
     }
     .intro-screen.hidden{display:none}
-    .intro-bg{
+    .intro-bg-wrap{
       position:absolute;
       inset:0;
-      width:100%;
-      height:100%;
+      overflow:hidden;
+    }
+    .intro-bg{
+      position:absolute;
+      inset:-8%;
+      width:116%;
+      height:116%;
       object-fit:cover;
+      filter:blur(28px);
+      opacity:.92;
     }
     .intro-panel{
       position:relative;
@@ -1471,7 +1481,9 @@
 </head>
 <body>
   <div class="intro-screen" id="introScreen">
-    <img class="intro-bg" id="introBg" alt="">
+    <div class="intro-bg-wrap">
+      <img class="intro-bg" id="introBg" alt="">
+    </div>
     <div class="intro-panel">
       <div class="intro-story" id="introStory"></div>
       <button class="intro-start" id="introStartBtn">BEGIN ADVENTURE</button>
@@ -1485,7 +1497,7 @@
     <button class="stage-skip-btn" id="stageSkipBtn">⏭ Skip Stage 1</button>
     <div class="cpop" id="coinPopup">+0</div>
     <div class="instruction" id="instruction"></div>
-    <div class="player-side">
+    <div class="player-side" id="playerSide">
       <div class="p-frame" id="pFrame">
         <span id="pEmoji">🧍</span>
         <img id="pImg" alt="player">
@@ -1548,66 +1560,7 @@
   </div>
 
   <script>
-  const LESSON = {"meta":{"lesson_id":"division_island2_medium","topic_key":"number_division","topic_label":"Division","difficulty":"medium","island_number":2,"student_name":"Pirate","student_code":"MONKEY-4821","student_level":2,"student_coins":165,"character_key":"pirate_green","character_image":"assets/characters/pirate_green.webp","total_stages":6,"estimated_duration_minutes":12,"island_key":"blue_crab_island"},"story":{"island_name":"Синий Остров","villain":"Синяя Обезьяна-Краб","artifact_name":"Очки чтения мыслей","artifact_emoji":"🕶️","artifact_power":"See hidden numbers in any problem instantly","greeting":"Ahoy, Pirate — the Blue Island needs your division skills!","act1":"You step onto the Blue Island and your boots sink into glowing sapphire sand. Crystal-blue palm trees hum in the salty breeze, and tide pools shimmer with floating starfish.","act2":"But the Синяя Обезьяна-Краб has gone bananas — he's hoarding ALL the island's treasures in two giant clam shells and refusing to share them fairly with the islanders! The monkeys are arguing over how to split everything evenly.","act3":"Only YOU can restore balance by dividing the treasures into equal groups. Complete the mission and claim the Очки чтения мыслей — magic sunglasses that let you see hidden numbers before anyone else!","goal":"Division is your superpower to make things fair — split any pile into perfect equal shares!"},"stages":[{"id":1,"type":"drag_drop","title":"Share the Treasures","background":"blue_crab_island1","coins":15,"mechanic_reason":"Age 7-8 medium: drag_drop is welcoming and visual, perfect for introducing fair sharing concept with tangible objects","success_message":"Perfect sharing, Pirate! Every group got the same amount!","rounds":[{"instruction":"Drag 6 pearls equally into 2 clam shells","draggables":[{"id":"pearl1","image_key":"pearl"},{"id":"pearl2","image_key":"pearl"},{"id":"pearl3","image_key":"pearl"},{"id":"pearl4","image_key":"pearl"},{"id":"pearl5","image_key":"pearl"},{"id":"pearl6","image_key":"pearl"}],"drop_zones":[{"id":"clam1","image_key":"clam_shell"},{"id":"clam2","image_key":"clam_shell"}],"required_per_zone":{"clam1":3,"clam2":3},"screen_item_count":6,"target_count":2,"zone_counts":[3,3]},{"instruction":"Share 8 starfish between 2 tide pools","draggables":[{"id":"star1","image_key":"starfish"},{"id":"star2","image_key":"starfish"},{"id":"star3","image_key":"starfish"},{"id":"star4","image_key":"starfish"},{"id":"star5","image_key":"starfish"},{"id":"star6","image_key":"starfish"},{"id":"star7","image_key":"starfish"},{"id":"star8","image_key":"starfish"}],"drop_zones":[{"id":"pool1","image_key":"tide_pool"},{"id":"pool2","image_key":"tide_pool"}],"required_per_zone":{"pool1":4,"pool2":4},"screen_item_count":6,"target_count":2,"zone_counts":[3,3]},{"instruction":"Divide 10 blue gems into 2 treasure chests","draggables":[{"id":"gem1","image_key":"sapphire"},{"id":"gem2","image_key":"sapphire"},{"id":"gem3","image_key":"sapphire"},{"id":"gem4","image_key":"sapphire"},{"id":"gem5","image_key":"sapphire"},{"id":"gem6","image_key":"sapphire"},{"id":"gem7","image_key":"sapphire"},{"id":"gem8","image_key":"sapphire"},{"id":"gem9","image_key":"sapphire"},{"id":"gem10","image_key":"sapphire"}],"drop_zones":[{"id":"chest1","image_key":"treasure_chest"},{"id":"chest2","image_key":"treasure_chest"}],"required_per_zone":{"chest1":5,"chest2":5},"screen_item_count":6,"target_count":2,"zone_counts":[3,3]},{"instruction":"Split 12 coins equally into 2 pouches","draggables":[{"id":"coin1","image_key":"gold_coin"},{"id":"coin2","image_key":"gold_coin"},{"id":"coin3","image_key":"gold_coin"},{"id":"coin4","image_key":"gold_coin"},{"id":"coin5","image_key":"gold_coin"},{"id":"coin6","image_key":"gold_coin"},{"id":"coin7","image_key":"gold_coin"},{"id":"coin8","image_key":"gold_coin"},{"id":"coin9","image_key":"gold_coin"},{"id":"coin10","image_key":"gold_coin"},{"id":"coin11","image_key":"gold_coin"},{"id":"coin12","image_key":"gold_coin"}],"drop_zones":[{"id":"pouch1","image_key":"coin_pouch"},{"id":"pouch2","image_key":"coin_pouch"}],"required_per_zone":{"pouch1":6,"pouch2":6},"screen_item_count":6,"target_count":2,"zone_counts":[3,3]},{"instruction":"Divide 14 shells between 2 baskets (7 each)","draggables":[{"id":"shell1","image_key":"seashell"},{"id":"shell2","image_key":"seashell"},{"id":"shell3","image_key":"seashell"},{"id":"shell4","image_key":"seashell"},{"id":"shell5","image_key":"seashell"},{"id":"shell6","image_key":"seashell"},{"id":"shell7","image_key":"seashell"},{"id":"shell8","image_key":"seashell"},{"id":"shell9","image_key":"seashell"},{"id":"shell10","image_key":"seashell"},{"id":"shell11","image_key":"seashell"},{"id":"shell12","image_key":"seashell"},{"id":"shell13","image_key":"seashell"},{"id":"shell14","image_key":"seashell"}],"drop_zones":[{"id":"basket1","image_key":"wicker_basket"},{"id":"basket2","image_key":"wicker_basket"}],"required_per_zone":{"basket1":7,"basket2":7},"screen_item_count":6,"target_count":2,"zone_counts":[3,3]}],"round_bonus_coins":2},{"id":2,"type":"symbol_calc","title":"Decode the Blue Symbols","background":"blue_crab_island2","coins":20,"mechanic_reason":"Age 7-8 medium: symbol math bridges visual sharing to abstract division notation, preparing for numeric operations","success_message":"You cracked the symbol code, Pirate!","rounds":[{"instruction":"Find the value of the expression","symbol_values":[{"symbol":"A","image_key":"pearl","value":4},{"symbol":"B","image_key":"starfish","value":3},{"symbol":"C","image_key":"sapphire","value":2}],"expression":"A + B × C","answer":"10","symbol_a":4,"symbol_b":3,"symbol_c":2,"symbol_expression":"A + B × C"},{"instruction":"Calculate using the symbols","symbol_values":[{"symbol":"A","image_key":"seashell","value":6},{"symbol":"B","image_key":"gold_coin","value":2},{"symbol":"C","image_key":"coral","value":5}],"expression":"A ÷ B + C","answer":"10","symbol_a":4,"symbol_b":3,"symbol_c":2,"symbol_expression":"A + B × C"},{"instruction":"Solve the treasure equation","symbol_values":[{"symbol":"A","image_key":"crystal","value":8},{"symbol":"B","image_key":"pearl","value":4},{"symbol":"C","image_key":"starfish","value":3}],"expression":"A ÷ B + C","answer":"10","symbol_a":4,"symbol_b":3,"symbol_c":2,"symbol_expression":"A + B × C"},{"instruction":"Find the hidden answer","symbol_values":[{"symbol":"A","image_key":"sapphire","value":12},{"symbol":"B","image_key":"gold_coin","value":3},{"symbol":"C","image_key":"seashell","value":2}],"expression":"A ÷ B × C","answer":"10","symbol_a":4,"symbol_b":3,"symbol_c":2,"symbol_expression":"A + B × C"},{"instruction":"Decode the final symbol puzzle","symbol_values":[{"symbol":"A","image_key":"coral","value":10},{"symbol":"B","image_key":"crystal","value":5},{"symbol":"C","image_key":"pearl","value":6}],"expression":"A ÷ B + C","answer":"10","symbol_a":4,"symbol_b":3,"symbol_c":2,"symbol_expression":"A + B × C"}],"round_bonus_coins":2},{"id":3,"type":"fill_blank","title":"Division Cave Riddles","background":"2","coins":25,"mechanic_reason":"Age 7-8 medium: fill_blank introduces direct division notation, building fluency with the ÷ symbol","success_message":"Every riddle solved perfectly, Pirate!","rounds":[{"instruction":"12 ÷ 3 =","prompt":"12 ÷ 3 =","answer":"4","example":"12 ÷ 3 ="},{"instruction":"12 ÷ 3 =","prompt":"12 ÷ 3 =","answer":"4","example":"12 ÷ 3 ="},{"instruction":"12 ÷ 3 =","prompt":"12 ÷ 3 =","answer":"4","example":"12 ÷ 3 ="},{"instruction":"12 ÷ 3 =","prompt":"12 ÷ 3 =","answer":"4","example":"12 ÷ 3 ="},{"instruction":"12 ÷ 3 =","prompt":"12 ÷ 3 =","answer":"4","example":"12 ÷ 3 ="}],"round_bonus_coins":2},{"id":4,"type":"fill_blank","title":"Jungle Path Calculations","background":"3","coins":25,"mechanic_reason":"Age 7-8 medium: repeated fill_blank with different numbers builds automaticity and confidence","success_message":"You blazed through the jungle path, Pirate!","rounds":[{"instruction":"12 ÷ 3 =","prompt":"12 ÷ 3 =","answer":"4","example":"12 ÷ 3 ="},{"instruction":"12 ÷ 3 =","prompt":"12 ÷ 3 =","answer":"4","example":"12 ÷ 3 ="},{"instruction":"12 ÷ 3 =","prompt":"12 ÷ 3 =","answer":"4","example":"12 ÷ 3 ="},{"instruction":"12 ÷ 3 =","prompt":"12 ÷ 3 =","answer":"4","example":"12 ÷ 3 ="},{"instruction":"12 ÷ 3 =","prompt":"12 ÷ 3 =","answer":"4","example":"12 ÷ 3 ="}],"round_bonus_coins":2},{"id":5,"type":"fill_blank","title":"Temple of Division","background":"blue_crab_island3","coins":30,"mechanic_reason":"Age 7-8 medium: final fill_blank round with larger numbers adds challenge before finale choice stage","success_message":"The temple doors opened for you, Pirate!","rounds":[{"instruction":"12 ÷ 3 =","prompt":"12 ÷ 3 =","answer":"4","example":"12 ÷ 3 ="},{"instruction":"12 ÷ 3 =","prompt":"12 ÷ 3 =","answer":"4","example":"12 ÷ 3 ="},{"instruction":"12 ÷ 3 =","prompt":"12 ÷ 3 =","answer":"4","example":"12 ÷ 3 ="},{"instruction":"12 ÷ 3 =","prompt":"12 ÷ 3 =","answer":"4","example":"12 ÷ 3 ="},{"instruction":"12 ÷ 3 =","prompt":"12 ÷ 3 =","answer":"4","example":"12 ÷ 3 ="}],"round_bonus_coins":2},{"id":6,"type":"multi_choice","title":"Claim the Очки чтения мыслей","background":"blue_crab_island4","coins":35,"mechanic_reason":"Age 7-8 medium: multi_choice finale tests quick recognition and decision-making, celebrating mastery","success_message":"You claimed the Mind-Reading Glasses, Pirate! Now you can see hidden numbers anywhere!","rounds":[{"instruction":"Which answer is correct?","options":[{"id":"A","label":"3"},{"id":"B","label":"4"},{"id":"C","label":"5"}],"correct":"B","correct_option":"B"},{"instruction":"Which answer is correct?","options":[{"id":"A","label":"3"},{"id":"B","label":"4"},{"id":"C","label":"5"}],"correct":"B","correct_option":"B"},{"instruction":"Which answer is correct?","options":[{"id":"A","label":"3"},{"id":"B","label":"4"},{"id":"C","label":"5"}],"correct":"B","correct_option":"B"},{"instruction":"Which answer is correct?","options":[{"id":"A","label":"3"},{"id":"B","label":"4"},{"id":"C","label":"5"}],"correct":"B","correct_option":"B"},{"instruction":"Which answer is correct?","options":[{"id":"A","label":"3"},{"id":"B","label":"4"},{"id":"C","label":"5"}],"correct":"B","correct_option":"B"}],"round_bonus_coins":2,"artifact":{"emoji":"🕶️","name":"Очки чтения мыслей","description":"Magic sunglasses that reveal hidden numbers in any math problem"}}],"images_needed":{"backgrounds":["beach_sunset","cave_entrance","cave_deep","jungle_path","jungle_temple","temple_throne"],"items":["pearl","starfish","sapphire","gold_coin","seashell","coral","crystal"],"targets":["clam_shell","tide_pool","treasure_chest","coin_pouch","wicker_basket"],"artifact":{"key":"mind_reading_glasses","emoji":"🕶️","name":"Очки чтения мыслей"}},"tutor_notes":{"block1_script":"Hey Pirate! Today we're learning DIVISION — the superpower of sharing things fairly. Imagine you have 12 cookies and 3 friends. Division helps you give everyone the exact same amount. No one gets extra, no one gets less. That's what makes division so magical — it creates perfect fairness! Let's start by sharing some Blue Island treasures into equal groups.","block2_hint":"When you see the ÷ symbol, think 'split into equal parts.' The number before ÷ is what you're sharing. The number after ÷ is how many groups you're making. Your answer is how many go in EACH group. Try saying it out loud: '12 divided by 3 equals 4' means 12 things split into 3 groups gives you 4 in each group.","block3_tips":["Draw circles for each group and put dots inside until you use all the items","Use your fingers: if dividing by 3, hold up 3 fingers and count items onto each finger equally","Think backwards from multiplication: 3 × 4 = 12, so 12 ÷ 3 = 4","Practice with real objects at home: share toys, crackers, or blocks with family"],"block5_abstraction":"Division is the opposite of multiplication. When we multiply 3 × 4, we combine groups to get 12 total. When we divide 12 ÷ 3, we break 12 apart into 3 equal groups of 4. Division answers the question: 'If I split this total into this many groups, how many are in each group?' It's like being a fair judge who makes sure everyone gets the exact same share — no arguments, no leftovers, perfectly balanced!","weak_point_focus":"If you forget the answer, don't panic! Use the skip-counting trick: for 12 ÷ 3, count by 3s (3, 6, 9, 12) on your fingers. You counted 4 times, so the answer is 4! Or think: 'What number times 3 gives me 12?' Practice the small division facts (÷2, ÷3, ÷4) until they feel automatic, then bigger numbers will be easy."}};
-  function getIslandStageBackgroundMapForNormalize(islandKey){
-    const prefix = String(islandKey || "").trim().replace(/s+/g, "_");
-    if(!prefix) return null;
-    return { 1: prefix + "1", 2: prefix + "2", 3: "2", 4: "3", 5: prefix + "3", 6: prefix + "4" };
-  }
-  const CANONICAL_ISLAND_KEYS = ["cherry_blossom_island","jelly_bay_island","snowy_peaks_island","neon_city_island","blue_crab_island","antigravity_island","mushroom_island","crystal_island"];
-  function inferIslandKeyFromLessonObj(lesson){
-    const meta = lesson && lesson.meta && typeof lesson.meta === "object" ? lesson.meta : {};
-    let k = String(meta.island_key || meta.islandKey || "").trim();
-    if(k) return k;
-    const stages = Array.isArray(lesson && lesson.stages) ? lesson.stages : [];
-    for(const canon of CANONICAL_ISLAND_KEYS){
-      for(const st of stages){
-        const bg = String(st && st.background != null ? st.background : "").trim();
-        if(!bg) continue;
-        if(bg === canon || (bg.startsWith(canon) && /^[1-4]$/.test(bg.slice(canon.length)))) return canon;
-      }
-    }
-    const parts = [
-      String(meta.lesson_id || "").toLowerCase(),
-      String(lesson && lesson.story && lesson.story.island_name ? lesson.story.island_name : ""),
-      String(lesson && lesson.story && lesson.story.villain ? lesson.story.villain : ""),
-      String(lesson && lesson.story && lesson.story.greeting ? lesson.story.greeting : ""),
-      String(lesson && lesson.story && lesson.story.act1 ? lesson.story.act1 : ""),
-      String(lesson && lesson.story && lesson.story.act2 ? lesson.story.act2 : ""),
-    ];
-    const blob = parts.join(" ").toLowerCase();
-    if(/blue_crab|blue\s+crab|blue\s+island|синий\s+остров|синяя\s+обезьян|tide\s+pools?|clam\s+shells?|sapphire\s+sand/i.test(blob)) return "blue_crab_island";
-    if(/cherry_blossom|hanaydo|сакур|вишн|blossom|samurai/i.test(blob)) return "cherry_blossom_island";
-    if(/jelly_bay|jelly\s+bay|медуз|jellyfish/i.test(blob)) return "jelly_bay_island";
-    if(/snowy_peaks|snowy\s+peaks|снегов|пик/i.test(blob)) return "snowy_peaks_island";
-    if(/neon_city|neon\s+city|неон/i.test(blob)) return "neon_city_island";
-    if(/antigravity|антигравит/i.test(blob)) return "antigravity_island";
-    if(/mushroom_island|mushroom|грибн/i.test(blob)) return "mushroom_island";
-    if(/crystal_island|\bcrystal\b|кристалл/i.test(blob)) return "crystal_island";
-    return "blue_crab_island";
-  }
-  function normalizeLessonIslandPipeline(lesson){
-    if(!lesson || typeof lesson !== "object") return;
-    const inferred = inferIslandKeyFromLessonObj(lesson);
-    if(!inferred) return;
-    const map = getIslandStageBackgroundMapForNormalize(inferred);
-    if(!map) return;
-    lesson.meta = lesson.meta || {};
-    if(!String(lesson.meta.island_key || lesson.meta.islandKey || "").trim()){
-      lesson.meta.island_key = inferred;
-    }
-    const useKey = String(lesson.meta.island_key || lesson.meta.islandKey || inferred).trim();
-    const map2 = getIslandStageBackgroundMapForNormalize(useKey);
-    if(!map2) return;
-    const stages = Array.isArray(lesson.stages) ? lesson.stages : [];
-    for(let i = 0; i < stages.length; i++){
-      const st = stages[i];
-      if(!st || typeof st !== "object") continue;
-      const sn = Number(st.id != null ? st.id : i + 1) || i + 1;
-      if(map2[sn]) st.background = map2[sn];
-    }
-  }
-  normalizeLessonIslandPipeline(LESSON);
+  const LESSON = {"meta":{"lesson_id":"division_island2_medium","topic_key":"number_division","topic_label":"Division","difficulty":"medium","island_number":2,"student_name":"Pirate","student_code":"MONKEY-4821","student_level":2,"student_coins":165,"character_key":"pirate_green","character_image":"assets/characters/pirate_green.webp","total_stages":6,"estimated_duration_minutes":12,"island_key":"blue_crab_island"},"story":{"island_name":"Blue Crab Island","villain":"Four-armed monkey","artifact_name":"Tidal Core","artifact_emoji":"🦀","artifact_power":"Hidden power beneath the reef that fuels the crab army.","greeting":"Pirate, your island mission begins now — listen closely.","act1":"On Blue Crab Island, swarms of snapping blue crabs guard the shores while a four-armed monkey rules from the tide pools, striking with impossible speed. Twisted by the will of Doctor Krit, it commands the crabs like an army. Hidden beneath the reef lies the Tidal Core that fuels its power. We must reach, Pirate, it first and break Krit's control before the island is overrun.","act2":"","act3":"","goal":"Pirate, master every math trial, reach the island's core in time, and break Doctor Krit's hold."},"stages":[{"id":1,"type":"drag_drop","title":"Share the Treasures","background":"blue_crab_island1","coins":15,"mechanic_reason":"Age 7-8 medium: drag_drop is welcoming and visual, perfect for introducing fair sharing concept with tangible objects","success_message":"Perfect sharing, Pirate! Every group got the same amount!","rounds":[{"instruction":"Drag 6 pearls equally into 2 clam shells","draggables":[{"id":"pearl1","image_key":"pearl"},{"id":"pearl2","image_key":"pearl"},{"id":"pearl3","image_key":"pearl"},{"id":"pearl4","image_key":"pearl"},{"id":"pearl5","image_key":"pearl"},{"id":"pearl6","image_key":"pearl"}],"drop_zones":[{"id":"clam1","image_key":"clam_shell"},{"id":"clam2","image_key":"clam_shell"}],"required_per_zone":{"clam1":3,"clam2":3},"screen_item_count":6,"target_count":2,"zone_counts":[3,3]},{"instruction":"Share 8 starfish between 2 tide pools","draggables":[{"id":"star1","image_key":"starfish"},{"id":"star2","image_key":"starfish"},{"id":"star3","image_key":"starfish"},{"id":"star4","image_key":"starfish"},{"id":"star5","image_key":"starfish"},{"id":"star6","image_key":"starfish"},{"id":"star7","image_key":"starfish"},{"id":"star8","image_key":"starfish"}],"drop_zones":[{"id":"pool1","image_key":"tide_pool"},{"id":"pool2","image_key":"tide_pool"}],"required_per_zone":{"pool1":4,"pool2":4},"screen_item_count":6,"target_count":2,"zone_counts":[3,3]},{"instruction":"Divide 10 blue gems into 2 treasure chests","draggables":[{"id":"gem1","image_key":"sapphire"},{"id":"gem2","image_key":"sapphire"},{"id":"gem3","image_key":"sapphire"},{"id":"gem4","image_key":"sapphire"},{"id":"gem5","image_key":"sapphire"},{"id":"gem6","image_key":"sapphire"},{"id":"gem7","image_key":"sapphire"},{"id":"gem8","image_key":"sapphire"},{"id":"gem9","image_key":"sapphire"},{"id":"gem10","image_key":"sapphire"}],"drop_zones":[{"id":"chest1","image_key":"treasure_chest"},{"id":"chest2","image_key":"treasure_chest"}],"required_per_zone":{"chest1":5,"chest2":5},"screen_item_count":6,"target_count":2,"zone_counts":[3,3]},{"instruction":"Split 12 coins equally into 2 pouches","draggables":[{"id":"coin1","image_key":"gold_coin"},{"id":"coin2","image_key":"gold_coin"},{"id":"coin3","image_key":"gold_coin"},{"id":"coin4","image_key":"gold_coin"},{"id":"coin5","image_key":"gold_coin"},{"id":"coin6","image_key":"gold_coin"},{"id":"coin7","image_key":"gold_coin"},{"id":"coin8","image_key":"gold_coin"},{"id":"coin9","image_key":"gold_coin"},{"id":"coin10","image_key":"gold_coin"},{"id":"coin11","image_key":"gold_coin"},{"id":"coin12","image_key":"gold_coin"}],"drop_zones":[{"id":"pouch1","image_key":"coin_pouch"},{"id":"pouch2","image_key":"coin_pouch"}],"required_per_zone":{"pouch1":6,"pouch2":6},"screen_item_count":6,"target_count":2,"zone_counts":[3,3]},{"instruction":"Divide 14 shells between 2 baskets (7 each)","draggables":[{"id":"shell1","image_key":"seashell"},{"id":"shell2","image_key":"seashell"},{"id":"shell3","image_key":"seashell"},{"id":"shell4","image_key":"seashell"},{"id":"shell5","image_key":"seashell"},{"id":"shell6","image_key":"seashell"},{"id":"shell7","image_key":"seashell"},{"id":"shell8","image_key":"seashell"},{"id":"shell9","image_key":"seashell"},{"id":"shell10","image_key":"seashell"},{"id":"shell11","image_key":"seashell"},{"id":"shell12","image_key":"seashell"},{"id":"shell13","image_key":"seashell"},{"id":"shell14","image_key":"seashell"}],"drop_zones":[{"id":"basket1","image_key":"wicker_basket"},{"id":"basket2","image_key":"wicker_basket"}],"required_per_zone":{"basket1":7,"basket2":7},"screen_item_count":6,"target_count":2,"zone_counts":[3,3]}],"round_bonus_coins":2},{"id":2,"type":"symbol_calc","title":"Decode the Blue Symbols","background":"blue_crab_island2","coins":20,"mechanic_reason":"Age 7-8 medium: symbol math bridges visual sharing to abstract division notation, preparing for numeric operations","success_message":"You cracked the symbol code, Pirate!","rounds":[{"instruction":"Find the value of the expression","symbol_values":[{"symbol":"A","image_key":"pearl","value":4},{"symbol":"B","image_key":"starfish","value":3},{"symbol":"C","image_key":"sapphire","value":2}],"expression":"A + B × C","answer":"10","symbol_a":4,"symbol_b":3,"symbol_c":2,"symbol_expression":"A + B × C"},{"instruction":"Calculate using the symbols","symbol_values":[{"symbol":"A","image_key":"seashell","value":6},{"symbol":"B","image_key":"gold_coin","value":2},{"symbol":"C","image_key":"coral","value":5}],"expression":"A ÷ B + C","answer":"10","symbol_a":4,"symbol_b":3,"symbol_c":2,"symbol_expression":"A + B × C"},{"instruction":"Solve the treasure equation","symbol_values":[{"symbol":"A","image_key":"crystal","value":8},{"symbol":"B","image_key":"pearl","value":4},{"symbol":"C","image_key":"starfish","value":3}],"expression":"A ÷ B + C","answer":"10","symbol_a":4,"symbol_b":3,"symbol_c":2,"symbol_expression":"A + B × C"},{"instruction":"Find the hidden answer","symbol_values":[{"symbol":"A","image_key":"sapphire","value":12},{"symbol":"B","image_key":"gold_coin","value":3},{"symbol":"C","image_key":"seashell","value":2}],"expression":"A ÷ B × C","answer":"10","symbol_a":4,"symbol_b":3,"symbol_c":2,"symbol_expression":"A + B × C"},{"instruction":"Decode the final symbol puzzle","symbol_values":[{"symbol":"A","image_key":"coral","value":10},{"symbol":"B","image_key":"crystal","value":5},{"symbol":"C","image_key":"pearl","value":6}],"expression":"A ÷ B + C","answer":"10","symbol_a":4,"symbol_b":3,"symbol_c":2,"symbol_expression":"A + B × C"}],"round_bonus_coins":2},{"id":3,"type":"fill_blank","title":"Division Cave Riddles","background":"2","coins":25,"mechanic_reason":"Age 7-8 medium: fill_blank introduces direct division notation, building fluency with the ÷ symbol","success_message":"Every riddle solved perfectly, Pirate!","rounds":[{"instruction":"12 ÷ 3 =","prompt":"12 ÷ 3 =","answer":"4","example":"12 ÷ 3 ="},{"instruction":"12 ÷ 3 =","prompt":"12 ÷ 3 =","answer":"4","example":"12 ÷ 3 ="},{"instruction":"12 ÷ 3 =","prompt":"12 ÷ 3 =","answer":"4","example":"12 ÷ 3 ="},{"instruction":"12 ÷ 3 =","prompt":"12 ÷ 3 =","answer":"4","example":"12 ÷ 3 ="},{"instruction":"12 ÷ 3 =","prompt":"12 ÷ 3 =","answer":"4","example":"12 ÷ 3 ="}],"round_bonus_coins":2},{"id":4,"type":"fill_blank","title":"Jungle Path Calculations","background":"3","coins":25,"mechanic_reason":"Age 7-8 medium: repeated fill_blank with different numbers builds automaticity and confidence","success_message":"You blazed through the jungle path, Pirate!","rounds":[{"instruction":"12 ÷ 3 =","prompt":"12 ÷ 3 =","answer":"4","example":"12 ÷ 3 ="},{"instruction":"12 ÷ 3 =","prompt":"12 ÷ 3 =","answer":"4","example":"12 ÷ 3 ="},{"instruction":"12 ÷ 3 =","prompt":"12 ÷ 3 =","answer":"4","example":"12 ÷ 3 ="},{"instruction":"12 ÷ 3 =","prompt":"12 ÷ 3 =","answer":"4","example":"12 ÷ 3 ="},{"instruction":"12 ÷ 3 =","prompt":"12 ÷ 3 =","answer":"4","example":"12 ÷ 3 ="}],"round_bonus_coins":2},{"id":5,"type":"fill_blank","title":"Temple of Division","background":"blue_crab_island3","coins":30,"mechanic_reason":"Age 7-8 medium: final fill_blank round with larger numbers adds challenge before finale choice stage","success_message":"The temple doors opened for you, Pirate!","rounds":[{"instruction":"12 ÷ 3 =","prompt":"12 ÷ 3 =","answer":"4","example":"12 ÷ 3 ="},{"instruction":"12 ÷ 3 =","prompt":"12 ÷ 3 =","answer":"4","example":"12 ÷ 3 ="},{"instruction":"12 ÷ 3 =","prompt":"12 ÷ 3 =","answer":"4","example":"12 ÷ 3 ="},{"instruction":"12 ÷ 3 =","prompt":"12 ÷ 3 =","answer":"4","example":"12 ÷ 3 ="},{"instruction":"12 ÷ 3 =","prompt":"12 ÷ 3 =","answer":"4","example":"12 ÷ 3 ="}],"round_bonus_coins":2},{"id":6,"type":"multi_choice","title":"Claim the Очки чтения мыслей","background":"blue_crab_island4","coins":35,"mechanic_reason":"Age 7-8 medium: multi_choice finale tests quick recognition and decision-making, celebrating mastery","success_message":"You claimed the Mind-Reading Glasses, Pirate! Now you can see hidden numbers anywhere!","rounds":[{"instruction":"Which answer is correct?","options":[{"id":"A","label":"3"},{"id":"B","label":"4"},{"id":"C","label":"5"}],"correct":"B","correct_option":"B"},{"instruction":"Which answer is correct?","options":[{"id":"A","label":"3"},{"id":"B","label":"4"},{"id":"C","label":"5"}],"correct":"B","correct_option":"B"},{"instruction":"Which answer is correct?","options":[{"id":"A","label":"3"},{"id":"B","label":"4"},{"id":"C","label":"5"}],"correct":"B","correct_option":"B"},{"instruction":"Which answer is correct?","options":[{"id":"A","label":"3"},{"id":"B","label":"4"},{"id":"C","label":"5"}],"correct":"B","correct_option":"B"},{"instruction":"Which answer is correct?","options":[{"id":"A","label":"3"},{"id":"B","label":"4"},{"id":"C","label":"5"}],"correct":"B","correct_option":"B"}],"round_bonus_coins":2,"artifact":{"emoji":"🕶️","name":"Очки чтения мыслей","description":"Magic sunglasses that reveal hidden numbers in any math problem"}}],"images_needed":{"backgrounds":["beach_sunset","cave_entrance","cave_deep","jungle_path","jungle_temple","temple_throne"],"items":["pearl","starfish","sapphire","gold_coin","seashell","coral","crystal"],"targets":["clam_shell","tide_pool","treasure_chest","coin_pouch","wicker_basket"],"artifact":{"key":"mind_reading_glasses","emoji":"🕶️","name":"Очки чтения мыслей"}},"tutor_notes":{"block1_script":"Hey Pirate! Today we're learning DIVISION — the superpower of sharing things fairly. Imagine you have 12 cookies and 3 friends. Division helps you give everyone the exact same amount. No one gets extra, no one gets less. That's what makes division so magical — it creates perfect fairness! Let's start by sharing some Blue Island treasures into equal groups.","block2_hint":"When you see the ÷ symbol, think 'split into equal parts.' The number before ÷ is what you're sharing. The number after ÷ is how many groups you're making. Your answer is how many go in EACH group. Try saying it out loud: '12 divided by 3 equals 4' means 12 things split into 3 groups gives you 4 in each group.","block3_tips":["Draw circles for each group and put dots inside until you use all the items","Use your fingers: if dividing by 3, hold up 3 fingers and count items onto each finger equally","Think backwards from multiplication: 3 × 4 = 12, so 12 ÷ 3 = 4","Practice with real objects at home: share toys, crackers, or blocks with family"],"block5_abstraction":"Division is the opposite of multiplication. When we multiply 3 × 4, we combine groups to get 12 total. When we divide 12 ÷ 3, we break 12 apart into 3 equal groups of 4. Division answers the question: 'If I split this total into this many groups, how many are in each group?' It's like being a fair judge who makes sure everyone gets the exact same share — no arguments, no leftovers, perfectly balanced!","weak_point_focus":"If you forget the answer, don't panic! Use the skip-counting trick: for 12 ÷ 3, count by 3s (3, 6, 9, 12) on your fingers. You counted 4 times, so the answer is 4! Or think: 'What number times 3 gives me 12?' Practice the small division facts (÷2, ÷3, ÷4) until they feel automatic, then bigger numbers will be easy."}};
   const BACKGROUND_MAP = {"2":"assets/backgrounds/2.png","3":"assets/backgrounds/3.png","antigravity_island1":"assets/backgrounds/antigravity_island1.PNG","antigravity_island2":"assets/backgrounds/antigravity_island2.PNG","antigravity_island3":"assets/backgrounds/antigravity_island3.PNG","antigravity_island4":"assets/backgrounds/antigravity_island4.PNG","blue_crab_island1":"assets/backgrounds/blue_crab_island1.PNG","blue_crab_island2":"assets/backgrounds/blue_crab_island2.PNG","blue_crab_island3":"assets/backgrounds/blue_crab_island3.PNG","blue_crab_island4":"assets/backgrounds/blue_crab_island4.PNG","cherry_blossom_island1":"assets/backgrounds/cherry_blossom_island1.PNG","cherry_blossom_island2":"assets/backgrounds/cherry_blossom_island2.PNG","cherry_blossom_island3":"assets/backgrounds/cherry_blossom_island3.PNG","cherry_blossom_island4":"assets/backgrounds/cherry_blossom_island4.PNG","crystal_island1":"assets/backgrounds/crystal_island1.PNG","crystal_island2":"assets/backgrounds/crystal_island2.PNG","crystal_island3":"assets/backgrounds/crystal_island3.PNG","crystal_island4":"assets/backgrounds/crystal_island4.PNG","jelly_bay_island1":"assets/backgrounds/jelly_bay_island1.PNG","jelly_bay_island2":"assets/backgrounds/jelly_bay_island2.PNG","jelly_bay_island3":"assets/backgrounds/jelly_bay_island3.PNG","jelly_bay_island4":"assets/backgrounds/jelly_bay_island4.PNG","mushroom_island1":"assets/backgrounds/mushroom_island1.PNG","mushroom_island2":"assets/backgrounds/mushroom_island2.PNG","mushroom_island3":"assets/backgrounds/mushroom_island3.PNG","mushroom_island4":"assets/backgrounds/mushroom_island4.PNG","neon_city_island1":"assets/backgrounds/neon_city_island1.PNG","neon_city_island2":"assets/backgrounds/neon_city_island2.PNG","neon_city_island3":"assets/backgrounds/neon_city_island3.PNG","neon_city_island4":"assets/backgrounds/neon_city_island4.PNG","second":"assets/backgrounds/second.webp","shop":"assets/backgrounds/shop.webp","snowy_peaks_island1":"assets/backgrounds/snowy_peaks_island1.PNG","snowy_peaks_island2":"assets/backgrounds/snowy_peaks_island2.PNG","snowy_peaks_island3":"assets/backgrounds/snowy_peaks_island3.PNG","snowy_peaks_island4":"assets/backgrounds/snowy_peaks_island4.PNG"};
   const CHARACTER_MAP = {"boy_blue":"assets/characters/boy_blue.webp","boy_brown":"assets/characters/boy_brown.webp","boy_green":"assets/characters/boy_green.webp","elf_blue":"assets/characters/elf_blue.webp","elf_green":"assets/characters/elf_green.webp","elf_red":"assets/characters/elf_red.webp","fairy_green":"assets/characters/fairy_green.webp","fairy_purple":"assets/characters/fairy_purple.webp","fairy_red":"assets/characters/fairy_red.webp","girl_blue":"assets/characters/girl_blue.webp","girl_brown":"assets/characters/girl_brown.webp","girl_green":"assets/characters/girl_green.webp","pirate_blue":"assets/characters/pirate_blue.webp","pirate_brown":"assets/characters/pirate_brown.webp","pirate_green":"assets/characters/pirate_green.webp","wizard_blue":"assets/characters/wizard_blue.webp","wizard_green":"assets/characters/wizard_green.webp","wizard_red":"assets/characters/wizard_red.webp"};
   const ITEMS_MAP = {"artifact":"assets/items/artifact.png","bamboo":"assets/items/bamboo.png","banana":"assets/items/banana.png","bubble":"assets/items/bubble.png","butterfly":"assets/items/butterfly.png","candy":"assets/items/candy.png","cherry":"assets/items/cherry.png","cookie":"assets/items/cookie.png","coral":"assets/items/coral.png","crab_blue":"assets/items/crab_blue.png","hibiscus":"assets/items/hibiscus.png","jellyfish":"assets/items/jellyfish.png","leaf":"assets/items/leaf.png","lollipop":"assets/items/lollipop.png","mushroom":"assets/items/mushroom.png","pawprint":"assets/items/pawprint.png","pearl_blue":"assets/items/pearl_blue.png","pearl_red":"assets/items/pearl_red.png","samurai_monkey":"assets/items/samurai_monkey.png","shell_blue":"assets/items/shell_blue.png","shell_red":"assets/items/shell_red.png","spore":"assets/items/spore.png","starfish":"assets/items/starfish.png","stone_blue":"assets/items/stone_blue.png"};
@@ -1874,6 +1827,39 @@
     return "assets/backgrounds/" + k + ".png";
   }
 
+  /** Ordered URLs for stage BG img — disk map first, then common extensions (PNG casing varies). */
+  function stageBackgroundCandidates(stem){
+    const k = String(stem || "").trim();
+    if(!k) return [];
+    const primary = backgroundPath(k);
+    const base = "assets/backgrounds/" + k;
+    const extras = [".PNG", ".png", ".webp", ".jpg", ".jpeg"].map((ext) => base + ext);
+    return [...new Set([primary, ...extras].filter(Boolean))];
+  }
+
+  function setStageBackgroundImg(el, stem){
+    const urls = stageBackgroundCandidates(stem);
+    if(!urls.length){
+      el.removeAttribute("src");
+      el.onerror = null;
+      return;
+    }
+    let i = 0;
+    el.onerror = () => {
+      i += 1;
+      if(i >= urls.length){
+        el.onerror = null;
+        el.removeAttribute("src");
+        if(el.id === "bg"){
+          $("game").style.background = "radial-gradient(circle at 20% 20%, #204a66, #0b1426)";
+        }
+      }else{
+        el.src = urls[i];
+      }
+    };
+    el.src = urls[0];
+  }
+
   function characterPath(charKey){
     if(!charKey) return "";
     const mapped = fuzzyFindPath(CHARACTER_MAP, charKey);
@@ -1938,7 +1924,7 @@
   function titleFromKey(key){
     return String(key || "Mystery Artifact")
       .replace(/[_-]+/g, " ")
-      .replace(/w/g, (c) => c.toUpperCase());
+      .replace(/\b\w/g, (c) => c.toUpperCase());
   }
 
   function ensureRingIceInventory(){
@@ -1970,7 +1956,7 @@
   function collectInventorySlugsForSync(){
     const set = new Set();
     const add = (x) => {
-      const s = String(x || "").trim().toLowerCase().replace(/s+/g, "_");
+      const s = String(x || "").trim().toLowerCase().replace(/\s+/g, "_");
       if(s) set.add(s);
     };
     for(const raw of LESSON.meta?.child_inventory || []) add(raw);
@@ -3759,6 +3745,10 @@
 
     const engType = resolveEngineType(stage.type);
     const engStage = { ...stage, type: engType };
+    const playerSide = $("playerSide");
+    if(playerSide){
+      playerSide.classList.toggle("stage-boss-hidden", index === STAGES.length - 1);
+    }
     const instruction = stage.title || stage.question || LESSON.story_hook || "";
     const cleanInstruction = String(instruction).trim() ? instruction : englishStageFallback(engStage);
     if(stage.hide_instruction_label){
@@ -3768,11 +3758,7 @@
     }
     $("bg").fetchPriority = "high";
     $("bg").decoding = "async";
-    $("bg").src = backgroundPath(resolveStageBackground(baseStage, index));
-    $("bg").onerror = () => {
-      $("bg").src = "";
-      $("game").style.background = "radial-gradient(circle at 20% 20%, #204a66, #0b1426)";
-    };
+    setStageBackgroundImg($("bg"), resolveStageBackground(baseStage, index));
     setMessage("");
     if(engType === "drag_drop") renderDragDrop(stage);
     else if(engType === "drag_sort") renderDragSort(stage);
@@ -3796,7 +3782,7 @@
 
   /** When meta.island_key is set, backgrounds are always PREFIX+1, PREFIX+2, "2", "3", PREFIX+3, PREFIX+4 (same as tutor server). */
   function islandPackBackgroundForIndex(islandKey, index){
-    const prefix = String(islandKey || "").trim().replace(/s+/g, "_");
+    const prefix = String(islandKey || "").trim().replace(/\s+/g, "_");
     if (!prefix) return "";
     const sn = index + 1;
     if (sn === 1) return prefix + "1";
@@ -3853,9 +3839,12 @@
     const reward = {
       key,
       image: artifactPathByKey(key),
-      emoji: artifactFromJson.emoji || LESSON.story?.artifact_emoji || "🏆",
-      name: artifactFromJson.name || LESSON.story?.artifact_name || titleFromKey(key),
-      description: artifactFromJson.description || "A magical reward for your adventure.",
+      emoji: LESSON.story?.artifact_emoji || artifactFromJson.emoji || "🏆",
+      name: LESSON.story?.artifact_name || titleFromKey(key) || artifactFromJson.name,
+      description:
+        LESSON.story?.artifact_power ||
+        artifactFromJson.description ||
+        "A magical reward for your adventure.",
     };
     state.completionArtifact = reward;
     state.earnedArtifacts.push(reward);
@@ -3978,7 +3967,8 @@
     const startLevel = Number(LESSON.meta?.student_level ?? 0);
     $("completionLevel").textContent = "Level " + (startLevel + 1);
     $("completionCoins").textContent = "🪙 " + state.totalCoins + " coins remaining";
-    $("completionBg").src = backgroundPath(resolveStageBackground(STAGES[0] || {}, 0));
+    $("completionBg").decoding = "async";
+    setStageBackgroundImg($("completionBg"), resolveStageBackground(STAGES[0] || {}, 0));
     $("completionArtifactName").textContent = art.name || "Mystery Artifact";
     $("completionArtifactDesc").textContent = art.description || "A magical reward for your journey.";
 
@@ -4175,7 +4165,8 @@
 
   setupPlayerAvatar();
   $("coinsLabel").textContent = String(state.totalCoins);
-  $("introBg").src = backgroundPath("second");
+  $("introBg").decoding = "async";
+  setStageBackgroundImg($("introBg"), resolveStageBackground(STAGES[0] || {}, 0));
   showIntroScreen();
   </script>
 </body>

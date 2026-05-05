@@ -4,6 +4,11 @@ import path from "path";
 import { fileURLToPath } from "url";
 import http from "http";
 import { spawn } from "child_process";
+import {
+  CANONICAL_ISLAND_KEYS,
+  applyIslandLessonCanon,
+  getIslandStageBgMap,
+} from "./island_canon.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const HOST = process.env.TUTOR_UI_HOST || "0.0.0.0";
@@ -39,45 +44,8 @@ const DEFAULT_STAGE_BACKGROUNDS = {
   4: "3",
 };
 
-/** Logical keys in draft.context.islandKey / meta.island_key (tutor + autofill). */
-const CANONICAL_ISLAND_KEYS = [
-  "cherry_blossom_island",
-  "jelly_bay_island",
-  "snowy_peaks_island",
-  "neon_city_island",
-  "blue_crab_island",
-  "antigravity_island",
-  "mushroom_island",
-  "crystal_island",
-];
-
-function islandKeyToBackgroundPrefix(islandKey) {
-  const k = String(islandKey || "").trim().replace(/\s+/g, "_");
-  return k;
-}
-
-/** Shared cave passage art for stages 3–4 (same files in every lesson): assets/backgrounds/2.png then 3.png */
-const ISLAND_CAVE_STAGE_BACKGROUNDS = {
-  3: "2",
-  4: "3",
-};
-
-/**
- * Per-lesson stage backgrounds when an island pack is selected:
- * stages 1–2 = {prefix}1 and {prefix}2; 3–4 = fixed cave art (keys "2" and "3" → 2.png, 3.png);
- * 5–6 = {prefix}3 and {prefix}4. Prefix matches PNG basename before the digit.
- */
 function getIslandStageBackgroundKeys(islandKey) {
-  const prefix = islandKeyToBackgroundPrefix(islandKey);
-  if (!prefix) return null;
-  return {
-    1: `${prefix}1`,
-    2: `${prefix}2`,
-    3: ISLAND_CAVE_STAGE_BACKGROUNDS[3],
-    4: ISLAND_CAVE_STAGE_BACKGROUNDS[4],
-    5: `${prefix}3`,
-    6: `${prefix}4`,
-  };
+  return getIslandStageBgMap(islandKey);
 }
 
 function stageBackgroundFor(stageNumber, islandKey) {
@@ -86,44 +54,10 @@ function stageBackgroundFor(stageNumber, islandKey) {
   return DEFAULT_STAGE_BACKGROUNDS[stageNumber] || "";
 }
 
-/** When draft omits islandKey / model skips meta.island_key, infer from stage tokens or story text. */
-function inferIslandKeyForLesson(lesson) {
-  const meta = lesson?.meta && typeof lesson.meta === "object" ? lesson.meta : {};
-  let k = String(meta.island_key || meta.islandKey || "").trim();
-  if (k) return k;
-  for (const canon of CANONICAL_ISLAND_KEYS) {
-    for (const st of lesson?.stages || []) {
-      const bg = String(st?.background || "").trim();
-      if (!bg) continue;
-      if (bg === canon) return canon;
-      if (bg.startsWith(canon) && /^[1-4]$/.test(bg.slice(canon.length))) return canon;
-    }
-  }
-  const parts = [
-    String(meta.lesson_id || ""),
-    String(lesson?.story?.island_name || ""),
-    String(lesson?.story?.villain || ""),
-    String(lesson?.story?.greeting || ""),
-    String(lesson?.story?.act1 || ""),
-    String(lesson?.story?.act2 || ""),
-  ];
-  const blob = parts.join(" ").toLowerCase();
-  if (/blue_crab|blue\s+crab|blue\s+island|синий\s+остров|синяя\s+обезьян|tide\s+pools?|clam\s+shells?|sapphire\s+sand/i.test(blob)) return "blue_crab_island";
-  if (/cherry_blossom|hanaydo|сакур|вишн|blossom|samurai/i.test(blob)) return "cherry_blossom_island";
-  if (/jelly_bay|jelly\s+bay|медуз|jellyfish/i.test(blob)) return "jelly_bay_island";
-  if (/snowy_peaks|snowy\s+peaks|снегов|пик/i.test(blob)) return "snowy_peaks_island";
-  if (/neon_city|neon\s+city|неон/i.test(blob)) return "neon_city_island";
-  if (/antigravity|антигравит/i.test(blob)) return "antigravity_island";
-  if (/mushroom_island|mushroom|грибн/i.test(blob)) return "mushroom_island";
-  if (/crystal_island|\bcrystal\b|кристалл/i.test(blob)) return "crystal_island";
-  // Final safety: never leave lesson without island_key pipeline.
-  return "blue_crab_island";
-}
-
 function syncDraftStageBackgroundsFromIslandKey(draft) {
   if (!draft || typeof draft !== "object") return;
   const key = String(draft.context?.islandKey || "").trim();
-  const map = getIslandStageBackgroundKeys(key);
+  const map = getIslandStageBgMap(key);
   if (!map) return;
   const stages = Array.isArray(draft.stages) ? draft.stages : [];
   for (let i = 0; i < stages.length; i++) {
@@ -131,20 +65,6 @@ function syncDraftStageBackgroundsFromIslandKey(draft) {
     if (!row || typeof row !== "object") continue;
     const sn = Number(row.stageNumber) || i + 1;
     if (map[sn]) row.background = map[sn];
-  }
-}
-
-function applyIslandBackgroundsToLesson(lesson, draft) {
-  const key = String(
-    draft?.context?.islandKey || lesson?.meta?.island_key || lesson?.meta?.islandKey || "",
-  ).trim();
-  const map = getIslandStageBackgroundKeys(key);
-  if (!map || !lesson?.stages?.length) return;
-  for (let i = 0; i < lesson.stages.length; i++) {
-    const st = lesson.stages[i];
-    if (!st || typeof st !== "object") continue;
-    const sn = Number(st.id ?? st._stageNo ?? i + 1) || i + 1;
-    if (map[sn]) st.background = map[sn];
   }
 }
 
@@ -876,6 +796,12 @@ function validateDraft(draft) {
   if (!draft?.childCode) errors.push("Child code is required");
   if (!draft?.child) errors.push("Child must be fetched before generation");
   if (!Array.isArray(draft?.stages) || draft.stages.length !== 6) errors.push("Draft must have 6 stages");
+  const islandKey = String(draft?.context?.islandKey || "")
+    .trim()
+    .replace(/\s+/g, "_");
+  if (!islandKey) errors.push("Choose an island in the tutor (context.islandKey is required)");
+  else if (!CANONICAL_ISLAND_KEYS.includes(islandKey))
+    errors.push(`Unknown island_key: ${islandKey}. Use one of: ${CANONICAL_ISLAND_KEYS.join(", ")}`);
   for (const stage of draft?.stages || []) {
     if (!stage.mechanic) errors.push(`Stage ${stage.stageNumber} must have a mechanic`);
     if (!Array.isArray(stage.examples) || stage.examples.length !== 5) errors.push(`Stage ${stage.stageNumber} must have exactly 5 examples`);
@@ -1082,6 +1008,11 @@ function validateLessonShape(lesson) {
   const errors = [];
   if (!lesson || typeof lesson !== "object") errors.push("Lesson must be a JSON object");
   if (!lesson.meta) errors.push("Missing meta");
+  const ik = String(lesson.meta?.island_key || lesson.meta?.islandKey || "")
+    .trim()
+    .replace(/\s+/g, "_");
+  if (!ik) errors.push("Missing meta.island_key");
+  else if (!CANONICAL_ISLAND_KEYS.includes(ik)) errors.push(`Invalid meta.island_key: ${ik}`);
   if (!lesson.story) errors.push("Missing story");
   if (!Array.isArray(lesson.stages) || lesson.stages.length !== 6) errors.push("stages must be exactly 6");
   return errors;
@@ -1134,18 +1065,13 @@ async function generateLessonFromDraft(draft) {
     lesson.meta.start_coins = Number(ch.coins ?? lesson.meta.start_coins ?? 0);
     if (ch.characterKey) lesson.meta.character_key = ch.characterKey;
   }
-  let ik = String(draft?.context?.islandKey || "").trim();
-  if (!ik) {
-    ik = inferIslandKeyForLesson(lesson);
-    if (ik) {
-      draft.context = draft.context && typeof draft.context === "object" ? draft.context : {};
-      draft.context.islandKey = ik;
-    }
-  }
-  if (ik) lesson.meta.island_key = ik;
+  const ik = String(draft?.context?.islandKey || "")
+    .trim()
+    .replace(/\s+/g, "_");
+  lesson.meta.island_key = ik;
   clampLessonAssetKeys(lesson, assetCatalog);
-  /** After clamp — island backgrounds must win (clamp fuzzy-match can replace unknown stems). */
-  applyIslandBackgroundsToLesson(lesson, draft);
+  /** Canon story + six background stems — always from island pack, not the model. */
+  applyIslandLessonCanon(lesson, draft);
   const errors = validateLessonShape(lesson);
   if (errors.length) {
     const err = new Error("Generated lesson shape is invalid");
