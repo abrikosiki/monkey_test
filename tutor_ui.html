@@ -1075,7 +1075,7 @@
     function renderStages() {
       const root = $("stagesRoot");
       root.innerHTML = "";
-      (state.draft?.stages || []).forEach((stage) => {
+      (state.draft?.stages || []).forEach((stage, stageIdx) => {
         const card = document.createElement("div");
         card.className = "stage-card";
         card.id = "tutorStage" + stage.stageNumber;
@@ -1103,11 +1103,16 @@
         picker.addEventListener("change", () => {
           const v = String(picker.value || "").trim();
           if (!v) return;
-          stage.mechanic = v;
-          stage.examples = Array.from(
+          const oldStages = Array.isArray(state.draft?.stages) ? state.draft.stages : [];
+          const nextExamples = Array.from(
             { length: Math.max(1, stage.examples?.length || 5) },
             (_, idx) => buildExampleTemplate(v, idx + 1),
           );
+          state.draft.stages = oldStages.map((row, idx) => (
+            idx === stageIdx
+              ? { ...row, mechanic: v, examples: nextExamples }
+              : row
+          ));
           queueAutosave();
           renderStages();
         });
