@@ -238,7 +238,12 @@
       editExpanded: false,
       generationRunning: false,
       manualMechanicsMode: false,
+      mechanicExamplesCache: {},
     };
+
+    function stageMechanicCacheKey(stageNumber, mechanic) {
+      return String(stageNumber) + "::" + String(mechanic || "");
+    }
 
     const PROGRESS_STEPS = [
       { key: "profile", label: "Loading child profile..." },
@@ -1162,11 +1167,23 @@
           const v = String(picker.value || "").trim();
           if (!v) return;
           if (v === stage.mechanic) return;
+          const prevMechanic = String(stage.mechanic || "").trim();
           const oldStages = Array.isArray(state.draft?.stages) ? state.draft.stages : [];
-          const nextExamples = Array.from(
-            { length: Math.max(1, stage.examples?.length || 5) },
-            (_, idx) => buildExampleTemplate(v, idx + 1),
-          );
+          const stageNo = stage.stageNumber || (stageIdx + 1);
+          if (prevMechanic) {
+            state.mechanicExamplesCache[stageMechanicCacheKey(stageNo, prevMechanic)] = clone(Array.isArray(stage.examples) ? stage.examples : []);
+          }
+          const cachedExamples = state.mechanicExamplesCache[stageMechanicCacheKey(stageNo, v)];
+          const sourceExamples = Array.isArray(cachedExamples) && cachedExamples.length
+            ? clone(cachedExamples)
+            : clone(Array.isArray(stage.examples) ? stage.examples : []);
+          const targetLength = Math.max(5, sourceExamples.length || 0);
+          const nextExamples = Array.from({ length: targetLength }, (_, idx) => {
+            const base = sourceExamples[idx] || {};
+            const shaped = ensureExampleShape({ ...base, roundNumber: idx + 1 }, v);
+            shaped.roundNumber = idx + 1;
+            return shaped;
+          });
           state.draft.stages = oldStages.map((row, idx) => (
             idx === stageIdx
               ? { ...row, mechanic: v, examples: nextExamples }
