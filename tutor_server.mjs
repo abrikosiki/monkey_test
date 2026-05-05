@@ -1137,6 +1137,73 @@ async function generateLessonFromDraft(draft, options = {}) {
   return lesson;
 }
 
+async function buildLessonFromDraftNoAI(draft) {
+  if (draft && !draft.child && draft.childCode) {
+    try {
+      draft.child = await fetchChildRecord(draft.childCode);
+    } catch {
+      // Keep validation behavior below if child lookup fails.
+    }
+  }
+  const draftErrors = validateDraft(draft);
+  if (draftErrors.length) {
+    const err = new Error("Draft is invalid");
+    err.details = draftErrors;
+    throw err;
+  }
+
+  const assetCatalog = buildAssetCatalog();
+  const baseLesson = readCurrentLesson();
+  const lesson =
+    baseLesson && typeof baseLesson === "object"
+      ? JSON.parse(JSON.stringify(baseLesson))
+      : {
+          meta: {},
+          story: {},
+          stages: Array.from({ length: 6 }, (_, i) => ({ id: i + 1, rounds: [] })),
+          images_needed: {},
+          tutor_notes: [],
+        };
+
+  buildStrictManualStageShell(lesson, draft);
+  applyDraftToLessonStages(lesson, draft);
+  enforceEnglishText(lesson);
+  lesson.meta = lesson.meta || {};
+  lesson.meta.child_inventory = Array.isArray(draft.child?.inventory) ? draft.child.inventory : [];
+  lesson.meta.has_freeze_ring = Boolean(draft.child?.freezeRing);
+  if (draft.child) {
+    const ch = draft.child;
+    lesson.meta.student_code = ch.childCode || lesson.meta.student_code;
+    lesson.meta.student_name = ch.name || lesson.meta.student_name;
+    lesson.meta.student_level = Number(ch.level ?? lesson.meta.student_level ?? 0);
+    lesson.meta.student_coins = Number(ch.coins ?? lesson.meta.student_coins ?? 0);
+    lesson.meta.start_coins = Number(ch.coins ?? lesson.meta.start_coins ?? 0);
+    if (ch.characterKey) lesson.meta.character_key = ch.characterKey;
+  }
+  const ik = String(draft?.context?.islandKey || "")
+    .trim()
+    .replace(/\s+/g, "_");
+  lesson.meta.island_key = ik;
+  applyIslandLessonCanon(lesson, draft);
+  clampLessonAssetKeys(lesson, assetCatalog);
+  if (!lesson.images_needed || typeof lesson.images_needed !== "object") {
+    lesson.images_needed = {};
+  }
+  if (!Array.isArray(lesson.tutor_notes)) {
+    lesson.tutor_notes = [];
+  }
+  const errors = validateLessonShape(lesson);
+  if (errors.length) {
+    const err = new Error("Manual lesson shape is invalid");
+    err.details = errors;
+    throw err;
+  }
+  fs.writeFileSync(OUT_FILE, JSON.stringify(lesson, null, 2), "utf-8");
+  draft.updatedAt = new Date().toISOString();
+  writeJson(DRAFT_FILE, draft);
+  return lesson;
+}
+
 async function runNodeScript(args) {
   return new Promise((resolve, reject) => {
     const child = spawn(process.execPath, args, { cwd: __dirname, stdio: ["ignore", "pipe", "pipe"] });
@@ -1436,6 +1503,17 @@ const server = http.createServer(async (req, res) => {
           });
         }
       })();
+      return;
+    }
+
+    if (req.method === "POST" && url.pathname === "/api/build-from-draft") {
+      const payload = JSON.parse((await readBody(req)) || "{}");
+      const draft =
+        payload.draft && typeof payload.draft === "object"
+          ? payload.draft
+          : readJson(DRAFT_FILE, buildDefaultDraft());
+      const lesson = await buildLessonFromDraftNoAI(draft);
+      sendJson(res, 200, { ok: true, lesson });
       return;
     }
 
