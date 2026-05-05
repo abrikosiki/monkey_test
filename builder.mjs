@@ -1935,23 +1935,29 @@ function buildHtml(
   const TARGETS_MAP = ${targetsPayload};
   const ARTIFACT_MAP = ${artifactsPayload};
   function buildShopItemsFromArtifacts(){
-    const keys = Object.keys(ARTIFACT_MAP || {});
-    const sorted = keys.sort((a, b) => titleFromKey(a).localeCompare(titleFromKey(b)));
-    const cheap = [35, 45, 60, 75];
-    const mid = [95, 120, 145, 170];
-    const high = [210, 260, 320, 420];
-    return sorted.map((key, i) => {
-      const bucket = i % 3 === 0 ? cheap : (i % 3 === 1 ? mid : high);
-      const price = bucket[Math.floor(i / 3) % bucket.length];
-      return {
-        id: key,
-        name: titleFromKey(key),
-        img: artifactPathByKey(key),
-        price,
-      };
-    });
+    const curatedShopItems = [
+      { id: "magic_necklace", name: "Magic necklace", price: 75 },
+      { id: "adventurers_binoculars", name: "Adventurers binoculars", price: 75 },
+      { id: "tiki_mask", name: "Tiki mask", price: 115 },
+      { id: "focusing_crystal", name: "Focusing crystal", price: 165 },
+      { id: "antigravity_boots", name: "Antigravity boots", price: 115 },
+      { id: "ninja_nunchucks", name: "Ninja nunchucks", price: 165 },
+      { id: "vanteon_watch", name: "Vanteon Watch", price: 280 },
+      { id: "spy_phone", name: "Spy phone", price: 280 },
+      { id: "mysterious_creature_egg", name: "Mysterious creature’s egg", price: 540 },
+      { id: "box_of_threads", name: "A box of threads", price: 540 },
+    ];
+    return curatedShopItems.map((item) => ({
+      ...item,
+      img: artifactPathByKey(item.id),
+    }));
   }
   const SHOP_ITEMS = buildShopItemsFromArtifacts();
+  const SHOP_ITEM_BY_NORM = SHOP_ITEMS.reduce((acc, item) => {
+    acc[normKey(item.id)] = item;
+    acc[normKey(item.name)] = item;
+    return acc;
+  }, {});
   function resolveArtifactKey(raw){
     const value = String(raw || "").trim();
     if(!value) return "";
@@ -1965,6 +1971,8 @@ function buildHtml(
     const keys = Object.keys(ARTIFACT_MAP);
     const exact = keys.find((k) => normKey(k) === wanted);
     if(exact) return exact;
+    const shopHit = SHOP_ITEM_BY_NORM[wanted];
+    if(shopHit) return shopHit.id;
     return "";
   }
 
@@ -1976,10 +1984,11 @@ function buildHtml(
       const key = resolveArtifactKey(raw);
       if(!key || seen.has(key)) continue;
       seen.add(key);
+      const shopItem = SHOP_ITEM_BY_NORM[normKey(key)] || null;
       owned.push({
         key,
-        name: titleFromKey(key),
-        image: artifactPathByKey(key),
+        name: shopItem?.name || titleFromKey(key),
+        image: shopItem?.img || artifactPathByKey(key),
         description: "Owned before this lesson.",
       });
     }
@@ -4633,6 +4642,7 @@ function buildHtml(
     $("shopCoins").textContent = String(state.totalCoins);
     SHOP_ITEMS.forEach((it) => {
       const owned = state.earnedArtifacts.some((a) => a && a.key === it.id);
+      if(owned) return;
       const card = document.createElement("div");
       card.className = "shop-item";
       const img = document.createElement("img");
