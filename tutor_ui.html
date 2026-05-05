@@ -739,6 +739,20 @@
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
+    // Guarantee that current visible form values are synced into state.draft
+    // right before save/generate, even if some field has not lost focus yet.
+    function flushManualFormToDraft() {
+      const root = $("stagesRoot");
+      if (!root) return;
+      if (document.activeElement && typeof document.activeElement.blur === "function") {
+        document.activeElement.blur();
+      }
+      const fields = root.querySelectorAll("input, textarea, select");
+      fields.forEach((el) => {
+        el.dispatchEvent(new Event("change", { bubbles: true }));
+      });
+    }
+
     function makeInput(label, value, onInput, opts = {}) {
       const wrap = document.createElement("div");
       if (opts.full) wrap.className = "full";
@@ -1335,9 +1349,7 @@
       const defaultRegenText = "Build lesson from my setup";
       try {
         syncContextInputsToDraft();
-        if (document.activeElement && typeof document.activeElement.blur === "function") {
-          document.activeElement.blur();
-        }
+        flushManualFormToDraft();
         const draftChildCode = String(state.draft?.confirmedChildCode || "").trim();
         const profileChildCode = String(state.draft?.child?.childCode || "").trim();
         const fallbackCode = draftChildCode || profileChildCode;
