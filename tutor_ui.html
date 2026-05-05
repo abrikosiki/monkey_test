@@ -500,10 +500,8 @@
 
     function queueAutosave() {
       syncContextInputsToDraft();
-      state.autosavePending = true;
-      setAutosaveStatus("Saving soon...");
+      state.autosavePending = false;
       clearTimeout(state.autosaveTimer);
-      state.autosaveTimer = setTimeout(() => saveDraft(true), 900);
     }
 
     async function saveDraft(silent = false) {
@@ -511,18 +509,9 @@
       if (silent) flushFormToDraftWithoutBlur();
       else flushManualFormToDraft();
       syncContextInputsToDraft();
-      try {
-        const data = await post("/api/drafts/save", { draft: state.draft });
-        if (data.draft && typeof data.draft === "object") state.draft = data.draft;
-        state.autosavePending = false;
-        setAutosaveStatus(`Saved ${new Date(data.savedAt).toLocaleTimeString()}`);
-        if (!silent) log("Draft saved.");
-        return true;
-      } catch (err) {
-        setAutosaveStatus("Save failed");
-        log("Draft save failed: " + err.message);
-        return false;
-      }
+      state.autosavePending = false;
+      if (!silent) setAutosaveStatus("Draft updated locally");
+      return true;
     }
 
     function renderChildPreview() {
@@ -721,8 +710,6 @@
       $("editPanel").classList.remove("hidden");
       renderStages();
       refreshManualMechanicsJumpNav();
-      // Save in background, but do not block opening editor on transient save issues.
-      saveDraft(true).catch(() => {});
       setAutosaveStatus(
         "Редактор: выберите механику и поля для каждого этапа → затем «Regenerate story + Build HTML»",
       );
@@ -1365,8 +1352,6 @@
         });
         state.draft = af.draft;
         $("tutorPromptInput").value = state.draft.tutorPrompt || tutorPrompt;
-        await saveDraft(true);
-
         const start = await post("/api/generate", { draft: state.draft });
         const jobId = start.jobId;
         if (!jobId) throw new Error("Generation job did not start");
@@ -1421,8 +1406,6 @@
           regenBtn.disabled = true;
           regenBtn.textContent = "Building... 1/3";
         }
-        const saved = await saveDraft(true);
-        if (!saved) throw new Error("Draft save failed");
         if (regenBtn) regenBtn.textContent = "Building... 2/3";
         const draftForGenerate = clone(state.draft);
         const start = await post("/api/generate", { draft: draftForGenerate, manualStrict: true });
@@ -1543,9 +1526,7 @@
 
       updateChildConfirmationState();
 
-      setInterval(() => {
-        if (state.autosavePending) saveDraft(true);
-      }, 30000);
+      // Autosave disabled: tutor opted to keep data only in current page session.
     }
 
     init().catch((err) => {
