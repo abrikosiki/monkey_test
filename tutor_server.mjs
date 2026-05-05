@@ -505,6 +505,26 @@ function applyDraftToLessonStages(lesson, draft) {
   return lesson;
 }
 
+function buildStrictManualStageShell(lesson, draft) {
+  const srcStages = Array.isArray(lesson?.stages) ? lesson.stages : [];
+  const out = [];
+  for (let i = 0; i < 6; i++) {
+    const fromLesson = srcStages[i] || {};
+    const fromDraft = draft?.stages?.[i] || {};
+    out.push({
+      id: i + 1,
+      type: fromDraft.mechanic || fromLesson.type || "fill_blank",
+      title: String(fromLesson.title || "").trim() || `Stage ${i + 1}`,
+      background: fromDraft.background || fromLesson.background || stageBackgroundFor(i + 1, draft?.context?.islandKey || ""),
+      coins: Number(fromLesson.coins ?? 10),
+      mechanic_reason: String(fromLesson.mechanic_reason || ""),
+      success_message: String(fromLesson.success_message || ""),
+      rounds: [],
+    });
+  }
+  lesson.stages = out;
+}
+
 function stageTemplate(stageNumber, islandKey = "") {
   return {
     stageNumber,
@@ -1051,7 +1071,8 @@ function readCurrentLesson() {
   return readJson(OUT_FILE, null);
 }
 
-async function generateLessonFromDraft(draft) {
+async function generateLessonFromDraft(draft, options = {}) {
+  const manualStrict = Boolean(options?.manualStrict);
   if (draft && !draft.child && draft.childCode) {
     try {
       draft.child = await fetchChildRecord(draft.childCode);
@@ -1080,6 +1101,9 @@ async function generateLessonFromDraft(draft) {
   });
   const text = msg.content?.find((c) => c.type === "text")?.text || "";
   const lesson = parseClaudeJson(text);
+  if (manualStrict) {
+    buildStrictManualStageShell(lesson, draft);
+  }
   applyDraftToLessonStages(lesson, draft);
   enforceEnglishText(lesson);
   lesson.meta = lesson.meta || {};
@@ -1395,12 +1419,13 @@ const server = http.createServer(async (req, res) => {
         payload.draft && typeof payload.draft === "object"
           ? payload.draft
           : readJson(DRAFT_FILE, buildDefaultDraft());
+      const manualStrict = Boolean(payload.manualStrict);
       const jobId = "gen_" + Date.now() + "_" + Math.random().toString(36).slice(2, 8);
       generationJobs.set(jobId, { status: "pending", createdAt: Date.now() });
       sendJson(res, 200, { ok: true, jobId });
       (async () => {
         try {
-          const lesson = await generateLessonFromDraft(draft);
+          const lesson = await generateLessonFromDraft(draft, { manualStrict });
           generationJobs.set(jobId, { status: "succeeded", lesson, finishedAt: Date.now() });
         } catch (err) {
           generationJobs.set(jobId, {

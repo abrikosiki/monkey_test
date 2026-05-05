@@ -1354,7 +1354,7 @@
         const saved = await saveDraft(true);
         if (!saved) throw new Error("Draft save failed");
         if (regenBtn) regenBtn.textContent = "Building... 2/3";
-        const start = await post("/api/generate", {});
+        const start = await post("/api/generate", { manualStrict: true });
         const jobId = start.jobId;
         if (!jobId) throw new Error("Generation job did not start");
         const result = await pollGenerateJob(jobId);
