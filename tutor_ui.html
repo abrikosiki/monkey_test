@@ -197,7 +197,7 @@
             <button type="button" class="ghost hidden" id="backFromManualEditBtn">← Назад к промпту</button>
             <div class="manual-stage-jump" id="manualStageJump" aria-label="Jump to stage"></div>
           </div>
-          <button class="primary" id="regenerateStoryBtn" type="button">Regenerate story + Build HTML</button>
+          <button class="primary" id="regenerateStoryBtn" type="button">Build lesson from my setup</button>
         </div>
       </div>
       <div id="stagesRoot"></div>
@@ -1331,8 +1331,13 @@
     }
 
     async function regenerateStoryAndBuild() {
+      const regenBtn = $("regenerateStoryBtn");
+      const defaultRegenText = "Build lesson from my setup";
       try {
         syncContextInputsToDraft();
+        if (document.activeElement && typeof document.activeElement.blur === "function") {
+          document.activeElement.blur();
+        }
         const draftChildCode = String(state.draft?.confirmedChildCode || "").trim();
         const profileChildCode = String(state.draft?.child?.childCode || "").trim();
         const fallbackCode = draftChildCode || profileChildCode;
@@ -1342,16 +1347,21 @@
         if (!state.draft.confirmedChildCode) state.draft.confirmedChildCode = fallbackCode;
         if (!state.draft.childCode) state.draft.childCode = fallbackCode;
         setAutosaveStatus("Generating...");
-        $("regenerateStoryBtn").disabled = true;
+        if (regenBtn) {
+          regenBtn.disabled = true;
+          regenBtn.textContent = "Building... 1/3";
+        }
         const saved = await saveDraft(true);
         if (!saved) throw new Error("Draft save failed");
-        const start = await post("/api/generate", { draft: state.draft });
+        if (regenBtn) regenBtn.textContent = "Building... 2/3";
+        const start = await post("/api/generate", {});
         const jobId = start.jobId;
         if (!jobId) throw new Error("Generation job did not start");
         const result = await pollGenerateJob(jobId);
         state.lesson = result.lesson;
         renderLessonJson();
         setAutosaveStatus("Building HTML...");
+        if (regenBtn) regenBtn.textContent = "Building... 3/3";
         const build = await post("/api/build-lesson");
         state.generatedLessonUrl = build.generatedFileUrl || "/lesson_game.html";
         $("previewBtn").href = state.generatedLessonUrl;
@@ -1367,7 +1377,10 @@
       } catch (err) {
         setAutosaveStatus("Generation failed: " + (err?.message || "Unknown error"));
       } finally {
-        $("regenerateStoryBtn").disabled = false;
+        if (regenBtn) {
+          regenBtn.disabled = false;
+          regenBtn.textContent = defaultRegenText;
+        }
       }
     }
 

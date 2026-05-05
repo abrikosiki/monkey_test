@@ -1391,7 +1391,10 @@ const server = http.createServer(async (req, res) => {
 
     if (req.method === "POST" && url.pathname === "/api/generate") {
       const payload = JSON.parse((await readBody(req)) || "{}");
-      const draft = payload.draft;
+      const draft =
+        payload.draft && typeof payload.draft === "object"
+          ? payload.draft
+          : readJson(DRAFT_FILE, buildDefaultDraft());
       const jobId = "gen_" + Date.now() + "_" + Math.random().toString(36).slice(2, 8);
       generationJobs.set(jobId, { status: "pending", createdAt: Date.now() });
       sendJson(res, 200, { ok: true, jobId });
