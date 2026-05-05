@@ -1088,16 +1088,31 @@
         sub.className = "muted";
         sub.textContent = `Fixed background: ${stage.background}`;
         titleWrap.append(title, sub);
-        const picker = makeInput("Mechanic", stage.mechanic, (v) => {
+        const pickerWrap = document.createElement("div");
+        pickerWrap.style.minWidth = "250px";
+        const pickerLabel = document.createElement("label");
+        pickerLabel.textContent = "Mechanic";
+        const picker = document.createElement("select");
+        for (const m of state.mechanics || []) {
+          const option = document.createElement("option");
+          option.value = m.id;
+          option.textContent = m.id;
+          picker.appendChild(option);
+        }
+        picker.value = stage.mechanic || "";
+        picker.addEventListener("change", () => {
+          const v = String(picker.value || "").trim();
+          if (!v) return;
           stage.mechanic = v;
-          stage.examples = Array.from({ length: Math.max(1, stage.examples?.length || 5) }, (_, idx) => buildExampleTemplate(v, idx + 1));
+          stage.examples = Array.from(
+            { length: Math.max(1, stage.examples?.length || 5) },
+            (_, idx) => buildExampleTemplate(v, idx + 1),
+          );
+          queueAutosave();
           renderStages();
-        }, {
-          type: "select",
-          options: state.mechanics.map((m) => m.id),
         });
-        picker.style.minWidth = "250px";
-        head.append(titleWrap, picker);
+        pickerWrap.append(pickerLabel, picker);
+        head.append(titleWrap, pickerWrap);
         card.appendChild(head);
 
         if (stage.mechanic_reason) {
