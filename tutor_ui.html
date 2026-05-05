@@ -508,6 +508,8 @@
 
     async function saveDraft(silent = false) {
       if (!state.draft) return false;
+      if (silent) flushFormToDraftWithoutBlur();
+      else flushManualFormToDraft();
       syncContextInputsToDraft();
       try {
         const data = await post("/api/drafts/save", { draft: state.draft });
@@ -739,19 +741,8 @@
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
-    // Guarantee that current visible form values are synced into state.draft
-    // right before save/generate, even if some field has not lost focus yet.
-    function flushManualFormToDraft() {
-      const root = $("stagesRoot");
+    function syncKeyLockFieldsFromDom(root) {
       if (!root) return;
-      if (document.activeElement && typeof document.activeElement.blur === "function") {
-        document.activeElement.blur();
-      }
-      const fields = root.querySelectorAll("input, textarea");
-      fields.forEach((el) => {
-        el.dispatchEvent(new Event("change", { bubbles: true }));
-      });
-
       // Extra hard sync for key_lock rows: read visible card inputs directly
       // so payload always reflects exactly what tutor sees in the form.
       const stageCards = root.querySelectorAll(".stage-card");
@@ -785,6 +776,38 @@
           });
         });
       });
+    }
+
+    // Guarantee that current visible form values are synced into state.draft
+    // right before save/generate, even if some field has not lost focus yet.
+    function flushManualFormToDraft() {
+      const root = $("stagesRoot");
+      if (!root) return;
+      if (document.activeElement && typeof document.activeElement.blur === "function") {
+        document.activeElement.blur();
+      }
+      const fields = root.querySelectorAll("input, textarea");
+      fields.forEach((el) => {
+        el.dispatchEvent(new Event("change", { bubbles: true }));
+      });
+      syncKeyLockFieldsFromDom(root);
+    }
+
+    // Same as flushManualFormToDraft, but avoids blur to keep typing UX smooth during autosave.
+    function flushFormToDraftWithoutBlur() {
+      const root = $("stagesRoot");
+      if (!root) return;
+      const active = document.activeElement;
+      const fields = root.querySelectorAll("input, textarea");
+      fields.forEach((el) => {
+        if (el !== active) {
+          el.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+      });
+      if (active && root.contains(active)) {
+        active.dispatchEvent(new Event("change", { bubbles: true }));
+      }
+      syncKeyLockFieldsFromDom(root);
     }
 
     function makeInput(label, value, onInput, opts = {}) {
