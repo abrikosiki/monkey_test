@@ -199,6 +199,7 @@
           </div>
           <button class="primary" id="regenerateStoryBtn" type="button">Build lesson from my setup</button>
         </div>
+        <div id="regenError" style="display:none;margin-top:10px;padding:10px 14px;background:#fff0f0;border:1px solid #f5a5a5;border-radius:8px;color:#c0392b;font-size:14px;font-weight:600;"></div>
       </div>
       <div id="stagesRoot"></div>
       <div class="card" style="margin-top:18px">
@@ -1443,33 +1444,35 @@
 
     async function regenerateStoryAndBuild() {
       const regenBtn = $("regenerateStoryBtn");
+      const errorBox = $("regenError");
       const defaultRegenText = "Build lesson from my setup";
+      if (errorBox) errorBox.style.display = "none";
       try {
         syncContextInputsToDraft();
         flushManualFormToDraft();
         const draftChildCode = String(state.draft?.confirmedChildCode || "").trim();
-        const profileChildCode = String(state.draft?.child?.childCode || "").trim();
+        const profileChildCode = String(state.draft?.child?.childCode || state.draft?.childCode || "").trim();
         const fallbackCode = draftChildCode || profileChildCode;
         if (!fallbackCode) {
-          throw new Error("Confirm the student in the draft before regenerating");
+          throw new Error("Student not found — enter and fetch the child code first");
         }
         if (!state.draft.confirmedChildCode) state.draft.confirmedChildCode = fallbackCode;
         if (!state.draft.childCode) state.draft.childCode = fallbackCode;
         setAutosaveStatus("Generating...");
         if (regenBtn) {
           regenBtn.disabled = true;
-          regenBtn.textContent = "Building... 1/3";
+          regenBtn.textContent = "Building... 1/3 — asking AI";
         }
-        if (regenBtn) regenBtn.textContent = "Building... 2/3";
         const draftForGenerate = clone(state.draft);
         const start = await post("/api/generate", { draft: draftForGenerate, manualStrict: true });
         const jobId = start.jobId;
-        if (!jobId) throw new Error("Generation job did not start");
+        if (!jobId) throw new Error("Generation job did not start — check server logs");
+        if (regenBtn) regenBtn.textContent = "Building... 2/3 — generating lesson";
         const result = await pollGenerateJob(jobId);
         state.lesson = result.lesson;
         renderLessonJson();
         setAutosaveStatus("Building HTML...");
-        if (regenBtn) regenBtn.textContent = "Building... 3/3";
+        if (regenBtn) regenBtn.textContent = "Building... 3/3 — building HTML";
         const build = await post("/api/build-lesson");
         state.generatedLessonUrl = build.generatedFileUrl || "/lesson_game.html";
         $("previewBtn").href = state.generatedLessonUrl;
@@ -1483,7 +1486,14 @@
         refreshManualMechanicsJumpNav();
         setAutosaveStatus("Lesson ready");
       } catch (err) {
-        setAutosaveStatus("Generation failed: " + (err?.message || "Unknown error"));
+        const msg = err?.message || "Unknown error";
+        setAutosaveStatus("Failed: " + msg);
+        if (errorBox) {
+          errorBox.textContent = "⚠️ " + msg;
+          errorBox.style.display = "block";
+          errorBox.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+        console.error("regenerateStoryAndBuild failed:", err);
       } finally {
         if (regenBtn) {
           regenBtn.disabled = false;
