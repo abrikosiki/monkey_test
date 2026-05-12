@@ -656,7 +656,6 @@
     .balance-next{
       margin-top:6px;
     }
-    /* key_lock — box + three dual-slot locks + six keys */
     .kl-root{
       position:absolute;
       inset:0;
@@ -1685,6 +1684,20 @@
       from{transform:scale(.8);opacity:0}
       to{transform:scale(1);opacity:1}
     }
+    .tf-row{display:flex;gap:16px;margin:12px 0 4px}
+    .tf-btn{flex:1;border:none;border-radius:14px;padding:16px;font-size:26px;font-weight:900;cursor:pointer;color:#0b1426;background:linear-gradient(135deg,#f7d36f,#f3b53f);box-shadow:0 4px 0 #946523;transition:transform .1s;font-family:'Fredoka One',cursive}
+    .tf-btn:active{transform:translateY(2px)}
+    .tf-btn.ok{background:linear-gradient(135deg,#9bf2b7,#4fd982);box-shadow:0 4px 0 #2f8b4e}
+    .tf-btn.bad{background:linear-gradient(135deg,#ffb3b3,#ff6f6f);box-shadow:0 4px 0 #a33f3f}
+    .tt-prompt{font-size:clamp(20px,2.8vw,30px);font-weight:800;text-align:center;color:#dff8dc;white-space:pre-line;line-height:1.5;margin:2px 0 10px}
+    .five-wrap{position:absolute;left:50%;transform:translateX(-50%);width:min(460px,88%);top:24%;background:rgba(8,18,33,.82);border:2px solid rgba(244,208,63,.45);border-radius:22px;padding:14px 20px 18px;z-index:12;backdrop-filter:blur(2px)}
+    .five-row{display:flex;align-items:center;justify-content:center;gap:8px;padding:9px 6px;border-radius:10px;margin:3px 0}
+    .five-row:nth-child(odd){background:rgba(255,255,255,.05)}
+    .five-seg{font-size:clamp(24px,3.2vw,34px);font-weight:900;color:#fff;white-space:nowrap}
+    .five-input{width:76px;font-size:28px;font-weight:900;text-align:center;border-radius:12px;border:2.5px solid rgba(244,208,63,.7);background:rgba(255,255,255,.08);color:#fff;padding:7px 4px;outline:none;font-family:'Fredoka One',cursive;transition:border-color .15s,background .15s}
+    .five-input:focus{border-color:var(--sand);background:rgba(255,255,255,.15)}
+    .five-input.ok{border-color:var(--ok);background:#e8fff1;color:#0f3b22;-webkit-text-fill-color:#0f3b22}
+    .five-input.bad{background:rgba(176,58,46,.88);border-color:#ffd5d1;animation:shake .22s ease}
   </style>
 </head>
 <body>
@@ -1773,12 +1786,12 @@
   </div>
 
   <script>
-  const LESSON = {"meta":{"lesson_id":"division_island2_medium","topic_key":"number_division","topic_label":"Division","difficulty":"medium","island_number":2,"student_name":"Pirate","student_code":"MONKEY-4821","student_level":2,"student_coins":165,"character_key":"pirate_green","character_image":"assets/characters/pirate_green.webp","total_stages":6,"estimated_duration_minutes":12,"island_key":"blue_crab_island"},"story":{"island_name":"Blue Crab Island","villain":"Four-armed monkey","artifact_name":"Tidal Core","artifact_emoji":"🦀","artifact_power":"Hidden power beneath the reef that fuels the crab army.","greeting":"Pirate, your island mission begins now — listen closely.","act1":"On Blue Crab Island, swarms of snapping blue crabs guard the shores while a four-armed monkey rules from the tide pools, striking with impossible speed. Twisted by the will of Doctor Krit, it commands the crabs like an army. Hidden beneath the reef lies the Tidal Core that fuels its power. We must reach, Pirate, it first and break Krit's control before the island is overrun.","act2":"","act3":"","goal":"Pirate, master every math trial, reach the island's core in time, and break Doctor Krit's hold."},"stages":[{"id":1,"type":"drag_drop","title":"Share the Treasures","background":"blue_crab_island1","coins":15,"mechanic_reason":"Age 7-8 medium: drag_drop is welcoming and visual, perfect for introducing fair sharing concept with tangible objects","success_message":"Perfect sharing, Pirate! Every group got the same amount!","rounds":[{"instruction":"Drag 6 pearls equally into 2 clam shells","draggables":[{"id":"pearl1","image_key":"pearl"},{"id":"pearl2","image_key":"pearl"},{"id":"pearl3","image_key":"pearl"},{"id":"pearl4","image_key":"pearl"},{"id":"pearl5","image_key":"pearl"},{"id":"pearl6","image_key":"pearl"}],"drop_zones":[{"id":"clam1","image_key":"clam_shell"},{"id":"clam2","image_key":"clam_shell"}],"required_per_zone":{"clam1":3,"clam2":3},"screen_item_count":6,"target_count":2,"zone_counts":[3,3]},{"instruction":"Share 8 starfish between 2 tide pools","draggables":[{"id":"star1","image_key":"starfish"},{"id":"star2","image_key":"starfish"},{"id":"star3","image_key":"starfish"},{"id":"star4","image_key":"starfish"},{"id":"star5","image_key":"starfish"},{"id":"star6","image_key":"starfish"},{"id":"star7","image_key":"starfish"},{"id":"star8","image_key":"starfish"}],"drop_zones":[{"id":"pool1","image_key":"tide_pool"},{"id":"pool2","image_key":"tide_pool"}],"required_per_zone":{"pool1":4,"pool2":4},"screen_item_count":6,"target_count":2,"zone_counts":[3,3]},{"instruction":"Divide 10 blue gems into 2 treasure chests","draggables":[{"id":"gem1","image_key":"sapphire"},{"id":"gem2","image_key":"sapphire"},{"id":"gem3","image_key":"sapphire"},{"id":"gem4","image_key":"sapphire"},{"id":"gem5","image_key":"sapphire"},{"id":"gem6","image_key":"sapphire"},{"id":"gem7","image_key":"sapphire"},{"id":"gem8","image_key":"sapphire"},{"id":"gem9","image_key":"sapphire"},{"id":"gem10","image_key":"sapphire"}],"drop_zones":[{"id":"chest1","image_key":"treasure_chest"},{"id":"chest2","image_key":"treasure_chest"}],"required_per_zone":{"chest1":5,"chest2":5},"screen_item_count":6,"target_count":2,"zone_counts":[3,3]},{"instruction":"Split 12 coins equally into 2 pouches","draggables":[{"id":"coin1","image_key":"gold_coin"},{"id":"coin2","image_key":"gold_coin"},{"id":"coin3","image_key":"gold_coin"},{"id":"coin4","image_key":"gold_coin"},{"id":"coin5","image_key":"gold_coin"},{"id":"coin6","image_key":"gold_coin"},{"id":"coin7","image_key":"gold_coin"},{"id":"coin8","image_key":"gold_coin"},{"id":"coin9","image_key":"gold_coin"},{"id":"coin10","image_key":"gold_coin"},{"id":"coin11","image_key":"gold_coin"},{"id":"coin12","image_key":"gold_coin"}],"drop_zones":[{"id":"pouch1","image_key":"coin_pouch"},{"id":"pouch2","image_key":"coin_pouch"}],"required_per_zone":{"pouch1":6,"pouch2":6},"screen_item_count":6,"target_count":2,"zone_counts":[3,3]},{"instruction":"Divide 14 shells between 2 baskets (7 each)","draggables":[{"id":"shell1","image_key":"seashell"},{"id":"shell2","image_key":"seashell"},{"id":"shell3","image_key":"seashell"},{"id":"shell4","image_key":"seashell"},{"id":"shell5","image_key":"seashell"},{"id":"shell6","image_key":"seashell"},{"id":"shell7","image_key":"seashell"},{"id":"shell8","image_key":"seashell"},{"id":"shell9","image_key":"seashell"},{"id":"shell10","image_key":"seashell"},{"id":"shell11","image_key":"seashell"},{"id":"shell12","image_key":"seashell"},{"id":"shell13","image_key":"seashell"},{"id":"shell14","image_key":"seashell"}],"drop_zones":[{"id":"basket1","image_key":"wicker_basket"},{"id":"basket2","image_key":"wicker_basket"}],"required_per_zone":{"basket1":7,"basket2":7},"screen_item_count":6,"target_count":2,"zone_counts":[3,3]}],"round_bonus_coins":2},{"id":2,"type":"symbol_calc","title":"Decode the Blue Symbols","background":"blue_crab_island2","coins":20,"mechanic_reason":"Age 7-8 medium: symbol math bridges visual sharing to abstract division notation, preparing for numeric operations","success_message":"You cracked the symbol code, Pirate!","rounds":[{"instruction":"Find the value of the expression","symbol_values":[{"symbol":"A","image_key":"pearl","value":4},{"symbol":"B","image_key":"starfish","value":3},{"symbol":"C","image_key":"sapphire","value":2}],"expression":"A + B × C","answer":"10","symbol_a":4,"symbol_b":3,"symbol_c":2,"symbol_expression":"A + B × C"},{"instruction":"Calculate using the symbols","symbol_values":[{"symbol":"A","image_key":"seashell","value":6},{"symbol":"B","image_key":"gold_coin","value":2},{"symbol":"C","image_key":"coral","value":5}],"expression":"A ÷ B + C","answer":"10","symbol_a":4,"symbol_b":3,"symbol_c":2,"symbol_expression":"A + B × C"},{"instruction":"Solve the treasure equation","symbol_values":[{"symbol":"A","image_key":"crystal","value":8},{"symbol":"B","image_key":"pearl","value":4},{"symbol":"C","image_key":"starfish","value":3}],"expression":"A ÷ B + C","answer":"10","symbol_a":4,"symbol_b":3,"symbol_c":2,"symbol_expression":"A + B × C"},{"instruction":"Find the hidden answer","symbol_values":[{"symbol":"A","image_key":"sapphire","value":12},{"symbol":"B","image_key":"gold_coin","value":3},{"symbol":"C","image_key":"seashell","value":2}],"expression":"A ÷ B × C","answer":"10","symbol_a":4,"symbol_b":3,"symbol_c":2,"symbol_expression":"A + B × C"},{"instruction":"Decode the final symbol puzzle","symbol_values":[{"symbol":"A","image_key":"coral","value":10},{"symbol":"B","image_key":"crystal","value":5},{"symbol":"C","image_key":"pearl","value":6}],"expression":"A ÷ B + C","answer":"10","symbol_a":4,"symbol_b":3,"symbol_c":2,"symbol_expression":"A + B × C"}],"round_bonus_coins":2},{"id":3,"type":"fill_blank","title":"Division Cave Riddles","background":"2","coins":25,"mechanic_reason":"Age 7-8 medium: fill_blank introduces direct division notation, building fluency with the ÷ symbol","success_message":"Every riddle solved perfectly, Pirate!","rounds":[{"instruction":"12 ÷ 3 =","prompt":"12 ÷ 3 =","answer":"4","example":"12 ÷ 3 ="},{"instruction":"12 ÷ 3 =","prompt":"12 ÷ 3 =","answer":"4","example":"12 ÷ 3 ="},{"instruction":"12 ÷ 3 =","prompt":"12 ÷ 3 =","answer":"4","example":"12 ÷ 3 ="},{"instruction":"12 ÷ 3 =","prompt":"12 ÷ 3 =","answer":"4","example":"12 ÷ 3 ="},{"instruction":"12 ÷ 3 =","prompt":"12 ÷ 3 =","answer":"4","example":"12 ÷ 3 ="}],"round_bonus_coins":2},{"id":4,"type":"fill_blank","title":"Jungle Path Calculations","background":"3","coins":25,"mechanic_reason":"Age 7-8 medium: repeated fill_blank with different numbers builds automaticity and confidence","success_message":"You blazed through the jungle path, Pirate!","rounds":[{"instruction":"12 ÷ 3 =","prompt":"12 ÷ 3 =","answer":"4","example":"12 ÷ 3 ="},{"instruction":"12 ÷ 3 =","prompt":"12 ÷ 3 =","answer":"4","example":"12 ÷ 3 ="},{"instruction":"12 ÷ 3 =","prompt":"12 ÷ 3 =","answer":"4","example":"12 ÷ 3 ="},{"instruction":"12 ÷ 3 =","prompt":"12 ÷ 3 =","answer":"4","example":"12 ÷ 3 ="},{"instruction":"12 ÷ 3 =","prompt":"12 ÷ 3 =","answer":"4","example":"12 ÷ 3 ="}],"round_bonus_coins":2},{"id":5,"type":"fill_blank","title":"Temple of Division","background":"blue_crab_island3","coins":30,"mechanic_reason":"Age 7-8 medium: final fill_blank round with larger numbers adds challenge before finale choice stage","success_message":"The temple doors opened for you, Pirate!","rounds":[{"instruction":"12 ÷ 3 =","prompt":"12 ÷ 3 =","answer":"4","example":"12 ÷ 3 ="},{"instruction":"12 ÷ 3 =","prompt":"12 ÷ 3 =","answer":"4","example":"12 ÷ 3 ="},{"instruction":"12 ÷ 3 =","prompt":"12 ÷ 3 =","answer":"4","example":"12 ÷ 3 ="},{"instruction":"12 ÷ 3 =","prompt":"12 ÷ 3 =","answer":"4","example":"12 ÷ 3 ="},{"instruction":"12 ÷ 3 =","prompt":"12 ÷ 3 =","answer":"4","example":"12 ÷ 3 ="}],"round_bonus_coins":2},{"id":6,"type":"multi_choice","title":"Claim the Очки чтения мыслей","background":"blue_crab_island4","coins":35,"mechanic_reason":"Age 7-8 medium: multi_choice finale tests quick recognition and decision-making, celebrating mastery","success_message":"You claimed the Mind-Reading Glasses, Pirate! Now you can see hidden numbers anywhere!","rounds":[{"instruction":"Which answer is correct?","options":[{"id":"A","label":"3"},{"id":"B","label":"4"},{"id":"C","label":"5"}],"correct":"B","correct_option":"B"},{"instruction":"Which answer is correct?","options":[{"id":"A","label":"3"},{"id":"B","label":"4"},{"id":"C","label":"5"}],"correct":"B","correct_option":"B"},{"instruction":"Which answer is correct?","options":[{"id":"A","label":"3"},{"id":"B","label":"4"},{"id":"C","label":"5"}],"correct":"B","correct_option":"B"},{"instruction":"Which answer is correct?","options":[{"id":"A","label":"3"},{"id":"B","label":"4"},{"id":"C","label":"5"}],"correct":"B","correct_option":"B"},{"instruction":"Which answer is correct?","options":[{"id":"A","label":"3"},{"id":"B","label":"4"},{"id":"C","label":"5"}],"correct":"B","correct_option":"B"}],"round_bonus_coins":2,"artifact":{"emoji":"🕶️","name":"Очки чтения мыслей","description":"Magic sunglasses that reveal hidden numbers in any math problem"}}],"images_needed":{"backgrounds":["beach_sunset","cave_entrance","cave_deep","jungle_path","jungle_temple","temple_throne"],"items":["pearl","starfish","sapphire","gold_coin","seashell","coral","crystal"],"targets":["clam_shell","tide_pool","treasure_chest","coin_pouch","wicker_basket"],"artifact":{"key":"mind_reading_glasses","emoji":"🕶️","name":"Очки чтения мыслей"}},"tutor_notes":{"block1_script":"Hey Pirate! Today we're learning DIVISION — the superpower of sharing things fairly. Imagine you have 12 cookies and 3 friends. Division helps you give everyone the exact same amount. No one gets extra, no one gets less. That's what makes division so magical — it creates perfect fairness! Let's start by sharing some Blue Island treasures into equal groups.","block2_hint":"When you see the ÷ symbol, think 'split into equal parts.' The number before ÷ is what you're sharing. The number after ÷ is how many groups you're making. Your answer is how many go in EACH group. Try saying it out loud: '12 divided by 3 equals 4' means 12 things split into 3 groups gives you 4 in each group.","block3_tips":["Draw circles for each group and put dots inside until you use all the items","Use your fingers: if dividing by 3, hold up 3 fingers and count items onto each finger equally","Think backwards from multiplication: 3 × 4 = 12, so 12 ÷ 3 = 4","Practice with real objects at home: share toys, crackers, or blocks with family"],"block5_abstraction":"Division is the opposite of multiplication. When we multiply 3 × 4, we combine groups to get 12 total. When we divide 12 ÷ 3, we break 12 apart into 3 equal groups of 4. Division answers the question: 'If I split this total into this many groups, how many are in each group?' It's like being a fair judge who makes sure everyone gets the exact same share — no arguments, no leftovers, perfectly balanced!","weak_point_focus":"If you forget the answer, don't panic! Use the skip-counting trick: for 12 ÷ 3, count by 3s (3, 6, 9, 12) on your fingers. You counted 4 times, so the answer is 4! Or think: 'What number times 3 gives me 12?' Practice the small division facts (÷2, ÷3, ÷4) until they feel automatic, then bigger numbers will be easy."}};
+  const LESSON = {"meta":{"student_code":"MONKEY-3007","student_name":"Pirate","island_key":"jelly_bay_island","character_key":"pirate_green","student_level":4,"student_coins":0,"start_coins":0,"child_inventory":["egg","sword","crown","lizard","quardo","freeze_ring","ring_ice","magic_necklace"],"has_freeze_ring":true},"story":{"island_name":"Jelly Bay Island","villain":"Monkey jellyfish king","artifact_name":"Pulse Core","artifact_emoji":"🪼","artifact_power":"The power that binds the jellyfish swarm beneath the bay.","greeting":"Pirate, your island mission begins now — listen closely.","act1":"On Jelly Bay Island, the waters glow with drifting jellyfish, lighting the shore in eerie colors. Beneath the surface rules a monkey jellyfish king, its body entwined with pulsing tentacles, commanding the swarm as one. Enslaved by Doctor Krit, it spreads control through the tides. Deep below the bay lies the Pulse Core that binds them. We must dive in, Pirate, destroy its power, and free the jelly king before the ocean itself turns against us.","act2":"","act3":"","goal":"Pirate, master every math trial, reach the island's core in time, and break Doctor Krit's hold."},"stages":[{"id":1,"type":"five_tasks","title":"Pirate trains before diving into Jelly Bay","background":"jelly_bay_island1","coins":15,"success_message":"Amazing! You solved them all!","rounds":[{"instruction":"Solve all tasks!","tasks":[{"q":"12 ÷ 3 = ?","a":"4"},{"q":"15 ÷ 5 = ?","a":"3"},{"q":"20 ÷ 4 = ?","a":"5"},{"q":"18 ÷ 2 = ?","a":"9"},{"q":"24 ÷ 6 = ?","a":"4"}]},{"instruction":"Solve all tasks!","tasks":[{"q":"16 ÷ 4 = ?","a":"4"},{"q":"21 ÷ 3 = ?","a":"7"},{"q":"30 ÷ 5 = ?","a":"6"},{"q":"27 ÷ 9 = ?","a":"3"},{"q":"14 ÷ 2 = ?","a":"7"}]},{"instruction":"Solve all tasks!","tasks":[{"q":"4 × 3 = ?","a":"12"},{"q":"12 ÷ 4 = ?","a":"3"},{"q":"? × 5 = 25","a":"5"},{"q":"24 ÷ ? = 6","a":"4"},{"q":"2 × 8 = ?","a":"16"}]}]},{"id":2,"type":"text_task","title":"Pirate explores glowing jelly pods","background":"jelly_bay_island2","coins":15,"success_message":"Brilliant! You solved every task!","rounds":[{"instruction":"Pirate finds 4 jelly pods. Each pod has 3 energy crystals. How many crystals are there in total?","prompt":"Pirate finds 4 jelly pods. Each pod has 3 energy crystals. How many crystals are there in total?","answer":"12"},{"instruction":"18 jelly cakes are shared equally onto 3 glowing trays. How many cakes are on each tray?","prompt":"18 jelly cakes are shared equally onto 3 glowing trays. How many cakes are on each tray?","answer":"6"},{"instruction":"There are 5 jelly ships. Each ship carries 6 jellyfish guards. How many guards are there in total?","prompt":"There are 5 jelly ships. Each ship carries 6 jellyfish guards. How many guards are there in total?","answer":"30"},{"instruction":"Pirate finds 24 magic cards. They are shared equally between 4 divers. How many cards does each diver get?","prompt":"Pirate finds 24 magic cards. They are shared equally between 4 divers. How many cards does each diver get?","answer":"6"},{"instruction":"There are 7 glowing rows of sea plants. Each row has 3 plants. How many plants are there in total?","prompt":"There are 7 glowing rows of sea plants. Each row has 3 plants. How many plants are there in total?","answer":"21"}]},{"id":3,"type":"true_false","title":"Pirate checks the current","background":"2","coins":20,"success_message":"You're a math detective!","rounds":[{"instruction":"True or False?","statement":"3 × 4 = 4 × 3","correct_answer":"true"},{"instruction":"True or False?","statement":"20 ÷ 5 = 5 ÷ 20","correct_answer":"false"},{"instruction":"True or False?","statement":"20 coins shared between 5 pirates means each pirate gets 4 coins","correct_answer":"true"},{"instruction":"True or False?","statement":"6 underwater rooms with 4 panels each makes 20 panels in total","correct_answer":"false"},{"instruction":"True or False?","statement":"16 slices shared between 4 plates means each plate has 5 slices","correct_answer":"false"}]},{"id":4,"type":"corridor_choice","title":"Glowing jellyfish surround Pirate","background":"3","coins":20,"success_message":"Perfect choice! You see through the illusion!","rounds":[{"instruction":"Pirate sees 20 glowing jelly orbs shared into 5 groups. Which path shows how many in each group?","question":"Pirate sees 20 glowing jelly orbs shared into 5 groups. Which path shows how many in each group?","left_expression":"20 ÷ 5 = 4","right_expression":"20 × 5 = 100","correct_side":"left"},{"instruction":"Pirate finds 4 treasure chests with 3 pearls each. Which path shows total pearls?","question":"Pirate finds 4 treasure chests with 3 pearls each. Which path shows total pearls?","left_expression":"4 × 3 = 12","right_expression":"4 + 3 = 7","correct_side":"left"},{"instruction":"Pirate sees 5 groups of 4 guards. Then 4 guards leave each group. Which path shows how many remain in total?","question":"Pirate sees 5 groups of 4 guards. Then 4 guards leave each group. Which path shows how many remain in total?","left_expression":"5 × (4 − 4) = 0","right_expression":"5 × 4 − 4 = 16","correct_side":"right"},{"instruction":"Pirate finds 30 energy crystals. They are shared into 5 groups, then each group doubles. Which path shows the final total?","question":"Pirate finds 30 energy crystals. They are shared into 5 groups, then each group doubles. Which path shows the final total?","left_expression":"12","right_expression":"3","correct_side":"left"},{"instruction":"Pirate sees 6 groups of 5 orbs, then 10 disappear. Which path shows how many remain?","question":"Pirate sees 6 groups of 5 orbs, then 10 disappear. Which path shows how many remain?","left_expression":"2","right_expression":"20","correct_side":"right"}]},{"id":5,"type":"symbol_calc","title":"Glowing symbols appear in the water","background":"jelly_bay_island3","coins":25,"success_message":"Outstanding! You cracked the symbol code!","rounds":[{"instruction":"Solve the expression.","symbol_a":4,"symbol_b":3,"symbol_c":2,"symbol_expression":"A × B + C = ?","answer":"14"},{"instruction":"Solve the expression.","symbol_a":6,"symbol_b":5,"symbol_c":4,"symbol_expression":"A × B − C = ?","answer":"26"},{"instruction":"Solve the expression.","symbol_a":20,"symbol_b":5,"symbol_c":3,"symbol_expression":"A ÷ B + C = ?","answer":"7"},{"instruction":"Solve the expression.","symbol_a":24,"symbol_b":4,"symbol_c":2,"symbol_expression":"A ÷ B × C = ?","answer":"12"},{"instruction":"Solve the expression.","symbol_a":30,"symbol_b":5,"symbol_c":4,"symbol_expression":"A ÷ B × C + 2 = ?","answer":"26"}]},{"id":6,"type":"fill_blank","title":"Pirate faces the jellyfish king","background":"jelly_bay_island4","coins":30,"success_message":"You freed the bay! The Pulse Core is yours!","rounds":[{"instruction":"24 ÷ 4 + 2 = ?","example":"24 ÷ 4 + 2 = ?","prompt":"24 ÷ 4 + 2 = ?","answer":"8"},{"instruction":"30 ÷ 5 × 2 = ?","example":"30 ÷ 5 × 2 = ?","prompt":"30 ÷ 5 × 2 = ?","answer":"12"},{"instruction":"40 ÷ 5 + 4 = ?","example":"40 ÷ 5 + 4 = ?","prompt":"40 ÷ 5 + 4 = ?","answer":"12"},{"instruction":"There are 5 jelly groups with 6 creatures each. Total = ?","example":"There are 5 jelly groups with 6 creatures each. Total = ?","prompt":"There are 5 jelly groups with 6 creatures each. Total = ?","answer":"30"},{"instruction":"30 jelly orbs are shared equally into ? groups. Each group has 5 orbs","example":"30 jelly orbs are shared equally into ? groups. Each group has 5 orbs","prompt":"30 jelly orbs are shared equally into ? groups. Each group has 5 orbs","answer":"6"}]}],"images_needed":{"library":[],"backgrounds":["jelly_bay_island1","jelly_bay_island2","2","3","jelly_bay_island3","jelly_bay_island4"],"items":[],"targets":[],"artifact":{"key":"Focusing_crystal","name":"Pulse Core"}},"tutor_notes":[]};
   const BACKGROUND_MAP = {"2":"assets/backgrounds/2.png","3":"assets/backgrounds/3.png","antigravity_island1":"assets/backgrounds/antigravity_island1.PNG","antigravity_island2":"assets/backgrounds/antigravity_island2.PNG","antigravity_island3":"assets/backgrounds/antigravity_island3.PNG","antigravity_island4":"assets/backgrounds/antigravity_island4.PNG","blue_crab_island1":"assets/backgrounds/blue_crab_island1.PNG","blue_crab_island2":"assets/backgrounds/blue_crab_island2.PNG","blue_crab_island3":"assets/backgrounds/blue_crab_island3.PNG","blue_crab_island4":"assets/backgrounds/blue_crab_island4.PNG","cherry_blossom_island1":"assets/backgrounds/cherry_blossom_island1.PNG","cherry_blossom_island2":"assets/backgrounds/cherry_blossom_island2.PNG","cherry_blossom_island3":"assets/backgrounds/cherry_blossom_island3.PNG","cherry_blossom_island4":"assets/backgrounds/cherry_blossom_island4.PNG","crystal_island1":"assets/backgrounds/crystal_island1.PNG","crystal_island2":"assets/backgrounds/crystal_island2.PNG","crystal_island3":"assets/backgrounds/crystal_island3.PNG","crystal_island4":"assets/backgrounds/crystal_island4.PNG","jelly_bay_island1":"assets/backgrounds/jelly_bay_island1.PNG","jelly_bay_island2":"assets/backgrounds/jelly_bay_island2.PNG","jelly_bay_island3":"assets/backgrounds/jelly_bay_island3.PNG","jelly_bay_island4":"assets/backgrounds/jelly_bay_island4.PNG","mushroom_island1":"assets/backgrounds/mushroom_island1.PNG","mushroom_island2":"assets/backgrounds/mushroom_island2.PNG","mushroom_island3":"assets/backgrounds/mushroom_island3.PNG","mushroom_island4":"assets/backgrounds/mushroom_island4.PNG","neon_city_island1":"assets/backgrounds/neon_city_island1.PNG","neon_city_island2":"assets/backgrounds/neon_city_island2.PNG","neon_city_island3":"assets/backgrounds/neon_city_island3.PNG","neon_city_island4":"assets/backgrounds/neon_city_island4.PNG","second":"assets/backgrounds/second.webp","shop":"assets/backgrounds/shop.webp","snowy_peaks_island1":"assets/backgrounds/snowy_peaks_island1.PNG","snowy_peaks_island2":"assets/backgrounds/snowy_peaks_island2.PNG","snowy_peaks_island3":"assets/backgrounds/snowy_peaks_island3.PNG","snowy_peaks_island4":"assets/backgrounds/snowy_peaks_island4.PNG","title":"assets/backgrounds/title.png"};
   const CHARACTER_MAP = {"boy_blue":"assets/characters/boy_blue.webp","boy_brown":"assets/characters/boy_brown.webp","boy_green":"assets/characters/boy_green.webp","elf_blue":"assets/characters/elf_blue.webp","elf_green":"assets/characters/elf_green.webp","elf_red":"assets/characters/elf_red.webp","fairy_green":"assets/characters/fairy_green.webp","fairy_purple":"assets/characters/fairy_purple.webp","fairy_red":"assets/characters/fairy_red.webp","girl_blue":"assets/characters/girl_blue.webp","girl_brown":"assets/characters/girl_brown.webp","girl_green":"assets/characters/girl_green.webp","pirate_blue":"assets/characters/pirate_blue.webp","pirate_brown":"assets/characters/pirate_brown.webp","pirate_green":"assets/characters/pirate_green.webp","wizard_blue":"assets/characters/wizard_blue.webp","wizard_green":"assets/characters/wizard_green.webp","wizard_red":"assets/characters/wizard_red.webp"};
-  const ITEMS_MAP = {"artifact":"assets/items/artifact.png","bamboo":"assets/items/bamboo.png","banana":"assets/items/banana.png","bubble":"assets/items/bubble.png","butterfly":"assets/items/butterfly.png","candy":"assets/items/candy.png","cherry":"assets/items/cherry.png","cookie":"assets/items/cookie.png","coral":"assets/items/coral.png","crab_blue":"assets/items/crab_blue.png","hibiscus":"assets/items/hibiscus.png","jellyfish":"assets/items/jellyfish.png","leaf":"assets/items/leaf.png","lollipop":"assets/items/lollipop.png","mushroom":"assets/items/mushroom.png","pawprint":"assets/items/pawprint.png","pearl_blue":"assets/items/pearl_blue.png","pearl_red":"assets/items/pearl_red.png","samurai_monkey":"assets/items/samurai_monkey.png","shell_blue":"assets/items/shell_blue.png","shell_red":"assets/items/shell_red.png","spore":"assets/items/spore.png","starfish":"assets/items/starfish.png","stone_blue":"assets/items/stone_blue.png"};
+  const ITEMS_MAP = {"artifact":"assets/items/artifact.png","bamboo":"assets/items/bamboo.png","banana":"assets/items/banana.png","box_close":"assets/items/box_close.png","box_open":"assets/items/box_open.png","bubble":"assets/items/bubble.png","butterfly":"assets/items/butterfly.png","candy":"assets/items/candy.png","cherry":"assets/items/cherry.png","cookie":"assets/items/cookie.png","coral":"assets/items/coral.png","crab_blue":"assets/items/crab_blue.png","hibiscus":"assets/items/hibiscus.png","jellyfish":"assets/items/jellyfish.png","key":"assets/items/key.webp","leaf":"assets/items/leaf.png","lollipop":"assets/items/lollipop.png","mushroom":"assets/items/mushroom.png","pawprint":"assets/items/pawprint.png","pearl_blue":"assets/items/pearl_blue.png","pearl_red":"assets/items/pearl_red.png","samurai_monkey":"assets/items/samurai_monkey.png","shell_blue":"assets/items/shell_blue.png","shell_red":"assets/items/shell_red.png","spore":"assets/items/spore.png","starfish":"assets/items/starfish.png","stone_blue":"assets/items/stone_blue.png"};
   const TARGETS_MAP = {"bag_cloth":"assets/targets/bag_cloth.png","basket_wood":"assets/targets/basket_wood.png","basket_woven":"assets/targets/basket_woven.png","bowl_stone":"assets/targets/bowl_stone.png","bowl_wood":"assets/targets/bowl_wood.png","cauldron":"assets/targets/cauldron.png","chest_open":"assets/targets/chest_open.png","totem_1":"assets/targets/totem_1.png","totem_2":"assets/targets/totem_2.png","totem_3":"assets/targets/totem_3.png"};
-  const ARTIFACT_MAP = {"boots_jump":"assets/artifacts/boots_jump.png","cloak_invisible":"assets/artifacts/cloak_invisible.png","crown":"assets/artifacts/crown.webp","dron":"assets/artifacts/dron.webp","egg":"assets/artifacts/egg.webp","glasses":"assets/artifacts/glasses.webp","glasses_mind":"assets/artifacts/glasses_mind.png","lizard":"assets/artifacts/lizard.webp","ring_ice":"assets/artifacts/ring_ice.webp","sword":"assets/artifacts/sword.webp","sword_light":"assets/artifacts/sword_light.png"};
+  const ARTIFACT_MAP = {"Adventurers_binoculars":"assets/artifacts/Adventurers_binoculars.png","Antigravity_boots":"assets/artifacts/Antigravity_boots.PNG","Focusing_crystal":"assets/artifacts/Focusing_crystal.PNG","Magic_necklace":"assets/artifacts/Magic_necklace.PNG","Mysterious_egg":"assets/artifacts/Mysterious_egg.PNG","Ninja_nunchucks":"assets/artifacts/Ninja_nunchucks.PNG","Spy_phone":"assets/artifacts/Spy_phone.PNG","Tiki_mask":"assets/artifacts/Tiki_mask.PNG","Vanteon_Watch":"assets/artifacts/Vanteon_Watch.PNG","boots_jump":"assets/artifacts/boots_jump.png","box_of_threads":"assets/artifacts/box_of_threads.PNG","cloak_invisible":"assets/artifacts/cloak_invisible.png","crown":"assets/artifacts/crown.webp","dron":"assets/artifacts/dron.webp","egg":"assets/artifacts/egg.webp","glasses":"assets/artifacts/glasses.webp","glasses_mind":"assets/artifacts/glasses_mind.png","lizard":"assets/artifacts/lizard.webp","ring_ice":"assets/artifacts/ring_ice.webp","sword":"assets/artifacts/sword.webp","sword_light":"assets/artifacts/sword_light.png"};
   function buildShopItemsFromArtifacts(){
     const curatedShopItems = [
       { id: "magic_necklace", name: "Magic necklace", price: 75 },
@@ -1904,6 +1917,9 @@
     if(type === "multi_choice") return "choice";
     if(type === "tap_count") return "tap_count";
     if(type === "corridor_choice") return "corridor_choice";
+    if(type === "true_false") return "true_false";
+    if(type === "text_task") return "text_task";
+    if(type === "five_tasks") return "five_tasks";
     return type;
   }
 
@@ -1918,6 +1934,9 @@
     if(t === "corridor_choice") return "Pick the path that fits the math story.";
     if(t === "key_lock") return "Drag two keys onto each lock so the numbers match the sums.";
     if(t === "animation") return "Watch the final animation sequence.";
+    if(t === "true_false") return "Read the statement and choose True or False.";
+    if(t === "text_task") return "Read the task and type the correct answer.";
+    if(t === "five_tasks") return "Solve all five tasks to continue.";
     return "Complete the task to continue.";
   }
 
@@ -1932,6 +1951,9 @@
     if(t === "corridor_choice") return "Right path!";
     if(t === "key_lock") return "The box is open!";
     if(t === "animation") return "Level complete!";
+    if(t === "true_false") return "Correct! You knew it!";
+    if(t === "text_task") return "Correct answer!";
+    if(t === "five_tasks") return "All five tasks solved!";
     return "Success!";
   }
 
@@ -2283,7 +2305,8 @@
       "lockSum1", "lockSum2", "lockSum3",
       "pair_1", "pair_2", "pair_3", "pair1", "pair2", "pair3",
       "lock1_sum", "lock2_sum", "lock3_sum",
-      "post_story_text"
+      "post_story_text",
+      "statement", "correct_answer", "prompt", "tasks"
     ];
     for(const k of pass){
       if(round[k] !== undefined) out[k] = round[k];
@@ -2991,6 +3014,126 @@
     lane.appendChild(box);
   }
 
+  function renderTrueFalse(stage){
+    const box = document.createElement("div");
+    box.className = "choice-box";
+    const q = document.createElement("div");
+    q.className = "choice-q";
+    q.textContent = stage.statement || stage.question || "True or false?";
+    box.appendChild(q);
+    const row = document.createElement("div");
+    row.className = "tf-row";
+    const correctRaw = String(stage.correct_answer || "true").toLowerCase().trim();
+    ["True","False"].forEach((label) => {
+      const btn = document.createElement("button");
+      btn.className = "tf-btn";
+      btn.textContent = label;
+      btn.onclick = () => {
+        if(state.stageSolved) return;
+        const isCorrect = label.toLowerCase() === correctRaw;
+        if(isCorrect){
+          btn.classList.add("ok");
+          row.querySelectorAll(".tf-btn").forEach((b) => { b.style.pointerEvents = "none"; });
+          setTimeout(() => markSuccess(stage), 140);
+        } else {
+          btn.classList.add("bad");
+          setTimeout(() => btn.classList.remove("bad"), 240);
+          shake(btn);
+        }
+      };
+      row.appendChild(btn);
+    });
+    box.appendChild(row);
+    const hint = document.createElement("div");
+    hint.className = "choice-hint";
+    hint.textContent = "Tap True or False";
+    box.appendChild(hint);
+    lane.appendChild(box);
+  }
+
+  function renderTextTask(stage){
+    const box = document.createElement("div");
+    box.className = "choice-box";
+    const prompt = document.createElement("div");
+    prompt.className = "tt-prompt";
+    prompt.textContent = stage.prompt || stage.question || "";
+    box.appendChild(prompt);
+    const input = document.createElement("input");
+    input.type = "text";
+    input.className = "eq-input answer";
+    input.placeholder = "?";
+    input.autocomplete = "off";
+    const correct = String(stage.answer ?? "").trim().toLowerCase();
+    function checkTextAnswer(){
+      if(state.stageSolved) return;
+      const val = input.value.trim().toLowerCase();
+      if(!val) return;
+      if(val === correct){
+        input.classList.add("ok");
+        input.disabled = true;
+        setTimeout(() => markSuccess(stage), 140);
+      } else {
+        input.value = "";
+        input.classList.add("bad");
+        setTimeout(() => input.classList.remove("bad"), 220);
+        shake(input);
+      }
+    }
+    input.addEventListener("change", checkTextAnswer);
+    input.addEventListener("keydown", (e) => { if(e.key === "Enter"){ e.preventDefault(); checkTextAnswer(); } });
+    box.appendChild(input);
+    lane.appendChild(box);
+  }
+
+  function renderFiveTasks(stage){
+    const wrap = document.createElement("div");
+    wrap.className = "five-wrap";
+    const tasks = Array.isArray(stage.tasks) ? stage.tasks.slice(0, 5) : [];
+    let solvedCount = 0;
+    tasks.forEach((task) => {
+      const row = document.createElement("div");
+      row.className = "five-row";
+      const q = task.q || "";
+      const blankToken = q.includes("___") ? "___" : "?";
+      const parts = q.split(blankToken);
+      const input = document.createElement("input");
+      input.type = "text";
+      input.className = "five-input answer";
+      input.placeholder = "?";
+      input.autocomplete = "off";
+      const correctVal = String(task.a ?? "").trim().toLowerCase();
+      function checkFive(){
+        if(input.disabled) return;
+        const val = input.value.trim().toLowerCase();
+        if(!val) return;
+        if(val === correctVal){
+          input.classList.add("ok");
+          input.disabled = true;
+          solvedCount += 1;
+          if(solvedCount >= tasks.length) setTimeout(() => markSuccess(stage), 140);
+        } else {
+          input.value = "";
+          input.classList.add("bad");
+          setTimeout(() => input.classList.remove("bad"), 220);
+          shake(input);
+        }
+      }
+      input.addEventListener("change", checkFive);
+      input.addEventListener("keydown", (e) => { if(e.key === "Enter"){ e.preventDefault(); checkFive(); } });
+      const makeSeg = (txt) => {
+        const s = document.createElement("span");
+        s.className = "five-seg";
+        s.textContent = txt.trim();
+        return s;
+      };
+      if(parts[0].trim()) row.appendChild(makeSeg(parts[0]));
+      row.appendChild(input);
+      if(parts[1] && parts[1].trim()) row.appendChild(makeSeg(parts[1]));
+      wrap.appendChild(row);
+    });
+    lane.appendChild(wrap);
+  }
+
   function renderTapCount(stage){
     const mode = String(stage.tap_mode || "").trim();
     if(mode === "totems"){
@@ -3184,13 +3327,6 @@
   function renderCorridorChoice(stage){
     const box = document.createElement("div");
     box.className = "choice-box";
-    const subText = String(stage.instruction || "").trim();
-    if(subText){
-      const sub = document.createElement("div");
-      sub.className = "choice-sub";
-      sub.textContent = subText;
-      box.appendChild(sub);
-    }
     const q = document.createElement("div");
     q.className = "choice-q";
     q.textContent = stage.question || "Choose a path";
@@ -3398,7 +3534,7 @@
 
   function parseKeyLockRound(stage){
     const splitNums = (raw) => String(raw || "")
-      .split(/[\s,]+/)
+      .split(/[s,]+/)
       .map((s) => s.trim())
       .filter(Boolean)
       .map(Number)
@@ -4386,6 +4522,9 @@
     else if(engType === "tap_count") renderTapCount(stage);
     else if(engType === "corridor_choice") renderCorridorChoice(stage);
     else if(engType === "animation") renderAnimation(stage);
+    else if(engType === "true_false") renderTrueFalse(stage);
+    else if(engType === "text_task") renderTextTask(stage);
+    else if(engType === "five_tasks") renderFiveTasks(stage);
     else {
       setMessage("Unknown stage type: " + stage.type);
     }
@@ -4442,27 +4581,31 @@
   function finishLesson(){
     clearStage();
     const stage6 = STAGES[5] || {};
-    const artifactFromJson = stage6.artifact || {};
-    let key = String(artifactFromJson.key || "").trim();
-    const allArtifactKeys = Object.keys(ARTIFACT_MAP);
-    if(!key && allArtifactKeys.length > 0){
-      key = allArtifactKeys[Math.floor(Math.random() * allArtifactKeys.length)];
+    const artifactFromJson = stage6.artifact || null;
+    const hasAnimationStage = STAGES.some((s) => s.type === "animation");
+    if(hasAnimationStage || (artifactFromJson && artifactFromJson.key)){
+      const key = String((artifactFromJson && artifactFromJson.key) || "").trim();
+      const reward = {
+        key,
+        image: key ? artifactPathByKey(key) : null,
+        emoji: LESSON.story?.artifact_emoji || (artifactFromJson && artifactFromJson.emoji) || "🏆",
+        name: LESSON.story?.artifact_name || titleFromKey(key) || (artifactFromJson && artifactFromJson.name),
+        description:
+          LESSON.story?.artifact_power ||
+          (artifactFromJson && artifactFromJson.description) ||
+          "A magical reward for your adventure.",
+      };
+      state.completionArtifact = reward;
+      state.earnedArtifacts.push(reward);
+      showSuccess("The final challenge is complete!", () => {
+        openShopScreen();
+      }, "AMAZING! Your reward is ready.", "Go to shop");
+    } else {
+      state.completionArtifact = null;
+      showSuccess("The final challenge is complete!", () => {
+        openShopScreen();
+      }, "AMAZING! You did it.", "Go to shop");
     }
-    const reward = {
-      key,
-      image: artifactPathByKey(key),
-      emoji: LESSON.story?.artifact_emoji || artifactFromJson.emoji || "🏆",
-      name: LESSON.story?.artifact_name || titleFromKey(key) || artifactFromJson.name,
-      description:
-        LESSON.story?.artifact_power ||
-        artifactFromJson.description ||
-        "A magical reward for your adventure.",
-    };
-    state.completionArtifact = reward;
-    state.earnedArtifacts.push(reward);
-    showSuccess("The final challenge is complete!", () => {
-      openShopScreen();
-    }, "AMAZING! Your reward is ready.", "Go to shop");
   }
 
   function showEndingStoryScreen(){
@@ -4582,23 +4725,39 @@
     $("completionCoins").textContent = "🪙 " + state.totalCoins + " coins remaining";
     $("completionBg").decoding = "async";
     setStageBackgroundImg($("completionBg"), resolveStageBackground(STAGES[0] || {}, 0));
-    $("completionArtifactName").textContent = art.name || "Mystery Artifact";
-    $("completionArtifactDesc").textContent = art.description || "A magical reward for your journey.";
+    const hasArtifact = !!(art && art.key);
+    const hide = (id) => { const el = $(id); if(el) el.style.display = "none"; };
+    const show = (id) => { const el = $(id); if(el) el.style.display = ""; };
+    const artifactWrap = document.querySelector(".artifact-wrap");
+    const artifactSectionLabel = Array.from(document.querySelectorAll(".completion-section")).find((el) => el.textContent.includes("Artifact"));
 
-    const artImg = $("completionArtifactImg");
-    const artFallback = $("completionArtifactFallback");
-    artFallback.textContent = art.emoji || "🏆";
-    if(art.image){
-      artImg.src = art.image;
-      artImg.classList.remove("hidden");
-      artFallback.classList.add("hidden");
-      artImg.onerror = () => {
+    if(hasArtifact){
+      if(artifactSectionLabel) artifactSectionLabel.style.display = "";
+      if(artifactWrap) artifactWrap.style.display = "";
+      show("completionArtifactName");
+      show("completionArtifactDesc");
+      $("completionArtifactName").textContent = art.name || "Mystery Artifact";
+      $("completionArtifactDesc").textContent = art.description || "A magical reward for your journey.";
+      const artImg = $("completionArtifactImg");
+      const artFallback = $("completionArtifactFallback");
+      artFallback.textContent = art.emoji || "🏆";
+      if(art.image){
+        artImg.src = art.image;
+        artImg.classList.remove("hidden");
+        artFallback.classList.add("hidden");
+        artImg.onerror = () => {
+          artImg.classList.add("hidden");
+          artFallback.classList.remove("hidden");
+        };
+      } else {
         artImg.classList.add("hidden");
         artFallback.classList.remove("hidden");
-      };
+      }
     } else {
-      artImg.classList.add("hidden");
-      artFallback.classList.remove("hidden");
+      if(artifactSectionLabel) artifactSectionLabel.style.display = "none";
+      if(artifactWrap) artifactWrap.style.display = "none";
+      hide("completionArtifactName");
+      hide("completionArtifactDesc");
     }
     renderCompletionInventory();
 

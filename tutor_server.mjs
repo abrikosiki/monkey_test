@@ -654,8 +654,8 @@ async function fetchChildRecord(code) {
   const childCode = String(code || "").trim();
   if (!childCode) throw new Error("Child code is required");
 
-  const supabaseUrl = process.env.SUPABASE_URL;
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+  const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   const table = process.env.SUPABASE_CHILDREN_TABLE || "children";
   /** Колонка с публичным кодом ребёнка: в новой схеме Monkey Game это `code`, в старой — `child_code`. */
   const lookupColumn = process.env.SUPABASE_CHILD_LOOKUP_COLUMN || "code";
@@ -1318,8 +1318,8 @@ async function patchChildLessonComplete(payload) {
   }
   const inventory = Array.isArray(payload.inventory) ? payload.inventory : [];
 
-  const supabaseUrl = process.env.SUPABASE_URL;
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+  const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   const table = process.env.SUPABASE_CHILDREN_TABLE || "children";
   const lookupColumn = process.env.SUPABASE_CHILD_LOOKUP_COLUMN || "code";
 

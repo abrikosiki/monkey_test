@@ -3483,13 +3483,6 @@ function buildHtml(
   function renderCorridorChoice(stage){
     const box = document.createElement("div");
     box.className = "choice-box";
-    const subText = String(stage.instruction || "").trim();
-    if(subText){
-      const sub = document.createElement("div");
-      sub.className = "choice-sub";
-      sub.textContent = subText;
-      box.appendChild(sub);
-    }
     const q = document.createElement("div");
     q.className = "choice-q";
     q.textContent = stage.question || "Choose a path";
@@ -4744,27 +4737,31 @@ function buildHtml(
   function finishLesson(){
     clearStage();
     const stage6 = STAGES[5] || {};
-    const artifactFromJson = stage6.artifact || {};
-    let key = String(artifactFromJson.key || "").trim();
-    const allArtifactKeys = Object.keys(ARTIFACT_MAP);
-    if(!key && allArtifactKeys.length > 0){
-      key = allArtifactKeys[Math.floor(Math.random() * allArtifactKeys.length)];
+    const artifactFromJson = stage6.artifact || null;
+    const hasAnimationStage = STAGES.some((s) => s.type === "animation");
+    if(hasAnimationStage || (artifactFromJson && artifactFromJson.key)){
+      const key = String((artifactFromJson && artifactFromJson.key) || "").trim();
+      const reward = {
+        key,
+        image: key ? artifactPathByKey(key) : null,
+        emoji: LESSON.story?.artifact_emoji || (artifactFromJson && artifactFromJson.emoji) || "🏆",
+        name: LESSON.story?.artifact_name || titleFromKey(key) || (artifactFromJson && artifactFromJson.name),
+        description:
+          LESSON.story?.artifact_power ||
+          (artifactFromJson && artifactFromJson.description) ||
+          "A magical reward for your adventure.",
+      };
+      state.completionArtifact = reward;
+      state.earnedArtifacts.push(reward);
+      showSuccess("The final challenge is complete!", () => {
+        openShopScreen();
+      }, "AMAZING! Your reward is ready.", "Go to shop");
+    } else {
+      state.completionArtifact = null;
+      showSuccess("The final challenge is complete!", () => {
+        openShopScreen();
+      }, "AMAZING! You did it.", "Go to shop");
     }
-    const reward = {
-      key,
-      image: artifactPathByKey(key),
-      emoji: LESSON.story?.artifact_emoji || artifactFromJson.emoji || "🏆",
-      name: LESSON.story?.artifact_name || titleFromKey(key) || artifactFromJson.name,
-      description:
-        LESSON.story?.artifact_power ||
-        artifactFromJson.description ||
-        "A magical reward for your adventure.",
-    };
-    state.completionArtifact = reward;
-    state.earnedArtifacts.push(reward);
-    showSuccess("The final challenge is complete!", () => {
-      openShopScreen();
-    }, "AMAZING! Your reward is ready.", "Go to shop");
   }
 
   function showEndingStoryScreen(){
@@ -4884,23 +4881,39 @@ function buildHtml(
     $("completionCoins").textContent = "🪙 " + state.totalCoins + " coins remaining";
     $("completionBg").decoding = "async";
     setStageBackgroundImg($("completionBg"), resolveStageBackground(STAGES[0] || {}, 0));
-    $("completionArtifactName").textContent = art.name || "Mystery Artifact";
-    $("completionArtifactDesc").textContent = art.description || "A magical reward for your journey.";
+    const hasArtifact = !!(art && art.key);
+    const hide = (id) => { const el = $(id); if(el) el.style.display = "none"; };
+    const show = (id) => { const el = $(id); if(el) el.style.display = ""; };
+    const artifactWrap = document.querySelector(".artifact-wrap");
+    const artifactSectionLabel = Array.from(document.querySelectorAll(".completion-section")).find((el) => el.textContent.includes("Artifact"));
 
-    const artImg = $("completionArtifactImg");
-    const artFallback = $("completionArtifactFallback");
-    artFallback.textContent = art.emoji || "🏆";
-    if(art.image){
-      artImg.src = art.image;
-      artImg.classList.remove("hidden");
-      artFallback.classList.add("hidden");
-      artImg.onerror = () => {
+    if(hasArtifact){
+      if(artifactSectionLabel) artifactSectionLabel.style.display = "";
+      if(artifactWrap) artifactWrap.style.display = "";
+      show("completionArtifactName");
+      show("completionArtifactDesc");
+      $("completionArtifactName").textContent = art.name || "Mystery Artifact";
+      $("completionArtifactDesc").textContent = art.description || "A magical reward for your journey.";
+      const artImg = $("completionArtifactImg");
+      const artFallback = $("completionArtifactFallback");
+      artFallback.textContent = art.emoji || "🏆";
+      if(art.image){
+        artImg.src = art.image;
+        artImg.classList.remove("hidden");
+        artFallback.classList.add("hidden");
+        artImg.onerror = () => {
+          artImg.classList.add("hidden");
+          artFallback.classList.remove("hidden");
+        };
+      } else {
         artImg.classList.add("hidden");
         artFallback.classList.remove("hidden");
-      };
+      }
     } else {
-      artImg.classList.add("hidden");
-      artFallback.classList.remove("hidden");
+      if(artifactSectionLabel) artifactSectionLabel.style.display = "none";
+      if(artifactWrap) artifactWrap.style.display = "none";
+      hide("completionArtifactName");
+      hide("completionArtifactDesc");
     }
     renderCompletionInventory();
 
