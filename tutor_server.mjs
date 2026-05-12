@@ -1386,10 +1386,13 @@ const server = http.createServer(async (req, res) => {
       return;
     }
 
-    if (req.method === "GET" && url.pathname === "/lesson_game.html") {
-      res.writeHead(200, { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" });
-      res.end(fs.readFileSync(path.join(__dirname, "lesson_game.html"), "utf-8"));
-      return;
+    if (req.method === "GET" && url.pathname.match(/^\/[\w\-]+\.html$/) && url.pathname !== "/") {
+      const htmlFile = path.join(__dirname, url.pathname.slice(1));
+      if (fs.existsSync(htmlFile)) {
+        res.writeHead(200, { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" });
+        res.end(fs.readFileSync(htmlFile, "utf-8"));
+        return;
+      }
     }
 
     if ((req.method === "GET" || req.method === "HEAD") && url.pathname.startsWith("/assets/")) {
