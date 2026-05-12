@@ -126,6 +126,9 @@ MECHANICS — Claude CHOOSES per stage (15 types)
 - build_number    — build number from tens and ones
 - abacus          — light up dot count
 - timer_challenge — solve within 30s (ONLY age >= 7; rare at 7-8; never age 5-6)
+- true_false    — read the statement and tap True or False
+- text_task     — read the task and type the text answer
+- five_tasks    — solve all 5 tasks shown simultaneously on one card
 
 For builder compatibility you MAY output legacy aliases where needed:
 - multi_choice → same schema as "choice" but type MUST be "multi_choice" in JSON
@@ -318,6 +321,24 @@ FIND_UNKNOWN (strict template):
 - C input is validated by tutor Answer for C.
 - Correct input highlights green and opens next round immediately.
 - Wrong input highlights red.
+
+TRUE_FALSE (strict template):
+- Card shows statement text centered and large inside a .choice-box card.
+- Two side-by-side buttons "True" and "False".
+- Round JSON: { "instruction", "statement": "text of statement", "correct_answer": "true" | "false" }
+- Correct tap glows green then immediately opens next round; wrong tap flashes red.
+
+TEXT_TASK (strict template):
+- Card shows prompt text and one text input field below.
+- Answer is checked case-insensitively (trim + lowercase).
+- Round JSON: { "instruction", "prompt": "task text", "answer": "correct text" }
+- Correct input glows green then next round; wrong input clears and flashes red.
+
+FIVE_TASKS (strict template):
+- One card with exactly 5 rows shown simultaneously; each row has task text + answer input.
+- All 5 answers must be correct before advancing to the next round.
+- Round JSON: { "instruction", "tasks": [ {"q": "5+7=?", "a": "12"}, {"q": "16-3=?", "a": "13"}, {"q": "?+10=22", "a": "12"}, {"q": "8×3=?", "a": "24"}, {"q": "20÷4=?", "a": "5"} ] }
+- Any wrong input flashes red and clears; when all 5 are correct, move immediately to next round.
 
 INPUT VISUAL RULE (all lessons):
 - In any input/fill_blank/pattern_input/finale input UI, correct answers may glow green, but typed digits MUST remain clearly readable and MUST NOT turn white or transparent when the field becomes correct/disabled.

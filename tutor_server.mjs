@@ -38,6 +38,9 @@ const MECHANICS = [
   { id: "timer_challenge", label: "Timer Challenge", description: "Solve as many as possible in 30 sec." },
   { id: "symbol_calc", label: "Symbol Calc", description: "Substitute A/B/C values and compute expression." },
   { id: "find_unknown", label: "Find Unknown", description: "Find C from equation with known A and B." },
+  { id: "true_false", label: "True or False", description: "Say whether the statement is true or false." },
+  { id: "text_task", label: "Text Task", description: "Type the correct text answer." },
+  { id: "five_tasks", label: "Five Tasks", description: "Solve all 5 tasks shown at once." },
 ];
 
 const DEFAULT_STAGE_BACKGROUNDS = {
@@ -494,6 +497,20 @@ function applyDraftToLessonStages(lesson, draft) {
           r.key_lock_keys = nums.slice(0, 6);
         }
         while (r.key_lock_keys.length < 6) r.key_lock_keys.push(0);
+      } else if (mech === "true_false") {
+        r.statement = ex.statement || r.statement || "";
+        r.correct_answer = String(ex.trueOrFalse || r.correct_answer || "true");
+      } else if (mech === "text_task") {
+        r.prompt = ex.prompt || r.prompt || "";
+        r.answer = String(ex.answer ?? r.answer ?? "");
+      } else if (mech === "five_tasks") {
+        r.tasks = [
+          { q: ex.task1 || r.tasks?.[0]?.q || "", a: String(ex.answer1 ?? r.tasks?.[0]?.a ?? "") },
+          { q: ex.task2 || r.tasks?.[1]?.q || "", a: String(ex.answer2 ?? r.tasks?.[1]?.a ?? "") },
+          { q: ex.task3 || r.tasks?.[2]?.q || "", a: String(ex.answer3 ?? r.tasks?.[2]?.a ?? "") },
+          { q: ex.task4 || r.tasks?.[3]?.q || "", a: String(ex.answer4 ?? r.tasks?.[3]?.a ?? "") },
+          { q: ex.task5 || r.tasks?.[4]?.q || "", a: String(ex.answer5 ?? r.tasks?.[4]?.a ?? "") },
+        ];
       }
 
       rounds.push(r);

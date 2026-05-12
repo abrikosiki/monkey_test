@@ -1,165 +1,9 @@
-import fs from "fs/promises";
-import path from "path";
-import { applyIslandLessonCanon, CANONICAL_ISLAND_KEYS } from "./island_canon.mjs";
-
-function usage() {
-  console.log("Usage: node builder.mjs <lesson.json> [output.html]");
-}
-
-function escapeHtml(value) {
-  return String(value ?? "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#39;");
-}
-
-function sanitizeLesson(raw) {
-  const lesson = raw?.lesson ?? raw;
-  if (!lesson || typeof lesson !== "object") {
-    throw new Error("Lesson JSON is empty or invalid");
-  }
-  if (!Array.isArray(lesson.stages) || lesson.stages.length === 0) {
-    throw new Error("Lesson JSON must contain non-empty stages[]");
-  }
-  return lesson;
-}
-
-/** Basename without extension; handles .PNG vs .png (path.basename(name, ".png") fails on .PNG). */
-function assetStem(fileName) {
-  const extRaw = path.extname(fileName);
-  if (!extRaw) return fileName;
-  return fileName.slice(0, -extRaw.length);
-}
-
-async function buildBackgroundMap(projectRoot) {
-  const backgroundsDir = path.join(projectRoot, "assets", "backgrounds");
-  const map = {};
-  const allowed = new Set([".webp", ".png", ".jpg", ".jpeg"]);
-
-  try {
-    const entries = await fs.readdir(backgroundsDir, { withFileTypes: true });
-    for (const entry of entries) {
-      if (!entry.isFile()) continue;
-      const ext = path.extname(entry.name).toLowerCase();
-      if (!allowed.has(ext)) continue;
-      const key = assetStem(entry.name);
-      map[key] = `assets/backgrounds/${entry.name}`;
-    }
-  } catch {
-    // Folder may not exist yet; fallback paths will still work.
-  }
-
-  return map;
-}
-
-async function buildCharacterMap(projectRoot) {
-  const charactersDir = path.join(projectRoot, "assets", "characters");
-  const map = {};
-  const allowed = new Set([".webp", ".png", ".jpg", ".jpeg"]);
-
-  try {
-    const entries = await fs.readdir(charactersDir, { withFileTypes: true });
-    for (const entry of entries) {
-      if (!entry.isFile()) continue;
-      const ext = path.extname(entry.name).toLowerCase();
-      if (!allowed.has(ext)) continue;
-      const key = assetStem(entry.name);
-      map[key] = `assets/characters/${entry.name}`;
-    }
-  } catch {
-    // Folder may not exist yet; fallback paths will still work.
-  }
-
-  return map;
-}
-
-async function buildItemsMap(projectRoot) {
-  const itemsDir = path.join(projectRoot, "assets", "items");
-  const map = {};
-  const allowed = new Set([".webp", ".png", ".jpg", ".jpeg"]);
-
-  try {
-    const entries = await fs.readdir(itemsDir, { withFileTypes: true });
-    for (const entry of entries) {
-      if (!entry.isFile()) continue;
-      const ext = path.extname(entry.name).toLowerCase();
-      if (!allowed.has(ext)) continue;
-      const key = assetStem(entry.name);
-      map[key] = `assets/items/${entry.name}`;
-    }
-  } catch {
-    // Folder may not exist yet; fallback paths will still work.
-  }
-
-  return map;
-}
-
-async function buildTargetsMap(projectRoot) {
-  const targetsDir = path.join(projectRoot, "assets", "targets");
-  const map = {};
-  const allowed = new Set([".webp", ".png", ".jpg", ".jpeg"]);
-
-  try {
-    const entries = await fs.readdir(targetsDir, { withFileTypes: true });
-    for (const entry of entries) {
-      if (!entry.isFile()) continue;
-      const ext = path.extname(entry.name).toLowerCase();
-      if (!allowed.has(ext)) continue;
-      const key = assetStem(entry.name);
-      map[key] = `assets/targets/${entry.name}`;
-    }
-  } catch {
-    // Folder may not exist yet; fallback paths will still work.
-  }
-
-  return map;
-}
-
-async function buildArtifactsMap(projectRoot) {
-  const artifactsDir = path.join(projectRoot, "assets", "artifacts");
-  const map = {};
-  const allowed = new Set([".webp", ".png", ".jpg", ".jpeg"]);
-
-  try {
-    const entries = await fs.readdir(artifactsDir, { withFileTypes: true });
-    for (const entry of entries) {
-      if (!entry.isFile()) continue;
-      const ext = path.extname(entry.name).toLowerCase();
-      if (!allowed.has(ext)) continue;
-      const key = assetStem(entry.name);
-      map[key] = `assets/artifacts/${entry.name}`;
-    }
-  } catch {
-    // Folder may not exist yet; runtime fallback can still be used.
-  }
-
-  return map;
-}
-
-function buildHtml(
-  lesson,
-  backgroundMap = {},
-  characterMap = {},
-  itemsMap = {},
-  targetsMap = {},
-  artifactsMap = {},
-) {
-  const title = `${lesson.island_name ?? "Monkey Archipelago"} - ${lesson.meta?.student_name ?? "Player"}`;
-  const payload = JSON.stringify(lesson).replaceAll("</script>", "<\\/script>");
-  const bgPayload = JSON.stringify(backgroundMap).replaceAll("</script>", "<\\/script>");
-  const charPayload = JSON.stringify(characterMap).replaceAll("</script>", "<\\/script>");
-  const itemsPayload = JSON.stringify(itemsMap).replaceAll("</script>", "<\\/script>");
-  const targetsPayload = JSON.stringify(targetsMap).replaceAll("</script>", "<\\/script>");
-  const artifactsPayload = JSON.stringify(artifactsMap).replaceAll("</script>", "<\\/script>");
-
-  return `<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${escapeHtml(title)}</title>
+  <title>Monkey Archipelago - Hero</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
     :root{
@@ -1942,12 +1786,12 @@ function buildHtml(
   </div>
 
   <script>
-  const LESSON = ${payload};
-  const BACKGROUND_MAP = ${bgPayload};
-  const CHARACTER_MAP = ${charPayload};
-  const ITEMS_MAP = ${itemsPayload};
-  const TARGETS_MAP = ${targetsPayload};
-  const ARTIFACT_MAP = ${artifactsPayload};
+  const LESSON = {"meta":{"student_code":"DEMO-001","student_name":"Hero","island_key":"blue_crab_island","character_key":"boy_brown","student_level":2,"student_coins":100,"start_coins":100,"child_inventory":[],"has_freeze_ring":false},"story":{"island_name":"Blue Crab Island","villain":"Four-armed monkey","artifact_name":"Tidal Core","artifact_emoji":"🦀","artifact_power":"Hidden power beneath the reef that fuels the crab army.","greeting":"Hero, your island mission begins now — listen closely.","act1":"On Blue Crab Island, swarms of snapping blue crabs guard the shores while a four-armed monkey rules from the tide pools, striking with impossible speed. Twisted by the will of Doctor Krit, it commands the crabs like an army. Hidden beneath the reef lies the Tidal Core that fuels its power. We must reach, Hero, it first and break Krit's control before the island is overrun.","act2":"","act3":"","goal":"Hero, master every math trial, reach the island's core in time, and break Doctor Krit's hold."},"stages":[{"id":1,"type":"true_false","title":"True or False?","background":"blue_crab_island1","coins":15,"mechanic_reason":"True or False is a great warm-up — simple binary choice, no calculations needed.","success_message":"Amazing! You know your math facts!","rounds":[{"instruction":"True or False?","statement":"3 + 4 = 7","correct_answer":"true"},{"instruction":"True or False?","statement":"2 яблока равно тому что три апельсина","correct_answer":"false"},{"instruction":"True or False?","statement":"10 − 3 = 7","correct_answer":"true"},{"instruction":"True or False?","statement":"4 × 4 = 15","correct_answer":"false"},{"instruction":"True or False?","statement":"18 ÷ 3 = 6","correct_answer":"true"}]},{"id":2,"type":"text_task","title":"Answer the Question","background":"blue_crab_island2","coins":15,"mechanic_reason":"Text Task tests conceptual understanding — child must recall and type, not just pick.","success_message":"Brilliant! You answered every question!","rounds":[{"instruction":"Type your answer.","prompt":"A robot has 4 boxes.\nEach box contains 3 batteries.\nHow many batteries are there altogether?","answer":"12"},{"instruction":"Type your answer.","prompt":"How many sides does a triangle have?","answer":"3"},{"instruction":"Type your answer.","prompt":"What is 5 + 5?","answer":"10"},{"instruction":"Type your answer.","prompt":"What is double 7?","answer":"14"},{"instruction":"Type your answer.","prompt":"What is half of 20?","answer":"10"}]},{"id":3,"type":"five_tasks","title":"Solve All 5!","background":"2","coins":20,"mechanic_reason":"Five Tasks builds stamina and focus — all solved together before moving on.","success_message":"Incredible! All 5 tasks done!","rounds":[{"instruction":"Solve all tasks!","tasks":[{"q":"2 × 8 = ___","a":"16"},{"q":"16 ÷ 2 = ___","a":"8"},{"q":"___ × 5 = 25","a":"5"},{"q":"24 ÷ ___ = 6","a":"4"},{"q":"3 × 7 = ___","a":"21"}]},{"instruction":"Solve all tasks!","tasks":[{"q":"5 + 8 = ?","a":"13"},{"q":"15 − 7 = ?","a":"8"},{"q":"3 × 6 = ?","a":"18"},{"q":"? − 5 = 9","a":"14"},{"q":"20 ÷ 5 = ?","a":"4"}]},{"instruction":"Solve all tasks!","tasks":[{"q":"9 + 7 = ?","a":"16"},{"q":"14 − 8 = ?","a":"6"},{"q":"5 × 4 = ?","a":"20"},{"q":"? × 3 = 21","a":"7"},{"q":"16 ÷ 2 = ?","a":"8"}]},{"instruction":"Solve all tasks!","tasks":[{"q":"6 + 9 = ?","a":"15"},{"q":"20 − 11 = ?","a":"9"},{"q":"7 × 3 = ?","a":"21"},{"q":"? + 8 = 17","a":"9"},{"q":"24 ÷ 6 = ?","a":"4"}]},{"instruction":"Solve all tasks!","tasks":[{"q":"8 + 6 = ?","a":"14"},{"q":"17 − 9 = ?","a":"8"},{"q":"4 × 6 = ?","a":"24"},{"q":"? × 5 = 35","a":"7"},{"q":"30 ÷ 6 = ?","a":"5"}]}]},{"id":4,"type":"true_false","title":"True or False? Hard Mode","background":"3","coins":20,"mechanic_reason":"Second round of True or False with trickier statements.","success_message":"You're a math detective!","rounds":[{"instruction":"True or False?","statement":"7 × 8 = 54","correct_answer":"false"},{"instruction":"True or False?","statement":"100 ÷ 10 = 10","correct_answer":"true"},{"instruction":"True or False?","statement":"13 + 14 = 27","correct_answer":"true"},{"instruction":"True or False?","statement":"6 × 6 = 38","correct_answer":"false"},{"instruction":"True or False?","statement":"45 − 18 = 27","correct_answer":"true"}]},{"id":5,"type":"five_tasks","title":"Final Challenge — 5 at Once!","background":"blue_crab_island3","coins":25,"mechanic_reason":"Five Tasks finale with harder numbers.","success_message":"Outstanding! You solved them all!","rounds":[{"instruction":"Solve all tasks!","tasks":[{"q":"12 + 15 = ?","a":"27"},{"q":"30 − 13 = ?","a":"17"},{"q":"9 × 4 = ?","a":"36"},{"q":"? + 11 = 25","a":"14"},{"q":"32 ÷ 8 = ?","a":"4"}]},{"instruction":"Solve all tasks!","tasks":[{"q":"17 + 16 = ?","a":"33"},{"q":"40 − 14 = ?","a":"26"},{"q":"8 × 7 = ?","a":"56"},{"q":"? − 9 = 15","a":"24"},{"q":"45 ÷ 9 = ?","a":"5"}]},{"instruction":"Solve all tasks!","tasks":[{"q":"24 + 18 = ?","a":"42"},{"q":"50 − 23 = ?","a":"27"},{"q":"6 × 9 = ?","a":"54"},{"q":"? × 4 = 48","a":"12"},{"q":"63 ÷ 7 = ?","a":"9"}]},{"instruction":"Solve all tasks!","tasks":[{"q":"35 + 27 = ?","a":"62"},{"q":"72 − 35 = ?","a":"37"},{"q":"11 × 5 = ?","a":"55"},{"q":"? + 17 = 40","a":"23"},{"q":"81 ÷ 9 = ?","a":"9"}]},{"instruction":"Solve all tasks!","tasks":[{"q":"48 + 34 = ?","a":"82"},{"q":"91 − 46 = ?","a":"45"},{"q":"12 × 7 = ?","a":"84"},{"q":"? × 8 = 64","a":"8"},{"q":"100 ÷ 10 = ?","a":"10"}]}]},{"id":6,"type":"animation","title":"Victory!","background":"blue_crab_island4","coins":30,"mechanic_reason":"Finale celebration.","success_message":"You freed the island! The Tidal Core is yours!","artifact":{"key":"glasses","emoji":"🦀","name":"Tidal Core","description":"Ancient power of the reef, now in your hands."},"rounds":[]}],"images_needed":{"library":[],"backgrounds":["blue_crab_island1","blue_crab_island2","2","3","blue_crab_island3","blue_crab_island4"],"items":[],"targets":[],"artifact":{"key":"glasses","name":"Tidal Core"}},"tutor_notes":[]};
+  const BACKGROUND_MAP = {"2":"assets/backgrounds/2.png","3":"assets/backgrounds/3.png","antigravity_island1":"assets/backgrounds/antigravity_island1.PNG","antigravity_island2":"assets/backgrounds/antigravity_island2.PNG","antigravity_island3":"assets/backgrounds/antigravity_island3.PNG","antigravity_island4":"assets/backgrounds/antigravity_island4.PNG","blue_crab_island1":"assets/backgrounds/blue_crab_island1.PNG","blue_crab_island2":"assets/backgrounds/blue_crab_island2.PNG","blue_crab_island3":"assets/backgrounds/blue_crab_island3.PNG","blue_crab_island4":"assets/backgrounds/blue_crab_island4.PNG","cherry_blossom_island1":"assets/backgrounds/cherry_blossom_island1.PNG","cherry_blossom_island2":"assets/backgrounds/cherry_blossom_island2.PNG","cherry_blossom_island3":"assets/backgrounds/cherry_blossom_island3.PNG","cherry_blossom_island4":"assets/backgrounds/cherry_blossom_island4.PNG","crystal_island1":"assets/backgrounds/crystal_island1.PNG","crystal_island2":"assets/backgrounds/crystal_island2.PNG","crystal_island3":"assets/backgrounds/crystal_island3.PNG","crystal_island4":"assets/backgrounds/crystal_island4.PNG","jelly_bay_island1":"assets/backgrounds/jelly_bay_island1.PNG","jelly_bay_island2":"assets/backgrounds/jelly_bay_island2.PNG","jelly_bay_island3":"assets/backgrounds/jelly_bay_island3.PNG","jelly_bay_island4":"assets/backgrounds/jelly_bay_island4.PNG","mushroom_island1":"assets/backgrounds/mushroom_island1.PNG","mushroom_island2":"assets/backgrounds/mushroom_island2.PNG","mushroom_island3":"assets/backgrounds/mushroom_island3.PNG","mushroom_island4":"assets/backgrounds/mushroom_island4.PNG","neon_city_island1":"assets/backgrounds/neon_city_island1.PNG","neon_city_island2":"assets/backgrounds/neon_city_island2.PNG","neon_city_island3":"assets/backgrounds/neon_city_island3.PNG","neon_city_island4":"assets/backgrounds/neon_city_island4.PNG","second":"assets/backgrounds/second.webp","shop":"assets/backgrounds/shop.webp","snowy_peaks_island1":"assets/backgrounds/snowy_peaks_island1.PNG","snowy_peaks_island2":"assets/backgrounds/snowy_peaks_island2.PNG","snowy_peaks_island3":"assets/backgrounds/snowy_peaks_island3.PNG","snowy_peaks_island4":"assets/backgrounds/snowy_peaks_island4.PNG","title":"assets/backgrounds/title.png"};
+  const CHARACTER_MAP = {"boy_blue":"assets/characters/boy_blue.webp","boy_brown":"assets/characters/boy_brown.webp","boy_green":"assets/characters/boy_green.webp","elf_blue":"assets/characters/elf_blue.webp","elf_green":"assets/characters/elf_green.webp","elf_red":"assets/characters/elf_red.webp","fairy_green":"assets/characters/fairy_green.webp","fairy_purple":"assets/characters/fairy_purple.webp","fairy_red":"assets/characters/fairy_red.webp","girl_blue":"assets/characters/girl_blue.webp","girl_brown":"assets/characters/girl_brown.webp","girl_green":"assets/characters/girl_green.webp","pirate_blue":"assets/characters/pirate_blue.webp","pirate_brown":"assets/characters/pirate_brown.webp","pirate_green":"assets/characters/pirate_green.webp","wizard_blue":"assets/characters/wizard_blue.webp","wizard_green":"assets/characters/wizard_green.webp","wizard_red":"assets/characters/wizard_red.webp"};
+  const ITEMS_MAP = {"artifact":"assets/items/artifact.png","bamboo":"assets/items/bamboo.png","banana":"assets/items/banana.png","box_close":"assets/items/box_close.png","box_open":"assets/items/box_open.png","bubble":"assets/items/bubble.png","butterfly":"assets/items/butterfly.png","candy":"assets/items/candy.png","cherry":"assets/items/cherry.png","cookie":"assets/items/cookie.png","coral":"assets/items/coral.png","crab_blue":"assets/items/crab_blue.png","hibiscus":"assets/items/hibiscus.png","jellyfish":"assets/items/jellyfish.png","key":"assets/items/key.webp","leaf":"assets/items/leaf.png","lollipop":"assets/items/lollipop.png","mushroom":"assets/items/mushroom.png","pawprint":"assets/items/pawprint.png","pearl_blue":"assets/items/pearl_blue.png","pearl_red":"assets/items/pearl_red.png","samurai_monkey":"assets/items/samurai_monkey.png","shell_blue":"assets/items/shell_blue.png","shell_red":"assets/items/shell_red.png","spore":"assets/items/spore.png","starfish":"assets/items/starfish.png","stone_blue":"assets/items/stone_blue.png"};
+  const TARGETS_MAP = {"bag_cloth":"assets/targets/bag_cloth.png","basket_wood":"assets/targets/basket_wood.png","basket_woven":"assets/targets/basket_woven.png","bowl_stone":"assets/targets/bowl_stone.png","bowl_wood":"assets/targets/bowl_wood.png","cauldron":"assets/targets/cauldron.png","chest_open":"assets/targets/chest_open.png","totem_1":"assets/targets/totem_1.png","totem_2":"assets/targets/totem_2.png","totem_3":"assets/targets/totem_3.png"};
+  const ARTIFACT_MAP = {"Adventurers_binoculars":"assets/artifacts/Adventurers_binoculars.png","Antigravity_boots":"assets/artifacts/Antigravity_boots.PNG","Focusing_crystal":"assets/artifacts/Focusing_crystal.PNG","Magic_necklace":"assets/artifacts/Magic_necklace.PNG","Mysterious_egg":"assets/artifacts/Mysterious_egg.PNG","Ninja_nunchucks":"assets/artifacts/Ninja_nunchucks.PNG","Spy_phone":"assets/artifacts/Spy_phone.PNG","Tiki_mask":"assets/artifacts/Tiki_mask.PNG","Vanteon_Watch":"assets/artifacts/Vanteon_Watch.PNG","boots_jump":"assets/artifacts/boots_jump.png","box_of_threads":"assets/artifacts/box_of_threads.PNG","cloak_invisible":"assets/artifacts/cloak_invisible.png","crown":"assets/artifacts/crown.webp","dron":"assets/artifacts/dron.webp","egg":"assets/artifacts/egg.webp","glasses":"assets/artifacts/glasses.webp","glasses_mind":"assets/artifacts/glasses_mind.png","lizard":"assets/artifacts/lizard.webp","ring_ice":"assets/artifacts/ring_ice.webp","sword":"assets/artifacts/sword.webp","sword_light":"assets/artifacts/sword_light.png"};
   function buildShopItemsFromArtifacts(){
     const curatedShopItems = [
       { id: "magic_necklace", name: "Magic necklace", price: 75 },
@@ -2065,7 +1909,7 @@ function buildHtml(
   }
 
   function hasCyrillic(value){
-    return /[\\u0400-\\u04FF]/.test(String(value || ""));
+    return /[\u0400-\u04FF]/.test(String(value || ""));
   }
 
   function resolveEngineType(type){
@@ -2327,7 +2171,7 @@ function buildHtml(
   function titleFromKey(key){
     return String(key || "Mystery Artifact")
       .replace(/[_-]+/g, " ")
-      .replace(/\\b\\w/g, (c) => c.toUpperCase());
+      .replace(/\b\w/g, (c) => c.toUpperCase());
   }
 
   function ensureRingIceInventory(){
@@ -2359,7 +2203,7 @@ function buildHtml(
   function collectInventorySlugsForSync(){
     const set = new Set();
     const add = (x) => {
-      const s = String(x || "").trim().toLowerCase().replace(/\\s+/g, "_");
+      const s = String(x || "").trim().toLowerCase().replace(/\s+/g, "_");
       if(s) set.add(s);
     };
     for(const raw of LESSON.meta?.child_inventory || []) add(raw);
@@ -2803,7 +2647,7 @@ function buildHtml(
   function parseNumberList(value){
     if(Array.isArray(value)) return value.map((v) => String(v).trim()).filter(Boolean);
     return String(value || "")
-      .split(/[,\\s]+/)
+      .split(/[,\s]+/)
       .map((v) => v.trim())
       .filter(Boolean);
   }
@@ -2954,7 +2798,7 @@ function buildHtml(
         row.className = "seq-row";
         const promptParts = String(entry.prompt || "")
           .replace(/,/g, " ")
-          .split(/(\\?)/)
+          .split(/(\?)/)
           .map((s) => s.trim())
           .filter(Boolean);
         let blankAdded = false;
@@ -3697,7 +3541,7 @@ function buildHtml(
 
   function parseKeyLockRound(stage){
     const splitNums = (raw) => String(raw || "")
-      .split(/[\s,]+/)
+      .split(/[s,]+/)
       .map((s) => s.trim())
       .filter(Boolean)
       .map(Number)
@@ -4294,7 +4138,7 @@ function buildHtml(
     const exprRaw = String(stage.symbol_expression || stage.symbolExpression || "A + B × C");
     const symbolMap = { A: itemA, B: itemB, C: itemC };
     exprRaw
-      .split(/(\\bA\\b|\\bB\\b|\\bC\\b)/g)
+      .split(/(\bA\b|\bB\b|\bC\b)/g)
       .filter(Boolean)
       .forEach((part) => {
         const key = part.trim();
@@ -4388,7 +4232,7 @@ function buildHtml(
     const exprRaw = String(stage.unknown_equation || stage.unknownEquation || "A + B + C = 15");
     const symbolMap = { A: itemA, B: itemB, C: itemC };
     exprRaw
-      .split(/(\\bA\\b|\\bB\\b|\\bC\\b)/g)
+      .split(/(\bA\b|\bB\b|\bC\b)/g)
       .filter(Boolean)
       .forEach((part) => {
         const key = part.trim();
@@ -4696,7 +4540,7 @@ function buildHtml(
 
   /** When meta.island_key is set, backgrounds are always PREFIX+1, PREFIX+2, "2", "3", PREFIX+3, PREFIX+4 (same as tutor server). */
   function islandPackBackgroundForIndex(islandKey, index){
-    const prefix = String(islandKey || "").trim().replace(/\\s+/g, "_");
+    const prefix = String(islandKey || "").trim().replace(/\s+/g, "_");
     if (!prefix) return "";
     const sn = index + 1;
     if (sn === 1) return prefix + "1";
@@ -5085,54 +4929,4 @@ function buildHtml(
   showIntroScreen();
   </script>
 </body>
-</html>`;
-}
-
-async function main() {
-  const [, , inputArg, outputArg] = process.argv;
-  if (!inputArg) {
-    usage();
-    process.exit(1);
-  }
-
-  const inputPath = path.resolve(process.cwd(), inputArg);
-  const outputPath = path.resolve(process.cwd(), outputArg || "game.html");
-
-  const rawText = await fs.readFile(inputPath, "utf-8");
-  const json = JSON.parse(rawText);
-  const lesson = sanitizeLesson(json);
-  const ik = String(lesson.meta?.island_key || "")
-    .trim()
-    .replace(/\s+/g, "_");
-  if (!CANONICAL_ISLAND_KEYS.includes(ik)) {
-    throw new Error(
-      `Lesson JSON needs meta.island_key as one of the eight tutor islands (got: ${JSON.stringify(lesson.meta?.island_key)})`,
-    );
-  }
-  lesson.meta = lesson.meta || {};
-  lesson.meta.island_key = ik;
-  applyIslandLessonCanon(lesson, {
-    child: { name: lesson.meta?.student_name },
-    context: { islandKey: ik },
-  });
-  const backgroundMap = await buildBackgroundMap(process.cwd());
-  const characterMap = await buildCharacterMap(process.cwd());
-  const itemsMap = await buildItemsMap(process.cwd());
-  const targetsMap = await buildTargetsMap(process.cwd());
-  const artifactsMap = await buildArtifactsMap(process.cwd());
-  const html = buildHtml(lesson, backgroundMap, characterMap, itemsMap, targetsMap, artifactsMap);
-
-  await fs.writeFile(outputPath, html, "utf-8");
-  console.log("Generated:", outputPath);
-  console.log("Stages:", lesson.stages.length);
-  console.log("Backgrounds found:", Object.keys(backgroundMap).length);
-  console.log("Characters found:", Object.keys(characterMap).length);
-  console.log("Items found:", Object.keys(itemsMap).length);
-  console.log("Targets found:", Object.keys(targetsMap).length);
-  console.log("Artifacts found:", Object.keys(artifactsMap).length);
-}
-
-main().catch((err) => {
-  console.error("Builder failed:", err.message);
-  process.exit(1);
-});
+</html>

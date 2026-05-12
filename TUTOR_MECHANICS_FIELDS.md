@@ -181,3 +181,35 @@ Fill per example:
 - `Equation (contains C)`
 - `Answer for C`
 
+---
+
+## true_false
+
+Fill per example:
+- `Title text`
+- `Statement inside card` (any text or math expression, e.g. "4 × 3 = 12")
+- `Correct answer` — select `true` or `false`
+
+---
+
+## text_task
+
+Fill per example:
+- `Title text`
+- `Task text` (question shown inside the card)
+- `Correct answer` (text, checked case-insensitively)
+
+---
+
+## five_tasks
+
+Fill per example:
+- `Title text`
+- `Task 1` + `Answer 1`
+- `Task 2` + `Answer 2`
+- `Task 3` + `Answer 3`
+- `Task 4` + `Answer 4`
+- `Task 5` + `Answer 5`
+
+Note: All 5 tasks are shown simultaneously on one card. The child must answer all 5 correctly before advancing.
+

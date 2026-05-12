@@ -268,6 +268,9 @@
       timer_challenge: "3 example lines (A/B/C), answer per line, and seconds.",
       symbol_calc: "Set A/B/C values, expression, and final answer.",
       find_unknown: "Set A/B values, equation, and answer for C.",
+      true_false: "Title + statement inside the card + select True or False as the correct answer.",
+      text_task: "Title + task text + correct text answer (case-insensitive).",
+      five_tasks: "Title + 5 tasks with answers (all shown at once on one card).",
     };
 
     const MECHANIC_TEMPLATES = {
@@ -340,6 +343,9 @@
       timer_challenge: () => ({ titleText: "Solve fast", prompt: "", answer: "", screenItemCount: "", targetCount: "", zoneCounts: [], options: [], leftExpression: "", rightExpression: "", correctSide: "", note: "", numbersText: "", group1Name: "", group1Values: "", group2Name: "", group2Values: "", choiceA: "", choiceB: "", choiceC: "", correctOption: "A", pairA: "", pairB: "", pairC: "", pairD: "", correctPair1: "A", correctPair2: "B", baseNumber: "", partsCount: "", readyFlag: false, timerExampleA: "8 ÷ 2", timerExampleB: "7 + 3", timerExampleC: "9 - 4", timerAnswerA: "4", timerAnswerB: "10", timerAnswerC: "5", timerSeconds: 30, symbolA: "", symbolB: "", symbolC: "", symbolExpression: "", unknownA: "", unknownB: "", unknownEquation: "" }),
       symbol_calc: () => ({ titleText: "Compute by symbols", prompt: "", answer: "10", screenItemCount: "", targetCount: "", zoneCounts: [], options: [], leftExpression: "", rightExpression: "", correctSide: "", note: "", numbersText: "", group1Name: "", group1Values: "", group2Name: "", group2Values: "", choiceA: "", choiceB: "", choiceC: "", correctOption: "A", pairA: "", pairB: "", pairC: "", pairD: "", correctPair1: "A", correctPair2: "B", baseNumber: "", partsCount: "", readyFlag: false, timerExampleA: "", timerExampleB: "", timerExampleC: "", timerAnswerA: "", timerAnswerB: "", timerAnswerC: "", timerSeconds: 30, symbolA: 4, symbolB: 3, symbolC: 2, symbolExpression: "A + B × C", unknownA: "", unknownB: "", unknownEquation: "" }),
       find_unknown: () => ({ titleText: "Find unknown C", prompt: "", answer: "5", screenItemCount: "", targetCount: "", zoneCounts: [], options: [], leftExpression: "", rightExpression: "", correctSide: "", note: "", numbersText: "", group1Name: "", group1Values: "", group2Name: "", group2Values: "", choiceA: "", choiceB: "", choiceC: "", correctOption: "A", pairA: "", pairB: "", pairC: "", pairD: "", correctPair1: "A", correctPair2: "B", baseNumber: "", partsCount: "", readyFlag: false, timerExampleA: "", timerExampleB: "", timerExampleC: "", timerAnswerA: "", timerAnswerB: "", timerAnswerC: "", timerSeconds: 30, symbolA: "", symbolB: "", symbolC: "", symbolExpression: "", unknownA: 4, unknownB: 6, unknownEquation: "A + B + C = 15" }),
+      true_false: () => ({ titleText: "True or false?", statement: "4 × 3 = 12", trueOrFalse: "true", prompt: "", answer: "", screenItemCount: "", targetCount: "", zoneCounts: [], options: [], leftExpression: "", rightExpression: "", correctSide: "", note: "", numbersText: "", group1Name: "", group1Values: "", group2Name: "", group2Values: "", choiceA: "", choiceB: "", choiceC: "", correctOption: "A", pairA: "", pairB: "", pairC: "", pairD: "", correctPair1: "A", correctPair2: "B", baseNumber: "", partsCount: "", readyFlag: false, timerExampleA: "", timerExampleB: "", timerExampleC: "", timerAnswerA: "", timerAnswerB: "", timerAnswerC: "", timerSeconds: 30, symbolA: "", symbolB: "", symbolC: "", symbolExpression: "", unknownA: "", unknownB: "", unknownEquation: "", task1: "", answer1: "", task2: "", answer2: "", task3: "", answer3: "", task4: "", answer4: "", task5: "", answer5: "" }),
+      text_task: () => ({ titleText: "Solve the task", prompt: "What is the next even number after 8?", answer: "10", statement: "", trueOrFalse: "true", screenItemCount: "", targetCount: "", zoneCounts: [], options: [], leftExpression: "", rightExpression: "", correctSide: "", note: "", numbersText: "", group1Name: "", group1Values: "", group2Name: "", group2Values: "", choiceA: "", choiceB: "", choiceC: "", correctOption: "A", pairA: "", pairB: "", pairC: "", pairD: "", correctPair1: "A", correctPair2: "B", baseNumber: "", partsCount: "", readyFlag: false, timerExampleA: "", timerExampleB: "", timerExampleC: "", timerAnswerA: "", timerAnswerB: "", timerAnswerC: "", timerSeconds: 30, symbolA: "", symbolB: "", symbolC: "", symbolExpression: "", unknownA: "", unknownB: "", unknownEquation: "", task1: "", answer1: "", task2: "", answer2: "", task3: "", answer3: "", task4: "", answer4: "", task5: "", answer5: "" }),
+      five_tasks: () => ({ titleText: "Solve all tasks", statement: "", trueOrFalse: "true", prompt: "", answer: "", screenItemCount: "", targetCount: "", zoneCounts: [], options: [], leftExpression: "", rightExpression: "", correctSide: "", note: "", numbersText: "", group1Name: "", group1Values: "", group2Name: "", group2Values: "", choiceA: "", choiceB: "", choiceC: "", correctOption: "A", pairA: "", pairB: "", pairC: "", pairD: "", correctPair1: "A", correctPair2: "B", baseNumber: "", partsCount: "", readyFlag: false, timerExampleA: "", timerExampleB: "", timerExampleC: "", timerAnswerA: "", timerAnswerB: "", timerAnswerC: "", timerSeconds: 30, symbolA: "", symbolB: "", symbolC: "", symbolExpression: "", unknownA: "", unknownB: "", unknownEquation: "", task1: "3+4=?", answer1: "7", task2: "10-6=?", answer2: "4", task3: "?+5=11", answer3: "6", task4: "2×8=?", answer4: "16", task5: "20÷4=?", answer5: "5" }),
     };
 
     function log(_message) {}
@@ -859,6 +865,9 @@
       if (mechanic === "timer_challenge") return `Title: ${example.titleText || "?"} | A:${example.timerExampleA || "?"}->${example.timerAnswerA || "?"} | B:${example.timerExampleB || "?"}->${example.timerAnswerB || "?"} | C:${example.timerExampleC || "?"}->${example.timerAnswerC || "?"} | ${example.timerSeconds || "?"}s`;
       if (mechanic === "symbol_calc") return `Title: ${example.titleText || "?"} | A=${example.symbolA || "?"} B=${example.symbolB || "?"} C=${example.symbolC || "?"} | ${example.symbolExpression || "?"} = ${example.answer || "?"}`;
       if (mechanic === "find_unknown") return `Title: ${example.titleText || "?"} | A=${example.unknownA || "?"} B=${example.unknownB || "?"} | ${example.unknownEquation || "?"} | C=${example.answer || "?"}`;
+      if (mechanic === "true_false") return `Title: ${example.titleText || "?"} | statement: ${example.statement || "?"} | answer: ${example.trueOrFalse || "?"}`;
+      if (mechanic === "text_task") return `Title: ${example.titleText || "?"} | task: ${example.prompt || "?"} | answer: ${example.answer || "?"}`;
+      if (mechanic === "five_tasks") return `Title: ${example.titleText || "?"} | 1:${example.task1||"?"}=${example.answer1||"?"} 2:${example.task2||"?"}=${example.answer2||"?"} 3:${example.task3||"?"}=${example.answer3||"?"} 4:${example.task4||"?"}=${example.answer4||"?"} 5:${example.task5||"?"}=${example.answer5||"?"}`;
       return `Prompt: ${example.prompt || "?"} | answer: ${example.answer || "?"}`;
     }
 
@@ -919,6 +928,13 @@
         lock3KeyA: "",
         lock3KeyB: "",
         note: "",
+        statement: "",
+        trueOrFalse: "true",
+        task1: "", answer1: "",
+        task2: "", answer2: "",
+        task3: "", answer3: "",
+        task4: "", answer4: "",
+        task5: "", answer5: "",
       };
       return { ...base };
     }
@@ -1116,6 +1132,26 @@
           makeInput("Equation (contains C)", example.unknownEquation, (v) => example.unknownEquation = v, { type: "textarea", full: true }),
           makeInput("Answer for C", example.answer, (v) => example.answer = v),
         );
+      } else if (mechanic === "true_false") {
+        add(
+          ...base,
+          makeInput("Statement inside card", example.statement, (v) => example.statement = v, { type: "textarea", full: true }),
+          makeInput("Correct answer", example.trueOrFalse, (v) => example.trueOrFalse = v, { type: "select", options: ["true", "false"] }),
+        );
+      } else if (mechanic === "text_task") {
+        add(
+          ...base,
+          makeInput("Task text", example.prompt, (v) => example.prompt = v, { type: "textarea", full: true }),
+          makeInput("Correct answer", example.answer, (v) => example.answer = v),
+        );
+      } else if (mechanic === "five_tasks") {
+        add(...base);
+        for (let i = 1; i <= 5; i++) {
+          add(
+            makeInput(`Task ${i}`, example[`task${i}`], (v) => { example[`task${i}`] = v; }, { full: false }),
+            makeInput(`Answer ${i}`, example[`answer${i}`], (v) => { example[`answer${i}`] = v; }, { full: false }),
+          );
+        }
       } else {
         add(
           ...base,
