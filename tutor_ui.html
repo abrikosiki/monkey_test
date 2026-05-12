@@ -924,7 +924,8 @@
     }
 
     function ensureExampleShape(example, mechanic) {
-      return Object.assign(example, buildExampleTemplate(mechanic, example.roundNumber || 1), example || {});
+      const snapshot = { ...example };
+      return Object.assign(example, buildExampleTemplate(mechanic, example.roundNumber || 1), snapshot);
     }
 
     function renderExampleFields(example, mechanic) {
@@ -1467,7 +1468,9 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      const parts = String(state.generatedLessonUrl).split("/");
+      const rawUrl = String(state.generatedLessonUrl || "");
+      const cleanUrl = rawUrl.split("?")[0];
+      const parts = cleanUrl.split("/");
       a.download = parts[parts.length - 1] || "lesson_game.html";
       document.body.appendChild(a);
       a.click();
