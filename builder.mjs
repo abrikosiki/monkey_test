@@ -2597,6 +2597,8 @@ function buildHtml(
       ? stage.success_message
       : englishSuccessFallback(engStage);
 
+    const isLastStage = state.stageIndex === STAGES.length - 1;
+
     if(nRounds >= 2){
       if(state.stagePracticeDone < nRounds){
         state.stageSolved = false;
@@ -2605,6 +2607,7 @@ function buildHtml(
       }
       addCoins(bonus);
       addCoins(Number(base.coins != null ? base.coins : stage.coins) || 0);
+      if(isLastStage){ setTimeout(() => advanceToNextStage(), 380); return; }
       showSuccess(msg, () => {
         advanceToNextStage();
       }, "Round " + nRounds + "/" + nRounds + " — stage clear!");
@@ -2613,6 +2616,7 @@ function buildHtml(
 
     if(nRounds === 1){
       addCoins(Number(base.coins != null ? base.coins : stage.coins) || 0);
+      if(isLastStage){ setTimeout(() => advanceToNextStage(), 380); return; }
       showSuccess(msg, () => {
         advanceToNextStage();
       }, "Round 1/1 complete!");
@@ -2620,6 +2624,7 @@ function buildHtml(
     }
 
     addCoins(stage.coins);
+    if(isLastStage){ setTimeout(() => advanceToNextStage(), 380); return; }
     showSuccess(msg, () => {
       if(state.stagePracticeDone < state.stagePracticeTarget){
         renderStage(state.stageIndex);
