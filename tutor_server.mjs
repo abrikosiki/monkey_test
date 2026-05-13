@@ -1,4 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
+import OpenAI from "openai";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -42,6 +43,21 @@ const MECHANICS = [
   { id: "text_task", label: "Text Task", description: "Type the correct text answer." },
   { id: "five_tasks", label: "Five Tasks", description: "Solve all 5 tasks shown at once." },
 ];
+
+function autoTutorPrompt(child) {
+  const level = Number(child?.level ?? child?.student_level ?? 1);
+  if (level <= 2) return "addition and subtraction up to 20, difficulty 2";
+  if (level <= 4) return "multiplication tables 1–5, difficulty 3";
+  if (level <= 6) return "multiplication and division, difficulty 4";
+  return "multi-step operations and word problems, difficulty 5";
+}
+
+function autoIslandKey(child) {
+  const code = String(child?.childCode || child?.student_code || "");
+  const digits = code.replace(/\D/g, "");
+  const seed = digits ? parseInt(digits, 10) % CANONICAL_ISLAND_KEYS.length : Math.floor(Math.random() * CANONICAL_ISLAND_KEYS.length);
+  return CANONICAL_ISLAND_KEYS[seed];
+}
 
 const DEFAULT_STAGE_BACKGROUNDS = {
   3: "2",
@@ -986,13 +1002,6 @@ function inferChildAgeForAutofill(childPayload, normalizedChild) {
 }
 
 async function generateAutofillDraft(body) {
-  const tutorPrompt = String(body?.tutor_prompt ?? body?.tutorPrompt ?? "").trim();
-  if (!tutorPrompt) {
-    const err = new Error("tutor_prompt is required");
-    err.details = ["Provide a short description of what to work on"];
-    throw err;
-  }
-
   const childPayload = body?.child && typeof body.child === "object" ? body.child : {};
   const childCode = String(childPayload.child_code || childPayload.childCode || body.childCode || "").trim();
   if (!childCode) {
@@ -1011,7 +1020,6 @@ async function generateAutofillDraft(body) {
     const dbChild = await fetchChildRecord(childCode);
     normalizedChild = { ...normalizedChild, ...dbChild, childCode };
   } catch {
-    // Use payload-only child if local/remote lookup fails
     normalizedChild = {
       ...normalizedChild,
       childCode,
@@ -1026,8 +1034,18 @@ async function generateAutofillDraft(body) {
   const age = inferChildAgeForAutofill(childPayload, normalizedChild);
   normalizedChild = { ...normalizedChild, age };
 
-  if (!process.env.ANTHROPIC_API_KEY) {
-    throw new Error("ANTHROPIC_API_KEY is not set in environment/.env");
+  // Auto-derive tutorPrompt and islandKey if not provided
+  const tutorPrompt = String(body?.tutor_prompt ?? body?.tutorPrompt ?? "").trim() || autoTutorPrompt(normalizedChild);
+  let forcedIsland = String(body?.island_key ?? body?.islandKey ?? "").trim().replace(/\s+/g, "_");
+  if (!forcedIsland) forcedIsland = autoIslandKey(normalizedChild);
+  if (!CANONICAL_ISLAND_KEYS.includes(forcedIsland)) {
+    const err = new Error("Invalid island_key");
+    err.details = [`Must be one of: ${CANONICAL_ISLAND_KEYS.join(", ")}`];
+    throw err;
+  }
+
+  if (!process.env.OPENAI_API_KEY) {
+    throw new Error("OPENAI_API_KEY is not set in environment/.env");
   }
 
   const childBlock = {
@@ -1038,36 +1056,28 @@ async function generateAutofillDraft(body) {
     character_key: normalizedChild.characterKey,
   };
 
-  const forcedIsland = String(body?.island_key ?? body?.islandKey ?? "").trim().replace(/\s+/g, "_");
-  if (forcedIsland && !CANONICAL_ISLAND_KEYS.includes(forcedIsland)) {
-    const err = new Error("Invalid island_key");
-    err.details = [`Must be one of: ${CANONICAL_ISLAND_KEYS.join(", ")}`];
-    throw err;
-  }
-
   const system = buildAutofillSystemPrompt(childBlock, tutorPrompt);
   let userMsg = `Generate the lesson draft JSON for child code ${childCode}. Output tutorContext, context (topicLabel, topicKey, islandKey, knows, weakPoint, notes), and stages (6 unique mechanics, 5 rounds each); fields must match each chosen mechanic.`;
-  if (forcedIsland) {
-    userMsg += `\n\nTUTOR-SELECTED ISLAND (mandatory — do not change):\n- context.islandKey MUST be exactly: "${forcedIsland}"\n- Set every stage "background" to the six-step pattern for this island (see ISLAND KEY section in system prompt).\n`;
-  }
+  userMsg += `\n\nTUTOR-SELECTED ISLAND (mandatory — do not change):\n- context.islandKey MUST be exactly: "${forcedIsland}"\n- Set every stage "background" to the six-step pattern for this island (see ISLAND KEY section in system prompt).\n`;
 
-  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-  const msg = await client.messages.create({
-    model: "claude-sonnet-4-5",
+  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  const response = await openai.chat.completions.create({
+    model: "gpt-4o",
     max_tokens: 16384,
-    system,
-    messages: [{ role: "user", content: userMsg }],
+    messages: [
+      { role: "system", content: system },
+      { role: "user", content: userMsg },
+    ],
+    response_format: { type: "json_object" },
   });
-  const text = msg.content?.find((c) => c.type === "text")?.text || "";
+  const text = response.choices[0]?.message?.content || "";
   const parsed = parseClaudeJson(text);
   const draft = mergeAutofillDraftPayload(parsed, childCode, normalizedChild, tutorPrompt);
-  if (forcedIsland) {
-    draft.context = draft.context && typeof draft.context === "object" ? draft.context : {};
-    draft.context.islandKey = forcedIsland;
-    syncDraftStageBackgroundsFromIslandKey(draft);
-  }
+  draft.context = draft.context && typeof draft.context === "object" ? draft.context : {};
+  draft.context.islandKey = forcedIsland;
+  syncDraftStageBackgroundsFromIslandKey(draft);
   writeJson(DRAFT_FILE, draft);
-  return draft;
+  return { draft, resolvedIslandKey: forcedIsland, resolvedTutorPrompt: tutorPrompt };
 }
 
 function validateLessonShape(lesson) {
@@ -1104,19 +1114,22 @@ async function generateLessonFromDraft(draft, options = {}) {
     throw err;
   }
 
-  if (!process.env.ANTHROPIC_API_KEY) {
-    throw new Error("ANTHROPIC_API_KEY is not set in environment/.env");
+  if (!process.env.OPENAI_API_KEY) {
+    throw new Error("OPENAI_API_KEY is not set in environment/.env");
   }
 
   const assetCatalog = buildAssetCatalog();
-  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-  const msg = await client.messages.create({
-    model: "claude-sonnet-4-5",
+  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  const response = await openai.chat.completions.create({
+    model: "gpt-4o",
     max_tokens: 7000,
-    system: SYSTEM_PROMPT,
-    messages: [{ role: "user", content: buildUserPromptFromDraft(draft, assetCatalog) }],
+    messages: [
+      { role: "system", content: SYSTEM_PROMPT },
+      { role: "user", content: buildUserPromptFromDraft(draft, assetCatalog) },
+    ],
+    response_format: { type: "json_object" },
   });
-  const text = msg.content?.find((c) => c.type === "text")?.text || "";
+  const text = response.choices[0]?.message?.content || "";
   const lesson = parseClaudeJson(text);
   if (manualStrict) {
     buildStrictManualStageShell(lesson, draft);
@@ -1488,8 +1501,8 @@ const server = http.createServer(async (req, res) => {
     if (req.method === "POST" && url.pathname === "/api/autofill") {
       try {
         const payload = JSON.parse((await readBody(req)) || "{}");
-        const draft = await generateAutofillDraft(payload);
-        sendJson(res, 200, { ok: true, draft });
+        const result = await generateAutofillDraft(payload);
+        sendJson(res, 200, { ok: true, draft: result.draft, resolvedIslandKey: result.resolvedIslandKey, resolvedTutorPrompt: result.resolvedTutorPrompt });
       } catch (err) {
         sendJson(res, 422, {
           ok: false,

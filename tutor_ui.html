@@ -167,6 +167,15 @@
           Открывает полную форму редакторa (остров и ученик уже должны быть выбраны). Промпт для ИИ не обязателен — можно сразу настроить этапы и затем нажать «Regenerate story + Build HTML» внизу.
         </p>
         <button class="primary btn-generate" id="quickGenerateBtn" type="button">✨ Generate Lesson</button>
+
+        <div id="autoModeSection" style="margin-top:20px;padding-top:16px;border-top:1px solid rgba(255,255,255,.1)">
+          <p class="muted" style="font-size:12px;margin:0 0 10px;text-align:center">or skip the form entirely</p>
+          <button class="ghost" id="autoGenerateBtn" type="button" style="width:100%;font-size:15px;padding:12px">
+            ⚡ Auto-generate (AI picks topic &amp; island)
+          </button>
+          <div id="autoResolvedInfo" style="display:none;margin-top:8px;font-size:12px;color:#a8d8ea;text-align:center;line-height:1.5"></div>
+        </div>
+
         <div class="back-to-prompt">
           <button type="button" class="ghost" id="backToStudentBtn">← Back — student lookup</button>
         </div>
@@ -1442,6 +1451,91 @@
       }
     }
 
+    async function runAutoLessonPipeline() {
+      if (!isChildConfirmed()) {
+        setAutosaveStatus("Confirm your student first");
+        return;
+      }
+      state.generationRunning = true;
+      state.workflowStep = 3;
+      state.editExpanded = false;
+      state.manualMechanicsMode = false;
+      refreshManualMechanicsJumpNav();
+      $("editPanel").classList.add("hidden");
+      $("quickFlow").classList.remove("hidden");
+      $("toggleEditBtn").textContent = "Not happy with something? Edit the lesson →";
+      updateWorkflowUI();
+      resetGenCardForRun();
+
+      try {
+        syncContextInputsToDraft();
+        renderProgressLines(0, [false, false, false, false]);
+        await sleep(100);
+        renderProgressLines(0, [true, false, false, false]);
+
+        renderProgressLines(1, [true, false, false, false]);
+        const child = state.draft.child;
+        const af = await post("/api/autofill", {
+          child: {
+            name: child.name,
+            age: child.age,
+            level: child.level,
+            coins: child.coins,
+            character_key: child.characterKey,
+            child_code: child.childCode,
+          },
+          tutor_prompt: "",
+          island_key: "",
+        });
+        state.draft = af.draft;
+        if (af.resolvedIslandKey || af.resolvedTutorPrompt) {
+          const infoEl = $("autoResolvedInfo");
+          if (infoEl) {
+            infoEl.style.display = "block";
+            infoEl.textContent = `Island: ${af.resolvedIslandKey || "?"} · Topic: ${af.resolvedTutorPrompt || "?"}`;
+          }
+          if (af.resolvedTutorPrompt) $("tutorPromptInput").value = af.resolvedTutorPrompt;
+          if (af.resolvedIslandKey) {
+            const sel = $("islandSelect");
+            if (sel) sel.value = af.resolvedIslandKey;
+          }
+        }
+
+        const start = await post("/api/generate", { draft: state.draft });
+        const jobId = start.jobId;
+        if (!jobId) throw new Error("Generation job did not start");
+        const result = await pollGenerateJob(jobId);
+        state.lesson = result.lesson;
+        renderLessonJson();
+
+        renderProgressLines(1, [true, true, false, false]);
+        await sleep(400);
+        renderProgressLines(2, [true, true, true, false]);
+        await sleep(200);
+
+        setAutosaveStatus("Building HTML...");
+        renderProgressLines(3, [true, true, true, false]);
+        const build = await post("/api/build-lesson");
+        state.generatedLessonUrl = build.generatedFileUrl || "/lesson_game.html";
+        $("previewBtn").href = state.generatedLessonUrl;
+
+        renderProgressLines(3, [true, true, true, true]);
+        showResultBlock();
+        markSessionLessonReady();
+        setAutosaveStatus("Lesson ready");
+      } catch (err) {
+        setAutosaveStatus("Failed: " + (err?.message || "Unknown error"));
+        state.workflowStep = 2;
+        updateWorkflowUI();
+        $("genCardTitle").textContent = "Something went wrong";
+        $("resultBlock").classList.add("hidden");
+        $("progressList").classList.remove("hidden");
+      } finally {
+        state.generationRunning = false;
+        updateChildConfirmationState();
+      }
+    }
+
     async function regenerateStoryAndBuild() {
       const regenBtn = $("regenerateStoryBtn");
       const errorBox = $("regenError");
@@ -1568,6 +1662,7 @@
 
       $("findChildBtn").onclick = fetchChild;
       $("quickGenerateBtn").onclick = runQuickLessonPipeline;
+      $("autoGenerateBtn").onclick = runAutoLessonPipeline;
       $("downloadHtmlBtn").onclick = downloadHtml;
       $("regenerateStoryBtn").onclick = regenerateStoryAndBuild;
       $("toggleEditBtn").onclick = () => {

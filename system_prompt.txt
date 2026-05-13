@@ -149,12 +149,16 @@ DIFFICULTY RULES (pool to pick from):
 
 LESSON MIX RULES (6 stages):
 - Exactly 6 stages. When meta.island_key is set, each stage "background" MUST follow the six-token island pattern (see STAGE "background" TOKENS above) — same rule for every allowed island; do not invent a different progression.
-- Stage 1: ONLY drag_drop OR tap_count — easiest welcome
-- Stages 2-5: mix from allowed pool for age+difficulty
-- Stage 6: finale — combine 2-3 micro-tasks in one stage OR one rich mechanic; type "animation" for celebration after last challenge OR embed sub-sequence in stage 6 description
+- No stage has a fixed required mechanic — pick freely based on age + difficulty. Any mechanic can appear at any position.
+- Distribute across categories for variety (at least 1 of each in the lesson):
+    VISUAL:    drag_drop | drag_sort | drag_group | tap_count
+    CHOICE:    multi_choice | corridor_choice | true_false | match_pairs
+    TYPING:    fill_blank | pattern_input | text_task | find_unknown
+    CHALLENGE: five_tasks | balance_scale | key_lock | symbol_calc | timer_challenge | build_number
+- Stage 6: finale — use the richest/hardest mechanic appropriate for age+difficulty.
 - NEVER same mechanic type two stages in a row (compare "type" field)
-- NEVER timer_challenge on stage 1 (index 0) or stage 6 (index 5)
-- Minimum 3 DISTINCT mechanic types in the whole lesson
+- NEVER timer_challenge on stage 6 (index 5)
+- Minimum 4 DISTINCT mechanic types in the whole lesson
 
 ════════════════════════════════════════
 STAGES — 6 items, id 1..6
