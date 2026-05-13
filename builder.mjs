@@ -1394,6 +1394,23 @@ function buildHtml(
     .shake{animation:shake .25s ease}
     .hidden{display:none!important}
     @keyframes cflip{50%{transform:rotateY(180deg)}}
+    @keyframes bossScreenShake{
+      0%{transform:translate(0,0)}
+      15%{transform:translate(-9px,3px)}
+      30%{transform:translate(9px,-3px)}
+      50%{transform:translate(-6px,2px)}
+      70%{transform:translate(6px,-2px)}
+      85%{transform:translate(-3px,1px)}
+      100%{transform:translate(0,0)}
+    }
+    .boss-hit{animation:bossScreenShake .32s ease}
+    .boss-flash{position:fixed;inset:0;background:rgba(200,30,30,.42);pointer-events:none;z-index:150;animation:bossFlashFade .38s ease forwards}
+    @keyframes bossFlashFade{0%{opacity:1}100%{opacity:0}}
+    @keyframes villainDefeatIn{
+      0%{opacity:0;transform:scale(.65) translateY(40px)}
+      65%{transform:scale(1.06) translateY(-6px)}
+      100%{opacity:1;transform:scale(1) translateY(0)}
+    }
     @keyframes cpopAnim{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-52px)}}
     @keyframes shake{
       0%{transform:translateX(0)}
@@ -2567,6 +2584,7 @@ function buildHtml(
   function markSuccess(stage){
     if(state.stageSolved) return;
     state.stageSolved = true;
+    if(state.stageIndex === STAGES.length - 1) bossHit();
     const base = STAGES[state.stageIndex];
     const rounds = Array.isArray(base.rounds) ? base.rounds : [];
     const nRounds = rounds.length;
@@ -4753,15 +4771,10 @@ function buildHtml(
       };
       state.completionArtifact = reward;
       state.earnedArtifacts.push(reward);
-      showSuccess("The final challenge is complete!", () => {
-        openShopScreen();
-      }, "AMAZING! Your reward is ready.", "Go to shop");
     } else {
       state.completionArtifact = null;
-      showSuccess("The final challenge is complete!", () => {
-        openShopScreen();
-      }, "AMAZING! You did it.", "Go to shop");
     }
+    showVillainDefeat(() => openShopScreen());
   }
 
   function showEndingStoryScreen(){
@@ -4943,6 +4956,44 @@ function buildHtml(
       state.successCb = null;
       cb();
     }
+  }
+
+  function bossHit(){
+    const flash = document.createElement("div");
+    flash.className = "boss-flash";
+    document.body.appendChild(flash);
+    setTimeout(() => flash.remove(), 400);
+    const game = $("game");
+    if(game){
+      game.classList.remove("boss-hit");
+      void game.offsetWidth;
+      game.classList.add("boss-hit");
+      setTimeout(() => game.classList.remove("boss-hit"), 360);
+    }
+  }
+
+  function showVillainDefeat(cb){
+    const villainName = String(LESSON.story?.villain || "the villain");
+    const overlay = document.createElement("div");
+    overlay.style.cssText = "position:fixed;inset:0;z-index:300;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.82)";
+    const inner = document.createElement("div");
+    inner.style.cssText = "text-align:center;padding:28px 36px;animation:villainDefeatIn .65s cubic-bezier(.22,1,.36,1) forwards";
+    const line1 = document.createElement("div");
+    line1.textContent = "YOU DEFEATED";
+    line1.style.cssText = "font-size:clamp(26px,5.5vw,54px);font-weight:900;color:#f7d36f;font-family:'Fredoka One',cursive;text-shadow:0 0 40px rgba(247,211,111,.85);letter-spacing:3px";
+    const line2 = document.createElement("div");
+    line2.textContent = villainName.toUpperCase();
+    line2.style.cssText = "font-size:clamp(18px,3.5vw,36px);font-weight:900;color:#fff;font-family:'Fredoka One',cursive;margin:10px 0 40px;opacity:.9;line-height:1.2";
+    const btn = document.createElement("button");
+    btn.textContent = "Go to Shop →";
+    btn.style.cssText = "background:linear-gradient(135deg,#f7d36f,#f3b53f);border:none;border-radius:16px;padding:14px 38px;font-size:22px;font-weight:900;cursor:pointer;color:#0b1426;font-family:'Fredoka One',cursive;box-shadow:0 4px 0 #946523;transition:transform .1s";
+    btn.onpointerdown = () => btn.style.transform = "translateY(3px)";
+    btn.onpointerup = () => btn.style.transform = "";
+    btn.onclick = () => { overlay.remove(); cb(); };
+    inner.append(line1, line2, btn);
+    overlay.appendChild(inner);
+    document.body.appendChild(overlay);
+    confetti(200);
   }
 
   function confetti(count = 80){
