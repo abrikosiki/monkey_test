@@ -44,21 +44,6 @@ const MECHANICS = [
   { id: "five_tasks", label: "Five Tasks", description: "Solve all 5 tasks shown at once." },
 ];
 
-function autoTutorPrompt(child) {
-  const level = Number(child?.level ?? child?.student_level ?? 1);
-  if (level <= 2) return "addition and subtraction up to 20, difficulty 2";
-  if (level <= 4) return "multiplication tables 1–5, difficulty 3";
-  if (level <= 6) return "multiplication and division, difficulty 4";
-  return "multi-step operations and word problems, difficulty 5";
-}
-
-function autoIslandKey(child) {
-  const code = String(child?.childCode || child?.student_code || "");
-  const digits = code.replace(/\D/g, "");
-  const seed = digits ? parseInt(digits, 10) % CANONICAL_ISLAND_KEYS.length : Math.floor(Math.random() * CANONICAL_ISLAND_KEYS.length);
-  return CANONICAL_ISLAND_KEYS[seed];
-}
-
 const DEFAULT_STAGE_BACKGROUNDS = {
   3: "2",
   4: "3",
@@ -1002,6 +987,13 @@ function inferChildAgeForAutofill(childPayload, normalizedChild) {
 }
 
 async function generateAutofillDraft(body) {
+  const tutorPrompt = String(body?.tutor_prompt ?? body?.tutorPrompt ?? "").trim();
+  if (!tutorPrompt) {
+    const err = new Error("tutor_prompt is required");
+    err.details = ["Describe what to work on, e.g. 'multiplication, difficulty 5'"];
+    throw err;
+  }
+
   const childPayload = body?.child && typeof body.child === "object" ? body.child : {};
   const childCode = String(childPayload.child_code || childPayload.childCode || body.childCode || "").trim();
   if (!childCode) {
@@ -1034,16 +1026,6 @@ async function generateAutofillDraft(body) {
   const age = inferChildAgeForAutofill(childPayload, normalizedChild);
   normalizedChild = { ...normalizedChild, age };
 
-  // Auto-derive tutorPrompt and islandKey if not provided
-  const tutorPrompt = String(body?.tutor_prompt ?? body?.tutorPrompt ?? "").trim() || autoTutorPrompt(normalizedChild);
-  let forcedIsland = String(body?.island_key ?? body?.islandKey ?? "").trim().replace(/\s+/g, "_");
-  if (!forcedIsland) forcedIsland = autoIslandKey(normalizedChild);
-  if (!CANONICAL_ISLAND_KEYS.includes(forcedIsland)) {
-    const err = new Error("Invalid island_key");
-    err.details = [`Must be one of: ${CANONICAL_ISLAND_KEYS.join(", ")}`];
-    throw err;
-  }
-
   if (!process.env.OPENAI_API_KEY) {
     throw new Error("OPENAI_API_KEY is not set in environment/.env");
   }
@@ -1056,9 +1038,18 @@ async function generateAutofillDraft(body) {
     character_key: normalizedChild.characterKey,
   };
 
+  const forcedIsland = String(body?.island_key ?? body?.islandKey ?? "").trim().replace(/\s+/g, "_");
+  if (forcedIsland && !CANONICAL_ISLAND_KEYS.includes(forcedIsland)) {
+    const err = new Error("Invalid island_key");
+    err.details = [`Must be one of: ${CANONICAL_ISLAND_KEYS.join(", ")}`];
+    throw err;
+  }
+
   const system = buildAutofillSystemPrompt(childBlock, tutorPrompt);
   let userMsg = `Generate the lesson draft JSON for child code ${childCode}. Output tutorContext, context (topicLabel, topicKey, islandKey, knows, weakPoint, notes), and stages (6 unique mechanics, 5 rounds each); fields must match each chosen mechanic.`;
-  userMsg += `\n\nTUTOR-SELECTED ISLAND (mandatory — do not change):\n- context.islandKey MUST be exactly: "${forcedIsland}"\n- Set every stage "background" to the six-step pattern for this island (see ISLAND KEY section in system prompt).\n`;
+  if (forcedIsland) {
+    userMsg += `\n\nTUTOR-SELECTED ISLAND (mandatory — do not change):\n- context.islandKey MUST be exactly: "${forcedIsland}"\n- Set every stage "background" to the six-step pattern for this island (see ISLAND KEY section in system prompt).\n`;
+  }
 
   const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
   const response = await openai.chat.completions.create({
@@ -1073,11 +1064,13 @@ async function generateAutofillDraft(body) {
   const text = response.choices[0]?.message?.content || "";
   const parsed = parseClaudeJson(text);
   const draft = mergeAutofillDraftPayload(parsed, childCode, normalizedChild, tutorPrompt);
-  draft.context = draft.context && typeof draft.context === "object" ? draft.context : {};
-  draft.context.islandKey = forcedIsland;
-  syncDraftStageBackgroundsFromIslandKey(draft);
+  if (forcedIsland) {
+    draft.context = draft.context && typeof draft.context === "object" ? draft.context : {};
+    draft.context.islandKey = forcedIsland;
+    syncDraftStageBackgroundsFromIslandKey(draft);
+  }
   writeJson(DRAFT_FILE, draft);
-  return { draft, resolvedIslandKey: forcedIsland, resolvedTutorPrompt: tutorPrompt };
+  return draft;
 }
 
 function validateLessonShape(lesson) {
@@ -1501,8 +1494,8 @@ const server = http.createServer(async (req, res) => {
     if (req.method === "POST" && url.pathname === "/api/autofill") {
       try {
         const payload = JSON.parse((await readBody(req)) || "{}");
-        const result = await generateAutofillDraft(payload);
-        sendJson(res, 200, { ok: true, draft: result.draft, resolvedIslandKey: result.resolvedIslandKey, resolvedTutorPrompt: result.resolvedTutorPrompt });
+        const draft = await generateAutofillDraft(payload);
+        sendJson(res, 200, { ok: true, draft });
       } catch (err) {
         sendJson(res, 422, {
           ok: false,
