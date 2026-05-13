@@ -273,6 +273,7 @@
       true_false: "Title + statement inside the card + select True or False as the correct answer.",
       text_task: "Title + task text + correct text answer (case-insensitive).",
       five_tasks: "Title + 5 tasks with answers (all shown at once on one card).",
+      boss_mix: "Stage 6 boss battle — write 2 NEW harder examples per mechanic from stages 1–5 (10 rounds total).",
     };
 
     const MECHANIC_TEMPLATES = {
@@ -348,6 +349,7 @@
       true_false: () => ({ titleText: "True or false?", statement: "4 × 3 = 12", trueOrFalse: "true", prompt: "", answer: "", screenItemCount: "", targetCount: "", zoneCounts: [], options: [], leftExpression: "", rightExpression: "", correctSide: "", note: "", numbersText: "", group1Name: "", group1Values: "", group2Name: "", group2Values: "", choiceA: "", choiceB: "", choiceC: "", correctOption: "A", pairA: "", pairB: "", pairC: "", pairD: "", correctPair1: "A", correctPair2: "B", baseNumber: "", partsCount: "", readyFlag: false, timerExampleA: "", timerExampleB: "", timerExampleC: "", timerAnswerA: "", timerAnswerB: "", timerAnswerC: "", timerSeconds: 30, symbolA: "", symbolB: "", symbolC: "", symbolExpression: "", unknownA: "", unknownB: "", unknownEquation: "", task1: "", answer1: "", task2: "", answer2: "", task3: "", answer3: "", task4: "", answer4: "", task5: "", answer5: "" }),
       text_task: () => ({ titleText: "Solve the task", prompt: "What is the next even number after 8?", answer: "10", statement: "", trueOrFalse: "true", screenItemCount: "", targetCount: "", zoneCounts: [], options: [], leftExpression: "", rightExpression: "", correctSide: "", note: "", numbersText: "", group1Name: "", group1Values: "", group2Name: "", group2Values: "", choiceA: "", choiceB: "", choiceC: "", correctOption: "A", pairA: "", pairB: "", pairC: "", pairD: "", correctPair1: "A", correctPair2: "B", baseNumber: "", partsCount: "", readyFlag: false, timerExampleA: "", timerExampleB: "", timerExampleC: "", timerAnswerA: "", timerAnswerB: "", timerAnswerC: "", timerSeconds: 30, symbolA: "", symbolB: "", symbolC: "", symbolExpression: "", unknownA: "", unknownB: "", unknownEquation: "", task1: "", answer1: "", task2: "", answer2: "", task3: "", answer3: "", task4: "", answer4: "", task5: "", answer5: "" }),
       five_tasks: () => ({ titleText: "Solve all tasks", statement: "", trueOrFalse: "true", prompt: "", answer: "", screenItemCount: "", targetCount: "", zoneCounts: [], options: [], leftExpression: "", rightExpression: "", correctSide: "", note: "", numbersText: "", group1Name: "", group1Values: "", group2Name: "", group2Values: "", choiceA: "", choiceB: "", choiceC: "", correctOption: "A", pairA: "", pairB: "", pairC: "", pairD: "", correctPair1: "A", correctPair2: "B", baseNumber: "", partsCount: "", readyFlag: false, timerExampleA: "", timerExampleB: "", timerExampleC: "", timerAnswerA: "", timerAnswerB: "", timerAnswerC: "", timerSeconds: 30, symbolA: "", symbolB: "", symbolC: "", symbolExpression: "", unknownA: "", unknownB: "", unknownEquation: "", task1: "3+4=?", answer1: "7", task2: "10-6=?", answer2: "4", task3: "?+5=11", answer3: "6", task4: "2×8=?", answer4: "16", task5: "20÷4=?", answer5: "5" }),
+      boss_mix: () => ({ titleText: "", bossMechanic: "" }),
     };
 
     function log(_message) {}
@@ -1173,6 +1175,56 @@
       return grid;
     }
 
+    function buildBossExampleTemplate(mechanic, roundNumber) {
+      const tpl = MECHANIC_TEMPLATES[mechanic] ? MECHANIC_TEMPLATES[mechanic]() : { titleText: "", prompt: "", answer: "" };
+      return { ...buildExampleTemplate(mechanic, roundNumber), ...tpl, roundNumber, bossMechanic: mechanic };
+    }
+
+    function syncBossMixExamples(stage6) {
+      const stages15 = (state.draft?.stages || []).slice(0, 5);
+      if (!Array.isArray(stage6.examples)) stage6.examples = [];
+      for (let groupIdx = 0; groupIdx < 5; groupIdx++) {
+        const srcMechanic = stages15[groupIdx]?.mechanic || "fill_blank";
+        for (let pairIdx = 0; pairIdx < 2; pairIdx++) {
+          const exIdx = groupIdx * 2 + pairIdx;
+          const ex = stage6.examples[exIdx];
+          if (!ex || typeof ex !== "object" || ex.bossMechanic !== srcMechanic) {
+            stage6.examples[exIdx] = buildBossExampleTemplate(srcMechanic, exIdx + 1);
+          } else {
+            ex.roundNumber = exIdx + 1;
+          }
+        }
+      }
+      stage6.examples = stage6.examples.slice(0, 10);
+    }
+
+    function renderBossMixExamples(card, stage6) {
+      const stages15 = (state.draft?.stages || []).slice(0, 5);
+      for (let groupIdx = 0; groupIdx < 5; groupIdx++) {
+        const srcMechanic = stages15[groupIdx]?.mechanic || "fill_blank";
+        const mecLabel = (state.mechanics || []).find((m) => m.id === srcMechanic)?.label || srcMechanic;
+        const groupHeader = document.createElement("div");
+        groupHeader.style.cssText = "margin-top:16px;padding:10px 12px;background:#122746;border:1px solid #f1be4f55;border-radius:12px;font-weight:700;color:#f1be4f;font-size:14px;";
+        groupHeader.textContent = `⚔️ Boss Group ${groupIdx + 1} — ${mecLabel}`;
+        card.appendChild(groupHeader);
+        for (let pairIdx = 0; pairIdx < 2; pairIdx++) {
+          const exIdx = groupIdx * 2 + pairIdx;
+          const example = stage6.examples[exIdx];
+          if (!example) continue;
+          const ex = document.createElement("div");
+          ex.className = "example";
+          const exHead = document.createElement("div");
+          exHead.className = "example-head";
+          const h = document.createElement("h3");
+          h.textContent = `Example ${exIdx + 1}`;
+          exHead.appendChild(h);
+          ex.appendChild(exHead);
+          ex.appendChild(renderExampleFields(example, srcMechanic));
+          card.appendChild(ex);
+        }
+      }
+    }
+
     function renderStages() {
       const root = $("stagesRoot");
       root.innerHTML = "";
@@ -1200,37 +1252,44 @@
           option.textContent = m.id;
           picker.appendChild(option);
         }
-        picker.value = stage.mechanic || "";
-        picker.dataset.role = "mechanic-picker";
-        picker.addEventListener("change", () => {
-          const v = String(picker.value || "").trim();
-          if (!v) return;
-          if (v === stage.mechanic) return;
-          const prevMechanic = String(stage.mechanic || "").trim();
-          const oldStages = Array.isArray(state.draft?.stages) ? state.draft.stages : [];
-          const stageNo = stage.stageNumber || (stageIdx + 1);
-          if (prevMechanic) {
-            state.mechanicExamplesCache[stageMechanicCacheKey(stageNo, prevMechanic)] = clone(Array.isArray(stage.examples) ? stage.examples : []);
-          }
-          const cachedExamples = state.mechanicExamplesCache[stageMechanicCacheKey(stageNo, v)];
-          const sourceExamples = Array.isArray(cachedExamples) && cachedExamples.length
-            ? clone(cachedExamples)
-            : clone(Array.isArray(stage.examples) ? stage.examples : []);
-          const targetLength = Math.max(5, sourceExamples.length || 0);
-          const nextExamples = Array.from({ length: targetLength }, (_, idx) => {
-            const base = sourceExamples[idx] || {};
-            const shaped = ensureExampleShape({ ...base, roundNumber: idx + 1 }, v);
-            shaped.roundNumber = idx + 1;
-            return shaped;
+        if (stage.stageNumber === 6) {
+          stage.mechanic = "boss_mix";
+          picker.value = "boss_mix";
+          picker.disabled = true;
+          picker.title = "Stage 6 is always the Boss Stage";
+        } else {
+          picker.value = stage.mechanic || "";
+          picker.dataset.role = "mechanic-picker";
+          picker.addEventListener("change", () => {
+            const v = String(picker.value || "").trim();
+            if (!v) return;
+            if (v === stage.mechanic) return;
+            const prevMechanic = String(stage.mechanic || "").trim();
+            const oldStages = Array.isArray(state.draft?.stages) ? state.draft.stages : [];
+            const stageNo = stage.stageNumber || (stageIdx + 1);
+            if (prevMechanic) {
+              state.mechanicExamplesCache[stageMechanicCacheKey(stageNo, prevMechanic)] = clone(Array.isArray(stage.examples) ? stage.examples : []);
+            }
+            const cachedExamples = state.mechanicExamplesCache[stageMechanicCacheKey(stageNo, v)];
+            const sourceExamples = Array.isArray(cachedExamples) && cachedExamples.length
+              ? clone(cachedExamples)
+              : clone(Array.isArray(stage.examples) ? stage.examples : []);
+            const targetLength = Math.max(5, sourceExamples.length || 0);
+            const nextExamples = Array.from({ length: targetLength }, (_, idx) => {
+              const base = sourceExamples[idx] || {};
+              const shaped = ensureExampleShape({ ...base, roundNumber: idx + 1 }, v);
+              shaped.roundNumber = idx + 1;
+              return shaped;
+            });
+            state.draft.stages = oldStages.map((row, idx) => (
+              idx === stageIdx
+                ? { ...row, mechanic: v, examples: nextExamples }
+                : row
+            ));
+            queueAutosave();
+            renderStages();
           });
-          state.draft.stages = oldStages.map((row, idx) => (
-            idx === stageIdx
-              ? { ...row, mechanic: v, examples: nextExamples }
-              : row
-          ));
-          queueAutosave();
-          renderStages();
-        });
+        }
         pickerWrap.append(pickerLabel, picker);
         head.append(titleWrap, pickerWrap);
         card.appendChild(head);
@@ -1244,10 +1303,12 @@
           card.appendChild(why);
         }
 
+        const isBossStage = stage.stageNumber === 6;
+
         const chips = document.createElement("div");
         chips.className = "chips";
         [
-          `Rounds: ${(stage.examples || []).length}`,
+          isBossStage ? "10 boss rounds" : `Rounds: ${(stage.examples || []).length}`,
           stage.stageNumber === 1 || stage.stageNumber === 6 ? "Unique background" : "Fixed background",
           stage.mechanic || "No mechanic selected"
         ].forEach((text) => {
@@ -1259,40 +1320,49 @@
         card.appendChild(chips);
         const stageRule = document.createElement("div");
         stageRule.className = "stage-rule";
-        stageRule.textContent = `Stage ${stage.stageNumber} should contain exactly 5 tutor-written math examples. Story, assets, villain, artifact, and all child-facing text are generated automatically.`;
+        if (isBossStage) {
+          stageRule.textContent = "Stage 6 — Boss Battle! Write 2 NEW harder examples per mechanic from stages 1–5 (10 rounds total). These examples must be harder than anything in the previous stages.";
+        } else {
+          stageRule.textContent = `Stage ${stage.stageNumber} should contain exactly 5 tutor-written math examples. Story, assets, villain, artifact, and all child-facing text are generated automatically.`;
+        }
         card.appendChild(stageRule);
 
-        const examples = Array.isArray(stage.examples) ? stage.examples : [];
-        examples.forEach((example, idx) => {
-          const ex = document.createElement("div");
-          ex.className = "example";
-          const exHead = document.createElement("div");
-          exHead.className = "example-head";
-          const h = document.createElement("h3");
-          h.textContent = `Example ${idx + 1}`;
-          exHead.append(h, removeButton(() => {
-            if (stage.examples.length <= 1) return;
-            stage.examples.splice(idx, 1);
-            stage.examples.forEach((item, index) => item.roundNumber = index + 1);
+        if (isBossStage) {
+          syncBossMixExamples(stage);
+          renderBossMixExamples(card, stage);
+        } else {
+          const examples = Array.isArray(stage.examples) ? stage.examples : [];
+          examples.forEach((example, idx) => {
+            const ex = document.createElement("div");
+            ex.className = "example";
+            const exHead = document.createElement("div");
+            exHead.className = "example-head";
+            const h = document.createElement("h3");
+            h.textContent = `Example ${idx + 1}`;
+            exHead.append(h, removeButton(() => {
+              if (stage.examples.length <= 1) return;
+              stage.examples.splice(idx, 1);
+              stage.examples.forEach((item, index) => item.roundNumber = index + 1);
+              renderStages();
+              queueAutosave();
+            }));
+            ex.appendChild(exHead);
+            ex.appendChild(renderExampleFields(example, stage.mechanic));
+            card.appendChild(ex);
+          });
+
+          const addBtn = document.createElement("button");
+          addBtn.className = "ghost small";
+          addBtn.type = "button";
+          addBtn.textContent = "+ Add example";
+          addBtn.onclick = () => {
+            if (stage.examples.length >= 5) return;
+            stage.examples.push(buildExampleTemplate(stage.mechanic, stage.examples.length + 1));
             renderStages();
             queueAutosave();
-          }));
-          ex.appendChild(exHead);
-          ex.appendChild(renderExampleFields(example, stage.mechanic));
-          card.appendChild(ex);
-        });
-
-        const addBtn = document.createElement("button");
-        addBtn.className = "ghost small";
-        addBtn.type = "button";
-        addBtn.textContent = "+ Add example";
-        addBtn.onclick = () => {
-          if (stage.examples.length >= 5) return;
-          stage.examples.push(buildExampleTemplate(stage.mechanic, stage.examples.length + 1));
-          renderStages();
-          queueAutosave();
-        };
-        card.appendChild(addBtn);
+          };
+          card.appendChild(addBtn);
+        }
         root.appendChild(card);
       });
       refreshManualMechanicsJumpNav();
@@ -1407,6 +1477,11 @@
           island_key: islandKey,
         });
         state.draft = af.draft;
+        // Stage 6 is always boss_mix; sync boss examples from stages 1–5
+        if (Array.isArray(state.draft.stages) && state.draft.stages[5]) {
+          state.draft.stages[5].mechanic = "boss_mix";
+          syncBossMixExamples(state.draft.stages[5]);
+        }
         $("tutorPromptInput").value = state.draft.tutorPrompt || tutorPrompt;
         const start = await post("/api/generate", { draft: state.draft });
         const jobId = start.jobId;

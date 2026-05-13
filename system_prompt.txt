@@ -129,6 +129,7 @@ MECHANICS — Claude CHOOSES per stage (15 types)
 - true_false    — read the statement and tap True or False
 - text_task     — read the task and type the text answer
 - five_tasks    — solve all 5 tasks shown simultaneously on one card
+- boss_mix      — ONLY stage 6: 10 rounds mixing the 5 mechanics from stages 1–5; each round carries its own "type" field
 
 For builder compatibility you MAY output legacy aliases where needed:
 - multi_choice → same schema as "choice" but type MUST be "multi_choice" in JSON
@@ -155,10 +156,10 @@ LESSON MIX RULES (6 stages):
     CHOICE:    multi_choice | corridor_choice | true_false | match_pairs
     TYPING:    fill_blank | pattern_input | text_task | find_unknown
     CHALLENGE: five_tasks | balance_scale | key_lock | symbol_calc | timer_challenge | build_number
-- Stage 6: finale — use the richest/hardest mechanic appropriate for age+difficulty.
-- NEVER same mechanic type two stages in a row (compare "type" field)
+- Stage 6: MUST use type "boss_mix". Output stage 6 with type "boss_mix" and 10 rounds — each round has its own "type" field matching one of the mechanics from stages 1–5 (2 rounds per mechanic in order). When the tutor draft sets mechanic "boss_mix", applyDraftToLessonStages will replace all rounds from the draft; output any valid placeholder rounds.
+- NEVER same mechanic type two stages in a row (compare "type" field; boss_mix is unique)
 - NEVER timer_challenge on stage 6 (index 5)
-- Minimum 4 DISTINCT mechanic types in the whole lesson
+- Minimum 4 DISTINCT mechanic types in stages 1–5
 
 ════════════════════════════════════════
 STAGES — 6 items, id 1..6

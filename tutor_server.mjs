@@ -42,6 +42,7 @@ const MECHANICS = [
   { id: "true_false", label: "True or False", description: "Say whether the statement is true or false." },
   { id: "text_task", label: "Text Task", description: "Type the correct text answer." },
   { id: "five_tasks", label: "Five Tasks", description: "Solve all 5 tasks shown at once." },
+  { id: "boss_mix", label: "⚔️ Boss Stage", description: "Final battle — 2 hard examples per each of the 5 stage mechanics (10 rounds total)." },
 ];
 
 const DEFAULT_STAGE_BACKGROUNDS = {
@@ -379,6 +380,125 @@ function clampLessonAssetKeys(lesson, cat) {
   }
 }
 
+function mapExampleToRound(mech, ex, existing) {
+  const r = {};
+  if (ex.prompt) r.instruction = ex.prompt;
+
+  if (mech === "fill_blank" || mech === "pattern_input") {
+    r.example = ex.prompt || "";
+    r.prompt = ex.prompt || "";
+    r.answer = String(ex.answer ?? "");
+  } else if (mech === "multi_choice") {
+    r.instruction = ex.prompt || "";
+    r.options = [
+      { id: "A", label: String(ex.choiceA ?? "") },
+      { id: "B", label: String(ex.choiceB ?? "") },
+      { id: "C", label: String(ex.choiceC ?? "") },
+    ];
+    r.correct_option = String(ex.correctOption || "A").toUpperCase();
+  } else if (mech === "corridor_choice") {
+    r.question = ex.prompt || "";
+    r.left_expression = ex.leftExpression || "";
+    r.right_expression = ex.rightExpression || "";
+    r.correct_side = String(ex.correctSide || "left").toLowerCase();
+  } else if (mech === "match_pairs") {
+    r.pair_a = ex.pairA || "";
+    r.pair_b = ex.pairB || "";
+    r.pair_c = ex.pairC || "";
+    r.pair_d = ex.pairD || "";
+    r.correct_pair_1 = String(ex.correctPair1 || "A").toUpperCase();
+    r.correct_pair_2 = String(ex.correctPair2 || "B").toUpperCase();
+  } else if (mech === "tap_count") {
+    r.question = ex.prompt || "Tap this item";
+    r.target_count = toNumber(ex.answer, 2);
+  } else if (mech === "balance_scale") {
+    r.left_expression = ex.leftExpression || "3 + ?";
+    r.right_expression = ex.rightExpression || "7";
+    r.answer = String(ex.answer ?? "");
+  } else if (mech === "build_number") {
+    r.base_number = toNumber(ex.baseNumber, 24);
+    r.parts_count = toNumber(ex.partsCount, 3);
+  } else if (mech === "timer_challenge") {
+    r.timer_example_a = ex.timerExampleA || "";
+    r.timer_example_b = ex.timerExampleB || "";
+    r.timer_example_c = ex.timerExampleC || "";
+    r.timer_answer_a = String(ex.timerAnswerA ?? "");
+    r.timer_answer_b = String(ex.timerAnswerB ?? "");
+    r.timer_answer_c = String(ex.timerAnswerC ?? "");
+    r.timer_seconds = toNumber(ex.timerSeconds, 30);
+  } else if (mech === "symbol_calc") {
+    r.symbol_a = toNumber(ex.symbolA, 4);
+    r.symbol_b = toNumber(ex.symbolB, 3);
+    r.symbol_c = toNumber(ex.symbolC, 2);
+    r.symbol_expression = ex.symbolExpression || "A + B × C";
+    r.answer = String(ex.answer ?? "");
+  } else if (mech === "find_unknown") {
+    r.unknown_a = toNumber(ex.unknownA, 4);
+    r.unknown_b = toNumber(ex.unknownB, 6);
+    r.unknown_equation = ex.unknownEquation || "A + B + C = 15";
+    r.answer = String(ex.answer ?? "");
+  } else if (mech === "drag_group") {
+    r.numbers_text = ex.numbersText || "";
+    r.group1_name = ex.group1Name || "Group 1";
+    r.group2_name = ex.group2Name || "Group 2";
+    r.group1_values = ex.group1Values || "";
+    r.group2_values = ex.group2Values || "";
+  } else if (mech === "drag_sort") {
+    const nums = splitValues(ex.prompt || "");
+    const rule = splitValues(ex.answer || "");
+    if (nums.length) {
+      r.items = nums.map((t, idx) => ({
+        id: `i${idx + 1}`,
+        value: t,
+        text: t,
+        image_key: existing.items?.[idx]?.image_key || "banana",
+      }));
+    }
+    if (rule.length) {
+      r.correct_order = rule;
+    }
+  } else if (mech === "drag_drop") {
+    r.screen_item_count = toNumber(ex.screenItemCount, 6);
+    r.target_count = toNumber(ex.targetCount, 2);
+    if (Array.isArray(ex.zoneCounts) && ex.zoneCounts.length) {
+      r.zone_counts = ex.zoneCounts.map((v) => toNumber(v, 0));
+    }
+  } else if (mech === "key_lock") {
+    r.lock_sum_1 = toNumber(ex.lock1Sum, 0);
+    r.lock_sum_2 = toNumber(ex.lock2Sum, 0);
+    r.lock_sum_3 = toNumber(ex.lock3Sum, 0);
+    r.pair_1 = [toNumber(ex.lock1KeyA, 0), toNumber(ex.lock1KeyB, 0)];
+    r.pair_2 = [toNumber(ex.lock2KeyA, 0), toNumber(ex.lock2KeyB, 0)];
+    r.pair_3 = [toNumber(ex.lock3KeyA, 0), toNumber(ex.lock3KeyB, 0)];
+    const fromPairs = [...r.pair_1, ...r.pair_2, ...r.pair_3]
+      .map((v) => toNumber(v, NaN))
+      .filter((n) => Number.isFinite(n));
+    if (fromPairs.length >= 6) {
+      r.key_lock_keys = fromPairs.slice(0, 6);
+    } else {
+      const rawKeys = splitValues(ex.keysSixText || ex.keys_six_text || "");
+      const keyNums = rawKeys.map((v) => toNumber(v, NaN)).filter((n) => Number.isFinite(n));
+      r.key_lock_keys = keyNums.slice(0, 6);
+    }
+    while (r.key_lock_keys.length < 6) r.key_lock_keys.push(0);
+  } else if (mech === "true_false") {
+    r.statement = ex.statement || "";
+    r.correct_answer = String(ex.trueOrFalse || "true");
+  } else if (mech === "text_task") {
+    r.prompt = ex.prompt || "";
+    r.answer = String(ex.answer ?? "");
+  } else if (mech === "five_tasks") {
+    r.tasks = [
+      { q: ex.task1 || "", a: String(ex.answer1 ?? "") },
+      { q: ex.task2 || "", a: String(ex.answer2 ?? "") },
+      { q: ex.task3 || "", a: String(ex.answer3 ?? "") },
+      { q: ex.task4 || "", a: String(ex.answer4 ?? "") },
+      { q: ex.task5 || "", a: String(ex.answer5 ?? "") },
+    ];
+  }
+  return r;
+}
+
 function applyDraftToLessonStages(lesson, draft) {
   if (!lesson || !Array.isArray(lesson.stages) || !draft || !Array.isArray(draft.stages)) return lesson;
   const stageCount = Math.min(lesson.stages.length, draft.stages.length);
@@ -391,133 +511,33 @@ function applyDraftToLessonStages(lesson, draft) {
     const stageTitleFromDraft = String(dExamples[0]?.titleText || "").trim();
     if (stageTitleFromDraft) lStage.title = stageTitleFromDraft;
     if (!Array.isArray(lStage.rounds)) lStage.rounds = [];
-    const rounds = [];
-    for (let j = 0; j < Math.max(5, dExamples.length, lStage.rounds.length); j++) {
-      const ex = dExamples[j] || {};
-      const existing = lStage.rounds[j] || {};
-      const mech = dStage.mechanic || lStage.type;
-      const r = {};
 
-      if (ex.titleText && !lStage.title) lStage.title = ex.titleText;
-      if (ex.prompt) r.instruction = ex.prompt;
+    const mech = dStage.mechanic || lStage.type;
 
-      if (mech === "fill_blank" || mech === "pattern_input") {
-        r.example = ex.prompt || r.example || "";
-        r.prompt = ex.prompt || r.prompt || "";
-        r.answer = String(ex.answer ?? r.answer ?? "");
-      } else if (mech === "multi_choice") {
-        r.instruction = ex.prompt || r.instruction || "";
-        r.options = [
-          { id: "A", label: String(ex.choiceA ?? "") },
-          { id: "B", label: String(ex.choiceB ?? "") },
-          { id: "C", label: String(ex.choiceC ?? "") },
-        ];
-        r.correct_option = String(ex.correctOption || "A").toUpperCase();
-      } else if (mech === "corridor_choice") {
-        r.question = ex.prompt || r.question || "";
-        r.left_expression = ex.leftExpression || r.left_expression || "";
-        r.right_expression = ex.rightExpression || r.right_expression || "";
-        r.correct_side = String(ex.correctSide || "left").toLowerCase();
-      } else if (mech === "match_pairs") {
-        r.pair_a = ex.pairA || r.pair_a || "";
-        r.pair_b = ex.pairB || r.pair_b || "";
-        r.pair_c = ex.pairC || r.pair_c || "";
-        r.pair_d = ex.pairD || r.pair_d || "";
-        r.correct_pair_1 = String(ex.correctPair1 || "A").toUpperCase();
-        r.correct_pair_2 = String(ex.correctPair2 || "B").toUpperCase();
-      } else if (mech === "tap_count") {
-        r.question = ex.prompt || r.question || "Tap this item";
-        r.target_count = toNumber(ex.answer, toNumber(r.target_count, 2));
-      } else if (mech === "balance_scale") {
-        r.left_expression = ex.leftExpression || r.left_expression || "3 + ?";
-        r.right_expression = ex.rightExpression || r.right_expression || "7";
-        r.answer = String(ex.answer ?? r.answer ?? "");
-      } else if (mech === "build_number") {
-        r.base_number = toNumber(ex.baseNumber, toNumber(r.base_number, 24));
-        r.parts_count = toNumber(ex.partsCount, toNumber(r.parts_count, 3));
-      } else if (mech === "timer_challenge") {
-        r.timer_example_a = ex.timerExampleA || r.timer_example_a || "";
-        r.timer_example_b = ex.timerExampleB || r.timer_example_b || "";
-        r.timer_example_c = ex.timerExampleC || r.timer_example_c || "";
-        r.timer_answer_a = String(ex.timerAnswerA ?? r.timer_answer_a ?? "");
-        r.timer_answer_b = String(ex.timerAnswerB ?? r.timer_answer_b ?? "");
-        r.timer_answer_c = String(ex.timerAnswerC ?? r.timer_answer_c ?? "");
-        r.timer_seconds = toNumber(ex.timerSeconds, toNumber(r.timer_seconds, 30));
-      } else if (mech === "symbol_calc") {
-        r.symbol_a = toNumber(ex.symbolA, toNumber(r.symbol_a, 4));
-        r.symbol_b = toNumber(ex.symbolB, toNumber(r.symbol_b, 3));
-        r.symbol_c = toNumber(ex.symbolC, toNumber(r.symbol_c, 2));
-        r.symbol_expression = ex.symbolExpression || r.symbol_expression || "A + B × C";
-        r.answer = String(ex.answer ?? r.answer ?? "");
-      } else if (mech === "find_unknown") {
-        r.unknown_a = toNumber(ex.unknownA, toNumber(r.unknown_a, 4));
-        r.unknown_b = toNumber(ex.unknownB, toNumber(r.unknown_b, 6));
-        r.unknown_equation = ex.unknownEquation || r.unknown_equation || "A + B + C = 15";
-        r.answer = String(ex.answer ?? r.answer ?? "");
-      } else if (mech === "drag_group") {
-        r.numbers_text = ex.numbersText || r.numbers_text || "";
-        r.group1_name = ex.group1Name || r.group1_name || "Group 1";
-        r.group2_name = ex.group2Name || r.group2_name || "Group 2";
-        r.group1_values = ex.group1Values || r.group1_values || "";
-        r.group2_values = ex.group2Values || r.group2_values || "";
-      } else if (mech === "drag_sort") {
-        const nums = splitValues(ex.prompt || "");
-        const rule = splitValues(ex.answer || "");
-        if (nums.length) {
-          r.items = nums.map((t, idx) => ({
-            id: `i${idx + 1}`,
-            value: t,
-            text: t,
-            image_key: existing.items?.[idx]?.image_key || lStage.image_key || "banana",
-          }));
-        }
-        if (rule.length) {
-          r.correct_order = rule;
-        }
-      } else if (mech === "drag_drop") {
-        r.screen_item_count = toNumber(ex.screenItemCount, toNumber(r.screen_item_count, 6));
-        r.target_count = toNumber(ex.targetCount, toNumber(r.target_count, 2));
-        if (Array.isArray(ex.zoneCounts) && ex.zoneCounts.length) {
-          r.zone_counts = ex.zoneCounts.map((v) => toNumber(v, 0));
-        }
-      } else if (mech === "key_lock") {
-        r.lock_sum_1 = toNumber(ex.lock1Sum, toNumber(r.lock_sum_1, 0));
-        r.lock_sum_2 = toNumber(ex.lock2Sum, toNumber(r.lock_sum_2, 0));
-        r.lock_sum_3 = toNumber(ex.lock3Sum, toNumber(r.lock_sum_3, 0));
-        r.pair_1 = [toNumber(ex.lock1KeyA, 0), toNumber(ex.lock1KeyB, 0)];
-        r.pair_2 = [toNumber(ex.lock2KeyA, 0), toNumber(ex.lock2KeyB, 0)];
-        r.pair_3 = [toNumber(ex.lock3KeyA, 0), toNumber(ex.lock3KeyB, 0)];
-        const fromPairs = [...r.pair_1, ...r.pair_2, ...r.pair_3]
-          .map((v) => toNumber(v, NaN))
-          .filter((n) => Number.isFinite(n));
-        if (fromPairs.length >= 6) {
-          r.key_lock_keys = fromPairs.slice(0, 6);
-        } else {
-          const rawKeys = splitValues(ex.keysSixText || ex.keys_six_text || "");
-          const nums = rawKeys.map((v) => toNumber(v, NaN)).filter((n) => Number.isFinite(n));
-          r.key_lock_keys = nums.slice(0, 6);
-        }
-        while (r.key_lock_keys.length < 6) r.key_lock_keys.push(0);
-      } else if (mech === "true_false") {
-        r.statement = ex.statement || r.statement || "";
-        r.correct_answer = String(ex.trueOrFalse || r.correct_answer || "true");
-      } else if (mech === "text_task") {
-        r.prompt = ex.prompt || r.prompt || "";
-        r.answer = String(ex.answer ?? r.answer ?? "");
-      } else if (mech === "five_tasks") {
-        r.tasks = [
-          { q: ex.task1 || r.tasks?.[0]?.q || "", a: String(ex.answer1 ?? r.tasks?.[0]?.a ?? "") },
-          { q: ex.task2 || r.tasks?.[1]?.q || "", a: String(ex.answer2 ?? r.tasks?.[1]?.a ?? "") },
-          { q: ex.task3 || r.tasks?.[2]?.q || "", a: String(ex.answer3 ?? r.tasks?.[2]?.a ?? "") },
-          { q: ex.task4 || r.tasks?.[3]?.q || "", a: String(ex.answer4 ?? r.tasks?.[3]?.a ?? "") },
-          { q: ex.task5 || r.tasks?.[4]?.q || "", a: String(ex.answer5 ?? r.tasks?.[4]?.a ?? "") },
-        ];
+    if (mech === "boss_mix") {
+      const bossRounds = [];
+      for (const ex of dExamples) {
+        if (!ex || typeof ex !== "object") continue;
+        const srcMech = ex.bossMechanic || "fill_blank";
+        const r = mapExampleToRound(srcMech, ex, {});
+        r.type = srcMech;
+        if (ex.titleText) r.instruction = ex.titleText;
+        bossRounds.push(r);
       }
-
-      rounds.push(r);
-      if (rounds.length >= 5) break;
+      lStage.rounds = bossRounds;
+    } else {
+      const rounds = [];
+      for (let j = 0; j < Math.max(5, dExamples.length, lStage.rounds.length); j++) {
+        const ex = dExamples[j] || {};
+        const existing = lStage.rounds[j] || {};
+        if (ex.titleText && !lStage.title) lStage.title = ex.titleText;
+        const r = mapExampleToRound(mech, ex, existing);
+        rounds.push(r);
+        if (rounds.length >= 5) break;
+      }
+      lStage.rounds = rounds.slice(0, 5);
     }
-    lStage.rounds = rounds.slice(0, 5);
+
     lesson.stages[i] = lStage;
   }
   return lesson;
@@ -544,11 +564,17 @@ function buildStrictManualStageShell(lesson, draft) {
 }
 
 function stageTemplate(stageNumber, islandKey = "") {
+  const isBoss = stageNumber === 6;
+  const mechanic = stageNumber === 1 ? "drag_drop" : isBoss ? "boss_mix" : "fill_blank";
   return {
     stageNumber,
-    mechanic: stageNumber === 1 ? "drag_drop" : stageNumber === 6 ? "balance_scale" : "fill_blank",
+    mechanic,
     background: stageBackgroundFor(stageNumber, islandKey),
-    examples: Array.from({ length: 5 }, (_, idx) => exampleTemplate(stageNumber, idx + 1)),
+    examples: Array.from({ length: isBoss ? 10 : 5 }, (_, idx) => {
+      const ex = exampleTemplate(stageNumber, idx + 1);
+      if (isBoss) ex.bossMechanic = "";
+      return ex;
+    }),
   };
 }
 
@@ -782,6 +808,7 @@ function buildUserPromptFromDraft(draft, assetCatalog) {
         example.lock2KeyA != null && example.lock2KeyA !== "" ? `lock2_keys=${example.lock2KeyA},${example.lock2KeyB}` : "",
         example.lock3KeyA != null && example.lock3KeyA !== "" ? `lock3_keys=${example.lock3KeyA},${example.lock3KeyB}` : "",
         example.note ? `note=${example.note}` : "",
+        example.bossMechanic ? `boss_mechanic=${example.bossMechanic}` : "",
       ].filter(Boolean);
       return `  - ${parts.join(" ; ")}`;
     }).join("\n");
@@ -871,7 +898,11 @@ function validateDraft(draft) {
     errors.push(`Unknown island_key: ${islandKey}. Use one of: ${CANONICAL_ISLAND_KEYS.join(", ")}`);
   for (const stage of draft?.stages || []) {
     if (!stage.mechanic) errors.push(`Stage ${stage.stageNumber} must have a mechanic`);
-    if (!Array.isArray(stage.examples) || stage.examples.length !== 5) errors.push(`Stage ${stage.stageNumber} must have exactly 5 examples`);
+    if (stage.mechanic === "boss_mix") {
+      if (!Array.isArray(stage.examples)) errors.push(`Stage ${stage.stageNumber} examples must be an array`);
+    } else {
+      if (!Array.isArray(stage.examples) || stage.examples.length !== 5) errors.push(`Stage ${stage.stageNumber} must have exactly 5 examples`);
+    }
   }
   return errors;
 }
@@ -884,7 +915,7 @@ function coerceMechanic(id, fallback) {
   return fallback;
 }
 
-/** Ensures 6 stages × 5 examples with backgrounds and safe mechanics. */
+/** Ensures 6 stages with safe mechanics and correct example counts. Stage 6 is always boss_mix. */
 function normalizeAutofillStages(rawStages, islandKey) {
   const list = Array.isArray(rawStages) ? rawStages : [];
   const islandBg = getIslandStageBackgroundKeys(String(islandKey || "").trim());
@@ -893,17 +924,34 @@ function normalizeAutofillStages(rawStages, islandKey) {
     const stageNumber = i + 1;
     const incoming = list[i] || {};
     let mechanic = coerceMechanic(incoming.mechanic, stageTemplate(stageNumber).mechanic);
+    if (stageNumber === 6) mechanic = "boss_mix";
+
+    const isBoss = mechanic === "boss_mix";
     const examplesIn = Array.isArray(incoming.examples) ? incoming.examples : [];
     const examples = [];
-    for (let r = 0; r < 5; r++) {
-      const base = exampleTemplate(stageNumber, r + 1);
-      const ex = examplesIn[r] && typeof examplesIn[r] === "object" ? examplesIn[r] : {};
-      examples.push({
-        ...base,
-        ...ex,
-        roundNumber: r + 1,
-      });
+
+    if (isBoss) {
+      for (let groupIdx = 0; groupIdx < 5; groupIdx++) {
+        const stageMechanic = stages[groupIdx]?.mechanic || "fill_blank";
+        for (let pairIdx = 0; pairIdx < 2; pairIdx++) {
+          const exIdx = groupIdx * 2 + pairIdx;
+          const base = exampleTemplate(stageNumber, exIdx + 1);
+          base.bossMechanic = stageMechanic;
+          examples.push(base);
+        }
+      }
+    } else {
+      for (let r = 0; r < 5; r++) {
+        const base = exampleTemplate(stageNumber, r + 1);
+        const ex = examplesIn[r] && typeof examplesIn[r] === "object" ? examplesIn[r] : {};
+        examples.push({
+          ...base,
+          ...ex,
+          roundNumber: r + 1,
+        });
+      }
     }
+
     const defaultBg = stageBackgroundFor(stageNumber, islandKey);
     const row = {
       stageNumber,

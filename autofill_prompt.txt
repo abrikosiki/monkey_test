@@ -42,16 +42,16 @@ LESSON STRUCTURE
 Pick exactly 6 different mechanics — NO mechanic may appear twice in the lesson (each stage = one unique interaction type).
 
 Stages 1–5 — escalating complexity, any mechanic that fits age + difficulty
-Stage 6 — hardest challenge of the lesson + finale feel
+Stage 6 — ALWAYS mechanic "boss_mix". Generate exactly 10 examples: 2 per mechanic from stages 1–5.
 
 ════════════════════════════════════════
 MECHANIC SELECTION
 ════════════════════════════════════════
 
-Pick exactly 6 different mechanics from this list.
-Never use the same mechanic twice in one lesson.
+Pick exactly 6 different mechanics for stages 1–5, and always use "boss_mix" for stage 6.
+Never use the same mechanic twice in stages 1–5.
 
-Available mechanics:
+Available mechanics for stages 1–5:
   drag_drop       — drag items into target zones
   drag_sort       — arrange elements in correct order
   drag_group      — sort into two named groups
@@ -237,6 +237,19 @@ Game: five tasks shown simultaneously on one card; all must be answered before a
 Per round REQUIRED fields:
   • task1, task2, task3, task4, task5 (strings) — the task text for each row, e.g. "3 × 4 = ?"
   • answer1, answer2, answer3, answer4, answer5 (strings) — correct answer for each row
+
+--- boss_mix ---
+ONLY for stage 6. This is not a regular mechanic — it is a special final-battle stage.
+Stage 6 mechanic MUST always be "boss_mix". Do NOT use any other mechanic for stage 6.
+Stage 6 has exactly 10 examples: 2 examples per each mechanic from stages 1–5 (in order).
+Each example MUST include "bossMechanic": "<mechanic_of_that_group>" (same as the mechanic chosen for that stage).
+These examples must be HARDER than any example in stages 1–5 — they must require real thinking.
+Example structure for stage 6:
+  Example 1+2: bossMechanic = mechanic from stage 1, plus all required fields for that mechanic
+  Example 3+4: bossMechanic = mechanic from stage 2, plus all required fields for that mechanic
+  Example 5+6: bossMechanic = mechanic from stage 3, plus all required fields for that mechanic
+  Example 7+8: bossMechanic = mechanic from stage 4, plus all required fields for that mechanic
+  Example 9+10: bossMechanic = mechanic from stage 5, plus all required fields for that mechanic
 
 GENERAL RULES FOR ALL MECHANICS:
   • titleText is always the centered round/stage title shown to the child.
@@ -425,7 +438,9 @@ QUALITY CHECKLIST — verify before output
 ════════════════════════════════════════
 
 □ Exactly 6 stages?
-□ All 6 mechanics are different from each other?
+□ Stage 6 mechanic is exactly "boss_mix"?
+□ Stage 6 has exactly 10 examples with bossMechanic matching stages 1–5 mechanics?
+□ All 5 mechanics in stages 1–5 are different from each other?
 □ Mechanics drawn from at least 3 of the 4 categories (VISUAL, CHOICE, TYPING, CHALLENGE)?
 □ No default drag_drop-first sequence — mechanics vary freely by fit, not by position?
 □ Each stage has exactly 5 rounds?
