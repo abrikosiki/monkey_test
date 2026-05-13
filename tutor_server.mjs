@@ -1555,22 +1555,30 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (req.method === "POST" && url.pathname === "/api/build-lesson") {
-      const lesson = readCurrentLesson();
+      const payload = JSON.parse((await readBody(req)) || "{}");
+      const lesson = (payload.lesson && typeof payload.lesson === "object")
+        ? payload.lesson
+        : readCurrentLesson();
       if (!lesson) {
-        sendJson(res, 422, { ok: false, error: "No output_lesson.json yet. Create Lesson first." });
+        sendJson(res, 422, { ok: false, error: "No lesson data. Generate a lesson first." });
         return;
       }
       const fileName = buildGeneratedHtmlFilename(lesson);
+      const sessionId = Date.now() + "_" + Math.random().toString(36).slice(2, 8);
+      const sessionFile = path.join(DATA_DIR, `session_${sessionId}.json`);
       const outputRelativePath = path.join("generated_lessons", fileName);
-      const output = await runNodeScript(["builder.mjs", "output_lesson.json", outputRelativePath]);
-      const latestOutput = await runNodeScript(["builder.mjs", "output_lesson.json", "lesson_game.html"]);
-      sendJson(res, 200, {
-        ok: true,
-        output,
-        latestOutput,
-        generatedFileName: fileName,
-        generatedFileUrl: `/generated-lessons/${fileName}?v=${Date.now()}`,
-      });
+      try {
+        fs.writeFileSync(sessionFile, JSON.stringify(lesson, null, 2), "utf-8");
+        const output = await runNodeScript(["builder.mjs", sessionFile, outputRelativePath]);
+        sendJson(res, 200, {
+          ok: true,
+          output,
+          generatedFileName: fileName,
+          generatedFileUrl: `/generated-lessons/${fileName}?v=${Date.now()}`,
+        });
+      } finally {
+        try { fs.unlinkSync(sessionFile); } catch {}
+      }
       return;
     }
 

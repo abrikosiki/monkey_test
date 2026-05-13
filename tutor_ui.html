@@ -1422,7 +1422,7 @@
 
         setAutosaveStatus("Building HTML...");
         renderProgressLines(3, [true, true, true, false]);
-        const build = await post("/api/build-lesson");
+        const build = await post("/api/build-lesson", { lesson: state.lesson });
         state.generatedLessonUrl = build.generatedFileUrl || "/lesson_game.html";
         $("previewBtn").href = state.generatedLessonUrl;
 
@@ -1474,7 +1474,7 @@
         renderLessonJson();
         setAutosaveStatus("Building HTML...");
         if (regenBtn) regenBtn.textContent = "Building... 3/3 — building HTML";
-        const build = await post("/api/build-lesson");
+        const build = await post("/api/build-lesson", { lesson: state.lesson });
         state.generatedLessonUrl = build.generatedFileUrl || "/lesson_game.html";
         $("previewBtn").href = state.generatedLessonUrl;
         state.manualMechanicsMode = false;
