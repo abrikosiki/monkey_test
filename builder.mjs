@@ -1406,6 +1406,7 @@ function buildHtml(
     .boss-hit{animation:bossScreenShake .32s ease}
     .boss-flash{position:fixed;inset:0;background:rgba(200,30,30,.42);pointer-events:none;z-index:150;animation:bossFlashFade .38s ease forwards}
     @keyframes bossFlashFade{0%{opacity:1}100%{opacity:0}}
+    @keyframes diceRoll{0%{transform:rotate(0) scale(1)}15%{transform:rotate(-25deg) scale(1.18)}35%{transform:rotate(22deg) scale(0.9)}55%{transform:rotate(-18deg) scale(1.12)}75%{transform:rotate(12deg) scale(0.95)}90%{transform:rotate(-6deg) scale(1.05)}100%{transform:rotate(0) scale(1)}}
     .boss-hp-bar{position:absolute;bottom:14px;left:4%;width:92%;z-index:30;pointer-events:none;}
     .boss-hp-bar.hidden{display:none}
     .boss-hp-villain{width:100%;}
@@ -3372,25 +3373,21 @@ function buildHtml(
     let rolled = false;
 
     const wrap = document.createElement("div");
-    wrap.style.cssText = "display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px 16px;";
+    wrap.style.cssText = "position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;";
 
-    // Dice SVG
-    const diceFaces = ["⚀","⚁","⚂","⚃","⚄","⚅"];
     const diceEl = document.createElement("div");
-    diceEl.style.cssText = "font-size:88px;cursor:pointer;user-select:none;transition:transform .15s;line-height:1;";
+    diceEl.style.cssText = "font-size:220px;cursor:pointer;user-select:none;line-height:1;filter:drop-shadow(0 8px 24px rgba(0,0,0,.5));";
     diceEl.textContent = "🎲";
     diceEl.title = "Tap to roll!";
 
     const promptEl = document.createElement("div");
-    promptEl.style.cssText = "font-size:28px;font-weight:700;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.5);min-height:42px;";
+    promptEl.style.cssText = "font-size:72px;font-weight:700;color:#fff;text-shadow:0 3px 12px rgba(0,0,0,.6);min-height:88px;text-align:center;letter-spacing:2px;";
     promptEl.textContent = "? × " + mult + " = ?";
 
-    const inputWrap = document.createElement("div");
-    inputWrap.style.cssText = "display:flex;align-items:center;gap:10px;";
     const input = document.createElement("input");
     input.type = "number";
     input.className = "answer";
-    input.style.cssText = "width:90px;font-size:28px;text-align:center;";
+    input.style.cssText = "width:160px;font-size:60px;text-align:center;padding:10px;border-radius:16px;";
     input.placeholder = "?";
     input.autocomplete = "off";
     input.disabled = true;
@@ -3425,25 +3422,26 @@ function buildHtml(
       if(rolled || state.stageSolved) return;
       rolled = true;
       diceVal = Math.floor(Math.random() * 6) + 1;
-      let frames = 0;
-      const anim = setInterval(() => {
-        diceEl.textContent = diceFaces[Math.floor(Math.random() * 6)];
-        frames++;
-        if(frames >= 10){
-          clearInterval(anim);
-          diceEl.textContent = diceFaces[diceVal - 1];
-          diceEl.style.cursor = "default";
-          promptEl.textContent = diceVal + " × " + mult + " = ?";
-          input.disabled = false;
-          input.focus();
-        }
-      }, 80);
+      // Spin animation — 🎲 stays as-is, no ugly face switch
+      diceEl.style.animation = "diceRoll .7s ease-out forwards";
+      diceEl.style.cursor = "default";
+      setTimeout(() => {
+        diceEl.style.animation = "";
+        // Show result number as badge on top of dice area
+        diceEl.style.position = "relative";
+        const badge = document.createElement("div");
+        badge.style.cssText = "position:absolute;top:-18px;right:-18px;width:90px;height:90px;background:#ff4400;color:#fff;font-size:52px;font-weight:900;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.5);font-family:'Fredoka One',cursive;animation:introPop .3s cubic-bezier(.34,1.56,.64,1)";
+        badge.textContent = String(diceVal);
+        diceEl.appendChild(badge);
+        promptEl.textContent = diceVal + " × " + mult + " = ?";
+        input.disabled = false;
+        input.focus();
+      }, 750);
     });
 
-    inputWrap.appendChild(input);
     wrap.appendChild(diceEl);
     wrap.appendChild(promptEl);
-    wrap.appendChild(inputWrap);
+    wrap.appendChild(input);
     lane.appendChild(wrap);
   }
 
