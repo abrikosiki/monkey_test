@@ -273,6 +273,9 @@
       true_false: "Title + statement inside the card + select True or False as the correct answer.",
       text_task: "Title + task text + correct text answer (case-insensitive).",
       five_tasks: "Title + 5 tasks with answers (all shown at once on one card).",
+      dice_multiply: "Set multiplier1 (rounds 1–3) and multiplier2 (rounds 4–5). Same values apply to all 5 rounds.",
+      fortune_wheel: "Choose the artifact the wheel can give. Coin sectors are fixed. Same values apply to all 5 rounds.",
+      number_grid: "Round 1: write 25 grid numbers (comma-separated). Every round: math prompt + cell coordinate answer (e.g. B3).",
       boss_mix: "Stage 6 boss battle — write 2 NEW harder examples per mechanic from stages 1–5 (10 rounds total).",
     };
 
@@ -349,6 +352,9 @@
       true_false: () => ({ titleText: "True or false?", statement: "4 × 3 = 12", trueOrFalse: "true", prompt: "", answer: "", screenItemCount: "", targetCount: "", zoneCounts: [], options: [], leftExpression: "", rightExpression: "", correctSide: "", note: "", numbersText: "", group1Name: "", group1Values: "", group2Name: "", group2Values: "", choiceA: "", choiceB: "", choiceC: "", correctOption: "A", pairA: "", pairB: "", pairC: "", pairD: "", correctPair1: "A", correctPair2: "B", baseNumber: "", partsCount: "", readyFlag: false, timerExampleA: "", timerExampleB: "", timerExampleC: "", timerAnswerA: "", timerAnswerB: "", timerAnswerC: "", timerSeconds: 30, symbolA: "", symbolB: "", symbolC: "", symbolExpression: "", unknownA: "", unknownB: "", unknownEquation: "", task1: "", answer1: "", task2: "", answer2: "", task3: "", answer3: "", task4: "", answer4: "", task5: "", answer5: "" }),
       text_task: () => ({ titleText: "Solve the task", prompt: "What is the next even number after 8?", answer: "10", statement: "", trueOrFalse: "true", screenItemCount: "", targetCount: "", zoneCounts: [], options: [], leftExpression: "", rightExpression: "", correctSide: "", note: "", numbersText: "", group1Name: "", group1Values: "", group2Name: "", group2Values: "", choiceA: "", choiceB: "", choiceC: "", correctOption: "A", pairA: "", pairB: "", pairC: "", pairD: "", correctPair1: "A", correctPair2: "B", baseNumber: "", partsCount: "", readyFlag: false, timerExampleA: "", timerExampleB: "", timerExampleC: "", timerAnswerA: "", timerAnswerB: "", timerAnswerC: "", timerSeconds: 30, symbolA: "", symbolB: "", symbolC: "", symbolExpression: "", unknownA: "", unknownB: "", unknownEquation: "", task1: "", answer1: "", task2: "", answer2: "", task3: "", answer3: "", task4: "", answer4: "", task5: "", answer5: "" }),
       five_tasks: () => ({ titleText: "Solve all tasks", statement: "", trueOrFalse: "true", prompt: "", answer: "", screenItemCount: "", targetCount: "", zoneCounts: [], options: [], leftExpression: "", rightExpression: "", correctSide: "", note: "", numbersText: "", group1Name: "", group1Values: "", group2Name: "", group2Values: "", choiceA: "", choiceB: "", choiceC: "", correctOption: "A", pairA: "", pairB: "", pairC: "", pairD: "", correctPair1: "A", correctPair2: "B", baseNumber: "", partsCount: "", readyFlag: false, timerExampleA: "", timerExampleB: "", timerExampleC: "", timerAnswerA: "", timerAnswerB: "", timerAnswerC: "", timerSeconds: 30, symbolA: "", symbolB: "", symbolC: "", symbolExpression: "", unknownA: "", unknownB: "", unknownEquation: "", task1: "3+4=?", answer1: "7", task2: "10-6=?", answer2: "4", task3: "?+5=11", answer3: "6", task4: "2×8=?", answer4: "16", task5: "20÷4=?", answer5: "5" }),
+      dice_multiply: () => ({ titleText: "Roll and multiply!", multiplier1: 3, multiplier2: 5, prompt: "", answer: "" }),
+      fortune_wheel: () => ({ titleText: "Spin the wheel!", artifactKey: "crown", prompt: "", answer: "" }),
+      number_grid: () => ({ titleText: "Find the answer!", gridNumbers: "34,21,8,15,42,6,18,30,5,27,12,45,3,24,9,36,7,16,25,48,2,20,14,32,10", prompt: "20 + 14 = ?", answer: "B3" }),
       boss_mix: () => ({ titleText: "", bossMechanic: "" }),
     };
 
@@ -872,6 +878,9 @@
       if (mechanic === "true_false") return `Title: ${example.titleText || "?"} | statement: ${example.statement || "?"} | answer: ${example.trueOrFalse || "?"}`;
       if (mechanic === "text_task") return `Title: ${example.titleText || "?"} | task: ${example.prompt || "?"} | answer: ${example.answer || "?"}`;
       if (mechanic === "five_tasks") return `Title: ${example.titleText || "?"} | 1:${example.task1||"?"}=${example.answer1||"?"} 2:${example.task2||"?"}=${example.answer2||"?"} 3:${example.task3||"?"}=${example.answer3||"?"} 4:${example.task4||"?"}=${example.answer4||"?"} 5:${example.task5||"?"}=${example.answer5||"?"}`;
+      if (mechanic === "dice_multiply") return `Title: ${example.titleText || "?"} | ×${example.multiplier1 || "?"} (R1-3) / ×${example.multiplier2 || "?"} (R4-5)`;
+      if (mechanic === "fortune_wheel") return `Title: ${example.titleText || "?"} | artifact: ${example.artifactKey || "?"}`;
+      if (mechanic === "number_grid") return `Title: ${example.titleText || "?"} | prompt: ${example.prompt || "?"} | answer: ${example.answer || "?"}`;
       return `Prompt: ${example.prompt || "?"} | answer: ${example.answer || "?"}`;
     }
 
@@ -939,6 +948,10 @@
         task3: "", answer3: "",
         task4: "", answer4: "",
         task5: "", answer5: "",
+        multiplier1: 3,
+        multiplier2: 5,
+        artifactKey: "crown",
+        gridNumbers: "",
       };
       return { ...base };
     }
@@ -1154,6 +1167,40 @@
           add(
             makeInput(`Task ${i}`, example[`task${i}`], (v) => { example[`task${i}`] = v; }, { full: false }),
             makeInput(`Answer ${i}`, example[`answer${i}`], (v) => { example[`answer${i}`] = v; }, { full: false }),
+          );
+        }
+      } else if (mechanic === "dice_multiply") {
+        if (example.roundNumber === 1) {
+          add(
+            ...base,
+            makeInput("Multiplier (rounds 1–3)", example.multiplier1, (v) => example.multiplier1 = Number(v || 3), { type: "number" }),
+            makeInput("Multiplier (rounds 4–5)", example.multiplier2, (v) => example.multiplier2 = Number(v || 5), { type: "number" }),
+          );
+        } else {
+          add(...base);
+        }
+      } else if (mechanic === "fortune_wheel") {
+        if (example.roundNumber === 1) {
+          add(
+            ...base,
+            makeInput("Artifact key", example.artifactKey, (v) => example.artifactKey = v, { type: "select", options: ["crown", "pearl", "anchor", "compass", "map", "gem", "sword", "shield"] }),
+          );
+        } else {
+          add(...base);
+        }
+      } else if (mechanic === "number_grid") {
+        if (example.roundNumber === 1) {
+          add(
+            ...base,
+            makeInput("Grid numbers (25, comma-separated)", example.gridNumbers, (v) => example.gridNumbers = v, { type: "textarea", full: true }),
+            makeInput("Math prompt", example.prompt, (v) => example.prompt = v),
+            makeInput("Answer cell (e.g. B3)", example.answer, (v) => example.answer = v),
+          );
+        } else {
+          add(
+            ...base,
+            makeInput("Math prompt", example.prompt, (v) => example.prompt = v),
+            makeInput("Answer cell (e.g. B3)", example.answer, (v) => example.answer = v),
           );
         }
       } else {

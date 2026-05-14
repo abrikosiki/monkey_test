@@ -70,6 +70,9 @@ Available mechanics for stages 1–5:
   true_false      — one statement, child taps True or False
   text_task       — one word problem, child types the answer in text
   five_tasks      — five tasks shown at once, all must be answered
+  dice_multiply   — child rolls a dice and multiplies result by a set number
+  fortune_wheel   — spin a wheel to land on coins or artifact reward
+  number_grid     — 5×5 number grid, child taps the cell with the math answer
 
 AGE RULES:
   age 5–6 → only: drag_drop, tap_count, drag_sort,
@@ -100,9 +103,9 @@ No stage has a fixed mechanic requirement — any mechanic can appear at any pos
 as long as it fits the child's age and the difficulty level.
 
 Distribute across categories for a balanced lesson:
-  VISUAL:    drag_drop | drag_sort | drag_group | tap_count
-  CHOICE:    multi_choice | corridor_choice | true_false | match_pairs
-  TYPING:    fill_blank | pattern_input | text_task | find_unknown
+  VISUAL:    drag_drop | drag_sort | drag_group | tap_count | fortune_wheel
+  CHOICE:    multi_choice | corridor_choice | true_false | match_pairs | number_grid
+  TYPING:    fill_blank | pattern_input | text_task | find_unknown | dice_multiply
   CHALLENGE: five_tasks | balance_scale | key_lock | symbol_calc | timer_challenge | build_number
 
 Aim for at least 1 from VISUAL, 1 from CHOICE, 1 from TYPING in the 6 stages.
@@ -241,6 +244,29 @@ Game: five tasks shown simultaneously on one card; all must be answered before a
 Per round REQUIRED fields:
   • task1, task2, task3, task4, task5 (strings) — the task text for each row, e.g. "3 × 4 = ?"
   • answer1, answer2, answer3, answer4, answer5 (strings) — correct answer for each row
+
+--- dice_multiply ---
+Game: child taps the dice, it rolls 1–6, then multiplies by a set multiplier and types the result.
+Rounds 1–3 use multiplier1; rounds 4–5 use multiplier2 (must be harder).
+These fields are the SAME for all 5 examples in the stage (only set them in example 1):
+  • multiplier1 (number) — multiplier for rounds 1–3, e.g. 3
+  • multiplier2 (number) — harder multiplier for rounds 4–5, e.g. 7
+  • titleText (string) — e.g. "Roll and multiply!"
+
+--- fortune_wheel ---
+Game: child taps Spin, the wheel stops on a random sector (coins or artifact). No math question — this is a reward mechanic.
+These fields are the SAME for all 5 examples (only set them in example 1):
+  • artifactKey (string) — artifact the wheel can give, e.g. "crown"
+  • titleText (string) — e.g. "Spin the wheel!"
+
+--- number_grid ---
+Game: a 5×5 grid (rows A–E, columns 1–5) filled with numbers. Child reads a math problem and taps the cell containing the answer.
+Example 1 REQUIRED fields (grid is shared across all 5 rounds):
+  • gridNumbers (string) — 25 comma-separated numbers to fill the grid, e.g. "34,21,8,15,42,6,18,30,5,27,12,45,3,24,9,36,7,16,25,48,2,20,14,32,10"
+Every round REQUIRED fields:
+  • prompt (string) — the math problem shown, e.g. "20 + 14 = ?"
+  • answer (string) — cell coordinate where the answer appears, row letter + column number, e.g. "B3"
+Important: the answer number MUST exist in the grid at the stated coordinate. Design the grid so each round's correct answer is at a different cell.
 
 --- boss_mix ---
 ONLY for stage 6. This is not a regular mechanic — it is a special final-battle stage.

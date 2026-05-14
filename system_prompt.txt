@@ -129,6 +129,9 @@ MECHANICS — Claude CHOOSES per stage (15 types)
 - true_false    — read the statement and tap True or False
 - text_task     — read the task and type the text answer
 - five_tasks    — solve all 5 tasks shown simultaneously on one card
+- dice_multiply — child rolls dice, multiplies by preset number; multiplier1 (rounds 1-3), multiplier2 (rounds 4-5)
+- fortune_wheel — spin the wheel to land on coin or artifact reward; artifactKey field sets the prize
+- number_grid   — 5×5 grid of numbers; child taps cell matching the math answer; rows A-E, cols 1-5; answer field = coordinate like "B3"
 - boss_mix      — ONLY stage 6: 10 rounds mixing the 5 mechanics from stages 1–5; each round carries its own "type" field
 
 For builder compatibility you MAY output legacy aliases where needed:
@@ -152,9 +155,9 @@ LESSON MIX RULES (6 stages):
 - Exactly 6 stages. When meta.island_key is set, each stage "background" MUST follow the six-token island pattern (see STAGE "background" TOKENS above) — same rule for every allowed island; do not invent a different progression.
 - No stage has a fixed required mechanic — pick freely based on age + difficulty. Any mechanic can appear at any position.
 - Distribute across categories for variety (at least 1 of each in the lesson):
-    VISUAL:    drag_drop | drag_sort | drag_group | tap_count
-    CHOICE:    multi_choice | corridor_choice | true_false | match_pairs
-    TYPING:    fill_blank | pattern_input | text_task | find_unknown
+    VISUAL:    drag_drop | drag_sort | drag_group | tap_count | fortune_wheel
+    CHOICE:    multi_choice | corridor_choice | true_false | match_pairs | number_grid
+    TYPING:    fill_blank | pattern_input | text_task | find_unknown | dice_multiply
     CHALLENGE: five_tasks | balance_scale | key_lock | symbol_calc | timer_challenge | build_number
 - Stage 6: MUST use type "boss_mix". Output stage 6 with type "boss_mix" and 10 rounds — each round has its own "type" field matching one of the mechanics from stages 1–5 (2 rounds per mechanic in order). When the tutor draft sets mechanic "boss_mix", applyDraftToLessonStages will replace all rounds from the draft; output any valid placeholder rounds.
 - NEVER same mechanic type two stages in a row (compare "type" field; boss_mix is unique)

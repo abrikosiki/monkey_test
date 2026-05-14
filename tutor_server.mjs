@@ -42,6 +42,9 @@ const MECHANICS = [
   { id: "true_false", label: "True or False", description: "Say whether the statement is true or false." },
   { id: "text_task", label: "Text Task", description: "Type the correct text answer." },
   { id: "five_tasks", label: "Five Tasks", description: "Solve all 5 tasks shown at once." },
+  { id: "dice_multiply", label: "🎲 Dice Multiply", description: "Child rolls a dice and multiplies by a set number." },
+  { id: "fortune_wheel", label: "🎡 Fortune Wheel", description: "Spin the wheel to land on a coin or artifact reward." },
+  { id: "number_grid", label: "🗺️ Number Grid", description: "5×5 grid — child finds the cell containing the math answer." },
   { id: "boss_mix", label: "⚔️ Boss Stage", description: "Final battle — 2 hard examples per each of the 5 stage mechanics (10 rounds total)." },
 ];
 
@@ -504,6 +507,15 @@ function mapExampleToRound(mech, ex, existing) {
       { q: ex.task4 || "", a: String(ex.answer4 ?? "") },
       { q: ex.task5 || "", a: String(ex.answer5 ?? "") },
     ];
+  } else if (mech === "dice_multiply") {
+    r.multiplier1 = toNumber(ex.multiplier1, 3);
+    r.multiplier2 = toNumber(ex.multiplier2, 4);
+  } else if (mech === "fortune_wheel") {
+    r.artifact_key = ex.artifactKey || "crown";
+  } else if (mech === "number_grid") {
+    r.grid_numbers = splitValues(ex.gridNumbers || "");
+    r.prompt = ex.prompt || "";
+    r.answer = String(ex.answer || "").toUpperCase().trim();
   }
   return r;
 }

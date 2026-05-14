@@ -1406,6 +1406,13 @@ function buildHtml(
     .boss-hit{animation:bossScreenShake .32s ease}
     .boss-flash{position:fixed;inset:0;background:rgba(200,30,30,.42);pointer-events:none;z-index:150;animation:bossFlashFade .38s ease forwards}
     @keyframes bossFlashFade{0%{opacity:1}100%{opacity:0}}
+    .boss-hp-bar{position:absolute;top:8px;left:50%;transform:translateX(-50%);z-index:30;display:flex;flex-direction:column;align-items:center;gap:4px;background:rgba(0,0,0,.55);border-radius:14px;padding:6px 14px;min-width:220px;pointer-events:none;}
+    .boss-hp-bar.hidden{display:none}
+    .boss-hp-villain{display:flex;align-items:center;gap:8px;width:100%;}
+    #villainHpLabel{color:#ff6b6b;font-size:14px;font-weight:700;white-space:nowrap;}
+    .boss-hp-track{flex:1;height:12px;background:rgba(255,255,255,.2);border-radius:6px;overflow:hidden;}
+    .boss-hp-fill{height:100%;background:linear-gradient(90deg,#ff4444,#ff8800);border-radius:6px;transition:width .4s ease;}
+    .boss-hp-hero{font-size:20px;letter-spacing:4px;}
     @keyframes villainDefeatIn{
       0%{opacity:0;transform:scale(.65) translateY(40px)}
       65%{transform:scale(1.06) translateY(-6px)}
@@ -1904,6 +1911,13 @@ function buildHtml(
       <div class="p-tag" id="pTag"></div>
     </div>
     <div class="izone" id="izone"></div>
+    <div class="boss-hp-bar hidden" id="bossHpBar">
+      <div class="boss-hp-villain">
+        <span id="villainHpLabel">👹 20 HP</span>
+        <div class="boss-hp-track"><div class="boss-hp-fill" id="villainHpFill"></div></div>
+      </div>
+      <div class="boss-hp-hero" id="heroHearts">❤️❤️❤️</div>
+    </div>
     <div class="bottom"></div>
   </div>
   <div class="success-screen" id="successScreen">
@@ -2058,6 +2072,8 @@ function buildHtml(
     earnedArtifacts: buildInitialOwnedArtifacts(),
     completionArtifact: null,
     keyLockAbort: null,
+    villainHp: 20,
+    heroHp: 3,
   };
   const STAGES = buildStagePlan();
 
@@ -2110,6 +2126,9 @@ function buildHtml(
     if(t === "true_false") return "Read the statement and choose True or False.";
     if(t === "text_task") return "Read the task and type the correct answer.";
     if(t === "five_tasks") return "Solve all five tasks to continue.";
+    if(t === "dice_multiply") return "Tap the dice to roll, then multiply!";
+    if(t === "fortune_wheel") return "Spin the wheel and win a reward!";
+    if(t === "number_grid") return "Find the answer to the math problem in the grid!";
     return "Complete the task to continue.";
   }
 
@@ -2127,6 +2146,9 @@ function buildHtml(
     if(t === "true_false") return "Correct! You knew it!";
     if(t === "text_task") return "Correct answer!";
     if(t === "five_tasks") return "All five tasks solved!";
+    if(t === "dice_multiply") return "Correct! Great multiplication!";
+    if(t === "fortune_wheel") return "The wheel has spoken!";
+    if(t === "number_grid") return "Found it! Ship sunk!";
     return "Success!";
   }
 
@@ -2585,7 +2607,10 @@ function buildHtml(
   function markSuccess(stage){
     if(state.stageSolved) return;
     state.stageSolved = true;
-    if(state.stageIndex === STAGES.length - 1) bossHit();
+    if(state.stageIndex === STAGES.length - 1){
+      bossHit();
+      decreaseVillainHp(2);
+    }
     const base = STAGES[state.stageIndex];
     const rounds = Array.isArray(base.rounds) ? base.rounds : [];
     const nRounds = rounds.length;
@@ -3150,6 +3175,7 @@ function buildHtml(
           input.classList.add("bad");
           setTimeout(() => input.classList.remove("bad"), 200);
           shake(input);
+          onWrongAnswer();
         }
       };
 
@@ -3189,6 +3215,7 @@ function buildHtml(
           setTimeout(() => markSuccess(stage), 140);
         }else{
           shake(btn);
+          onWrongAnswer();
         }
       };
       box.appendChild(btn);
@@ -3225,6 +3252,7 @@ function buildHtml(
           btn.classList.add("bad");
           setTimeout(() => btn.classList.remove("bad"), 240);
           shake(btn);
+          onWrongAnswer();
         }
       };
       row.appendChild(btn);
@@ -3263,6 +3291,7 @@ function buildHtml(
         input.classList.add("bad");
         setTimeout(() => input.classList.remove("bad"), 220);
         shake(input);
+        onWrongAnswer();
       }
     }
     input.addEventListener("change", checkTextAnswer);
@@ -3308,6 +3337,7 @@ function buildHtml(
           input.classList.add("bad");
           setTimeout(() => input.classList.remove("bad"), 220);
           shake(input);
+          onWrongAnswer();
         }
       }
       input.addEventListener("change", checkFive);
@@ -3329,6 +3359,283 @@ function buildHtml(
       if(parts[1] && parts[1].trim()) row.appendChild(makeSeg(parts[1]));
       wrap.appendChild(row);
     });
+    lane.appendChild(wrap);
+  }
+
+  function renderDiceMultiply(stage){
+    const roundIdx = state.stagePracticeDone || 0;
+    const mult = roundIdx < 3 ? (stage.multiplier1 || 3) : (stage.multiplier2 || 5);
+    let diceVal = null;
+    let rolled = false;
+
+    const wrap = document.createElement("div");
+    wrap.style.cssText = "display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px 16px;";
+
+    // Dice SVG
+    const diceFaces = ["⚀","⚁","⚂","⚃","⚄","⚅"];
+    const diceEl = document.createElement("div");
+    diceEl.style.cssText = "font-size:88px;cursor:pointer;user-select:none;transition:transform .15s;line-height:1;";
+    diceEl.textContent = "🎲";
+    diceEl.title = "Tap to roll!";
+
+    const promptEl = document.createElement("div");
+    promptEl.style.cssText = "font-size:28px;font-weight:700;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.5);min-height:42px;";
+    promptEl.textContent = "? × " + mult + " = ?";
+
+    const inputWrap = document.createElement("div");
+    inputWrap.style.cssText = "display:flex;align-items:center;gap:10px;";
+    const input = document.createElement("input");
+    input.type = "number";
+    input.className = "answer";
+    input.style.cssText = "width:90px;font-size:28px;text-align:center;";
+    input.placeholder = "?";
+    input.autocomplete = "off";
+    input.disabled = true;
+
+    function checkDice(){
+      if(!rolled || input.disabled) return;
+      const val = String(input.value).trim();
+      if(!val) return;
+      if(Number(val) === diceVal * mult){
+        input.disabled = true;
+        input.classList.add("ok");
+        setTimeout(() => markSuccess(stage), 200);
+      } else {
+        input.value = "";
+        input.classList.add("bad");
+        shake(input);
+        setTimeout(() => input.classList.remove("bad"), 300);
+        onWrongAnswer();
+      }
+    }
+
+    input.addEventListener("change", checkDice);
+    input.addEventListener("keydown", (e) => { if(e.key === "Enter"){ e.preventDefault(); checkDice(); } });
+    let _diceTimer;
+    input.addEventListener("input", () => {
+      clearTimeout(_diceTimer);
+      if(String(input.value).trim() === "") return;
+      _diceTimer = setTimeout(() => checkDice(), 1200);
+    });
+
+    diceEl.addEventListener("click", () => {
+      if(rolled || state.stageSolved) return;
+      rolled = true;
+      diceVal = Math.floor(Math.random() * 6) + 1;
+      let frames = 0;
+      const anim = setInterval(() => {
+        diceEl.textContent = diceFaces[Math.floor(Math.random() * 6)];
+        frames++;
+        if(frames >= 10){
+          clearInterval(anim);
+          diceEl.textContent = diceFaces[diceVal - 1];
+          diceEl.style.cursor = "default";
+          promptEl.textContent = diceVal + " × " + mult + " = ?";
+          input.disabled = false;
+          input.focus();
+        }
+      }, 80);
+    });
+
+    inputWrap.appendChild(input);
+    wrap.appendChild(diceEl);
+    wrap.appendChild(promptEl);
+    wrap.appendChild(inputWrap);
+    lane.appendChild(wrap);
+  }
+
+  function renderFortuneWheel(stage){
+    const artifactKey = stage.artifact_key || "crown";
+    const sectors = [
+      { label: "+5", type: "coins", coins: 5, color: "#4ade80" },
+      { label: "+10", type: "coins", coins: 10, color: "#facc15" },
+      { label: "+15", type: "coins", coins: 15, color: "#fb923c" },
+      { label: "+20", type: "coins", coins: 20, color: "#f472b6" },
+      { label: "🏆", type: "artifact", color: "#a78bfa" },
+      { label: "🔄", type: "bonus", color: "#38bdf8" },
+    ];
+    const total = sectors.length;
+    let spinning = false;
+
+    const wrap = document.createElement("div");
+    wrap.style.cssText = "display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:20px 12px;";
+
+    // Build wheel canvas
+    const canvas = document.createElement("canvas");
+    canvas.width = 240;
+    canvas.height = 240;
+    canvas.style.cssText = "border-radius:50%;box-shadow:0 4px 24px rgba(0,0,0,.5);";
+    const ctx = canvas.getContext("2d");
+    const cx = 120, cy = 120, r = 114;
+    const sliceAngle = (Math.PI * 2) / total;
+
+    function drawWheel(rotation){
+      ctx.clearRect(0, 0, 240, 240);
+      sectors.forEach((sec, i) => {
+        const start = rotation + i * sliceAngle;
+        const end = start + sliceAngle;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.arc(cx, cy, r, start, end);
+        ctx.closePath();
+        ctx.fillStyle = sec.color;
+        ctx.fill();
+        ctx.strokeStyle = "#fff";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        // label
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(start + sliceAngle / 2);
+        ctx.textAlign = "right";
+        ctx.fillStyle = "#fff";
+        ctx.font = "bold 18px sans-serif";
+        ctx.shadowColor = "rgba(0,0,0,.5)";
+        ctx.shadowBlur = 4;
+        ctx.fillText(sec.label, r - 10, 6);
+        ctx.restore();
+      });
+      // Arrow pointer at top
+      ctx.beginPath();
+      ctx.moveTo(cx, 4);
+      ctx.lineTo(cx - 10, 24);
+      ctx.lineTo(cx + 10, 24);
+      ctx.closePath();
+      ctx.fillStyle = "#fff";
+      ctx.fill();
+    }
+
+    let rotation = 0;
+    drawWheel(rotation);
+
+    const resultEl = document.createElement("div");
+    resultEl.style.cssText = "font-size:22px;font-weight:700;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.6);min-height:32px;text-align:center;";
+
+    const spinBtn = document.createElement("button");
+    spinBtn.className = "primary";
+    spinBtn.textContent = "Spin!";
+    spinBtn.style.cssText = "font-size:20px;padding:10px 32px;";
+
+    spinBtn.addEventListener("click", () => {
+      if(spinning || state.stageSolved) return;
+      spinning = true;
+      spinBtn.disabled = true;
+      resultEl.textContent = "";
+      const totalDeg = 1440 + Math.floor(Math.random() * 360);
+      const totalRad = totalDeg * Math.PI / 180;
+      const duration = 2400;
+      const start = performance.now();
+      const startRot = rotation;
+
+      function animate(now){
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        const ease = 1 - Math.pow(1 - progress, 3);
+        rotation = startRot + totalRad * ease;
+        drawWheel(rotation);
+        if(progress < 1){
+          requestAnimationFrame(animate);
+        } else {
+          // Determine landed sector — pointer is at top (angle = -PI/2 from canvas)
+          const normalised = (((-rotation % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2));
+          const idx = Math.floor((normalised / (Math.PI * 2)) * total) % total;
+          const sec = sectors[idx];
+          if(sec.type === "coins"){
+            addCoins(sec.coins);
+            resultEl.textContent = "You won " + sec.label + " coins!";
+            setTimeout(() => markSuccess(stage), 900);
+          } else if(sec.type === "artifact"){
+            const artImg = artifactPathByKey(artifactKey);
+            state.earnedArtifacts.push({ key: artifactKey, name: titleFromKey(artifactKey), image: artImg, description: "" });
+            resultEl.textContent = "You won the " + titleFromKey(artifactKey) + "!";
+            setTimeout(() => markSuccess(stage), 900);
+          } else {
+            // bonus spin
+            resultEl.textContent = "Bonus spin! Go again!";
+            spinning = false;
+            spinBtn.disabled = false;
+          }
+        }
+      }
+      requestAnimationFrame(animate);
+    });
+
+    wrap.appendChild(canvas);
+    wrap.appendChild(resultEl);
+    wrap.appendChild(spinBtn);
+    lane.appendChild(wrap);
+  }
+
+  function renderNumberGrid(stage){
+    const gridNums = Array.isArray(stage.grid_numbers) ? stage.grid_numbers : [];
+    const correctAnswer = String(stage.answer || "").toUpperCase().trim();
+    const promptText = stage.prompt || stage.instruction || "Find the answer in the grid!";
+
+    const wrap = document.createElement("div");
+    wrap.style.cssText = "display:flex;flex-direction:column;align-items:center;gap:12px;padding:16px 8px;";
+
+    const promptEl = document.createElement("div");
+    promptEl.style.cssText = "font-size:24px;font-weight:700;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.5);text-align:center;";
+    promptEl.textContent = promptText;
+
+    const rows = ["A","B","C","D","E"];
+    const cols = [1,2,3,4,5];
+
+    const tableWrap = document.createElement("div");
+    tableWrap.style.cssText = "overflow:auto;";
+    const table = document.createElement("table");
+    table.style.cssText = "border-collapse:collapse;font-size:15px;";
+
+    // Header row
+    const thead = document.createElement("tr");
+    const cornerTh = document.createElement("th");
+    cornerTh.style.cssText = "width:28px;height:28px;";
+    thead.appendChild(cornerTh);
+    cols.forEach((c) => {
+      const th = document.createElement("th");
+      th.style.cssText = "width:44px;height:28px;text-align:center;color:#fff;font-size:14px;";
+      th.textContent = String(c);
+      thead.appendChild(th);
+    });
+    table.appendChild(thead);
+
+    rows.forEach((rowLetter, rIdx) => {
+      const tr = document.createElement("tr");
+      const rowHdr = document.createElement("th");
+      rowHdr.style.cssText = "text-align:center;color:#fff;font-size:14px;padding-right:4px;";
+      rowHdr.textContent = rowLetter;
+      tr.appendChild(rowHdr);
+      cols.forEach((colNum, cIdx) => {
+        const td = document.createElement("td");
+        const gridIdx = rIdx * 5 + cIdx;
+        const cellVal = String(gridNums[gridIdx] || "");
+        td.style.cssText = "width:44px;height:44px;text-align:center;vertical-align:middle;border:2px solid rgba(255,255,255,.4);border-radius:6px;cursor:pointer;background:rgba(255,255,255,.15);color:#fff;font-size:16px;font-weight:600;transition:background .15s;";
+        td.textContent = cellVal;
+        td.dataset.coord = rowLetter + colNum;
+        td.addEventListener("mouseenter", () => { if(!td.classList.contains("grid-hit")) td.style.background = "rgba(255,255,255,.35)"; });
+        td.addEventListener("mouseleave", () => { if(!td.classList.contains("grid-hit")) td.style.background = "rgba(255,255,255,.15)"; });
+        td.addEventListener("click", () => {
+          if(state.stageSolved) return;
+          if(td.dataset.coord === correctAnswer){
+            td.classList.add("grid-hit");
+            td.style.background = "rgba(74,222,128,.8)";
+            td.style.cursor = "default";
+            setTimeout(() => markSuccess(stage), 250);
+          } else {
+            td.style.background = "rgba(248,113,113,.7)";
+            shake(td);
+            setTimeout(() => { if(!td.classList.contains("grid-hit")) td.style.background = "rgba(255,255,255,.15)"; }, 350);
+            onWrongAnswer();
+          }
+        });
+        tr.appendChild(td);
+      });
+      table.appendChild(tr);
+    });
+
+    tableWrap.appendChild(table);
+    wrap.appendChild(promptEl);
+    wrap.appendChild(tableWrap);
     lane.appendChild(wrap);
   }
 
@@ -3563,6 +3870,7 @@ function buildHtml(
           btn.classList.add("bad");
           setTimeout(() => btn.classList.remove("bad"), 240);
           shake(btn);
+          onWrongAnswer();
         }
       };
       row.appendChild(btn);
@@ -3706,6 +4014,7 @@ function buildHtml(
           inp.classList.add("bad");
           setTimeout(() => inp.classList.remove("bad"), 220);
           shake(inp);
+          onWrongAnswer();
         }
       };
       inp.addEventListener("change", evaluate);
@@ -4707,6 +5016,9 @@ function buildHtml(
     if(playerSide){
       playerSide.classList.toggle("stage-boss-hidden", index === STAGES.length - 1);
     }
+    const isBossStage = index === STAGES.length - 1;
+    if(isBossStage && state.stagePracticeDone === 0) initBossHpBar();
+    else if(!isBossStage) hideBossHpBar();
     const instruction = stage.title || stage.question || LESSON.story_hook || "";
     const cleanInstruction = String(instruction).trim() ? instruction : englishStageFallback(engStage);
     if(stage.hide_instruction_label){
@@ -4736,6 +5048,9 @@ function buildHtml(
     else if(engType === "true_false") renderTrueFalse(stage);
     else if(engType === "text_task") renderTextTask(stage);
     else if(engType === "five_tasks") renderFiveTasks(stage);
+    else if(engType === "dice_multiply") renderDiceMultiply(stage);
+    else if(engType === "fortune_wheel") renderFortuneWheel(stage);
+    else if(engType === "number_grid") renderNumberGrid(stage);
     else {
       setMessage("Unknown stage type: " + stage.type);
     }
@@ -5006,6 +5321,47 @@ function buildHtml(
       void game.offsetWidth;
       game.classList.add("boss-hit");
       setTimeout(() => game.classList.remove("boss-hit"), 360);
+    }
+  }
+
+  function initBossHpBar(){
+    state.villainHp = 20;
+    state.heroHp = 3;
+    updateBossHpBar();
+    const bar = $("bossHpBar");
+    if(bar) bar.classList.remove("hidden");
+  }
+
+  function hideBossHpBar(){
+    const bar = $("bossHpBar");
+    if(bar) bar.classList.add("hidden");
+  }
+
+  function updateBossHpBar(){
+    const fill = $("villainHpFill");
+    const label = $("villainHpLabel");
+    const hearts = $("heroHearts");
+    if(fill) fill.style.width = Math.max(0, (state.villainHp / 20) * 100) + "%";
+    if(label) label.textContent = "👹 " + Math.max(0, state.villainHp) + " HP";
+    if(hearts) hearts.textContent = "❤️".repeat(Math.max(0, state.heroHp));
+  }
+
+  function decreaseVillainHp(amount){
+    state.villainHp = Math.max(0, state.villainHp - amount);
+    updateBossHpBar();
+    if(state.villainHp === 0){
+      hideBossHpBar();
+    }
+  }
+
+  function decreaseHeroHp(amount){
+    state.heroHp = Math.max(0, state.heroHp - amount);
+    updateBossHpBar();
+  }
+
+  function onWrongAnswer(){
+    if(state.stageIndex === STAGES.length - 1){
+      decreaseHeroHp(1);
     }
   }
 
