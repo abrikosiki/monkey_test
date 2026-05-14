@@ -5,63 +5,103 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🎲 Dice Multiply — demo</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
-  :root{
-    --sand:#f4d03f;--gold:#f39c12;--dark:#1a1a2e;--panel:rgba(0,0,0,.58);--ok:#4fd982;--bad:#ff6b6b;
-  }
-  *{box-sizing:border-box}
-  body{margin:0;font-family:"Fredoka One","Trebuchet MS",Arial,sans-serif;color:#fff;background:#0a0a1a;overflow:hidden;width:100vw;height:100vh;user-select:none;}
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+:root{--sand:#f4d03f;--gold:#f39c12;--dark:#1a1a2e;--panel:rgba(0,0,0,.58);}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Fredoka One",Arial,sans-serif;color:#fff;background:#0a0a1a;overflow:hidden;width:100vw;height:100vh;user-select:none;}
 
-  /* ── game layout (exact copy from builder) ── */
-  .game{position:fixed;inset:0;width:100vw;height:100vh;overflow:hidden;background:#111;}
-  .bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;filter:saturate(1.05) contrast(1.02);}
-  .overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.35),rgba(0,0,0,.15) 35%,rgba(0,0,0,.35));z-index:2;pointer-events:none;}
-  .hud{position:absolute;top:13px;right:16px;z-index:50;background:var(--panel);border:2px solid var(--gold);border-radius:26px;padding:6px 16px;display:flex;align-items:center;gap:6px;font-size:19px;color:var(--sand);}
-  .cspin{animation:cflip 3s linear infinite}
-  @keyframes cflip{0%,45%{transform:rotateY(0)}50%,95%{transform:rotateY(180deg)}100%{transform:rotateY(360deg)}}
-  .instruction{position:absolute;z-index:20;top:48px;left:46%;transform:translateX(-50%);background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:7px 14px;max-width:56%;text-align:center;font-size:16px;}
-  .player-side{position:absolute;left:150px;bottom:-18px;z-index:8;display:flex;flex-direction:column;align-items:flex-start;pointer-events:none;}
-  .p-frame{width:clamp(270px,27vw,480px);height:clamp(345px,39vw,630px);border:none;display:flex;align-items:flex-end;justify-content:center;font-size:210px;overflow:visible;position:relative;}
-  .p-frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 8px 18px rgba(0,0,0,.45));}
-  .izone{position:absolute;right:0;top:0;bottom:0;width:42%;z-index:5;}
-  .right-lane{position:absolute;inset:0;width:100%;height:100%;z-index:12;}
+/* ── exact game layout ── */
+.game{position:fixed;inset:0;overflow:hidden;background:#111;}
+.bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;filter:saturate(1.05) contrast(1.02);}
+.overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.35),rgba(0,0,0,.15) 35%,rgba(0,0,0,.35));z-index:2;pointer-events:none;}
+.hud{position:absolute;top:13px;right:16px;z-index:50;background:var(--panel);border:2px solid var(--gold);border-radius:26px;padding:6px 16px;display:flex;align-items:center;gap:6px;font-size:19px;color:var(--sand);}
+.cspin{animation:cflip 3s linear infinite}
+@keyframes cflip{0%,45%{transform:rotateY(0)}50%,95%{transform:rotateY(180deg)}100%{transform:rotateY(360deg)}}
+.instruction{position:absolute;z-index:20;top:48px;left:46%;transform:translateX(-50%);background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:7px 14px;max-width:56%;text-align:center;font-size:16px;}
+.player-side{position:absolute;left:150px;bottom:-18px;z-index:8;pointer-events:none;}
+.p-frame{width:clamp(270px,27vw,480px);height:clamp(345px,39vw,630px);position:relative;display:flex;align-items:flex-end;justify-content:center;}
+.p-frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 8px 18px rgba(0,0,0,.45));}
+.izone{position:absolute;right:0;top:0;bottom:0;width:42%;z-index:5;}
+.right-lane{position:absolute;inset:0;}
 
-  /* ── input styles ── */
-  input.answer{background:rgba(255,255,255,.95);border:3px solid rgba(255,180,0,.8);border-radius:14px;outline:none;color:#1d1606;font-family:"Fredoka One",cursive;transition:border-color .15s;}
-  input.answer:focus{border-color:#f7a500;box-shadow:0 0 0 4px rgba(247,165,0,.3);}
-  input.answer.ok{background:#d4f7d4;border-color:#22c55e;}
-  input.answer.bad{background:#ffd5d5;border-color:#ef4444;}
+/* ── answer input ── */
+input.answer{background:rgba(255,255,255,.95);border:3px solid rgba(255,180,0,.8);border-radius:14px;outline:none;color:#1d1606;font-family:"Fredoka One",cursive;transition:border-color .15s;}
+input.answer:focus{border-color:#f7a500;box-shadow:0 0 0 4px rgba(247,165,0,.3);}
+input.answer.ok{background:#d4f7d4;border-color:#22c55e;}
+input.answer.bad{background:#ffd5d5;border-color:#ef4444;animation:shake .22s ease;}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
+@keyframes introPop{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
 
-  /* ── animations ── */
-  @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
-  @keyframes diceRoll{0%{transform:rotate(0) scale(1)}15%{transform:rotate(-25deg) scale(1.18)}35%{transform:rotate(22deg) scale(.9)}55%{transform:rotate(-18deg) scale(1.12)}75%{transform:rotate(12deg) scale(.95)}90%{transform:rotate(-6deg) scale(1.05)}100%{transform:rotate(0) scale(1)}}
-  @keyframes introPop{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
-  @keyframes cpopAnim{0%{opacity:1;transform:translateY(0)}80%{opacity:1;transform:translateY(-54px)}100%{opacity:0;transform:translateY(-54px)}}
+/* ══════════════════════════════
+   3D DICE
+══════════════════════════════ */
+.dice-scene{
+  width:180px;height:180px;
+  perspective:520px;
+  cursor:pointer;
+  filter:drop-shadow(0 16px 32px rgba(0,0,0,.7));
+}
+.dice{
+  width:180px;height:180px;
+  position:relative;
+  transform-style:preserve-3d;
+  transform:rotateX(-18deg) rotateY(22deg);
+  animation:diceIdle 4s ease-in-out infinite;
+  transition:transform 1.9s cubic-bezier(0.12,0.8,0.2,1);
+}
+.dice.thrown{animation:none;}
+@keyframes diceIdle{
+  0%,100%{transform:rotateX(-18deg) rotateY(22deg)}
+  33%{transform:rotateX(-24deg) rotateY(38deg)}
+  66%{transform:rotateX(-12deg) rotateY(10deg)}
+}
 
-  /* ── demo controls overlay ── */
-  .demo-bar{position:fixed;bottom:0;left:0;right:0;z-index:200;background:rgba(0,0,0,.78);border-top:1px solid rgba(255,255,255,.1);padding:8px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;font-size:14px;}
-  .demo-bar label{display:flex;align-items:center;gap:6px;color:rgba(255,255,255,.8);}
-  .demo-bar input[type=number]{width:56px;padding:3px 8px;border-radius:8px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;font-family:"Fredoka One",cursive;font-size:14px;text-align:center;}
-  .demo-bar button{padding:6px 16px;border:none;border-radius:20px;cursor:pointer;background:linear-gradient(135deg,#ffcf66,#f3a93f);color:#1d1606;font-family:"Fredoka One",cursive;font-size:14px;box-shadow:0 3px 0 #9b6b21;}
-  .demo-bar button:active{transform:translateY(2px);box-shadow:none;}
-  .demo-bar .round-tag{background:rgba(255,255,255,.12);border-radius:20px;padding:4px 12px;color:#fff;font-size:14px;}
+/* 6 faces */
+.face{
+  position:absolute;width:180px;height:180px;
+  background:linear-gradient(145deg,#fffaf2,#ffe8c8);
+  border:3px solid rgba(160,100,40,.35);
+  border-radius:28px;
+  box-shadow:inset 0 3px 10px rgba(255,255,255,.9),inset 0 -3px 10px rgba(0,0,0,.12);
+  display:flex;align-items:center;justify-content:center;
+  backface-visibility:hidden;
+}
+.face-1{transform:translateZ(90px)}
+.face-6{transform:rotateY(180deg) translateZ(90px)}
+.face-3{transform:rotateY(90deg) translateZ(90px)}
+.face-4{transform:rotateY(-90deg) translateZ(90px)}
+.face-2{transform:rotateX(90deg) translateZ(90px)}
+.face-5{transform:rotateX(-90deg) translateZ(90px)}
+
+/* dot grid 3×3 */
+.dg{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);width:140px;height:140px;gap:10px;}
+.d{border-radius:50%;background:radial-gradient(circle at 36% 30%,#5a2080,#1a082e);box-shadow:inset 0 -2px 5px rgba(0,0,0,.5),0 1px 2px rgba(255,255,255,.15);}
+.e{visibility:hidden}
+
+/* ── demo controls ── */
+.demo-bar{position:fixed;bottom:0;left:0;right:0;z-index:200;background:rgba(0,0,0,.78);border-top:1px solid rgba(255,255,255,.1);padding:8px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;font-size:14px;}
+.demo-bar label{display:flex;align-items:center;gap:6px;color:rgba(255,255,255,.8);}
+.demo-bar input[type=number]{width:56px;padding:3px 8px;border-radius:8px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;font-family:"Fredoka One",cursive;font-size:14px;text-align:center;}
+.demo-bar button{padding:6px 16px;border:none;border-radius:20px;cursor:pointer;background:linear-gradient(135deg,#ffcf66,#f3a93f);color:#1d1606;font-family:"Fredoka One",cursive;font-size:14px;box-shadow:0 3px 0 #9b6b21;}
+.demo-bar button:active{transform:translateY(2px);box-shadow:none;}
+.round-tag{background:rgba(255,255,255,.12);border-radius:20px;padding:4px 12px;}
 </style>
 </head>
 <body>
-<div class="game" id="game">
-  <img class="bg" id="bg" src="assets/backgrounds/jelly_bay_island1.PNG" alt="">
+
+<div class="game">
+  <img class="bg" src="assets/backgrounds/jelly_bay_island1.PNG" alt="">
   <div class="overlay"></div>
   <div class="hud"><span class="cspin">🪙</span><span id="coinsLabel">0</span></div>
-  <div class="instruction" id="instruction">Tap the dice to roll!</div>
+  <div class="instruction" id="instruction">Tap the dice to roll! (1/5)</div>
   <div class="player-side">
     <div class="p-frame"><img src="assets/characters/elf_green.webp" alt=""></div>
   </div>
-  <div class="izone" id="izone">
+  <div class="izone">
     <div class="right-lane" id="lane"></div>
   </div>
 </div>
 
-<!-- Demo controls -->
 <div class="demo-bar">
   <label>✖ R1–3: <input type="number" id="mult1" value="3" min="1" max="20"></label>
   <label>✖ R4–5: <input type="number" id="mult2" value="7" min="1" max="20"></label>
@@ -70,121 +110,160 @@
 </div>
 
 <script>
-const state = { round: 0, coins: 0 };
+// ── die face HTML helpers ──────────────────────────────────────
+// 3×3 grid: d = dot, e = empty
+const FACES_HTML = {
+  1: `<e></e><e></e><e></e>  <e></e><d></d><e></e>  <e></e><e></e><e></e>`,
+  2: `<e></e><e></e><d></d>  <e></e><e></e><e></e>  <d></d><e></e><e></e>`,
+  3: `<e></e><e></e><d></d>  <e></e><d></d><e></e>  <d></d><e></e><e></e>`,
+  4: `<d></d><e></e><d></d>  <e></e><e></e><e></e>  <d></d><e></e><d></d>`,
+  5: `<d></d><e></e><d></d>  <e></e><d></d><e></e>  <d></d><e></e><d></d>`,
+  6: `<d></d><e></e><d></d>  <d></d><e></e><d></d>  <d></d><e></e><d></d>`,
+};
+
+function makeFaceHTML(n){
+  return FACES_HTML[n]
+    .replace(/\s+/g,'')
+    .replace(/<d><\/d>/g,'<i class="d"></i>')
+    .replace(/<e><\/e>/g,'<i class="e"></i>');
+}
+
+// Rotation to bring each face front (viewer looks along -Z)
+const LANDING = {
+  1: { x:   0, y:    0 },  // front face
+  2: { x: -90, y:    0 },  // top face → tilt toward viewer
+  3: { x:   0, y:  -90 },  // right face
+  4: { x:   0, y:   90 },  // left face
+  5: { x:  90, y:    0 },  // bottom face
+  6: { x:   0, y:  180 },  // back face
+};
+
+// ── app state ──────────────────────────────────────────────────
+const appState = { round: 0, coins: 0 };
 
 function $(id){ return document.getElementById(id); }
-
 function getMult(){
-  const m1 = Number($('mult1').value) || 3;
-  const m2 = Number($('mult2').value) || 7;
-  return state.round < 3 ? m1 : m2;
+  return appState.round < 3
+    ? (Number($('mult1').value)||3)
+    : (Number($('mult2').value)||7);
 }
 
-function addCoins(n){
-  state.coins += n;
-  $('coinsLabel').textContent = state.coins;
-}
-
-function shake(el){
-  el.style.animation = '';
-  void el.offsetWidth;
-  el.style.animation = 'shake .22s ease';
-  setTimeout(() => el.style.animation = '', 250);
-}
-
-function markSuccess(){
-  addCoins(2);
-  setTimeout(() => {
-    state.round = state.round < 4 ? state.round + 1 : 0;
-    $('roundTag').textContent = 'Round ' + (state.round + 1) + ' / 5';
-    $('instruction').textContent = state.round < 3
-      ? 'Tap the dice to roll! (×' + (Number($('mult1').value)||3) + ')'
-      : 'Harder now! (×' + (Number($('mult2').value)||7) + ')';
-    render();
-  }, 500);
-}
-
+// ── render ────────────────────────────────────────────────────
 function render(){
   const lane = $('lane');
   lane.innerHTML = '';
 
   const mult = getMult();
   let diceVal = null;
-  let rolled = false;
+  let rolled  = false;
 
+  // wrapper — centred in right zone
   const wrap = document.createElement('div');
-  wrap.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;';
+  wrap.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:28px;';
 
-  const diceEl = document.createElement('div');
-  diceEl.style.cssText = 'font-size:220px;cursor:pointer;user-select:none;line-height:1;filter:drop-shadow(0 8px 24px rgba(0,0,0,.5));position:relative;';
-  diceEl.textContent = '🎲';
-  diceEl.title = 'Tap to roll!';
+  // ── 3D dice ──
+  const scene = document.createElement('div');
+  scene.className = 'dice-scene';
 
+  const dice = document.createElement('div');
+  dice.className = 'dice';
+
+  // Build 6 faces
+  [1,2,3,4,5,6].forEach(n => {
+    const face = document.createElement('div');
+    face.className = 'face face-' + n;
+    const grid = document.createElement('div');
+    grid.className = 'dg';
+    grid.innerHTML = makeFaceHTML(n);
+    face.appendChild(grid);
+    dice.appendChild(face);
+  });
+
+  scene.appendChild(dice);
+
+  // ── prompt ──
   const promptEl = document.createElement('div');
-  promptEl.style.cssText = 'font-size:72px;font-weight:700;color:#fff;text-shadow:0 3px 12px rgba(0,0,0,.6);min-height:88px;text-align:center;letter-spacing:2px;';
+  promptEl.style.cssText = 'font-size:64px;font-weight:700;color:#fff;text-shadow:0 3px 12px rgba(0,0,0,.7);min-height:80px;text-align:center;letter-spacing:2px;';
   promptEl.textContent = '? × ' + mult + ' = ?';
 
+  // ── answer input ──
   const input = document.createElement('input');
   input.type = 'number';
   input.className = 'answer';
-  input.style.cssText = 'width:160px;font-size:60px;text-align:center;padding:10px;border-radius:16px;';
+  input.style.cssText = 'width:150px;font-size:56px;text-align:center;padding:10px;border-radius:16px;';
   input.placeholder = '?';
   input.autocomplete = 'off';
   input.disabled = true;
 
   let _timer;
-  function checkDice(){
+  function check(){
     if(!rolled || input.disabled) return;
     const val = String(input.value).trim();
     if(!val) return;
     if(Number(val) === diceVal * mult){
       input.disabled = true;
       input.classList.add('ok');
-      markSuccess();
+      appState.coins += 2;
+      $('coinsLabel').textContent = appState.coins;
+      setTimeout(() => {
+        appState.round = appState.round < 4 ? appState.round + 1 : 0;
+        $('roundTag').textContent = 'Round ' + (appState.round + 1) + ' / 5';
+        $('instruction').textContent = (appState.round < 3 ? '×' + (Number($('mult1').value)||3) : '×' + (Number($('mult2').value)||7)) + '  (' + (appState.round + 1) + '/5)';
+        render();
+      }, 500);
     } else {
       input.value = '';
-      shake(input);
       input.classList.add('bad');
-      setTimeout(() => input.classList.remove('bad'), 350);
+      setTimeout(() => input.classList.remove('bad'), 400);
     }
   }
-
-  input.addEventListener('change', checkDice);
-  input.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); checkDice(); } });
+  input.addEventListener('change', check);
+  input.addEventListener('keydown', e => { if(e.key==='Enter'){e.preventDefault();check();} });
   input.addEventListener('input', () => {
     clearTimeout(_timer);
     if(!String(input.value).trim()) return;
-    _timer = setTimeout(checkDice, 1200);
+    _timer = setTimeout(check, 1200);
   });
 
-  diceEl.addEventListener('click', () => {
+  // ── dice click → throw ──
+  scene.addEventListener('click', () => {
     if(rolled) return;
     rolled = true;
     diceVal = Math.floor(Math.random() * 6) + 1;
-    diceEl.style.animation = 'diceRoll .7s ease-out forwards';
-    diceEl.style.cursor = 'default';
+
+    const angle = LANDING[diceVal];
+    // Add multiple full rotations so it spins before landing
+    const finalX = angle.x + 720;   // 2 full X rotations
+    const finalY = angle.y + 1080;  // 3 full Y rotations
+
+    dice.classList.add('thrown');  // remove idle animation
+    dice.style.transform = `rotateX(${finalX}deg) rotateY(${finalY}deg)`;
+
+    // After landing: show result badge + enable input
     setTimeout(() => {
-      diceEl.style.animation = '';
-      const badge = document.createElement('div');
-      badge.style.cssText = 'position:absolute;top:-18px;right:-18px;width:90px;height:90px;background:#ff4400;color:#fff;font-size:52px;font-weight:900;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.5);font-family:"Fredoka One",cursive;animation:introPop .3s cubic-bezier(.34,1.56,.64,1);';
-      badge.textContent = String(diceVal);
-      diceEl.appendChild(badge);
-      promptEl.textContent = diceVal + ' × ' + mult + ' = ?';
-      input.disabled = false;
-      input.focus();
-    }, 750);
+      // Small bounce back
+      dice.style.transition = 'transform .18s cubic-bezier(.34,1.56,.64,1)';
+      dice.style.transform = `rotateX(${angle.x}deg) rotateY(${angle.y}deg)`;
+
+      setTimeout(() => {
+        promptEl.textContent = diceVal + ' × ' + mult + ' = ?';
+        input.disabled = false;
+        scene.style.cursor = 'default';
+        input.focus();
+      }, 200);
+    }, 1950);
   });
 
-  wrap.appendChild(diceEl);
+  wrap.appendChild(scene);
   wrap.appendChild(promptEl);
   wrap.appendChild(input);
   lane.appendChild(wrap);
 }
 
 function restart(){
-  state.round = 0;
+  appState.round = 0;
   $('roundTag').textContent = 'Round 1 / 5';
-  $('instruction').textContent = 'Tap the dice to roll!';
+  $('instruction').textContent = 'Tap the dice to roll! (1/5)';
   render();
 }
 
