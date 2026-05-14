@@ -2553,6 +2553,7 @@ function buildHtml(
   function updateStageControls(){
     const skip = $("stageSkipBtn");
     skip.textContent = "⏭ Skip Stage " + (state.stageIndex + 1);
+    skip.classList.toggle("hidden", state.stageIndex === STAGES.length - 1);
   }
 
   function advanceToNextStage(){
@@ -3132,6 +3133,12 @@ function buildHtml(
       input.addEventListener("keydown", (e) => {
         if(e.key === "Enter") input.blur();
       });
+      let _fillTimer;
+      input.addEventListener("input", () => {
+        clearTimeout(_fillTimer);
+        if(String(input.value).trim() === "") return;
+        _fillTimer = setTimeout(() => input.blur(), 1200);
+      });
       input.onchange = () => {
         const ok = Number(input.value) === Number(entry.answer);
         if(ok){
@@ -3260,6 +3267,12 @@ function buildHtml(
     }
     input.addEventListener("change", checkTextAnswer);
     input.addEventListener("keydown", (e) => { if(e.key === "Enter"){ e.preventDefault(); checkTextAnswer(); } });
+    let _ttTimer;
+    input.addEventListener("input", () => {
+      clearTimeout(_ttTimer);
+      if(String(input.value).trim() === "") return;
+      _ttTimer = setTimeout(() => checkTextAnswer(), 1200);
+    });
     box.appendChild(input);
     lane.appendChild(box);
   }
@@ -3299,6 +3312,12 @@ function buildHtml(
       }
       input.addEventListener("change", checkFive);
       input.addEventListener("keydown", (e) => { if(e.key === "Enter"){ e.preventDefault(); checkFive(); } });
+      let _fiveTimer;
+      input.addEventListener("input", () => {
+        clearTimeout(_fiveTimer);
+        if(String(input.value).trim() === "") return;
+        _fiveTimer = setTimeout(() => checkFive(), 1200);
+      });
       const makeSeg = (txt) => {
         const s = document.createElement("span");
         s.className = "five-seg";
@@ -3691,6 +3710,12 @@ function buildHtml(
       };
       inp.addEventListener("change", evaluate);
       inp.addEventListener("blur", evaluate);
+      let _balTimer;
+      inp.addEventListener("input", () => {
+        clearTimeout(_balTimer);
+        if(String(inp.value).trim() === "") return;
+        _balTimer = setTimeout(() => inp.blur(), 1200);
+      });
       leftPill.append(document.createTextNode(parts[0] || ""));
       leftPill.appendChild(inp);
       leftPill.append(document.createTextNode(parts.slice(1).join("?") || ""));
@@ -4578,6 +4603,12 @@ function buildHtml(
           input.autocomplete = "off";
           input.addEventListener("keydown", (e) => {
             if(e.key === "Enter") input.blur();
+          });
+          let _bossTimer;
+          input.addEventListener("input", () => {
+            clearTimeout(_bossTimer);
+            if(String(input.value).trim() === "") return;
+            _bossTimer = setTimeout(() => input.blur(), 1200);
           });
           input.onchange = () => {
             const ok = Number(input.value) === Number(entry.answer);
