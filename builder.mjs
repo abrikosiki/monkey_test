@@ -1406,7 +1406,14 @@ function buildHtml(
     .boss-hit{animation:bossScreenShake .32s ease}
     .boss-flash{position:fixed;inset:0;background:rgba(200,30,30,.42);pointer-events:none;z-index:150;animation:bossFlashFade .38s ease forwards}
     @keyframes bossFlashFade{0%{opacity:1}100%{opacity:0}}
-    @keyframes diceRoll{0%{transform:rotate(0) scale(1)}15%{transform:rotate(-25deg) scale(1.18)}35%{transform:rotate(22deg) scale(0.9)}55%{transform:rotate(-18deg) scale(1.12)}75%{transform:rotate(12deg) scale(0.95)}90%{transform:rotate(-6deg) scale(1.05)}100%{transform:rotate(0) scale(1)}}
+    .dm-scene{width:200px;height:200px;perspective:600px;cursor:pointer;filter:drop-shadow(0 20px 40px rgba(0,0,0,.8));}
+    .dm-cube{width:200px;height:200px;position:relative;transform-style:preserve-3d;animation:diceIdle 5s ease-in-out infinite;}
+    @keyframes diceIdle{0%,100%{transform:rotateX(-18deg) rotateY(22deg) rotateZ(0deg)}40%{transform:rotateX(-24deg) rotateY(40deg) rotateZ(2deg)}70%{transform:rotateX(-12deg) rotateY(8deg) rotateZ(-2deg)}}
+    .dm-face{position:absolute;width:200px;height:200px;background:linear-gradient(145deg,#fffdf8,#ffe9c8);border:3px solid rgba(160,100,40,.3);border-radius:30px;box-shadow:inset 0 4px 12px rgba(255,255,255,.85),inset 0 -4px 12px rgba(0,0,0,.1);display:flex;align-items:center;justify-content:center;backface-visibility:hidden;}
+    .dm-f1{transform:translateZ(100px)}.dm-f6{transform:rotateY(180deg) translateZ(100px)}.dm-f3{transform:rotateY(90deg) translateZ(100px)}.dm-f4{transform:rotateY(-90deg) translateZ(100px)}.dm-f2{transform:rotateX(90deg) translateZ(100px)}.dm-f5{transform:rotateX(-90deg) translateZ(100px)}
+    .dm-dg{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);width:152px;height:152px;gap:10px;}
+    .dm-d{border-radius:50%;background:radial-gradient(circle at 36% 30%,#5a2080,#1a082e);box-shadow:inset 0 -2px 5px rgba(0,0,0,.55),0 1px 2px rgba(255,255,255,.12);}
+    .dm-e{visibility:hidden}
     .boss-hp-bar{position:absolute;bottom:14px;left:4%;width:92%;z-index:30;pointer-events:none;}
     .boss-hp-bar.hidden{display:none}
     .boss-hp-villain{width:100%;}
@@ -3373,21 +3380,49 @@ function buildHtml(
     let rolled = false;
 
     const wrap = document.createElement("div");
-    wrap.style.cssText = "position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;";
+    wrap.style.cssText = "position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:32px;";
 
-    const diceEl = document.createElement("div");
-    diceEl.style.cssText = "font-size:220px;cursor:pointer;user-select:none;line-height:1;filter:drop-shadow(0 8px 24px rgba(0,0,0,.5));";
-    diceEl.textContent = "🎲";
-    diceEl.title = "Tap to roll!";
+    /* ── 3D dice ── */
+    const DOTS = {
+      1:"eee ede eee", 2:"eed eee dee", 3:"eed ede dee",
+      4:"ded eee ded", 5:"ded ede ded", 6:"ded ded ded"
+    };
+    function makeFace(n){
+      const face = document.createElement("div");
+      face.className = "dm-face dm-f" + n;
+      const grid = document.createElement("div");
+      grid.className = "dm-dg";
+      DOTS[n].replace(/\s/g,"").split("").forEach(c => {
+        const el = document.createElement("i");
+        el.className = c === "d" ? "dm-d" : "dm-e";
+        grid.appendChild(el);
+      });
+      face.appendChild(grid);
+      return face;
+    }
+    const LANDING = {
+      1:{x:0,y:0},2:{x:-90,y:0},3:{x:0,y:-90},
+      4:{x:0,y:90},5:{x:90,y:0},6:{x:0,y:180}
+    };
+    function easeOutQuart(t){ return 1 - Math.pow(1 - t, 4); }
+
+    const scene = document.createElement("div");
+    scene.className = "dm-scene";
+    const cube = document.createElement("div");
+    cube.className = "dm-cube";
+    [1,2,3,4,5,6].forEach(n => cube.appendChild(makeFace(n)));
+    scene.appendChild(cube);
+
+    let curX = -18, curY = 22;
 
     const promptEl = document.createElement("div");
-    promptEl.style.cssText = "font-size:72px;font-weight:700;color:#fff;text-shadow:0 3px 12px rgba(0,0,0,.6);min-height:88px;text-align:center;letter-spacing:2px;";
+    promptEl.style.cssText = "font-size:64px;font-weight:700;color:#fff;text-shadow:0 3px 12px rgba(0,0,0,.7);min-height:80px;text-align:center;letter-spacing:2px;";
     promptEl.textContent = "? × " + mult + " = ?";
 
     const input = document.createElement("input");
     input.type = "number";
     input.className = "answer";
-    input.style.cssText = "width:160px;font-size:60px;text-align:center;padding:10px;border-radius:16px;";
+    input.style.cssText = "width:150px;font-size:56px;text-align:center;padding:10px;border-radius:16px;";
     input.placeholder = "?";
     input.autocomplete = "off";
     input.disabled = true;
@@ -3418,28 +3453,46 @@ function buildHtml(
       _diceTimer = setTimeout(() => checkDice(), 1200);
     });
 
-    diceEl.addEventListener("click", () => {
+    scene.addEventListener("click", () => {
       if(rolled || state.stageSolved) return;
       rolled = true;
+      scene.style.cursor = "default";
       diceVal = Math.floor(Math.random() * 6) + 1;
-      // Spin animation — 🎲 stays as-is, no ugly face switch
-      diceEl.style.animation = "diceRoll .7s ease-out forwards";
-      diceEl.style.cursor = "default";
-      setTimeout(() => {
-        diceEl.style.animation = "";
-        // Show result number as badge on top of dice area
-        diceEl.style.position = "relative";
-        const badge = document.createElement("div");
-        badge.style.cssText = "position:absolute;top:-18px;right:-18px;width:90px;height:90px;background:#ff4400;color:#fff;font-size:52px;font-weight:900;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.5);font-family:'Fredoka One',cursive;animation:introPop .3s cubic-bezier(.34,1.56,.64,1)";
-        badge.textContent = String(diceVal);
-        diceEl.appendChild(badge);
-        promptEl.textContent = diceVal + " × " + mult + " = ?";
-        input.disabled = false;
-        input.focus();
-      }, 750);
+      const ang = LANDING[diceVal];
+      const endX = ang.x + 4 * 360;
+      const endY = ang.y + 5 * 360;
+      const startX = curX, startY = curY;
+      const startTime = performance.now();
+      const DURATION = 1900;
+      cube.style.animation = "none";
+      function step(now){
+        const raw = Math.min((now - startTime) / DURATION, 1);
+        const t = easeOutQuart(raw);
+        const x = startX + (endX - startX) * t;
+        const y = startY + (endY - startY) * t;
+        const wobble = Math.sin(raw * Math.PI * 9) * 28 * Math.pow(1 - raw, 2);
+        cube.style.transform = "rotateX(" + x + "deg) rotateY(" + y + "deg) rotateZ(" + wobble + "deg)";
+        if(raw < 1){
+          requestAnimationFrame(step);
+        } else {
+          curX = endX; curY = endY;
+          cube.style.transition = "transform .12s ease-out";
+          cube.style.transform = "rotateX(" + (endX+4) + "deg) rotateY(" + (endY+5) + "deg) rotateZ(0deg)";
+          setTimeout(() => {
+            cube.style.transition = "transform .2s cubic-bezier(.34,1.56,.64,1)";
+            cube.style.transform = "rotateX(" + endX + "deg) rotateY(" + endY + "deg) rotateZ(0deg)";
+            setTimeout(() => {
+              promptEl.textContent = diceVal + " × " + mult + " = ?";
+              input.disabled = false;
+              input.focus();
+            }, 160);
+          }, 130);
+        }
+      }
+      requestAnimationFrame(step);
     });
 
-    wrap.appendChild(diceEl);
+    wrap.appendChild(scene);
     wrap.appendChild(promptEl);
     wrap.appendChild(input);
     lane.appendChild(wrap);

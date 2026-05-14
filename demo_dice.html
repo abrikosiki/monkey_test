@@ -6,7 +6,7 @@
 <title>🎲 Dice Multiply — demo</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
-:root{--sand:#f4d03f;--gold:#f39c12;--dark:#1a1a2e;--panel:rgba(0,0,0,.58);}
+:root{--sand:#f4d03f;--gold:#f39c12;--panel:rgba(0,0,0,.58);}
 *{box-sizing:border-box}
 body{margin:0;font-family:"Fredoka One",Arial,sans-serif;color:#fff;background:#0a0a1a;overflow:hidden;width:100vw;height:100vh;user-select:none;}
 
@@ -32,54 +32,52 @@ input.answer.bad{background:#ffd5d5;border-color:#ef4444;animation:shake .22s ea
 @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
 @keyframes introPop{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
 
-/* ══════════════════════════════
-   3D DICE
-══════════════════════════════ */
+/* ══════════════════
+   3-D DICE
+══════════════════ */
 .dice-scene{
-  width:180px;height:180px;
-  perspective:520px;
+  width:200px; height:200px;
+  perspective:600px;
   cursor:pointer;
-  filter:drop-shadow(0 16px 32px rgba(0,0,0,.7));
+  filter:drop-shadow(0 20px 40px rgba(0,0,0,.8));
 }
 .dice{
-  width:180px;height:180px;
+  width:200px; height:200px;
   position:relative;
   transform-style:preserve-3d;
-  transform:rotateX(-18deg) rotateY(22deg);
-  animation:diceIdle 4s ease-in-out infinite;
-  transition:transform 1.9s cubic-bezier(0.12,0.8,0.2,1);
+  /* idle: slow float showing 3D depth */
+  animation:diceIdle 5s ease-in-out infinite;
 }
-.dice.thrown{animation:none;}
 @keyframes diceIdle{
-  0%,100%{transform:rotateX(-18deg) rotateY(22deg)}
-  33%{transform:rotateX(-24deg) rotateY(38deg)}
-  66%{transform:rotateX(-12deg) rotateY(10deg)}
+  0%,100%{transform:rotateX(-18deg) rotateY(22deg) rotateZ(0deg)}
+  40%    {transform:rotateX(-24deg) rotateY(40deg)  rotateZ(2deg)}
+  70%    {transform:rotateX(-12deg) rotateY(8deg)   rotateZ(-2deg)}
 }
 
-/* 6 faces */
+/* 6 faces — size 200px, so translateZ = 100px */
 .face{
-  position:absolute;width:180px;height:180px;
-  background:linear-gradient(145deg,#fffaf2,#ffe8c8);
-  border:3px solid rgba(160,100,40,.35);
-  border-radius:28px;
-  box-shadow:inset 0 3px 10px rgba(255,255,255,.9),inset 0 -3px 10px rgba(0,0,0,.12);
-  display:flex;align-items:center;justify-content:center;
+  position:absolute; width:200px; height:200px;
+  background:linear-gradient(145deg,#fffdf8,#ffe9c8);
+  border:3px solid rgba(160,100,40,.3);
+  border-radius:30px;
+  box-shadow:inset 0 4px 12px rgba(255,255,255,.85), inset 0 -4px 12px rgba(0,0,0,.1);
+  display:flex; align-items:center; justify-content:center;
   backface-visibility:hidden;
 }
-.face-1{transform:translateZ(90px)}
-.face-6{transform:rotateY(180deg) translateZ(90px)}
-.face-3{transform:rotateY(90deg) translateZ(90px)}
-.face-4{transform:rotateY(-90deg) translateZ(90px)}
-.face-2{transform:rotateX(90deg) translateZ(90px)}
-.face-5{transform:rotateX(-90deg) translateZ(90px)}
+.face-1{transform:translateZ(100px)}
+.face-6{transform:rotateY(180deg) translateZ(100px)}
+.face-3{transform:rotateY(90deg)  translateZ(100px)}
+.face-4{transform:rotateY(-90deg) translateZ(100px)}
+.face-2{transform:rotateX(90deg)  translateZ(100px)}
+.face-5{transform:rotateX(-90deg) translateZ(100px)}
 
-/* dot grid 3×3 */
-.dg{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);width:140px;height:140px;gap:10px;}
-.d{border-radius:50%;background:radial-gradient(circle at 36% 30%,#5a2080,#1a082e);box-shadow:inset 0 -2px 5px rgba(0,0,0,.5),0 1px 2px rgba(255,255,255,.15);}
+/* dot grid */
+.dg{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);width:152px;height:152px;gap:10px;}
+.d{border-radius:50%;background:radial-gradient(circle at 36% 30%,#5a2080,#1a082e);box-shadow:inset 0 -2px 5px rgba(0,0,0,.55),0 1px 2px rgba(255,255,255,.12);}
 .e{visibility:hidden}
 
-/* ── demo controls ── */
-.demo-bar{position:fixed;bottom:0;left:0;right:0;z-index:200;background:rgba(0,0,0,.78);border-top:1px solid rgba(255,255,255,.1);padding:8px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;font-size:14px;}
+/* ── demo bar ── */
+.demo-bar{position:fixed;bottom:0;left:0;right:0;z-index:200;background:rgba(0,0,0,.8);border-top:1px solid rgba(255,255,255,.1);padding:8px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;font-size:14px;}
 .demo-bar label{display:flex;align-items:center;gap:6px;color:rgba(255,255,255,.8);}
 .demo-bar input[type=number]{width:56px;padding:3px 8px;border-radius:8px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;font-family:"Fredoka One",cursive;font-size:14px;text-align:center;}
 .demo-bar button{padding:6px 16px;border:none;border-radius:20px;cursor:pointer;background:linear-gradient(135deg,#ffcf66,#f3a93f);color:#1d1606;font-family:"Fredoka One",cursive;font-size:14px;box-shadow:0 3px 0 #9b6b21;}
@@ -110,83 +108,75 @@ input.answer.bad{background:#ffd5d5;border-color:#ef4444;animation:shake .22s ea
 </div>
 
 <script>
-// ── die face HTML helpers ──────────────────────────────────────
-// 3×3 grid: d = dot, e = empty
-const FACES_HTML = {
-  1: `<e></e><e></e><e></e>  <e></e><d></d><e></e>  <e></e><e></e><e></e>`,
-  2: `<e></e><e></e><d></d>  <e></e><e></e><e></e>  <d></d><e></e><e></e>`,
-  3: `<e></e><e></e><d></d>  <e></e><d></d><e></e>  <d></d><e></e><e></e>`,
-  4: `<d></d><e></e><d></d>  <e></e><e></e><e></e>  <d></d><e></e><d></d>`,
-  5: `<d></d><e></e><d></d>  <e></e><d></d><e></e>  <d></d><e></e><d></d>`,
-  6: `<d></d><e></e><d></d>  <d></d><e></e><d></d>  <d></d><e></e><d></d>`,
+/* ── dot patterns per face ──────────────────────────── */
+// 3×3 grid: d=dot, e=empty (row by row)
+const DOTS = {
+  1: 'eee ede eee',
+  2: 'eed eee dee',
+  3: 'eed ede dee',
+  4: 'ded eee ded',
+  5: 'ded ede ded',
+  6: 'ded ded ded',
 };
-
-function makeFaceHTML(n){
-  return FACES_HTML[n]
-    .replace(/\s+/g,'')
-    .replace(/<d><\/d>/g,'<i class="d"></i>')
-    .replace(/<e><\/e>/g,'<i class="e"></i>');
+function makeFace(n){
+  const face = document.createElement('div');
+  face.className = 'face face-' + n;
+  const grid = document.createElement('div');
+  grid.className = 'dg';
+  DOTS[n].replace(/\s/g,'').split('').forEach(c => {
+    const el = document.createElement('i');
+    el.className = c === 'd' ? 'd' : 'e';
+    grid.appendChild(el);
+  });
+  face.appendChild(grid);
+  return face;
 }
 
-// Rotation to bring each face front (viewer looks along -Z)
+/* ── which rotation brings each face to front ──────── */
 const LANDING = {
-  1: { x:   0, y:    0 },  // front face
-  2: { x: -90, y:    0 },  // top face → tilt toward viewer
-  3: { x:   0, y:  -90 },  // right face
-  4: { x:   0, y:   90 },  // left face
-  5: { x:  90, y:    0 },  // bottom face
-  6: { x:   0, y:  180 },  // back face
+  1:{x:0,   y:0  },
+  2:{x:-90, y:0  },
+  3:{x:0,   y:-90},
+  4:{x:0,   y:90 },
+  5:{x:90,  y:0  },
+  6:{x:0,   y:180},
 };
 
-// ── app state ──────────────────────────────────────────────────
-const appState = { round: 0, coins: 0 };
+/* ── easing: quartic ease-out ──────────────────────── */
+function easeOutQuart(t){ return 1 - Math.pow(1 - t, 4); }
 
+/* ── app state ─────────────────────────────────────── */
+const S = { round:0, coins:0 };
 function $(id){ return document.getElementById(id); }
-function getMult(){
-  return appState.round < 3
-    ? (Number($('mult1').value)||3)
-    : (Number($('mult2').value)||7);
-}
+function getMult(){ return S.round < 3 ? (Number($('mult1').value)||3) : (Number($('mult2').value)||7); }
 
-// ── render ────────────────────────────────────────────────────
+/* ── render one round ──────────────────────────────── */
 function render(){
   const lane = $('lane');
   lane.innerHTML = '';
-
   const mult = getMult();
-  let diceVal = null;
-  let rolled  = false;
+  let rolled = false;
 
-  // wrapper — centred in right zone
+  /* outer wrapper */
   const wrap = document.createElement('div');
-  wrap.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:28px;';
+  wrap.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:32px;';
 
-  // ── 3D dice ──
+  /* — 3D dice — */
   const scene = document.createElement('div');
   scene.className = 'dice-scene';
-
   const dice = document.createElement('div');
   dice.className = 'dice';
-
-  // Build 6 faces
-  [1,2,3,4,5,6].forEach(n => {
-    const face = document.createElement('div');
-    face.className = 'face face-' + n;
-    const grid = document.createElement('div');
-    grid.className = 'dg';
-    grid.innerHTML = makeFaceHTML(n);
-    face.appendChild(grid);
-    dice.appendChild(face);
-  });
-
+  [1,2,3,4,5,6].forEach(n => dice.appendChild(makeFace(n)));
   scene.appendChild(dice);
 
-  // ── prompt ──
+  let curX = -18, curY = 22; // track rotation state
+
+  /* — prompt — */
   const promptEl = document.createElement('div');
   promptEl.style.cssText = 'font-size:64px;font-weight:700;color:#fff;text-shadow:0 3px 12px rgba(0,0,0,.7);min-height:80px;text-align:center;letter-spacing:2px;';
   promptEl.textContent = '? × ' + mult + ' = ?';
 
-  // ── answer input ──
+  /* — input — */
   const input = document.createElement('input');
   input.type = 'number';
   input.className = 'answer';
@@ -195,20 +185,21 @@ function render(){
   input.autocomplete = 'off';
   input.disabled = true;
 
-  let _timer;
+  let _t;
   function check(){
     if(!rolled || input.disabled) return;
     const val = String(input.value).trim();
     if(!val) return;
+    const diceVal = Number(scene.dataset.result);
     if(Number(val) === diceVal * mult){
       input.disabled = true;
       input.classList.add('ok');
-      appState.coins += 2;
-      $('coinsLabel').textContent = appState.coins;
+      S.coins += 2;
+      $('coinsLabel').textContent = S.coins;
       setTimeout(() => {
-        appState.round = appState.round < 4 ? appState.round + 1 : 0;
-        $('roundTag').textContent = 'Round ' + (appState.round + 1) + ' / 5';
-        $('instruction').textContent = (appState.round < 3 ? '×' + (Number($('mult1').value)||3) : '×' + (Number($('mult2').value)||7)) + '  (' + (appState.round + 1) + '/5)';
+        S.round = S.round < 4 ? S.round + 1 : 0;
+        $('roundTag').textContent = 'Round ' + (S.round+1) + ' / 5';
+        $('instruction').textContent = 'Roll! ×' + getMult() + '  (' + (S.round+1) + '/5)';
         render();
       }, 500);
     } else {
@@ -220,38 +211,65 @@ function render(){
   input.addEventListener('change', check);
   input.addEventListener('keydown', e => { if(e.key==='Enter'){e.preventDefault();check();} });
   input.addEventListener('input', () => {
-    clearTimeout(_timer);
+    clearTimeout(_t);
     if(!String(input.value).trim()) return;
-    _timer = setTimeout(check, 1200);
+    _t = setTimeout(check, 1200);
   });
 
-  // ── dice click → throw ──
+  /* ── THROW ── */
   scene.addEventListener('click', () => {
     if(rolled) return;
     rolled = true;
-    diceVal = Math.floor(Math.random() * 6) + 1;
+    scene.style.cursor = 'default';
 
-    const angle = LANDING[diceVal];
-    // Add multiple full rotations so it spins before landing
-    const finalX = angle.x + 720;   // 2 full X rotations
-    const finalY = angle.y + 1080;  // 3 full Y rotations
+    const result = Math.floor(Math.random() * 6) + 1;
+    scene.dataset.result = result;
 
-    dice.classList.add('thrown');  // remove idle animation
-    dice.style.transform = `rotateX(${finalX}deg) rotateY(${finalY}deg)`;
+    const ang = LANDING[result];
+    /* target: landing angle + enough full rotations for a fast spin */
+    const endX = ang.x + 4 * 360;
+    const endY = ang.y + 5 * 360;
 
-    // After landing: show result badge + enable input
-    setTimeout(() => {
-      // Small bounce back
-      dice.style.transition = 'transform .18s cubic-bezier(.34,1.56,.64,1)';
-      dice.style.transform = `rotateX(${angle.x}deg) rotateY(${angle.y}deg)`;
+    const startX = curX, startY = curY;
+    const startTime = performance.now();
+    const DURATION = 1900; // ms
 
-      setTimeout(() => {
-        promptEl.textContent = diceVal + ' × ' + mult + ' = ?';
-        input.disabled = false;
-        scene.style.cursor = 'default';
-        input.focus();
-      }, 200);
-    }, 1950);
+    /* stop idle CSS animation immediately */
+    dice.style.animation = 'none';
+
+    function step(now){
+      const raw = Math.min((now - startTime) / DURATION, 1);
+      const t   = easeOutQuart(raw);
+
+      /* interpolate X and Y */
+      const x = startX + (endX - startX) * t;
+      const y = startY + (endY - startY) * t;
+
+      /* Z wobble: sinusoidal, amplitude fades to 0 as it slows */
+      const wobble = Math.sin(raw * Math.PI * 9) * 28 * Math.pow(1 - raw, 2);
+
+      dice.style.transform = `rotateX(${x}deg) rotateY(${y}deg) rotateZ(${wobble}deg)`;
+
+      if(raw < 1){
+        requestAnimationFrame(step);
+      } else {
+        /* micro-bounce on landing */
+        curX = endX; curY = endY;
+        dice.style.transition = 'transform .12s ease-out';
+        dice.style.transform = `rotateX(${endX+4}deg) rotateY(${endY+5}deg) rotateZ(0deg)`;
+        setTimeout(() => {
+          dice.style.transition = 'transform .2s cubic-bezier(.34,1.56,.64,1)';
+          dice.style.transform  = `rotateX(${endX}deg) rotateY(${endY}deg) rotateZ(0deg)`;
+          /* show result + enable input */
+          setTimeout(() => {
+            promptEl.textContent = result + ' × ' + mult + ' = ?';
+            input.disabled = false;
+            input.focus();
+          }, 160);
+        }, 130);
+      }
+    }
+    requestAnimationFrame(step);
   });
 
   wrap.appendChild(scene);
@@ -261,7 +279,7 @@ function render(){
 }
 
 function restart(){
-  appState.round = 0;
+  S.round = 0;
   $('roundTag').textContent = 'Round 1 / 5';
   $('instruction').textContent = 'Tap the dice to roll! (1/5)';
   render();
