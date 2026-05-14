@@ -134,7 +134,7 @@ Optional: prompt if you use a one-line story; keep titleText as the main visible
 Game: numbers appear as tokens; child orders them (e.g. ascending).
 Per round REQUIRED fields:
   • prompt (string) — comma/space separated values shown as tokens, e.g. "2, 5, 3, 8, 1"
-  • answer (string) — rule or ordered list the engine expects, e.g. "ascending" or "1,2,3,5,8"
+  • answer (string) — MUST be the explicit correct order as a comma-separated sequence matching values from prompt, e.g. "1,2,3,5,8". Do NOT write "ascending" or "descending" — write the actual sorted numbers.
 
 --- drag_group ---
 Game: child sorts listed numbers into two named groups (e.g. even / odd).

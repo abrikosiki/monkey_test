@@ -445,7 +445,16 @@ function mapExampleToRound(mech, ex, existing) {
     r.group2_values = ex.group2Values || "";
   } else if (mech === "drag_sort") {
     const nums = splitValues(ex.prompt || "");
-    const rule = splitValues(ex.answer || "");
+    let rule = splitValues(ex.answer || "");
+    // Expand "ascending"/"descending" keywords into actual sorted sequence
+    if (nums.length && rule.length === 1) {
+      const keyword = rule[0].toLowerCase();
+      if (keyword === "ascending" || keyword === "asc") {
+        rule = [...nums].sort((a, b) => Number(a) - Number(b));
+      } else if (keyword === "descending" || keyword === "desc") {
+        rule = [...nums].sort((a, b) => Number(b) - Number(a));
+      }
+    }
     if (nums.length) {
       r.items = nums.map((t, idx) => ({
         id: `i${idx + 1}`,
