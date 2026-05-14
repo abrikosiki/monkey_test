@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>🎲 Dice Multiply — demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:#1a1a2e;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    font-family:'Fredoka One',cursive;
+  }
+
+  /* Controls bar at top */
+  .controls{
+    position:fixed;top:0;left:0;right:0;
+    background:rgba(0,0,0,.7);
+    padding:10px 20px;
+    display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+    z-index:100;
+    font-family:'Fredoka One',cursive;
+    font-size:15px;
+    color:#fff;
+  }
+  .controls label{display:flex;align-items:center;gap:6px;}
+  .controls input[type=number]{width:60px;padding:4px 8px;border-radius:8px;border:none;font-size:15px;text-align:center;}
+  .controls button{
+    padding:7px 18px;border:none;border-radius:20px;cursor:pointer;
+    background:linear-gradient(135deg,#f7d36f,#f3a93f);
+    color:#1d1606;font-family:'Fredoka One',cursive;font-size:15px;
+    box-shadow:0 3px 0 #9b6b21;
+  }
+  .controls button:active{transform:translateY(2px);box-shadow:none;}
+  .round-tag{
+    background:rgba(255,255,255,.15);
+    border-radius:20px;padding:4px 14px;font-size:14px;
+  }
+
+  /* Game area — mimics the right lane */
+  .game-area{
+    width:min(560px,90vw);
+    height:min(500px,70vh);
+    background:linear-gradient(160deg,#2d1b69,#11998e);
+    border-radius:24px;
+    position:relative;
+    overflow:hidden;
+    box-shadow:0 12px 48px rgba(0,0,0,.6);
+    margin-top:60px;
+  }
+
+  /* Input styling matching the game */
+  input.answer{
+    background:rgba(255,255,255,.95);
+    border:3px solid rgba(255,180,0,.8);
+    border-radius:14px;
+    outline:none;
+    color:#1d1606;
+    font-family:'Fredoka One',cursive;
+    transition:border-color .15s;
+  }
+  input.answer:focus{border-color:#f7a500;box-shadow:0 0 0 4px rgba(247,165,0,.3);}
+  input.answer.ok{background:#d4f7d4;border-color:#22c55e;}
+  input.answer.bad{background:#ffd5d5;border-color:#ef4444;animation:shake .22s ease;}
+
+  @keyframes shake{
+    0%,100%{transform:translateX(0)}
+    20%{transform:translateX(-8px)}
+    40%{transform:translateX(8px)}
+    60%{transform:translateX(-6px)}
+    80%{transform:translateX(6px)}
+  }
+  @keyframes diceRoll{
+    0%  {transform:rotate(0)    scale(1)}
+    15% {transform:rotate(-25deg) scale(1.18)}
+    35% {transform:rotate(22deg)  scale(0.9)}
+    55% {transform:rotate(-18deg) scale(1.12)}
+    75% {transform:rotate(12deg)  scale(0.95)}
+    90% {transform:rotate(-6deg)  scale(1.05)}
+    100%{transform:rotate(0)    scale(1)}
+  }
+  @keyframes introPop{
+    from{transform:scale(.5);opacity:0}
+    to{transform:scale(1);opacity:1}
+  }
+
+  /* Result overlay */
+  .result-banner{
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+    padding:10px 32px;border-radius:30px;font-size:20px;
+    animation:introPop .3s cubic-bezier(.34,1.56,.64,1);
+    z-index:200;
+  }
+  .result-banner.ok{background:#22c55e;color:#fff;}
+  .result-banner.bad{background:#ef4444;color:#fff;}
+</style>
+</head>
+<body>
+
+<div class="controls">
+  <label>✖️ Round 1–3: <input type="number" id="mult1" value="3" min="1" max="20"></label>
+  <label>✖️ Round 4–5: <input type="number" id="mult2" value="7" min="1" max="20"></label>
+  <button onclick="restart()">🔄 Restart round</button>
+  <div class="round-tag" id="roundTag">Round 1 / 5</div>
+</div>
+
+<div class="game-area" id="gameArea"></div>
+
+<script>
+const state = { round: 0, stageSolved: false };
+
+function getMult(){
+  const m1 = Number(document.getElementById('mult1').value) || 3;
+  const m2 = Number(document.getElementById('mult2').value) || 7;
+  return state.round < 3 ? m1 : m2;
+}
+
+function updateRoundTag(){
+  document.getElementById('roundTag').textContent = 'Round ' + (state.round + 1) + ' / 5';
+}
+
+function shake(el){
+  el.classList.remove('bad');
+  void el.offsetWidth;
+  el.classList.add('bad');
+  setTimeout(() => el.classList.remove('bad'), 400);
+}
+
+function showBanner(text, type){
+  document.querySelectorAll('.result-banner').forEach(b => b.remove());
+  const b = document.createElement('div');
+  b.className = 'result-banner ' + type;
+  b.textContent = text;
+  document.body.appendChild(b);
+  setTimeout(() => b.remove(), 1400);
+}
+
+function markSuccess(){
+  showBanner('✅ Correct!', 'ok');
+  setTimeout(() => {
+    if(state.round < 4){
+      state.round++;
+      updateRoundTag();
+      render();
+    } else {
+      state.round = 0;
+      updateRoundTag();
+      render();
+      showBanner('🎉 All 5 rounds done! Restarting…', 'ok');
+    }
+  }, 600);
+}
+
+function render(){
+  state.stageSolved = false;
+  const area = document.getElementById('gameArea');
+  area.innerHTML = '';
+
+  const mult = getMult();
+  let diceVal = null;
+  let rolled = false;
+
+  const wrap = document.createElement('div');
+  wrap.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;';
+
+  const diceEl = document.createElement('div');
+  diceEl.style.cssText = 'font-size:220px;cursor:pointer;user-select:none;line-height:1;filter:drop-shadow(0 8px 24px rgba(0,0,0,.5));';
+  diceEl.textContent = '🎲';
+  diceEl.title = 'Tap to roll!';
+
+  const promptEl = document.createElement('div');
+  promptEl.style.cssText = 'font-size:72px;font-weight:700;color:#fff;text-shadow:0 3px 12px rgba(0,0,0,.6);min-height:88px;text-align:center;letter-spacing:2px;';
+  promptEl.textContent = '? × ' + mult + ' = ?';
+
+  const input = document.createElement('input');
+  input.type = 'number';
+  input.className = 'answer';
+  input.style.cssText = 'width:160px;font-size:60px;text-align:center;padding:10px;border-radius:16px;';
+  input.placeholder = '?';
+  input.autocomplete = 'off';
+  input.disabled = true;
+
+  let _timer;
+  function checkDice(){
+    if(!rolled || input.disabled) return;
+    const val = String(input.value).trim();
+    if(!val) return;
+    if(Number(val) === diceVal * mult){
+      input.disabled = true;
+      input.classList.add('ok');
+      state.stageSolved = true;
+      setTimeout(markSuccess, 200);
+    } else {
+      input.value = '';
+      shake(input);
+      showBanner('❌ Try again!', 'bad');
+    }
+  }
+
+  input.addEventListener('change', checkDice);
+  input.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); checkDice(); } });
+  input.addEventListener('input', () => {
+    clearTimeout(_timer);
+    if(!String(input.value).trim()) return;
+    _timer = setTimeout(checkDice, 1200);
+  });
+
+  diceEl.addEventListener('click', () => {
+    if(rolled || state.stageSolved) return;
+    rolled = true;
+    diceVal = Math.floor(Math.random() * 6) + 1;
+    diceEl.style.animation = 'diceRoll .7s ease-out forwards';
+    diceEl.style.cursor = 'default';
+    setTimeout(() => {
+      diceEl.style.animation = '';
+      diceEl.style.position = 'relative';
+      const badge = document.createElement('div');
+      badge.style.cssText = 'position:absolute;top:-18px;right:-18px;width:90px;height:90px;background:#ff4400;color:#fff;font-size:52px;font-weight:900;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.5);font-family:"Fredoka One",cursive;animation:introPop .3s cubic-bezier(.34,1.56,.64,1)';
+      badge.textContent = String(diceVal);
+      diceEl.appendChild(badge);
+      promptEl.textContent = diceVal + ' × ' + mult + ' = ?';
+      input.disabled = false;
+      input.focus();
+    }, 750);
+  });
+
+  wrap.appendChild(diceEl);
+  wrap.appendChild(promptEl);
+  wrap.appendChild(input);
+  area.appendChild(wrap);
+}
+
+function restart(){
+  state.round = 0;
+  updateRoundTag();
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
