@@ -1540,6 +1540,11 @@
           regenBtn.textContent = "Building... 1/3 — asking AI";
         }
         const draftForGenerate = clone(state.draft);
+        // Stage 6 is always boss_mix — enforce before sending
+        if (Array.isArray(draftForGenerate.stages) && draftForGenerate.stages[5]) {
+          draftForGenerate.stages[5].mechanic = "boss_mix";
+          syncBossMixExamples(draftForGenerate.stages[5]);
+        }
         const start = await post("/api/generate", { draft: draftForGenerate, manualStrict: true });
         const jobId = start.jobId;
         if (!jobId) throw new Error("Generation job did not start — check server logs");

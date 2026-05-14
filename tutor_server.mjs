@@ -505,6 +505,7 @@ function applyDraftToLessonStages(lesson, draft) {
   for (let i = 0; i < stageCount; i++) {
     const lStage = lesson.stages[i] || {};
     const dStage = draft.stages[i] || {};
+    if (i === 5) dStage.mechanic = "boss_mix"; // stage 6 is always boss_mix
     lStage.type = dStage.mechanic || lStage.type;
     lStage.background = dStage.background || lStage.background;
     const dExamples = Array.isArray(dStage.examples) ? dStage.examples : [];
@@ -543,21 +544,26 @@ function applyDraftToLessonStages(lesson, draft) {
   return lesson;
 }
 
+const DRAG_MECHANICS = new Set(["drag_drop", "drag_sort", "drag_group"]);
+
 function buildStrictManualStageShell(lesson, draft) {
   const srcStages = Array.isArray(lesson?.stages) ? lesson.stages : [];
   const out = [];
   for (let i = 0; i < 6; i++) {
     const fromLesson = srcStages[i] || {};
     const fromDraft = draft?.stages?.[i] || {};
+    const mech = (i === 5 ? "boss_mix" : null) || fromDraft.mechanic || fromLesson.type || "fill_blank";
+    // Drag mechanics need AI-generated draggables/drop_zones — keep their rounds
+    const keepRounds = DRAG_MECHANICS.has(mech) ? (fromLesson.rounds || []) : [];
     out.push({
       id: i + 1,
-      type: fromDraft.mechanic || fromLesson.type || "fill_blank",
+      type: mech,
       title: String(fromLesson.title || "").trim() || `Stage ${i + 1}`,
       background: fromDraft.background || fromLesson.background || stageBackgroundFor(i + 1, draft?.context?.islandKey || ""),
       coins: Number(fromLesson.coins ?? 10),
       mechanic_reason: String(fromLesson.mechanic_reason || ""),
       success_message: String(fromLesson.success_message || ""),
-      rounds: [],
+      rounds: keepRounds,
     });
   }
   lesson.stages = out;
