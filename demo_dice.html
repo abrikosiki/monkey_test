@@ -83,8 +83,8 @@ const LANDING = [
 function easeOutQuart(t){ return 1 - Math.pow(1 - t, 4); }
 
 /* ── canvas size & projection constants ── */
-const CW = 240, CH = 240, CCX = 120, CCY = 120;
-const CSCALE = 88, CFOV = 500;
+const CW = 360, CH = 360, CCX = 180, CCY = 180;
+const CSCALE = 132, CFOV = 750;
 
 /* ── mutable render state (reset each round) ── */
 let dRx = 0.5, dRy = 0.3;
@@ -136,29 +136,29 @@ function drawOcta() {
     ctx.lineTo(p2[0],p2[1]);
     ctx.closePath();
 
-    /* dark face with subtle depth gradient */
-    var g = ctx.createRadialGradient(mx,my,4,mx,my,82);
-    var sh = Math.floor(nz*24);
-    g.addColorStop(0, 'rgb('+sh+','+(sh+5)+','+sh+')');
-    g.addColorStop(1, 'rgb(0,2,0)');
+    /* ocean-depth face gradient */
+    var g = ctx.createRadialGradient(mx,my,6,mx,my,123);
+    var sh = Math.floor(nz*18);
+    g.addColorStop(0, 'rgb('+sh+','+(sh*2+12)+','+(sh*3+18)+')');
+    g.addColorStop(1, 'rgb(0,3,7)');
     ctx.fillStyle = g;
     ctx.fill();
 
-    /* neon-green edge glow */
-    ctx.strokeStyle = 'rgba(57,255,20,'+(0.55+nz*0.45)+')';
-    ctx.lineWidth = 1.8 + nz*0.8;
-    ctx.shadowColor = '#39ff14';
-    ctx.shadowBlur = 8 + nz*7;
+    /* gold edge glow */
+    ctx.strokeStyle = 'rgba(212,160,23,'+(0.5+nz*0.5)+')';
+    ctx.lineWidth = 2 + nz;
+    ctx.shadowColor = '#c8920a';
+    ctx.shadowBlur = 10 + nz*9;
     ctx.stroke();
 
     /* number */
-    var fs = Math.max(13, Math.round(30*nz));
+    var fs = Math.max(19, Math.round(46*nz));
     ctx.font = 'bold '+fs+'px "Fredoka One",sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.shadowColor = '#39ff14';
-    ctx.shadowBlur = 16;
-    ctx.fillStyle = 'rgba(170,255,90,'+(0.6+nz*0.4)+')';
+    ctx.shadowColor = '#e8a820';
+    ctx.shadowBlur = 20;
+    ctx.fillStyle = 'rgba(255,224,100,'+(0.7+nz*0.3)+')';
     ctx.fillText(String(NUMS_8[item.i]), mx, my);
 
     ctx.restore();
@@ -192,7 +192,7 @@ function render(){
   /* canvas */
   const canvas = document.createElement('canvas');
   canvas.width = CW; canvas.height = CH;
-  canvas.style.cssText = 'cursor:pointer;filter:drop-shadow(0 6px 30px rgba(0,255,30,.5));';
+  canvas.style.cssText = 'cursor:pointer;filter:drop-shadow(0 8px 44px rgba(200,140,20,.65));';
   const ctx = canvas.getContext('2d');
 
   /* init state for this round */

@@ -1250,7 +1250,7 @@
     .boss-hit{animation:bossScreenShake .32s ease}
     .boss-flash{position:fixed;inset:0;background:rgba(200,30,30,.42);pointer-events:none;z-index:150;animation:bossFlashFade .38s ease forwards}
     @keyframes bossFlashFade{0%{opacity:1}100%{opacity:0}}
-    .dm-canvas{cursor:pointer;filter:drop-shadow(0 6px 30px rgba(0,255,30,.5));}
+    .dm-canvas{cursor:pointer;filter:drop-shadow(0 8px 44px rgba(200,140,20,.65));}
     .boss-hp-bar{position:absolute;bottom:14px;left:4%;width:92%;z-index:30;pointer-events:none;}
     .boss-hp-bar.hidden{display:none}
     .boss-hp-villain{width:100%;}
@@ -3232,7 +3232,7 @@
       {rx:3*Math.PI/4,  ry:-DM_ANG},{rx:3*Math.PI/4,  ry:+DM_ANG},
       {rx:-3*Math.PI/4, ry:-DM_ANG},{rx:-3*Math.PI/4, ry:+DM_ANG}
     ];
-    var CW=240,CH=240,CCX=120,CCY=120,CSCALE=88,CFOV=500;
+    var CW=360,CH=360,CCX=180,CCY=180,CSCALE=132,CFOV=750;
     var dRx=0.5, dRy=0.3, dmAnim;
 
     const canvas = document.createElement("canvas");
@@ -3271,20 +3271,20 @@
         dCtx.beginPath();
         dCtx.moveTo(p0[0],p0[1]); dCtx.lineTo(p1[0],p1[1]);
         dCtx.lineTo(p2[0],p2[1]); dCtx.closePath();
-        var g=dCtx.createRadialGradient(mx,my,4,mx,my,82);
-        var sh=Math.floor(nz*24);
-        g.addColorStop(0,"rgb("+sh+","+(sh+5)+","+sh+")");
-        g.addColorStop(1,"rgb(0,2,0)");
+        var g=dCtx.createRadialGradient(mx,my,6,mx,my,123);
+        var sh=Math.floor(nz*18);
+        g.addColorStop(0,"rgb("+sh+","+(sh*2+12)+","+(sh*3+18)+")");
+        g.addColorStop(1,"rgb(0,3,7)");
         dCtx.fillStyle=g; dCtx.fill();
-        dCtx.strokeStyle="rgba(57,255,20,"+(0.55+nz*0.45)+")";
-        dCtx.lineWidth=1.8+nz*0.8;
-        dCtx.shadowColor="#39ff14"; dCtx.shadowBlur=8+nz*7;
+        dCtx.strokeStyle="rgba(212,160,23,"+(0.5+nz*0.5)+")";
+        dCtx.lineWidth=2+nz;
+        dCtx.shadowColor="#c8920a"; dCtx.shadowBlur=10+nz*9;
         dCtx.stroke();
-        var fs=Math.max(13,Math.round(30*nz));
+        var fs=Math.max(19,Math.round(46*nz));
         dCtx.font="bold "+fs+"px 'Fredoka One',sans-serif";
         dCtx.textAlign="center"; dCtx.textBaseline="middle";
-        dCtx.shadowColor="#39ff14"; dCtx.shadowBlur=16;
-        dCtx.fillStyle="rgba(170,255,90,"+(0.6+nz*0.4)+")";
+        dCtx.shadowColor="#e8a820"; dCtx.shadowBlur=20;
+        dCtx.fillStyle="rgba(255,224,100,"+(0.7+nz*0.3)+")";
         dCtx.fillText(String(DM_NUMS[item.i]),mx,my);
         dCtx.restore();
       });
