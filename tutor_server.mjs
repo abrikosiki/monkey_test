@@ -1103,6 +1103,7 @@ async function generateAutofillDraft(body) {
   const response = await openai.chat.completions.create({
     model: "gpt-4o",
     max_tokens: 16384,
+    temperature: 1.0,
     messages: [
       { role: "system", content: system },
       { role: "user", content: userMsg },
@@ -1164,6 +1165,7 @@ async function generateLessonFromDraft(draft, options = {}) {
   const response = await openai.chat.completions.create({
     model: "gpt-4o",
     max_tokens: 7000,
+    temperature: 1.0,
     messages: [
       { role: "system", content: SYSTEM_PROMPT },
       { role: "user", content: buildUserPromptFromDraft(draft, assetCatalog) },
