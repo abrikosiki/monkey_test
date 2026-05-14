@@ -1406,14 +1406,7 @@ function buildHtml(
     .boss-hit{animation:bossScreenShake .32s ease}
     .boss-flash{position:fixed;inset:0;background:rgba(200,30,30,.42);pointer-events:none;z-index:150;animation:bossFlashFade .38s ease forwards}
     @keyframes bossFlashFade{0%{opacity:1}100%{opacity:0}}
-    .dm-scene{width:200px;height:200px;perspective:600px;cursor:pointer;filter:drop-shadow(0 20px 40px rgba(0,0,0,.8));}
-    .dm-cube{width:200px;height:200px;position:relative;transform-style:preserve-3d;animation:diceIdle 5s ease-in-out infinite;}
-    @keyframes diceIdle{0%,100%{transform:rotateX(-18deg) rotateY(22deg) rotateZ(0deg)}40%{transform:rotateX(-24deg) rotateY(40deg) rotateZ(2deg)}70%{transform:rotateX(-12deg) rotateY(8deg) rotateZ(-2deg)}}
-    .dm-face{position:absolute;width:200px;height:200px;background:linear-gradient(145deg,#fffdf8,#ffe9c8);border:3px solid rgba(160,100,40,.3);border-radius:30px;box-shadow:inset 0 4px 12px rgba(255,255,255,.85),inset 0 -4px 12px rgba(0,0,0,.1);display:flex;align-items:center;justify-content:center;backface-visibility:hidden;}
-    .dm-f1{transform:translateZ(100px)}.dm-f6{transform:rotateY(180deg) translateZ(100px)}.dm-f3{transform:rotateY(90deg) translateZ(100px)}.dm-f4{transform:rotateY(-90deg) translateZ(100px)}.dm-f2{transform:rotateX(90deg) translateZ(100px)}.dm-f5{transform:rotateX(-90deg) translateZ(100px)}
-    .dm-dg{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);width:152px;height:152px;gap:10px;}
-    .dm-d{border-radius:50%;background:radial-gradient(circle at 36% 30%,#5a2080,#1a082e);box-shadow:inset 0 -2px 5px rgba(0,0,0,.55),0 1px 2px rgba(255,255,255,.12);}
-    .dm-e{visibility:hidden}
+    .dm-canvas{cursor:pointer;filter:drop-shadow(0 6px 30px rgba(0,255,30,.5));}
     .boss-hp-bar{position:absolute;bottom:14px;left:4%;width:92%;z-index:30;pointer-events:none;}
     .boss-hp-bar.hidden{display:none}
     .boss-hp-villain{width:100%;}
@@ -3376,48 +3369,89 @@ function buildHtml(
   function renderDiceMultiply(stage){
     const roundIdx = state.stagePracticeDone || 0;
     const mult = roundIdx < 3 ? (stage.multiplier1 || 3) : (stage.multiplier2 || 5);
-    let diceVal = null;
-    let rolled = false;
+    var diceVal = null;
+    var rolled  = false;
 
     const wrap = document.createElement("div");
-    wrap.style.cssText = "position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:32px;";
+    wrap.style.cssText = "position:absolute;top:50%;left:50%;transform:translate(-50%,-60%);display:flex;flex-direction:column;align-items:center;gap:24px;";
 
-    /* ── 3D dice ── */
-    const DOTS = {
-      1:"eee ede eee", 2:"eed eee dee", 3:"eed ede dee",
-      4:"ded eee ded", 5:"ded ede ded", 6:"ded ded ded"
-    };
-    function makeFace(n){
-      const face = document.createElement("div");
-      face.className = "dm-face dm-f" + n;
-      const grid = document.createElement("div");
-      grid.className = "dm-dg";
-      DOTS[n].replace(/\s/g,"").split("").forEach(c => {
-        const el = document.createElement("i");
-        el.className = c === "d" ? "dm-d" : "dm-e";
-        grid.appendChild(el);
-      });
-      face.appendChild(grid);
-      return face;
+    /* ── octahedron (d8) geometry ── */
+    var DM_NUMS  = [3,5,2,6,7,9,10,13];
+    var DM_VERTS = [[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]];
+    var DM_FACES = [[0,2,4],[1,4,2],[0,4,3],[1,3,4],[0,5,2],[1,2,5],[0,3,5],[1,5,3]];
+    var DM_NORMS = [[1,1,1],[-1,1,1],[1,-1,1],[-1,-1,1],[1,1,-1],[-1,1,-1],[1,-1,-1],[-1,-1,-1]];
+    var DM_SQ3   = Math.sqrt(3);
+    var DM_ANG   = Math.atan(1/Math.SQRT2);
+    var DM_LAND  = [
+      {rx:Math.PI/4,    ry:-DM_ANG},{rx:Math.PI/4,    ry:+DM_ANG},
+      {rx:-Math.PI/4,   ry:-DM_ANG},{rx:-Math.PI/4,   ry:+DM_ANG},
+      {rx:3*Math.PI/4,  ry:-DM_ANG},{rx:3*Math.PI/4,  ry:+DM_ANG},
+      {rx:-3*Math.PI/4, ry:-DM_ANG},{rx:-3*Math.PI/4, ry:+DM_ANG}
+    ];
+    var CW=240,CH=240,CCX=120,CCY=120,CSCALE=88,CFOV=500;
+    var dRx=0.5, dRy=0.3, dmAnim;
+
+    const canvas = document.createElement("canvas");
+    canvas.width=CW; canvas.height=CH;
+    canvas.className = "dm-canvas";
+    const dCtx = canvas.getContext("2d");
+
+    function dmRotV(v){
+      var x=v[0],y=v[1],z=v[2];
+      var y2=y*Math.cos(dRx)-z*Math.sin(dRx), z2=y*Math.sin(dRx)+z*Math.cos(dRx);
+      y=y2; z=z2;
+      var x2=x*Math.cos(dRy)+z*Math.sin(dRy), z3=-x*Math.sin(dRy)+z*Math.cos(dRy);
+      return [x2,y,z3];
     }
-    const LANDING = {
-      1:{x:0,y:0},2:{x:-90,y:0},3:{x:0,y:-90},
-      4:{x:0,y:90},5:{x:90,y:0},6:{x:0,y:180}
-    };
-    function easeOutQuart(t){ return 1 - Math.pow(1 - t, 4); }
+    function dmProj(v){
+      var r=dmRotV(v),x=r[0],y=r[1],z=r[2],f=CFOV/(CFOV+z*CSCALE);
+      return [CCX+x*CSCALE*f, CCY-y*CSCALE*f, z];
+    }
+    function dmNz(n){ return dmRotV([n[0]/DM_SQ3,n[1]/DM_SQ3,n[2]/DM_SQ3])[2]; }
 
-    const scene = document.createElement("div");
-    scene.className = "dm-scene";
-    const cube = document.createElement("div");
-    cube.className = "dm-cube";
-    [1,2,3,4,5,6].forEach(n => cube.appendChild(makeFace(n)));
-    scene.appendChild(cube);
+    function dmDraw(){
+      dCtx.clearRect(0,0,CW,CH);
+      var pts=DM_VERTS.map(dmProj);
+      var vis=[];
+      DM_FACES.forEach(function(f,i){
+        var nz=dmNz(DM_NORMS[i]);
+        if(nz<=0.05) return;
+        vis.push({i:i,f:f,nz:nz,avgZ:(pts[f[0]][2]+pts[f[1]][2]+pts[f[2]][2])/3});
+      });
+      vis.sort(function(a,b){return a.avgZ-b.avgZ;});
+      vis.forEach(function(item){
+        var f=item.f,nz=item.nz;
+        var p0=pts[f[0]],p1=pts[f[1]],p2=pts[f[2]];
+        var mx=(p0[0]+p1[0]+p2[0])/3, my=(p0[1]+p1[1]+p2[1])/3;
+        dCtx.save();
+        dCtx.beginPath();
+        dCtx.moveTo(p0[0],p0[1]); dCtx.lineTo(p1[0],p1[1]);
+        dCtx.lineTo(p2[0],p2[1]); dCtx.closePath();
+        var g=dCtx.createRadialGradient(mx,my,4,mx,my,82);
+        var sh=Math.floor(nz*24);
+        g.addColorStop(0,"rgb("+sh+","+(sh+5)+","+sh+")");
+        g.addColorStop(1,"rgb(0,2,0)");
+        dCtx.fillStyle=g; dCtx.fill();
+        dCtx.strokeStyle="rgba(57,255,20,"+(0.55+nz*0.45)+")";
+        dCtx.lineWidth=1.8+nz*0.8;
+        dCtx.shadowColor="#39ff14"; dCtx.shadowBlur=8+nz*7;
+        dCtx.stroke();
+        var fs=Math.max(13,Math.round(30*nz));
+        dCtx.font="bold "+fs+"px 'Fredoka One',sans-serif";
+        dCtx.textAlign="center"; dCtx.textBaseline="middle";
+        dCtx.shadowColor="#39ff14"; dCtx.shadowBlur=16;
+        dCtx.fillStyle="rgba(170,255,90,"+(0.6+nz*0.4)+")";
+        dCtx.fillText(String(DM_NUMS[item.i]),mx,my);
+        dCtx.restore();
+      });
+    }
 
-    let curX = -18, curY = 22;
+    function dmIdle(){ dRy+=0.010; dRx+=0.003; dmDraw(); dmAnim=requestAnimationFrame(dmIdle); }
+    dmIdle();
 
     const promptEl = document.createElement("div");
     promptEl.style.cssText = "font-size:64px;font-weight:700;color:#fff;text-shadow:0 3px 12px rgba(0,0,0,.7);min-height:80px;text-align:center;letter-spacing:2px;";
-    promptEl.textContent = "? × " + mult + " = ?";
+    promptEl.textContent = "? \xd7 " + mult + " = ?";
 
     const input = document.createElement("input");
     input.type = "number";
@@ -3443,56 +3477,48 @@ function buildHtml(
         onWrongAnswer();
       }
     }
-
     input.addEventListener("change", checkDice);
-    input.addEventListener("keydown", (e) => { if(e.key === "Enter"){ e.preventDefault(); checkDice(); } });
-    let _diceTimer;
-    input.addEventListener("input", () => {
+    input.addEventListener("keydown", function(e){ if(e.key==="Enter"){e.preventDefault();checkDice();} });
+    var _diceTimer;
+    input.addEventListener("input", function(){
       clearTimeout(_diceTimer);
-      if(String(input.value).trim() === "") return;
-      _diceTimer = setTimeout(() => checkDice(), 1200);
+      if(String(input.value).trim()==="") return;
+      _diceTimer = setTimeout(checkDice, 1200);
     });
 
-    scene.addEventListener("click", () => {
+    canvas.addEventListener("click", function(){
       if(rolled || state.stageSolved) return;
       rolled = true;
-      scene.style.cursor = "default";
-      diceVal = Math.floor(Math.random() * 6) + 1;
-      const ang = LANDING[diceVal];
-      const endX = ang.x + 4 * 360;
-      const endY = ang.y + 5 * 360;
-      const startX = curX, startY = curY;
-      const startTime = performance.now();
-      const DURATION = 1900;
-      cube.style.animation = "none";
+      canvas.style.cursor = "default";
+      cancelAnimationFrame(dmAnim);
+
+      var faceIdx = Math.floor(Math.random()*8);
+      diceVal = DM_NUMS[faceIdx];
+      var ang = DM_LAND[faceIdx];
+      var endRx=ang.rx+3*Math.PI*2, endRy=ang.ry+4*Math.PI*2;
+      var s0rx=dRx, s0ry=dRy, t0=performance.now(), DUR=1900;
+
       function step(now){
-        const raw = Math.min((now - startTime) / DURATION, 1);
-        const t = easeOutQuart(raw);
-        const x = startX + (endX - startX) * t;
-        const y = startY + (endY - startY) * t;
-        const wobble = Math.sin(raw * Math.PI * 9) * 28 * Math.pow(1 - raw, 2);
-        cube.style.transform = "rotateX(" + x + "deg) rotateY(" + y + "deg) rotateZ(" + wobble + "deg)";
-        if(raw < 1){
-          requestAnimationFrame(step);
+        var raw=Math.min((now-t0)/DUR,1), t=1-Math.pow(1-raw,4);
+        dRx=s0rx+(endRx-s0rx)*t; dRy=s0ry+(endRy-s0ry)*t;
+        dmDraw();
+        if(raw<1){
+          dmAnim=requestAnimationFrame(step);
         } else {
-          curX = endX; curY = endY;
-          cube.style.transition = "transform .12s ease-out";
-          cube.style.transform = "rotateX(" + (endX+4) + "deg) rotateY(" + (endY+5) + "deg) rotateZ(0deg)";
-          setTimeout(() => {
-            cube.style.transition = "transform .2s cubic-bezier(.34,1.56,.64,1)";
-            cube.style.transform = "rotateX(" + endX + "deg) rotateY(" + endY + "deg) rotateZ(0deg)";
-            setTimeout(() => {
-              promptEl.textContent = diceVal + " × " + mult + " = ?";
-              input.disabled = false;
-              input.focus();
-            }, 160);
-          }, 130);
+          dRx=endRx+0.04; dRy=endRy+0.05; dmDraw();
+          setTimeout(function(){
+            dRx=endRx; dRy=endRy; dmDraw();
+            setTimeout(function(){
+              promptEl.textContent = diceVal+" \xd7 "+mult+" = ?";
+              input.disabled=false; input.focus();
+            },120);
+          },100);
         }
       }
-      requestAnimationFrame(step);
+      dmAnim=requestAnimationFrame(step);
     });
 
-    wrap.appendChild(scene);
+    wrap.appendChild(canvas);
     wrap.appendChild(promptEl);
     wrap.appendChild(input);
     lane.appendChild(wrap);
