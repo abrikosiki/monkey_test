@@ -4296,10 +4296,11 @@ function buildHtml(
     const wrap = document.createElement("div");
     wrap.className = "symbol-wrap";
 
-    const defaultKeys = ["shell_blue", "banana", "stone_blue", "cherry", "mushroom", "pearl_blue"];
-    const fallbackA = stage.symbol_item_a || stage.symbolItemA || defaultKeys[0];
-    const fallbackB = stage.symbol_item_b || stage.symbolItemB || defaultKeys[1];
-    const fallbackC = stage.symbol_item_c || stage.symbolItemC || defaultKeys[2];
+    const defaultKeys = ["shell_blue","banana","stone_blue","cherry","mushroom","pearl_blue","starfish","butterfly","coral","jellyfish","candy","lollipop","hibiscus","leaf","bamboo"];
+    const roundOffset = ((state.stagePracticeDone || 0) * 3) % defaultKeys.length;
+    const fallbackA = stage.symbol_item_a || stage.symbolItemA || defaultKeys[roundOffset % defaultKeys.length];
+    const fallbackB = stage.symbol_item_b || stage.symbolItemB || defaultKeys[(roundOffset + 1) % defaultKeys.length];
+    const fallbackC = stage.symbol_item_c || stage.symbolItemC || defaultKeys[(roundOffset + 2) % defaultKeys.length];
     const uniq = [];
     [fallbackA, fallbackB, fallbackC].forEach((k) => {
       if(!uniq.includes(k)) uniq.push(k);
