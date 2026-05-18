@@ -2170,10 +2170,11 @@ function buildHtml(
 
   function buildStagePlan(){
     const src = Array.isArray(LESSON.stages) ? LESSON.stages : [];
+    const count = src.length || 6;
     const fallback = src[src.length - 1] || { type: "choice", options: [{label:"A",correct:true}], question: "Choose", coins: 0 };
     const plan = [];
-    for(let i = 0; i < 6; i++){
-      const pick = src[i] || (i === 5 ? fallback : src[Math.min(i, src.length - 1)] || fallback);
+    for(let i = 0; i < count; i++){
+      const pick = src[i] || (i === count - 1 ? fallback : src[Math.min(i, src.length - 1)] || fallback);
       plan.push({...pick, _stageNo: i + 1});
     }
     return plan;
