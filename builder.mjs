@@ -5684,7 +5684,7 @@ function buildHtml(
   setupPlayerAvatar();
   $("coinsLabel").textContent = String(state.totalCoins);
   $("introBg").decoding = "async";
-  setStageBackgroundImg($("introBg"), "story_back");
+  $("introBg").src = "assets/backgrounds/story_back.webp";
   showIntroScreen();
   </script>
 </body>
