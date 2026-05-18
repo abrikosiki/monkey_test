@@ -24,7 +24,6 @@ const CHILDREN_FILE = path.join(DATA_DIR, "children.json");
 const generationJobs = new Map();
 
 const MECHANICS = [
-  { id: "drag_drop", label: "Drag Drop", description: "Drag items into target zones." },
   { id: "drag_sort", label: "Drag Sort", description: "Arrange values in the correct order." },
   { id: "drag_group", label: "Drag Group", description: "Sort objects into two groups." },
   { id: "pattern_input", label: "Pattern Input", description: "Continue a number pattern." },
@@ -474,17 +473,6 @@ function mapExampleToRound(mech, ex, existing) {
     } else if (Array.isArray(existing.correct_order) && existing.correct_order.length) {
       r.correct_order = existing.correct_order;
     }
-  } else if (mech === "drag_drop") {
-    r.screen_item_count = toNumber(ex.screenItemCount, 6);
-    r.target_count = toNumber(ex.targetCount, 2);
-    if (Array.isArray(ex.zoneCounts) && ex.zoneCounts.length) {
-      r.zone_counts = ex.zoneCounts.map((v) => toNumber(v, 0));
-    }
-    // Preserve Claude-generated geometry — draggables/drop_zones live in AI output, not the tutor form
-    if (Array.isArray(existing.draggables) && existing.draggables.length) r.draggables = existing.draggables;
-    if (Array.isArray(existing.drop_zones) && existing.drop_zones.length) r.drop_zones = existing.drop_zones;
-    if (existing.required_per_zone && typeof existing.required_per_zone === "object") r.required_per_zone = existing.required_per_zone;
-    if (existing.prefill_per_zone && typeof existing.prefill_per_zone === "object") r.prefill_per_zone = existing.prefill_per_zone;
   } else if (mech === "key_lock") {
     r.lock_sum_1 = toNumber(ex.lock1Sum, 0);
     r.lock_sum_2 = toNumber(ex.lock2Sum, 0);
@@ -575,7 +563,7 @@ function applyDraftToLessonStages(lesson, draft) {
   return lesson;
 }
 
-const DRAG_MECHANICS = new Set(["drag_drop", "drag_sort", "drag_group"]);
+const DRAG_MECHANICS = new Set(["drag_sort", "drag_group"]);
 
 function buildStrictManualStageShell(lesson, draft) {
   const srcStages = Array.isArray(lesson?.stages) ? lesson.stages : [];
@@ -602,7 +590,7 @@ function buildStrictManualStageShell(lesson, draft) {
 
 function stageTemplate(stageNumber, islandKey = "") {
   const isBoss = stageNumber === 6;
-  const mechanic = stageNumber === 1 ? "drag_drop" : isBoss ? "boss_mix" : "fill_blank";
+  const mechanic = isBoss ? "boss_mix" : "fill_blank";
   return {
     stageNumber,
     mechanic,

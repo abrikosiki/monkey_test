@@ -111,7 +111,6 @@ Canon: Evil Doctor Krit is hunting the magical crystals from this island to powe
 MECHANICS — Claude CHOOSES per stage (15 types)
 ════════════════════════════════════════
 
-- drag_drop       — drag items into zones
 - drag_sort       — order items into slots
 - drag_group      — sort into two groups
 - pattern_input   — continue number sequence (use type "input" with sequence prompts OR dedicated fields)
@@ -142,12 +141,12 @@ ALWAYS include on EVERY stage:
 "mechanic_reason": "why this mechanic fits age X and difficulty Y"
 
 AGE RULES (which mechanics allowed):
-- age 5-6: ONLY drag_drop, tap_count, multi_choice, fill_blank, drag_group
+- age 5-6: ONLY tap_count, multi_choice, fill_blank, drag_group
 - age 7-8: all EXCEPT timer_challenge is optional; timer_challenge rarely
 - age 9+: all including timer_challenge
 
 DIFFICULTY RULES (pool to pick from):
-- easy:   drag_drop, tap_count, multi_choice — simple visual
+- easy:   tap_count, multi_choice, drag_group — simple visual
 - medium: add pattern_input, drag_sort, fill_blank, corridor_choice
 - hard:   add key_lock, match_pairs, balance_scale, build_number, timer_challenge (if age allows)
 
@@ -155,7 +154,7 @@ LESSON MIX RULES (6 stages):
 - Exactly 6 stages. When meta.island_key is set, each stage "background" MUST follow the six-token island pattern (see STAGE "background" TOKENS above) — same rule for every allowed island; do not invent a different progression.
 - No stage has a fixed required mechanic — pick freely based on age + difficulty. Any mechanic can appear at any position.
 - Distribute across categories for variety (at least 1 of each in the lesson):
-    VISUAL:    drag_drop | drag_sort | drag_group | tap_count | fortune_wheel
+    VISUAL:    drag_sort | drag_group | tap_count | fortune_wheel
     CHOICE:    multi_choice | corridor_choice | true_false | match_pairs | number_grid
     TYPING:    fill_blank | pattern_input | text_task | find_unknown | dice_multiply
     CHALLENGE: five_tasks | balance_scale | key_lock | symbol_calc | timer_challenge | build_number
@@ -171,7 +170,7 @@ STAGES — 6 items, id 1..6
 ROUNDS (required for new lessons):
 - Array "rounds" with **5** objects. Per-round "instruction" and all type-specific data (draggables, inputs, options, sequence, …) live **inside** each round.
 - **round_bonus_coins** (optional, default 2 on the engine): small reward after each of rounds 1–4. Stage **coins** is the main reward after round 5 (with AMAZING + success_message).
-- Round curve: (1) learn (2) new numbers (3) harder / more zones (4) twist (5) inverse or prefill (drag_drop: use prefill_per_zone).
+- Round curve: (1) learn (2) new numbers (3) harder (4) twist (5) inverse or challenge.
 - Visual variety rule: avoid reusing the same main image_key set across all rounds of one stage (e.g., not cherries in every round). Rotate assets by round theme.
 - Asset uniqueness rule: inside one stage, rounds may reuse the same image_key for clarity; across different stages in the same lesson, avoid repeating the same primary item/target image_key unless story-critical.
 - **legacy**: flat stage or "practice_tasks" still supported if "rounds" is absent.
@@ -185,22 +184,7 @@ GLOBAL UI TEMPLATE RULE:
 - NO intermediate "+2" popup between rounds in any mechanic. After a correct round, open the next round immediately.
 
 When using names that match builder v1, prefer:
-- drag_drop, drag_sort, input, choice, animation
-
-When using new types, include a clear data shape and "type" as the canonical mechanic name from the list of 15; add "engine_hint" string if output is for a future engine.
-
-DRAG_DROP (all lessons — engine rules, do not fight the layout in JSON):
-- drop_zones: only "id" and "image_key" per zone. Do NOT set "label", "x", or "y" for layout (the game engine auto-places targets in a row at the BOTTOM of the play area). No text on targets: only the PNG.
-- draggables: "id" + "image_key" per item. The engine scatters them in the UPPER band only (above a horizontal divider); they MUST NOT overlap drop targets.
-- required_per_zone: counts stay as-is.
-- Targets should be visual containers only (basket/totem/portal/etc.) with no labels baked into art.
-- Use the beach_lesson drag_drop visual as the canonical template.
-- Drag-drop stage background must be exactly the stage "background" token from the tutor draft for that stage id (island PNG sequence + fixed middle keys "2" then "3" for cave art). Copy it character-for-character from the allowed BACKGROUNDS list in the user message.
-- Round title/instruction for drag_drop should come from tutor "Title text" for that example (do not invent a different core task line).
-- Draggables count MUST strictly follow tutor "How many items on screen" for each example.
-- Use exactly 2 target PNGs from assets/targets for each drag_drop round; they may be identical or different.
-- Targets must always stay strictly below the draggable area (bottom row), never mixed into upper item zone.
-- Sum of required_per_zone MAY be less than total draggables (extra items are allowed as distractors to increase challenge).
+- drag_sort, input, choice, animation
 
 DRAG_SORT (strict template):
 - Stage "background" must match the tutor-required token for that stage id (island pattern: {prefix}1, {prefix}2, 2, 3, {prefix}3, {prefix}4 when island_key is set).

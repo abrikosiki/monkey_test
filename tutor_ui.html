@@ -255,7 +255,6 @@
     ];
 
     const MECHANIC_HINTS = {
-      drag_drop: "Use instruction + item/target hints + expected distribution.",
       drag_sort: "Use prompt, answer rule, and item hints for ordered values.",
       drag_group: "Describe the two groups in item/target hints.",
       pattern_input: "Use prompt + answer for each missing value.",
@@ -280,7 +279,6 @@
     };
 
     const MECHANIC_TEMPLATES = {
-      drag_drop: () => ({ titleText: "Share the items", prompt: "", answer: "", screenItemCount: 6, targetCount: 2, zoneCounts: [3, 3], options: [], leftExpression: "", rightExpression: "", correctSide: "", note: "", numbersText: "", group1Name: "", group1Values: "", group2Name: "", group2Values: "", choiceA: "", choiceB: "", choiceC: "", correctOption: "A", pairA: "", pairB: "", pairC: "", pairD: "", correctPair1: "A", correctPair2: "B", baseNumber: "", partsCount: "", readyFlag: false, timerExampleA: "", timerExampleB: "", timerExampleC: "", timerAnswerA: "", timerAnswerB: "", timerAnswerC: "", timerSeconds: 30, symbolA: "", symbolB: "", symbolC: "", symbolExpression: "", unknownA: "", unknownB: "", unknownEquation: "" }),
       drag_sort: () => ({ titleText: "Put in order", prompt: "2, 4, 6, 8", answer: "2,4,6,8", screenItemCount: "", targetCount: "", zoneCounts: [], options: [], leftExpression: "", rightExpression: "", correctSide: "", note: "ascending", numbersText: "", group1Name: "", group1Values: "", group2Name: "", group2Values: "", choiceA: "", choiceB: "", choiceC: "", correctOption: "A" }),
       drag_group: () => ({ titleText: "Sort the numbers", prompt: "", answer: "", screenItemCount: "", targetCount: "", zoneCounts: [], options: [], leftExpression: "", rightExpression: "", correctSide: "", note: "", numbersText: "2, 3, 4, 9", group1Name: "Even", group1Values: "2, 4", group2Name: "Odd", group2Values: "3, 9", choiceA: "", choiceB: "", choiceC: "", correctOption: "A", pairA: "", pairB: "", pairC: "", pairD: "", correctPair1: "A", correctPair2: "B", baseNumber: "", partsCount: "", readyFlag: false, timerExampleA: "", timerExampleB: "", timerExampleC: "", timerAnswerA: "", timerAnswerB: "", timerAnswerC: "", timerSeconds: 30, symbolA: "", symbolB: "", symbolC: "", symbolExpression: "", unknownA: "", unknownB: "", unknownEquation: "" }),
       pattern_input: () => ({ titleText: "Find the missing number", prompt: "2, 4, 6, ?", answer: "8", screenItemCount: "", targetCount: "", zoneCounts: [], options: [], leftExpression: "", rightExpression: "", correctSide: "", note: "", numbersText: "", group1Name: "", group1Values: "", group2Name: "", group2Values: "", choiceA: "", choiceB: "", choiceC: "", correctOption: "A", pairA: "", pairB: "", pairC: "", pairD: "", correctPair1: "A", correctPair2: "B", baseNumber: "", partsCount: "", readyFlag: false, timerExampleA: "", timerExampleB: "", timerExampleC: "", timerAnswerA: "", timerAnswerB: "", timerAnswerC: "", timerSeconds: 30, symbolA: "", symbolB: "", symbolC: "", symbolExpression: "", unknownA: "", unknownB: "", unknownEquation: "" }),
@@ -859,7 +857,6 @@
     }
 
     function exampleSummary(example, mechanic) {
-      if (mechanic === "drag_drop") return `Title: ${example.titleText || "?"} | items on screen: ${example.screenItemCount || "?"} | targets: ${example.targetCount || "?"} | per zone: ${(example.zoneCounts || []).join(", ") || "?"}`;
       if (mechanic === "drag_group") return `Title: ${example.titleText || "?"} | numbers: ${example.numbersText || "?"} | ${example.group1Name || "Group 1"}: ${example.group1Values || "?"} | ${example.group2Name || "Group 2"}: ${example.group2Values || "?"}`;
       if (mechanic === "fill_blank") return `Title: ${example.titleText || "?"} | example: ${example.prompt || "?"} | answer: ${example.answer || "?"}`;
       if (mechanic === "pattern_input") return `Title: ${example.titleText || "?"} | pattern: ${example.prompt || "?"} | missing value: ${example.answer || "?"}`;
@@ -970,36 +967,7 @@
       ];
       const add = (...nodes) => nodes.forEach((n) => grid.appendChild(n));
 
-      if (mechanic === "drag_drop") {
-        const zoneCountWrap = document.createElement("div");
-        zoneCountWrap.className = "full";
-        const targetCountField = makeInput("How many targets", example.targetCount, (v) => {
-          const count = Math.max(0, Number(v || 0));
-          example.targetCount = count;
-          const next = Array.from({ length: count }, (_, idx) => Number(example.zoneCounts?.[idx] || 0));
-          example.zoneCounts = next;
-          renderStages();
-        }, { type: "number" });
-        zoneCountWrap.appendChild(targetCountField.firstChild);
-        zoneCountWrap.appendChild(targetCountField.lastChild);
-        add(
-          ...base,
-          makeInput("How many items on screen", example.screenItemCount, (v) => example.screenItemCount = Number(v || 0), { type: "number" }),
-          targetCountField,
-        );
-        const zoneGrid = document.createElement("div");
-        zoneGrid.className = "field-grid full";
-        const zoneCount = Math.max(0, Number(example.targetCount || 0));
-        for (let i = 0; i < zoneCount; i++) {
-          zoneGrid.appendChild(
-            makeInput(`Zone ${i + 1}: correct item count`, example.zoneCounts?.[i] || 0, (v) => {
-              if (!Array.isArray(example.zoneCounts)) example.zoneCounts = [];
-              example.zoneCounts[i] = Number(v || 0);
-            }, { type: "number" })
-          );
-        }
-        add(zoneGrid);
-      } else if (mechanic === "drag_group") {
+      if (mechanic === "drag_group") {
         add(
           ...base,
           makeInput("All numbers that appear", example.numbersText, (v) => example.numbersText = v, { type: "textarea", full: true }),

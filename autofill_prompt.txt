@@ -52,7 +52,6 @@ Pick exactly 6 different mechanics for stages 1–5, and always use "boss_mix" f
 Never use the same mechanic twice in stages 1–5.
 
 Available mechanics for stages 1–5:
-  drag_drop       — drag items into target zones
   drag_sort       — arrange elements in correct order
   drag_group      — sort into two named groups
   pattern_input   — fill missing number in a sequence
@@ -75,13 +74,13 @@ Available mechanics for stages 1–5:
   number_grid     — 5×5 number grid, child taps the cell with the math answer
 
 AGE RULES:
-  age 5–6 → only: drag_drop, tap_count, drag_sort,
+  age 5–6 → only: tap_count, drag_sort,
              multi_choice, fill_blank, drag_group, true_false
   age 7–8 → all except timer_challenge (use rarely)
   age 9   → all including timer_challenge
 
 DIFFICULTY RULES (parsed from tutor_prompt):
-  level 1–3 → prefer: drag_drop, tap_count, drag_sort,
+  level 1–3 → prefer: tap_count, drag_sort,
                multi_choice, fill_blank, true_false
                numbers: age 5–6 up to 10, age 7–9 up to 20
 
@@ -103,14 +102,14 @@ No stage has a fixed mechanic requirement — any mechanic can appear at any pos
 as long as it fits the child's age and the difficulty level.
 
 Distribute across categories for a balanced lesson:
-  VISUAL:    drag_drop | drag_sort | drag_group | tap_count | fortune_wheel
+  VISUAL:    drag_sort | drag_group | tap_count | fortune_wheel
   CHOICE:    multi_choice | corridor_choice | true_false | match_pairs | number_grid
   TYPING:    fill_blank | pattern_input | text_task | find_unknown | dice_multiply
   CHALLENGE: five_tasks | balance_scale | key_lock | symbol_calc | timer_challenge | build_number
 
 Aim for at least 1 from VISUAL, 1 from CHOICE, 1 from TYPING in the 6 stages.
 Never use the same mechanic twice in one lesson.
-Anti-monotony: do NOT default to drag_drop → multi_choice → fill_blank → ... every time.
+Anti-monotony: do NOT default to the same sequence every time.
 Vary your selection — the same tutor prompt should produce different mechanic combinations on different runs.
 
 ════════════════════════════════════════
@@ -124,14 +123,6 @@ MUST be island-themed and narrative, never generic. Write it like a chapter titl
 Reference the island, villain, artifact, or story tension. Max 8 words. Every round's titleText must be unique.
 
 Then add ONLY the fields listed for that stage's mechanic. Types: strings unless noted as number or array.
-
---- drag_drop ---
-Game: child drags item tokens into bottom target zones; each zone needs a fixed count of correct drops.
-Per round REQUIRED fields:
-  • screenItemCount (number) — total draggable items on screen
-  • targetCount (number) — how many drop zones (usually 2)
-  • zoneCounts (array of numbers, length = targetCount) — how many correct items belong in each zone; sum should equal screenItemCount for a clean “share equally” puzzle, or your intentional split
-Optional: prompt if you use a one-line story; keep titleText as the main visible title.
 
 --- drag_sort ---
 Game: numbers appear as tokens; child orders them (e.g. ascending).
@@ -362,7 +353,7 @@ ISLAND THEMING (required):
     "4 jellyfish pods, each holding 3 crystals. How many crystals total?"
     "The samurai blocked 6 bridges with 5 guards each. Total guards?"
     "7 neon towers each have 4 glitching floors. How many floors?"
-  For visual mechanics (drag_drop, drag_sort), use island item names in titleText and prompt.
+  For visual mechanics (drag_sort, drag_group), use island item names in titleText and prompt.
 
 EXAMPLE FRESHNESS + DIFFICULTY SLOPE (required):
   Each stage must follow this exact progression — a different PROBLEM TYPE per round:
@@ -496,15 +487,14 @@ Return valid JSON only. No markdown. Start with {
   "stages": [
     {
       "stageNumber": 1,
-      "mechanic": "drag_drop",
+      "mechanic": "fill_blank",
       "mechanic_reason": "why this mechanic fits this age/level/topic",
       "examples": [
         {
           "roundNumber": 1,
           "titleText": "short title shown on screen",
-          "screenItemCount": 6,
-          "targetCount": 2,
-          "zoneCounts": [3, 3]
+          "prompt": "3 × 4 = ?",
+          "answer": "12"
         }
       ]
     }
@@ -527,7 +517,7 @@ QUALITY CHECKLIST — verify before output
 □ Stage 6 has exactly 10 examples with bossMechanic matching stages 1–5 mechanics?
 □ All 5 mechanics in stages 1–5 are different from each other?
 □ Mechanics drawn from at least 3 of the 4 categories (VISUAL, CHOICE, TYPING, CHALLENGE)?
-□ No default drag_drop-first sequence — mechanics vary freely by fit, not by position?
+□ No default mechanic sequence — mechanics vary freely by fit, not by position?
 □ Each stage has exactly 5 rounds?
 □ Difficulty level parsed correctly from tutor_prompt?
 □ Mechanics match age and difficulty rules?
