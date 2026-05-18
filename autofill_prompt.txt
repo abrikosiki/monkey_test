@@ -59,7 +59,6 @@ Available mechanics for stages 1–5:
   multi_choice    — pick one correct answer from three
   corridor_choice — choose left or right path
   match_pairs     — find two correct pairs from four options
-  tap_count       — tap a target exactly N times
   key_lock        — three locks with sums, six keys, two keys per lock
   balance_scale   — make both sides of equation equal
   build_number    — compose a number from parts
@@ -74,14 +73,12 @@ Available mechanics for stages 1–5:
   number_grid     — 5×5 number grid, child taps the cell with the math answer
 
 AGE RULES:
-  age 5–6 → only: tap_count, drag_sort,
-             multi_choice, fill_blank, drag_group, true_false
+  age 5–6 → only: drag_sort, multi_choice, fill_blank, drag_group, true_false
   age 7–8 → all except timer_challenge (use rarely)
   age 9   → all including timer_challenge
 
 DIFFICULTY RULES (parsed from tutor_prompt):
-  level 1–3 → prefer: tap_count, drag_sort,
-               multi_choice, fill_blank, true_false
+  level 1–3 → prefer: drag_sort, multi_choice, fill_blank, true_false
                numbers: age 5–6 up to 10, age 7–9 up to 20
 
   level 4–6 → add: pattern_input, corridor_choice, balance_scale,
@@ -102,7 +99,7 @@ No stage has a fixed mechanic requirement — any mechanic can appear at any pos
 as long as it fits the child's age and the difficulty level.
 
 Distribute across categories for a balanced lesson:
-  VISUAL:    drag_sort | drag_group | tap_count | fortune_wheel
+  VISUAL:    drag_sort | drag_group | fortune_wheel
   CHOICE:    multi_choice | corridor_choice | true_false | match_pairs | number_grid
   TYPING:    fill_blank | pattern_input | text_task | find_unknown | dice_multiply
   CHALLENGE: five_tasks | balance_scale | key_lock | symbol_calc | timer_challenge | build_number
@@ -168,12 +165,6 @@ Game: four statements A–D; exactly two are correct; child finds both.
 Per round REQUIRED fields:
   • pairA, pairB, pairC, pairD (strings) — four lines (can be equations with =)
   • correctPair1, correctPair2 (strings) — each is one of "A","B","C","D"; must be two DIFFERENT letters for the two true statements
-
---- tap_count ---
-Game: child taps one on-screen item exactly N times.
-Per round REQUIRED fields:
-  • prompt (string) — instruction, e.g. "Tap the banana 6 times"
-  • answer (string or number) — required tap count as digits, e.g. "6"
 
 --- key_lock ---
 Game: three lock cards each show a target sum and have two slots; six draggable keys with numbers; child places the correct pair on each lock.

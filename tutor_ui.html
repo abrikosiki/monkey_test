@@ -262,7 +262,6 @@
       multi_choice: "Use prompt + 3 options + correct option.",
       corridor_choice: "Task text + left example + right example + correct side.",
       match_pairs: "Set A/B/C/D and choose the two correct pairs.",
-      tap_count: "Use instruction + answer count + item hints.",
       key_lock: "Title + three card sums; each card has two key values (A/B) that form the correct pair.",
       balance_scale: "Use left/right expressions + answer + option tiles.",
       build_number: "Set base number and required parts count; no single correct answer.",
@@ -286,7 +285,6 @@
       multi_choice: () => ({ titleText: "Choose the correct answer", prompt: "Which answer is correct?", answer: "", screenItemCount: "", targetCount: "", zoneCounts: [], options: [], leftExpression: "", rightExpression: "", correctSide: "", note: "", numbersText: "", group1Name: "", group1Values: "", group2Name: "", group2Values: "", choiceA: "3", choiceB: "4", choiceC: "5", correctOption: "B", pairA: "", pairB: "", pairC: "", pairD: "", correctPair1: "A", correctPair2: "B", baseNumber: "", partsCount: "", readyFlag: false, timerExampleA: "", timerExampleB: "", timerExampleC: "", timerAnswerA: "", timerAnswerB: "", timerAnswerC: "", timerSeconds: 30, symbolA: "", symbolB: "", symbolC: "", symbolExpression: "", unknownA: "", unknownB: "", unknownEquation: "" }),
       corridor_choice: () => ({ titleText: "Choose side", prompt: "Which side is correct?", answer: "", screenItemCount: "", targetCount: "", zoneCounts: [], options: [], leftExpression: "8 ÷ 2", rightExpression: "10 ÷ 2", correctSide: "right", note: "", numbersText: "", group1Name: "", group1Values: "", group2Name: "", group2Values: "", choiceA: "", choiceB: "", choiceC: "", correctOption: "A", pairA: "", pairB: "", pairC: "", pairD: "", correctPair1: "A", correctPair2: "B", baseNumber: "", partsCount: "", readyFlag: false, timerExampleA: "", timerExampleB: "", timerExampleC: "", timerAnswerA: "", timerAnswerB: "", timerAnswerC: "", timerSeconds: 30, symbolA: "", symbolB: "", symbolC: "", symbolExpression: "", unknownA: "", unknownB: "", unknownEquation: "" }),
       match_pairs: () => ({ titleText: "Find two correct pairs", prompt: "", answer: "", screenItemCount: "", targetCount: "", zoneCounts: [], options: [], leftExpression: "", rightExpression: "", correctSide: "", note: "", numbersText: "", group1Name: "", group1Values: "", group2Name: "", group2Values: "", choiceA: "", choiceB: "", choiceC: "", correctOption: "A", pairA: "2+2 = 4", pairB: "3+3 = 5", pairC: "5+1 = 6", pairD: "9-2 = 8", correctPair1: "A", correctPair2: "C", baseNumber: "", partsCount: "", readyFlag: false, timerExampleA: "", timerExampleB: "", timerExampleC: "", timerAnswerA: "", timerAnswerB: "", timerAnswerC: "", timerSeconds: 30, symbolA: "", symbolB: "", symbolC: "", symbolExpression: "", unknownA: "", unknownB: "", unknownEquation: "" }),
-      tap_count: () => ({ titleText: "Tap the item", prompt: "Tap this item 4 times", answer: "4", screenItemCount: "", targetCount: "", zoneCounts: [], options: [], leftExpression: "", rightExpression: "", correctSide: "", note: "", numbersText: "", group1Name: "", group1Values: "", group2Name: "", group2Values: "", choiceA: "", choiceB: "", choiceC: "", correctOption: "A", pairA: "", pairB: "", pairC: "", pairD: "", correctPair1: "A", correctPair2: "B", baseNumber: "", partsCount: "", readyFlag: false, timerExampleA: "", timerExampleB: "", timerExampleC: "", timerAnswerA: "", timerAnswerB: "", timerAnswerC: "", timerSeconds: 30, symbolA: "", symbolB: "", symbolC: "", symbolExpression: "", unknownA: "", unknownB: "", unknownEquation: "" }),
       key_lock: () => ({
         titleText: "Match keys to the locks",
         prompt: "",
@@ -865,7 +863,6 @@
       if (mechanic === "multi_choice") return `Title: ${example.titleText || "?"} | ${example.prompt || "?"} | A:${example.choiceA || "?"} B:${example.choiceB || "?"} C:${example.choiceC || "?"} | correct: ${example.correctOption || "?"}`;
       if (mechanic === "drag_sort") return `Title: ${example.titleText || "?"} | numbers in order: ${example.prompt || "?"} | rule: ${example.answer || "?"}`;
       if (mechanic === "match_pairs") return `Title: ${example.titleText || "?"} | A:${example.pairA || "?"} B:${example.pairB || "?"} C:${example.pairC || "?"} D:${example.pairD || "?"} | correct: ${example.correctPair1 || "?"}, ${example.correctPair2 || "?"}`;
-      if (mechanic === "tap_count") return `Title: ${example.titleText || "?"} | task: ${example.prompt || "?"} | taps: ${example.answer || "?"}`;
       if (mechanic === "key_lock")
         return `Title: ${example.titleText || "?"} | L1=${example.lock1Sum || "?"} [${example.lock1KeyA},${example.lock1KeyB}] L2=${example.lock2Sum || "?"} [${example.lock2KeyA},${example.lock2KeyB}] L3=${example.lock3Sum || "?"} [${example.lock3KeyA},${example.lock3KeyB}]`;
       if (mechanic === "build_number") return `Title: ${example.titleText || "?"} | base number: ${example.baseNumber || "?"} | parts: ${example.partsCount || "?"} | ready: ${example.readyFlag ? "yes" : "no"}`;
@@ -1009,12 +1006,6 @@
           makeInput("Left bowl expression (with ?)", example.leftExpression, (v) => example.leftExpression = v),
           makeInput("Right bowl expression/value", example.rightExpression, (v) => example.rightExpression = v),
           makeInput("Answer instead of ?", example.answer, (v) => example.answer = v),
-        );
-      } else if (mechanic === "tap_count") {
-        add(
-          ...base,
-          makeInput("Task text inside the interactive zone", example.prompt, (v) => example.prompt = v, { type: "textarea", full: true }),
-          makeInput("How many taps", example.answer, (v) => example.answer = v),
         );
       } else if (mechanic === "key_lock") {
         add(...base);

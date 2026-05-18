@@ -31,7 +31,6 @@ const MECHANICS = [
   { id: "multi_choice", label: "Multi Choice", description: "Pick one correct option." },
   { id: "corridor_choice", label: "Left Or Right", description: "Choose correct side between two examples." },
   { id: "match_pairs", label: "Find Two Pairs", description: "Pick two correct pairs from A/B/C/D options." },
-  { id: "tap_count", label: "Tap Count", description: "Tap target N times." },
   { id: "key_lock", label: "Key Lock Box", description: "Three sum locks and six numbered keys." },
   { id: "balance_scale", label: "Balance Scale", description: "Make both sides equal." },
   { id: "build_number", label: "Build Number", description: "Build a number from parts." },
@@ -410,9 +409,6 @@ function mapExampleToRound(mech, ex, existing) {
     r.pair_d = ex.pairD || "";
     r.correct_pair_1 = String(ex.correctPair1 || "A").toUpperCase();
     r.correct_pair_2 = String(ex.correctPair2 || "B").toUpperCase();
-  } else if (mech === "tap_count") {
-    r.question = ex.prompt || "Tap this item";
-    r.target_count = toNumber(ex.answer, 2);
   } else if (mech === "balance_scale") {
     r.left_expression = ex.leftExpression || "3 + ?";
     r.right_expression = ex.rightExpression || "7";
@@ -535,16 +531,27 @@ function applyDraftToLessonStages(lesson, draft) {
     const mech = dStage.mechanic || lStage.type;
 
     if (mech === "boss_mix") {
-      const bossRounds = [];
-      for (const ex of dExamples) {
-        if (!ex || typeof ex !== "object") continue;
-        const srcMech = ex.bossMechanic || "fill_blank";
-        const r = mapExampleToRound(srcMech, ex, {});
-        r.type = srcMech;
-        if (ex.titleText) r.instruction = ex.titleText;
-        bossRounds.push(r);
+      const existingRounds = Array.isArray(lStage.rounds) ? lStage.rounds : [];
+      if (existingRounds.length > 0) {
+        // Boss rounds are fully AI-generated; preserve Claude's content,
+        // only apply instruction overrides from the draft titleText.
+        dExamples.forEach((ex, idx) => {
+          if (ex?.titleText && existingRounds[idx]) existingRounds[idx].instruction = ex.titleText;
+        });
+        lStage.rounds = existingRounds;
+      } else {
+        // Fallback for manual/build-from-draft mode (no AI rounds yet).
+        const bossRounds = [];
+        for (const ex of dExamples) {
+          if (!ex || typeof ex !== "object") continue;
+          const srcMech = ex.bossMechanic || "fill_blank";
+          const r = mapExampleToRound(srcMech, ex, {});
+          r.type = srcMech;
+          if (ex.titleText) r.instruction = ex.titleText;
+          bossRounds.push(r);
+        }
+        lStage.rounds = bossRounds;
       }
-      lStage.rounds = bossRounds;
     } else {
       const rounds = [];
       for (let j = 0; j < Math.max(5, dExamples.length, lStage.rounds.length); j++) {
@@ -887,7 +894,6 @@ RULES:
 - multi_choice template: task text is large inside interactive zone; render exactly 3 options (A/B/C); exactly one option is correct by tutor setting.
 - corridor_choice template: task text in centered card; left/right examples are math text only (no placeholder icons); correct side from tutor field; correct=green then next round, wrong=red.
 - match_pairs template: render A/B/C/D options as four tappable choices; exactly two correct options from tutor settings; correct=green+lock, wrong=red; once both correct are found, advance immediately to next round.
-- tap_count template: centered card with task text and one tappable item PNG; required taps from tutor field; each tap has short pulse animation; on completion move immediately to next round (no 'Correct' interstitial, no +2 popup).
 - key_lock template: three lock cards each showing lock_sum_N on the card and two slots; six draggable keys with badges from tutor keys_six order; correct pair per lock from tutor pair_N must sum to that lock_sum_N; rounds 1–(n−1): after all three locks solved advance immediately to next round; final round: open chest then NEXT completes stage (no +2 between rounds).
 - balance_scale template: use scale_down first, expressions in framed pills near bowls, left includes ? input and right is fixed value/expression, correct input triggers magical transform to scale, expressions disappear, NEXT button appears, NEXT jumps directly to next round.
 - build_number template: large base-number card in upper-middle, N empty input cards below (N from tutor parts count, clamp 2..5), arrows from lower cards to base card, tutor checkmark immediately advances to next round.
