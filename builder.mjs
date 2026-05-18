@@ -539,6 +539,39 @@ function buildHtml(
       transform:translate(-50%,-50%);
       z-index:16;
     }
+    .dd-text-chip{
+      position:absolute;
+      min-width:72px;
+      height:72px;
+      padding:0 14px;
+      border-radius:18px;
+      background:radial-gradient(circle at 30% 30%,#fff6c7 0%,#ffd667 52%,#e5a227 100%);
+      border:2px solid rgba(84,56,8,.85);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-family:"Fredoka One",cursive;
+      font-size:28px;
+      color:#2c1f08;
+      font-weight:700;
+      text-shadow:0 1px 0 rgba(255,255,255,.45);
+      box-shadow:0 5px 10px rgba(0,0,0,.28);
+      transform:translate(-50%,-50%);
+      touch-action:none;
+      cursor:grab;
+      z-index:13;
+    }
+    .dd-text-chip:active{cursor:grabbing;}
+    .zone-text-label{
+      font-family:"Fredoka One",cursive;
+      font-size:20px;
+      color:#ffe7a6;
+      text-align:center;
+      padding:8px 12px;
+      line-height:1.3;
+      pointer-events:none;
+      text-shadow:0 2px 6px rgba(0,0,0,.7);
+    }
     .input-row{
       position:absolute;
       min-width:260px;
@@ -2510,7 +2543,12 @@ function buildHtml(
       "statement", "correct_answer", "prompt", "tasks",
       "multiplier1", "multiplier2",
       "artifact_key",
-      "grid_numbers"
+      "grid_numbers",
+      "draggables", "drop_zones", "required_per_zone", "prefill_per_zone",
+      "items", "correct_order",
+      "numbers_text", "group1_name", "group2_name", "group1_values", "group2_values",
+      "timer_example_a", "timer_example_b", "timer_example_c",
+      "timer_answer_a", "timer_answer_b", "timer_answer_c", "timer_seconds"
     ];
     for(const k of pass){
       if(round[k] !== undefined) out[k] = round[k];
@@ -2549,6 +2587,25 @@ function buildHtml(
     if(resolveEngineType(out.type) === "choice" && !out.question){
       out.question = round.question ?? round.prompt ?? round.instruction ?? out.question ?? "";
     }
+
+    // Compatibility bridge: drag_drop with correct_id on drop_zones → accept_zone_ids + required_per_zone
+    if(
+      resolveEngineType(out.type) === "drag_drop" &&
+      Array.isArray(out.drop_zones) &&
+      out.drop_zones.some((z) => z.correct_id)
+    ){
+      const byId = {};
+      (out.draggables || []).forEach((d) => { byId[String(d.id)] = d; });
+      const rpz = {};
+      out.drop_zones.forEach((z) => {
+        if(!z.correct_id) return;
+        rpz[z.id] = 1;
+        const d = byId[String(z.correct_id)];
+        if(d && !Array.isArray(d.accept_zone_ids)) d.accept_zone_ids = [z.id];
+      });
+      if(!out.required_per_zone) out.required_per_zone = rpz;
+    }
+
     if (base && base.background != null && String(base.background).trim() !== "") {
       out.background = base.background;
     }
@@ -2718,13 +2775,20 @@ function buildHtml(
       const xPct = nz <= 1 ? 50 : (100 / (nz + 1)) * (idx + 1);
       zoneWrap.style.cssText += posStyle(xPct, dockY);
 
-      const img = makeImg(
-        "game-img",
-        z.image_key,
-        "width:100%;height:100%;object-fit:contain;position:relative;opacity:1;filter:drop-shadow(0 6px 10px rgba(0,0,0,.35));",
-        z.image_kind === "item" ? "item" : "target"
-      );
-      zoneWrap.appendChild(img);
+      if(z.image_key){
+        const img = makeImg(
+          "game-img",
+          z.image_key,
+          "width:100%;height:100%;object-fit:contain;position:relative;opacity:1;filter:drop-shadow(0 6px 10px rgba(0,0,0,.35));",
+          z.image_kind === "item" ? "item" : "target"
+        );
+        zoneWrap.appendChild(img);
+      } else if(z.label){
+        const lbl = document.createElement("div");
+        lbl.className = "zone-text-label";
+        lbl.textContent = String(z.label);
+        zoneWrap.appendChild(lbl);
+      }
       const need = Number(required[z.id] ?? 0);
       const needBadge = document.createElement("div");
       needBadge.className = "zone-need";
@@ -2748,7 +2812,15 @@ function buildHtml(
 
     draggables.forEach((d, i) => {
       const spot = draggableSpots[i];
-      const draggable = makeImg("game-img draggable", d.image_key, posStyle(spot.x, spot.y));
+      let draggable;
+      if(d.image_key){
+        draggable = makeImg("game-img draggable", d.image_key, posStyle(spot.x, spot.y));
+      } else {
+        draggable = document.createElement("div");
+        draggable.className = "dd-text-chip";
+        draggable.style.cssText = posStyle(spot.x, spot.y);
+        draggable.textContent = String(d.label || d.id);
+      }
       draggable.dataset.id = d.id;
       draggable.dataset.start = draggable.style.cssText;
       enablePointerDrag(draggable, (x, y) => {

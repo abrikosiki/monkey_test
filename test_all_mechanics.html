@@ -383,6 +383,39 @@
       transform:translate(-50%,-50%);
       z-index:16;
     }
+    .dd-text-chip{
+      position:absolute;
+      min-width:72px;
+      height:72px;
+      padding:0 14px;
+      border-radius:18px;
+      background:radial-gradient(circle at 30% 30%,#fff6c7 0%,#ffd667 52%,#e5a227 100%);
+      border:2px solid rgba(84,56,8,.85);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-family:"Fredoka One",cursive;
+      font-size:28px;
+      color:#2c1f08;
+      font-weight:700;
+      text-shadow:0 1px 0 rgba(255,255,255,.45);
+      box-shadow:0 5px 10px rgba(0,0,0,.28);
+      transform:translate(-50%,-50%);
+      touch-action:none;
+      cursor:grab;
+      z-index:13;
+    }
+    .dd-text-chip:active{cursor:grabbing;}
+    .zone-text-label{
+      font-family:"Fredoka One",cursive;
+      font-size:20px;
+      color:#ffe7a6;
+      text-align:center;
+      padding:8px 12px;
+      line-height:1.3;
+      pointer-events:none;
+      text-shadow:0 2px 6px rgba(0,0,0,.7);
+    }
     .input-row{
       position:absolute;
       min-width:260px;
@@ -1821,7 +1854,7 @@
   </div>
 
   <script>
-  const LESSON = {"meta":{"student_code":"TEST-ALL","student_name":"Tester","island_key":"jelly_bay_island","character_key":"elf_green","student_level":3,"student_coins":0,"start_coins":0,"child_inventory":["crown","egg"]},"story":{"island_name":"Jelly Bay Island","villain":"Monkey jellyfish king","artifact_name":"Pulse Core","artifact_emoji":"🪼","artifact_power":"The power that binds the jellyfish swarm beneath the bay.","greeting":"Tester, your island mission begins now — listen closely.","act1":"On Jelly Bay Island, the waters glow with drifting jellyfish, lighting the shore in eerie colors. Beneath the surface rules a monkey jellyfish king, its body entwined with pulsing tentacles, commanding the swarm as one. Enslaved by Doctor Krit, it spreads control through the tides. Deep below the bay lies the Pulse Core that binds them. We must dive in, Tester, destroy its power, and free the jelly king before the ocean itself turns against us.","act2":"","act3":"","goal":"Tester, master every math trial, reach the island's core in time, and break Doctor Krit's hold."},"stages":[{"id":1,"type":"fill_blank","title":"Stage 1 — Fill Blank","background":"jelly_bay_island1","coins":5,"success_message":"Fill blank works!","rounds":[{"inputs":[{"prompt":"3 × 4 = ?","answer":"12"}]}]},{"id":2,"type":"true_false","title":"Stage 2 — True or False","background":"jelly_bay_island2","coins":5,"success_message":"True / False works!","rounds":[{"statement":"4 × 3 = 12","correct_answer":"true"}]},{"id":3,"type":"multi_choice","title":"Stage 3 — Multi Choice","background":"2","coins":5,"success_message":"Multi choice works!","rounds":[{"question":"5 × 6 = ?","options":[{"label":"25","correct":false},{"label":"30","correct":true},{"label":"35","correct":false},{"label":"36","correct":false}]}]},{"id":4,"type":"corridor_choice","title":"Stage 4 — Corridor Choice","background":"3","coins":5,"success_message":"Corridor choice works!","rounds":[{"question":"3 bags with 5 apples each — how many apples total?","left_expression":"3 × 5 = 15","right_expression":"3 + 5 = 8","correct_side":"left"}]},{"id":5,"type":"balance_scale","title":"Stage 5 — Balance Scale","background":"jelly_bay_island3","coins":5,"success_message":"Balance scale works!","rounds":[{"left_expression":"? + 4 = 10","right_expression":"10","answer":"6"}]},{"id":6,"type":"symbol_calc","title":"Stage 6 — Symbol Calc","background":"jelly_bay_island4","coins":5,"success_message":"Symbol calc works!","rounds":[{"symbol_a":5,"symbol_b":3,"symbol_c":2,"symbol_expression":"A × B + C = ?","answer":"17"}]},{"id":7,"type":"find_unknown","title":"Stage 7 — Find Unknown","background":"jelly_bay_island1","coins":5,"success_message":"Find unknown works!","rounds":[{"unknown_a":4,"unknown_b":3,"unknown_equation":"A × B = C","answer":"12"}]},{"id":8,"type":"text_task","title":"Stage 8 — Text Task","background":"jelly_bay_island1","coins":5,"success_message":"Text task works!","rounds":[{"prompt":"There are 4 boxes with 6 toys each. How many toys in total?","answer":"24"}]},{"id":9,"type":"five_tasks","title":"Stage 9 — Five Tasks","background":"jelly_bay_island1","coins":5,"success_message":"Five tasks works!","rounds":[{"tasks":[{"q":"2 × 3 = ?","a":"6"},{"q":"4 × 2 = ?","a":"8"},{"q":"5 × 3 = ?","a":"15"},{"q":"6 × 2 = ?","a":"12"},{"q":"3 × 4 = ?","a":"12"}]}]},{"id":10,"type":"drag_drop","title":"Stage 10 — Drag & Drop","background":"jelly_bay_island1","coins":5,"success_message":"Drag drop works!","rounds":[{"draggables":[{"id":"d1","label":"6"},{"id":"d2","label":"8"},{"id":"d3","label":"12"},{"id":"d4","label":"15"}],"drop_zones":[{"id":"z1","label":"2 × 4 = ?","correct_id":"d2"},{"id":"z2","label":"2 × 3 = ?","correct_id":"d1"},{"id":"z3","label":"3 × 4 = ?","correct_id":"d3"}]}]},{"id":11,"type":"dice_multiply","title":"Stage 11 — Dice Multiply 🎲","background":"jelly_bay_island1","coins":5,"success_message":"Dice multiply works!","rounds":[{"multiplier1":4,"multiplier2":4}]},{"id":12,"type":"fortune_wheel","title":"Stage 12 — Fortune Wheel 🎡","background":"jelly_bay_island1","coins":5,"success_message":"Fortune wheel works!","rounds":[{"artifact_key":"crown"}]},{"id":13,"type":"number_grid","title":"Stage 13 — Number Grid 🗺️","background":"jelly_bay_island1","coins":5,"success_message":"Number grid works!","rounds":[{"grid_numbers":"34,21,8,15,42,6,18,30,5,27,12,45,3,24,9,36,7,16,25,48,2,20,14,32,10","prompt":"3 × 6 = ?","answer":"B2"}]},{"id":14,"type":"boss_mix","title":"FINAL — Boss Mix ⚔️","background":"jelly_bay_island1","coins":10,"success_message":"All mechanics verified — Bug Monster defeated!","rounds":[{"type":"fill_blank","instruction":"Boss round 1 — fill blank","inputs":[{"prompt":"9 × 8 = ?","answer":"72"}]},{"type":"true_false","instruction":"Boss round 2 — true/false","statement":"7 × 6 = 42","correct_answer":"true"},{"type":"corridor_choice","instruction":"Boss round 3 — corridor","question":"4 groups of 7 — which is correct?","left_expression":"4 × 7 = 28","right_expression":"4 + 7 = 11","correct_side":"left"}]}],"images_needed":{"library":[],"backgrounds":["jelly_bay_island1"],"items":[],"targets":[],"artifact":{"key":"crown","name":"Debug Crystal"}},"tutor_notes":[]};
+  const LESSON = {"meta":{"student_code":"TEST-ALL","student_name":"Tester","island_key":"jelly_bay_island","character_key":"elf_green","student_level":3,"student_coins":0,"start_coins":0,"child_inventory":[]},"story":{"island_name":"Jelly Bay Island","villain":"Monkey jellyfish king","artifact_name":"Pulse Core","artifact_emoji":"🪼","artifact_power":"The power that binds the jellyfish swarm beneath the bay.","greeting":"Tester, your island mission begins now — listen closely.","act1":"On Jelly Bay Island, the waters glow with drifting jellyfish, lighting the shore in eerie colors. Beneath the surface rules a monkey jellyfish king, its body entwined with pulsing tentacles, commanding the swarm as one. Enslaved by Doctor Krit, it spreads control through the tides. Deep below the bay lies the Pulse Core that binds them. We must dive in, Tester, destroy its power, and free the jelly king before the ocean itself turns against us.","act2":"","act3":"","goal":"Tester, master every math trial, reach the island's core in time, and break Doctor Krit's hold."},"stages":[{"id":1,"type":"drag_drop","title":"Stage 1 — Drag & Drop","background":"jelly_bay_island1","coins":5,"success_message":"Drag drop works!","rounds":[{"draggables":[{"id":"d1","label":"12","accept_zone_ids":["z1"]},{"id":"d2","label":"8","accept_zone_ids":["z2"]},{"id":"d3","label":"15","accept_zone_ids":["z3"]},{"id":"d4","label":"6","decoy":true}],"drop_zones":[{"id":"z1","label":"3 × 4 = ?"},{"id":"z2","label":"2 × 4 = ?"},{"id":"z3","label":"3 × 5 = ?"}],"required_per_zone":{"z1":1,"z2":1,"z3":1}}]},{"id":2,"type":"drag_sort","title":"Stage 2 — Drag Sort","background":"jelly_bay_island2","coins":5,"success_message":"Drag sort works!","rounds":[{"correct_order":[2,4,6,8,10],"items":[{"id":"s1","value":6,"image_key":"starfish"},{"id":"s2","value":2,"image_key":"starfish"},{"id":"s3","value":10,"image_key":"starfish"},{"id":"s4","value":4,"image_key":"starfish"},{"id":"s5","value":8,"image_key":"starfish"}]}]},{"id":3,"type":"drag_group","title":"Stage 3 — Drag Group","background":"2","coins":5,"success_message":"Drag group works!","rounds":[{"numbers_text":"3,6,9,12,4,8,16,20","group1_name":"× 3","group2_name":"× 4","group1_values":"3,6,9,12","group2_values":"4,8,16,20"}]},{"id":4,"type":"pattern_input","title":"Stage 4 — Pattern Input","background":"3","coins":5,"success_message":"Pattern input works!","rounds":[{"inputs":[{"prompt":"2, 4, 6, ?, 10","answer":"8"}]}]},{"id":5,"type":"key_lock","title":"Stage 5 — Key Lock","background":"jelly_bay_island3","coins":5,"success_message":"Key lock works!","rounds":[{"keys_six":"3 5 7 4 6 2","lock_sum_1":8,"lock_sum_2":11,"lock_sum_3":8,"pair_1":[3,5],"pair_2":[4,7],"pair_3":[2,6]}]},{"id":6,"type":"timer_challenge","title":"Stage 6 — Timer Challenge","background":"jelly_bay_island4","coins":5,"success_message":"Timer challenge works!","rounds":[{"timer_example_a":"3 × 4 = ?","timer_answer_a":"12","timer_example_b":"5 × 2 = ?","timer_answer_b":"10","timer_example_c":"6 × 3 = ?","timer_answer_c":"18","timer_seconds":30}]}],"images_needed":{"library":[],"backgrounds":["jelly_bay_island1"],"items":["starfish"],"targets":[],"artifact":{"key":"crown","name":"Debug Crystal"}},"tutor_notes":[]};
   const BACKGROUND_MAP = {"2":"assets/backgrounds/2.png","3":"assets/backgrounds/3.png","antigravity_island1":"assets/backgrounds/antigravity_island1.PNG","antigravity_island2":"assets/backgrounds/antigravity_island2.PNG","antigravity_island3":"assets/backgrounds/antigravity_island3.PNG","antigravity_island4":"assets/backgrounds/antigravity_island4.PNG","blue_crab_island1":"assets/backgrounds/blue_crab_island1.PNG","blue_crab_island2":"assets/backgrounds/blue_crab_island2.PNG","blue_crab_island3":"assets/backgrounds/blue_crab_island3.PNG","blue_crab_island4":"assets/backgrounds/blue_crab_island4.PNG","cherry_blossom_island1":"assets/backgrounds/cherry_blossom_island1.PNG","cherry_blossom_island2":"assets/backgrounds/cherry_blossom_island2.PNG","cherry_blossom_island3":"assets/backgrounds/cherry_blossom_island3.PNG","cherry_blossom_island4":"assets/backgrounds/cherry_blossom_island4.PNG","crystal_island1":"assets/backgrounds/crystal_island1.PNG","crystal_island2":"assets/backgrounds/crystal_island2.PNG","crystal_island3":"assets/backgrounds/crystal_island3.PNG","crystal_island4":"assets/backgrounds/crystal_island4.PNG","jelly_bay_island1":"assets/backgrounds/jelly_bay_island1.PNG","jelly_bay_island2":"assets/backgrounds/jelly_bay_island2.PNG","jelly_bay_island3":"assets/backgrounds/jelly_bay_island3.PNG","jelly_bay_island4":"assets/backgrounds/jelly_bay_island4.PNG","mushroom_island1":"assets/backgrounds/mushroom_island1.PNG","mushroom_island2":"assets/backgrounds/mushroom_island2.PNG","mushroom_island3":"assets/backgrounds/mushroom_island3.PNG","mushroom_island4":"assets/backgrounds/mushroom_island4.PNG","neon_city_island1":"assets/backgrounds/neon_city_island1.PNG","neon_city_island2":"assets/backgrounds/neon_city_island2.PNG","neon_city_island3":"assets/backgrounds/neon_city_island3.PNG","neon_city_island4":"assets/backgrounds/neon_city_island4.PNG","second":"assets/backgrounds/second.webp","shop":"assets/backgrounds/shop.webp","snowy_peaks_island1":"assets/backgrounds/snowy_peaks_island1.PNG","snowy_peaks_island2":"assets/backgrounds/snowy_peaks_island2.PNG","snowy_peaks_island3":"assets/backgrounds/snowy_peaks_island3.PNG","snowy_peaks_island4":"assets/backgrounds/snowy_peaks_island4.PNG","title":"assets/backgrounds/title.png"};
   const CHARACTER_MAP = {"boy_blue":"assets/characters/boy_blue.webp","boy_brown":"assets/characters/boy_brown.webp","boy_green":"assets/characters/boy_green.webp","elf_blue":"assets/characters/elf_blue.webp","elf_green":"assets/characters/elf_green.webp","elf_red":"assets/characters/elf_red.webp","fairy_green":"assets/characters/fairy_green.webp","fairy_purple":"assets/characters/fairy_purple.webp","fairy_red":"assets/characters/fairy_red.webp","girl_blue":"assets/characters/girl_blue.webp","girl_brown":"assets/characters/girl_brown.webp","girl_green":"assets/characters/girl_green.webp","pirate_blue":"assets/characters/pirate_blue.webp","pirate_brown":"assets/characters/pirate_brown.webp","pirate_green":"assets/characters/pirate_green.webp","wizard_blue":"assets/characters/wizard_blue.webp","wizard_green":"assets/characters/wizard_green.webp","wizard_red":"assets/characters/wizard_red.webp"};
   const ITEMS_MAP = {"artifact":"assets/items/artifact.png","bamboo":"assets/items/bamboo.png","banana":"assets/items/banana.png","box_close":"assets/items/box_close.png","box_open":"assets/items/box_open.png","bubble":"assets/items/bubble.png","butterfly":"assets/items/butterfly.png","candy":"assets/items/candy.png","cherry":"assets/items/cherry.png","cookie":"assets/items/cookie.png","coral":"assets/items/coral.png","crab_blue":"assets/items/crab_blue.png","hibiscus":"assets/items/hibiscus.png","jellyfish":"assets/items/jellyfish.png","key":"assets/items/key.webp","leaf":"assets/items/leaf.png","lollipop":"assets/items/lollipop.png","mushroom":"assets/items/mushroom.png","pawprint":"assets/items/pawprint.png","pearl_blue":"assets/items/pearl_blue.png","pearl_red":"assets/items/pearl_red.png","samurai_monkey":"assets/items/samurai_monkey.png","shell_blue":"assets/items/shell_blue.png","shell_red":"assets/items/shell_red.png","spore":"assets/items/spore.png","starfish":"assets/items/starfish.png","stone_blue":"assets/items/stone_blue.png"};
@@ -2354,7 +2387,12 @@
       "statement", "correct_answer", "prompt", "tasks",
       "multiplier1", "multiplier2",
       "artifact_key",
-      "grid_numbers"
+      "grid_numbers",
+      "draggables", "drop_zones", "required_per_zone", "prefill_per_zone",
+      "items", "correct_order",
+      "numbers_text", "group1_name", "group2_name", "group1_values", "group2_values",
+      "timer_example_a", "timer_example_b", "timer_example_c",
+      "timer_answer_a", "timer_answer_b", "timer_answer_c", "timer_seconds"
     ];
     for(const k of pass){
       if(round[k] !== undefined) out[k] = round[k];
@@ -2393,6 +2431,25 @@
     if(resolveEngineType(out.type) === "choice" && !out.question){
       out.question = round.question ?? round.prompt ?? round.instruction ?? out.question ?? "";
     }
+
+    // Compatibility bridge: drag_drop with correct_id on drop_zones → accept_zone_ids + required_per_zone
+    if(
+      resolveEngineType(out.type) === "drag_drop" &&
+      Array.isArray(out.drop_zones) &&
+      out.drop_zones.some((z) => z.correct_id)
+    ){
+      const byId = {};
+      (out.draggables || []).forEach((d) => { byId[String(d.id)] = d; });
+      const rpz = {};
+      out.drop_zones.forEach((z) => {
+        if(!z.correct_id) return;
+        rpz[z.id] = 1;
+        const d = byId[String(z.correct_id)];
+        if(d && !Array.isArray(d.accept_zone_ids)) d.accept_zone_ids = [z.id];
+      });
+      if(!out.required_per_zone) out.required_per_zone = rpz;
+    }
+
     if (base && base.background != null && String(base.background).trim() !== "") {
       out.background = base.background;
     }
@@ -2562,13 +2619,20 @@
       const xPct = nz <= 1 ? 50 : (100 / (nz + 1)) * (idx + 1);
       zoneWrap.style.cssText += posStyle(xPct, dockY);
 
-      const img = makeImg(
-        "game-img",
-        z.image_key,
-        "width:100%;height:100%;object-fit:contain;position:relative;opacity:1;filter:drop-shadow(0 6px 10px rgba(0,0,0,.35));",
-        z.image_kind === "item" ? "item" : "target"
-      );
-      zoneWrap.appendChild(img);
+      if(z.image_key){
+        const img = makeImg(
+          "game-img",
+          z.image_key,
+          "width:100%;height:100%;object-fit:contain;position:relative;opacity:1;filter:drop-shadow(0 6px 10px rgba(0,0,0,.35));",
+          z.image_kind === "item" ? "item" : "target"
+        );
+        zoneWrap.appendChild(img);
+      } else if(z.label){
+        const lbl = document.createElement("div");
+        lbl.className = "zone-text-label";
+        lbl.textContent = String(z.label);
+        zoneWrap.appendChild(lbl);
+      }
       const need = Number(required[z.id] ?? 0);
       const needBadge = document.createElement("div");
       needBadge.className = "zone-need";
@@ -2592,7 +2656,15 @@
 
     draggables.forEach((d, i) => {
       const spot = draggableSpots[i];
-      const draggable = makeImg("game-img draggable", d.image_key, posStyle(spot.x, spot.y));
+      let draggable;
+      if(d.image_key){
+        draggable = makeImg("game-img draggable", d.image_key, posStyle(spot.x, spot.y));
+      } else {
+        draggable = document.createElement("div");
+        draggable.className = "dd-text-chip";
+        draggable.style.cssText = posStyle(spot.x, spot.y);
+        draggable.textContent = String(d.label || d.id);
+      }
       draggable.dataset.id = d.id;
       draggable.dataset.start = draggable.style.cssText;
       enablePointerDrag(draggable, (x, y) => {

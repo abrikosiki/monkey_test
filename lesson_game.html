@@ -383,6 +383,39 @@
       transform:translate(-50%,-50%);
       z-index:16;
     }
+    .dd-text-chip{
+      position:absolute;
+      min-width:72px;
+      height:72px;
+      padding:0 14px;
+      border-radius:18px;
+      background:radial-gradient(circle at 30% 30%,#fff6c7 0%,#ffd667 52%,#e5a227 100%);
+      border:2px solid rgba(84,56,8,.85);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-family:"Fredoka One",cursive;
+      font-size:28px;
+      color:#2c1f08;
+      font-weight:700;
+      text-shadow:0 1px 0 rgba(255,255,255,.45);
+      box-shadow:0 5px 10px rgba(0,0,0,.28);
+      transform:translate(-50%,-50%);
+      touch-action:none;
+      cursor:grab;
+      z-index:13;
+    }
+    .dd-text-chip:active{cursor:grabbing;}
+    .zone-text-label{
+      font-family:"Fredoka One",cursive;
+      font-size:20px;
+      color:#ffe7a6;
+      text-align:center;
+      padding:8px 12px;
+      line-height:1.3;
+      pointer-events:none;
+      text-shadow:0 2px 6px rgba(0,0,0,.7);
+    }
     .input-row{
       position:absolute;
       min-width:260px;
@@ -1250,6 +1283,16 @@
     .boss-hit{animation:bossScreenShake .32s ease}
     .boss-flash{position:fixed;inset:0;background:rgba(200,30,30,.42);pointer-events:none;z-index:150;animation:bossFlashFade .38s ease forwards}
     @keyframes bossFlashFade{0%{opacity:1}100%{opacity:0}}
+    .dm-canvas{cursor:pointer;filter:drop-shadow(0 8px 44px rgba(200,140,20,.65));}
+    .boss-hp-bar{position:absolute;bottom:14px;left:4%;width:92%;z-index:30;pointer-events:none;}
+    .boss-hp-bar.hidden{display:none}
+    .boss-hp-villain{width:100%;}
+    #villainHpLabel{display:none;}
+    .boss-hp-track{width:100%;height:60px;background:rgba(0,0,0,.35);border-radius:12px;overflow:hidden;box-shadow:0 0 0 3px rgba(255,80,80,.6);}
+    .boss-hp-fill{height:100%;background:linear-gradient(90deg,#cc0000,#ff4400,#ff8800);border-radius:12px;transition:width .5s ease;box-shadow:inset 0 4px 12px rgba(255,180,0,.4);}
+    .boss-hp-hero{display:none;}
+    .intro-skip-btn{position:absolute;bottom:20px;right:24px;z-index:50;padding:7px 20px;font-family:'Fredoka One',cursive;font-size:14px;color:rgba(255,255,255,.6);background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.2);border-radius:30px;cursor:pointer;letter-spacing:1px;}
+    .intro-skip-btn:hover{color:white;background:rgba(0,0,0,.6);}
     @keyframes villainDefeatIn{
       0%{opacity:0;transform:scale(.65) translateY(40px)}
       65%{transform:scale(1.06) translateY(-6px)}
@@ -1731,6 +1774,7 @@
         <button class="intro-start" id="introStartBtn">BEGIN ADVENTURE</button>
       </div>
     </div>
+    <button class="intro-skip-btn" id="introSkipBtn">SKIP ›</button>
   </div>
   <div class="game" id="game">
     <img class="bg" id="bg" alt="">
@@ -1748,6 +1792,13 @@
       <div class="p-tag" id="pTag"></div>
     </div>
     <div class="izone" id="izone"></div>
+    <div class="boss-hp-bar hidden" id="bossHpBar">
+      <div class="boss-hp-villain">
+        <span id="villainHpLabel">👹 20 HP</span>
+        <div class="boss-hp-track"><div class="boss-hp-fill" id="villainHpFill"></div></div>
+      </div>
+      <div class="boss-hp-hero" id="heroHearts">❤️❤️❤️</div>
+    </div>
     <div class="bottom"></div>
   </div>
   <div class="success-screen" id="successScreen">
@@ -1803,7 +1854,7 @@
   </div>
 
   <script>
-  const LESSON = {"meta":{"student_code":"MONKEY-3007","student_name":"Pirate","island_key":"jelly_bay_island","character_key":"pirate_green","student_level":4,"student_coins":0,"start_coins":0,"child_inventory":["egg","sword","crown","lizard","quardo","freeze_ring","ring_ice","magic_necklace"],"has_freeze_ring":true},"story":{"island_name":"Jelly Bay Island","villain":"Monkey jellyfish king","artifact_name":"Pulse Core","artifact_emoji":"🪼","artifact_power":"The power that binds the jellyfish swarm beneath the bay.","greeting":"Pirate, your island mission begins now — listen closely.","act1":"On Jelly Bay Island, the waters glow with drifting jellyfish, lighting the shore in eerie colors. Beneath the surface rules a monkey jellyfish king, its body entwined with pulsing tentacles, commanding the swarm as one. Enslaved by Doctor Krit, it spreads control through the tides. Deep below the bay lies the Pulse Core that binds them. We must dive in, Pirate, destroy its power, and free the jelly king before the ocean itself turns against us.","act2":"","act3":"","goal":"Pirate, master every math trial, reach the island's core in time, and break Doctor Krit's hold."},"stages":[{"id":1,"type":"five_tasks","title":"Pirate trains before diving into Jelly Bay","background":"jelly_bay_island1","coins":15,"success_message":"Amazing! You solved them all!","rounds":[{"instruction":"Solve all tasks!","tasks":[{"q":"12 ÷ 3 = ?","a":"4"},{"q":"15 ÷ 5 = ?","a":"3"},{"q":"20 ÷ 4 = ?","a":"5"},{"q":"18 ÷ 2 = ?","a":"9"},{"q":"24 ÷ 6 = ?","a":"4"}]},{"instruction":"Solve all tasks!","tasks":[{"q":"16 ÷ 4 = ?","a":"4"},{"q":"21 ÷ 3 = ?","a":"7"},{"q":"30 ÷ 5 = ?","a":"6"},{"q":"27 ÷ 9 = ?","a":"3"},{"q":"14 ÷ 2 = ?","a":"7"}]},{"instruction":"Solve all tasks!","tasks":[{"q":"4 × 3 = ?","a":"12"},{"q":"12 ÷ 4 = ?","a":"3"},{"q":"? × 5 = 25","a":"5"},{"q":"24 ÷ ? = 6","a":"4"},{"q":"2 × 8 = ?","a":"16"}]}]},{"id":2,"type":"text_task","title":"Pirate explores glowing jelly pods","background":"jelly_bay_island2","coins":15,"success_message":"Brilliant! You solved every task!","rounds":[{"instruction":"Pirate finds 4 jelly pods. Each pod has 3 energy crystals. How many crystals are there in total?","prompt":"Pirate finds 4 jelly pods. Each pod has 3 energy crystals. How many crystals are there in total?","answer":"12"},{"instruction":"18 jelly cakes are shared equally onto 3 glowing trays. How many cakes are on each tray?","prompt":"18 jelly cakes are shared equally onto 3 glowing trays. How many cakes are on each tray?","answer":"6"},{"instruction":"There are 5 jelly ships. Each ship carries 6 jellyfish guards. How many guards are there in total?","prompt":"There are 5 jelly ships. Each ship carries 6 jellyfish guards. How many guards are there in total?","answer":"30"},{"instruction":"Pirate finds 24 magic cards. They are shared equally between 4 divers. How many cards does each diver get?","prompt":"Pirate finds 24 magic cards. They are shared equally between 4 divers. How many cards does each diver get?","answer":"6"},{"instruction":"There are 7 glowing rows of sea plants. Each row has 3 plants. How many plants are there in total?","prompt":"There are 7 glowing rows of sea plants. Each row has 3 plants. How many plants are there in total?","answer":"21"}]},{"id":3,"type":"true_false","title":"Pirate checks the current","background":"2","coins":20,"success_message":"You're a math detective!","rounds":[{"instruction":"True or False?","statement":"3 × 4 = 4 × 3","correct_answer":"true"},{"instruction":"True or False?","statement":"20 ÷ 5 = 5 ÷ 20","correct_answer":"false"},{"instruction":"True or False?","statement":"20 coins shared between 5 pirates means each pirate gets 4 coins","correct_answer":"true"},{"instruction":"True or False?","statement":"6 underwater rooms with 4 panels each makes 20 panels in total","correct_answer":"false"},{"instruction":"True or False?","statement":"16 slices shared between 4 plates means each plate has 5 slices","correct_answer":"false"}]},{"id":4,"type":"corridor_choice","title":"Glowing jellyfish surround Pirate","background":"3","coins":20,"success_message":"Perfect choice! You see through the illusion!","rounds":[{"instruction":"Pirate sees 20 glowing jelly orbs shared into 5 groups. Which path shows how many in each group?","question":"Pirate sees 20 glowing jelly orbs shared into 5 groups. Which path shows how many in each group?","left_expression":"20 ÷ 5 = 4","right_expression":"20 × 5 = 100","correct_side":"left"},{"instruction":"Pirate finds 4 treasure chests with 3 pearls each. Which path shows total pearls?","question":"Pirate finds 4 treasure chests with 3 pearls each. Which path shows total pearls?","left_expression":"4 × 3 = 12","right_expression":"4 + 3 = 7","correct_side":"left"},{"instruction":"Pirate sees 5 groups of 4 guards. Then 4 guards leave each group. Which path shows how many remain in total?","question":"Pirate sees 5 groups of 4 guards. Then 4 guards leave each group. Which path shows how many remain in total?","left_expression":"5 × (4 − 4) = 0","right_expression":"5 × 4 − 4 = 16","correct_side":"right"},{"instruction":"Pirate finds 30 energy crystals. They are shared into 5 groups, then each group doubles. Which path shows the final total?","question":"Pirate finds 30 energy crystals. They are shared into 5 groups, then each group doubles. Which path shows the final total?","left_expression":"12","right_expression":"3","correct_side":"left"},{"instruction":"Pirate sees 6 groups of 5 orbs, then 10 disappear. Which path shows how many remain?","question":"Pirate sees 6 groups of 5 orbs, then 10 disappear. Which path shows how many remain?","left_expression":"2","right_expression":"20","correct_side":"right"}]},{"id":5,"type":"symbol_calc","title":"Glowing symbols appear in the water","background":"jelly_bay_island3","coins":25,"success_message":"Outstanding! You cracked the symbol code!","rounds":[{"instruction":"Solve the expression.","symbol_a":4,"symbol_b":3,"symbol_c":2,"symbol_expression":"A × B + C = ?","answer":"14"},{"instruction":"Solve the expression.","symbol_a":6,"symbol_b":5,"symbol_c":4,"symbol_expression":"A × B − C = ?","answer":"26"},{"instruction":"Solve the expression.","symbol_a":20,"symbol_b":5,"symbol_c":3,"symbol_expression":"A ÷ B + C = ?","answer":"7"},{"instruction":"Solve the expression.","symbol_a":24,"symbol_b":4,"symbol_c":2,"symbol_expression":"A ÷ B × C = ?","answer":"12"},{"instruction":"Solve the expression.","symbol_a":30,"symbol_b":5,"symbol_c":4,"symbol_expression":"A ÷ B × C + 2 = ?","answer":"26"}]},{"id":6,"type":"fill_blank","title":"Pirate faces the jellyfish king","background":"jelly_bay_island4","coins":30,"success_message":"You freed the bay! The Pulse Core is yours!","rounds":[{"instruction":"24 ÷ 4 + 2 = ?","example":"24 ÷ 4 + 2 = ?","prompt":"24 ÷ 4 + 2 = ?","answer":"8"},{"instruction":"30 ÷ 5 × 2 = ?","example":"30 ÷ 5 × 2 = ?","prompt":"30 ÷ 5 × 2 = ?","answer":"12"},{"instruction":"40 ÷ 5 + 4 = ?","example":"40 ÷ 5 + 4 = ?","prompt":"40 ÷ 5 + 4 = ?","answer":"12"},{"instruction":"There are 5 jelly groups with 6 creatures each. Total = ?","example":"There are 5 jelly groups with 6 creatures each. Total = ?","prompt":"There are 5 jelly groups with 6 creatures each. Total = ?","answer":"30"},{"instruction":"30 jelly orbs are shared equally into ? groups. Each group has 5 orbs","example":"30 jelly orbs are shared equally into ? groups. Each group has 5 orbs","prompt":"30 jelly orbs are shared equally into ? groups. Each group has 5 orbs","answer":"6"}]}],"images_needed":{"library":[],"backgrounds":["jelly_bay_island1","jelly_bay_island2","2","3","jelly_bay_island3","jelly_bay_island4"],"items":[],"targets":[],"artifact":{"key":"Focusing_crystal","name":"Pulse Core"}},"tutor_notes":[]};
+  const LESSON = {"meta":{"student_code":"MONKEY-3007","student_name":"Pirate","island_key":"jelly_bay_island","character_key":"pirate_green","student_level":4,"student_coins":0,"start_coins":0,"child_inventory":["egg","sword","crown","lizard","quardo","freeze_ring","ring_ice","magic_necklace"],"has_freeze_ring":true},"story":{"island_name":"Jelly Bay Island","villain":"Monkey jellyfish king","artifact_name":"Pulse Core","artifact_emoji":"🪼","artifact_power":"The power that binds the jellyfish swarm beneath the bay.","greeting":"Pirate, your island mission begins now — listen closely.","act1":"On Jelly Bay Island, the waters glow with drifting jellyfish, lighting the shore in eerie colors. Beneath the surface rules a monkey jellyfish king, its body entwined with pulsing tentacles, commanding the swarm as one. Enslaved by Doctor Krit, it spreads control through the tides. Deep below the bay lies the Pulse Core that binds them. We must dive in, Pirate, destroy its power, and free the jelly king before the ocean itself turns against us.","act2":"","act3":"","goal":"Pirate, master every math trial, reach the island's core in time, and break Doctor Krit's hold."},"stages":[{"id":1,"type":"five_tasks","title":"Pirate trains before diving into Jelly Bay","background":"jelly_bay_island1","coins":15,"success_message":"Amazing! You solved them all!","rounds":[{"instruction":"Solve all tasks!","tasks":[{"q":"12 ÷ 3 = ?","a":"4"},{"q":"15 ÷ 5 = ?","a":"3"},{"q":"20 ÷ 4 = ?","a":"5"},{"q":"18 ÷ 2 = ?","a":"9"},{"q":"24 ÷ 6 = ?","a":"4"}]},{"instruction":"Solve all tasks!","tasks":[{"q":"16 ÷ 4 = ?","a":"4"},{"q":"21 ÷ 3 = ?","a":"7"},{"q":"30 ÷ 5 = ?","a":"6"},{"q":"27 ÷ 9 = ?","a":"3"},{"q":"14 ÷ 2 = ?","a":"7"}]},{"instruction":"Solve all tasks!","tasks":[{"q":"4 × 3 = ?","a":"12"},{"q":"12 ÷ 4 = ?","a":"3"},{"q":"? × 5 = 25","a":"5"},{"q":"24 ÷ ? = 6","a":"4"},{"q":"2 × 8 = ?","a":"16"}]}]},{"id":2,"type":"text_task","title":"Pirate explores glowing jelly pods","background":"jelly_bay_island2","coins":15,"success_message":"Brilliant! You solved every task!","rounds":[{"instruction":"Pirate finds 4 jelly pods. Each pod has 3 energy crystals. How many crystals are there in total?","prompt":"Pirate finds 4 jelly pods. Each pod has 3 energy crystals. How many crystals are there in total?","answer":"12"},{"instruction":"18 jelly cakes are shared equally onto 3 glowing trays. How many cakes are on each tray?","prompt":"18 jelly cakes are shared equally onto 3 glowing trays. How many cakes are on each tray?","answer":"6"},{"instruction":"There are 5 jelly ships. Each ship carries 6 jellyfish guards. How many guards are there in total?","prompt":"There are 5 jelly ships. Each ship carries 6 jellyfish guards. How many guards are there in total?","answer":"30"},{"instruction":"Pirate finds 24 magic cards. They are shared equally between 4 divers. How many cards does each diver get?","prompt":"Pirate finds 24 magic cards. They are shared equally between 4 divers. How many cards does each diver get?","answer":"6"},{"instruction":"There are 7 glowing rows of sea plants. Each row has 3 plants. How many plants are there in total?","prompt":"There are 7 glowing rows of sea plants. Each row has 3 plants. How many plants are there in total?","answer":"21"}]},{"id":3,"type":"true_false","title":"Pirate checks the current","background":"2","coins":20,"success_message":"You're a math detective!","rounds":[{"instruction":"True or False?","statement":"3 × 4 = 4 × 3","correct_answer":"true"},{"instruction":"True or False?","statement":"20 ÷ 5 = 5 ÷ 20","correct_answer":"false"},{"instruction":"True or False?","statement":"20 coins shared between 5 pirates means each pirate gets 4 coins","correct_answer":"true"},{"instruction":"True or False?","statement":"6 underwater rooms with 4 panels each makes 20 panels in total","correct_answer":"false"},{"instruction":"True or False?","statement":"16 slices shared between 4 plates means each plate has 5 slices","correct_answer":"false"}]},{"id":4,"type":"corridor_choice","title":"Glowing jellyfish surround Pirate","background":"3","coins":20,"success_message":"Perfect choice! You see through the illusion!","rounds":[{"instruction":"Pirate sees 20 glowing jelly orbs shared into 5 groups. Which path shows how many in each group?","question":"Pirate sees 20 glowing jelly orbs shared into 5 groups. Which path shows how many in each group?","left_expression":"20 ÷ 5 = 4","right_expression":"20 × 5 = 100","correct_side":"left"},{"instruction":"Pirate finds 4 treasure chests with 3 pearls each. Which path shows total pearls?","question":"Pirate finds 4 treasure chests with 3 pearls each. Which path shows total pearls?","left_expression":"4 × 3 = 12","right_expression":"4 + 3 = 7","correct_side":"left"},{"instruction":"Pirate sees 5 groups of 4 guards. Then 4 guards leave each group. Which path shows how many remain in total?","question":"Pirate sees 5 groups of 4 guards. Then 4 guards leave each group. Which path shows how many remain in total?","left_expression":"5 × (4 − 4) = 0","right_expression":"5 × 4 − 4 = 16","correct_side":"right"},{"instruction":"Pirate finds 30 energy crystals. They are shared into 5 groups, then each group doubles. Which path shows the final total?","question":"Pirate finds 30 energy crystals. They are shared into 5 groups, then each group doubles. Which path shows the final total?","left_expression":"12","right_expression":"3","correct_side":"left"},{"instruction":"Pirate sees 6 groups of 5 orbs, then 10 disappear. Which path shows how many remain?","question":"Pirate sees 6 groups of 5 orbs, then 10 disappear. Which path shows how many remain?","left_expression":"2","right_expression":"20","correct_side":"right"}]},{"id":5,"type":"symbol_calc","title":"Glowing symbols appear in the water","background":"jelly_bay_island3","coins":25,"success_message":"Outstanding! You cracked the symbol code!","rounds":[{"instruction":"Solve the expression.","symbol_a":4,"symbol_b":3,"symbol_c":2,"symbol_expression":"A × B + C = ?","answer":"14"},{"instruction":"Solve the expression.","symbol_a":6,"symbol_b":5,"symbol_c":4,"symbol_expression":"A × B − C = ?","answer":"26"},{"instruction":"Solve the expression.","symbol_a":20,"symbol_b":5,"symbol_c":3,"symbol_expression":"A ÷ B + C = ?","answer":"7"},{"instruction":"Solve the expression.","symbol_a":24,"symbol_b":4,"symbol_c":2,"symbol_expression":"A ÷ B × C = ?","answer":"12"},{"instruction":"Solve the expression.","symbol_a":30,"symbol_b":5,"symbol_c":4,"symbol_expression":"A ÷ B × C + 2 = ?","answer":"26"}]},{"id":6,"type":"boss_mix","title":"FINAL BATTLE — Pirate vs the Jellyfish King","background":"jelly_bay_island4","coins":30,"success_message":"You freed the bay! The Pulse Core is yours!","rounds":[{"type":"five_tasks","instruction":"Pirate dives into the heart of Jelly Bay and faces the glowing swarm","tasks":[{"q":"36 ÷ 6 = ?","a":"6"},{"q":"45 ÷ 5 = ?","a":"9"},{"q":"28 ÷ 4 = ?","a":"7"},{"q":"32 ÷ 8 = ?","a":"4"},{"q":"54 ÷ 9 = ?","a":"6"}]},{"type":"five_tasks","instruction":"The jellyfish king awakens and the water begins to pulse","tasks":[{"q":"6 × 7 = ?","a":"42"},{"q":"42 ÷ 6 = ?","a":"7"},{"q":"___ × 6 = 36","a":"6"},{"q":"40 ÷ ___ = 8","a":"5"},{"q":"9 × 4 = ?","a":"36"}]},{"type":"text_task","instruction":"The swarm surrounds Pirate as the current grows stronger","prompt":"There are 8 glowing rows of jelly plants. Each row has 4 plants. How many plants are there in total?","answer":"32"},{"type":"text_task","instruction":"The current hides the path to the Pulse Core","prompt":"36 energy crystals are shared equally between some divers. Each diver gets 6 crystals. How many divers are there?","answer":"6"},{"type":"true_false","instruction":"The jellyfish king distorts what is true","statement":"24 ÷ 6 = 4","correct_answer":"true"},{"type":"true_false","instruction":"The water twists Pirate's perception","statement":"6 × 5 + 5 = 30","correct_answer":"false"},{"type":"corridor_choice","instruction":"Pirate fights through the shifting currents","question":"Pirate sees 36 crystals shared into 6 groups, then each group doubles. What is the total?","left_expression":"36 ÷ 6 + 2 = 8","right_expression":"(36 ÷ 6) × 2 = 12","correct_side":"right"},{"type":"corridor_choice","instruction":"The jelly king twists the flow of the ocean","question":"Pirate sees 5 groups of 8 orbs, then 8 disappear. How many remain?","left_expression":"5 × (8 − 8) = 0","right_expression":"5 × 8 − 8 = 32","correct_side":"right"},{"type":"symbol_calc","instruction":"Energy from the Pulse Core begins to surge","symbol_a":36,"symbol_b":6,"symbol_c":3,"symbol_expression":"A ÷ B × C + 2","answer":"20"},{"type":"symbol_calc","instruction":"The jellyfish king channels the power of the Core","symbol_a":48,"symbol_b":6,"symbol_c":4,"symbol_expression":"A ÷ B × C − 4","answer":"28"}]}],"images_needed":{"library":[],"backgrounds":["jelly_bay_island1","jelly_bay_island2","2","3","jelly_bay_island3","jelly_bay_island4"],"items":[],"targets":[],"artifact":{"key":"Focusing_crystal","name":"Pulse Core"}},"tutor_notes":[]};
   const BACKGROUND_MAP = {"2":"assets/backgrounds/2.png","3":"assets/backgrounds/3.png","antigravity_island1":"assets/backgrounds/antigravity_island1.PNG","antigravity_island2":"assets/backgrounds/antigravity_island2.PNG","antigravity_island3":"assets/backgrounds/antigravity_island3.PNG","antigravity_island4":"assets/backgrounds/antigravity_island4.PNG","blue_crab_island1":"assets/backgrounds/blue_crab_island1.PNG","blue_crab_island2":"assets/backgrounds/blue_crab_island2.PNG","blue_crab_island3":"assets/backgrounds/blue_crab_island3.PNG","blue_crab_island4":"assets/backgrounds/blue_crab_island4.PNG","cherry_blossom_island1":"assets/backgrounds/cherry_blossom_island1.PNG","cherry_blossom_island2":"assets/backgrounds/cherry_blossom_island2.PNG","cherry_blossom_island3":"assets/backgrounds/cherry_blossom_island3.PNG","cherry_blossom_island4":"assets/backgrounds/cherry_blossom_island4.PNG","crystal_island1":"assets/backgrounds/crystal_island1.PNG","crystal_island2":"assets/backgrounds/crystal_island2.PNG","crystal_island3":"assets/backgrounds/crystal_island3.PNG","crystal_island4":"assets/backgrounds/crystal_island4.PNG","jelly_bay_island1":"assets/backgrounds/jelly_bay_island1.PNG","jelly_bay_island2":"assets/backgrounds/jelly_bay_island2.PNG","jelly_bay_island3":"assets/backgrounds/jelly_bay_island3.PNG","jelly_bay_island4":"assets/backgrounds/jelly_bay_island4.PNG","mushroom_island1":"assets/backgrounds/mushroom_island1.PNG","mushroom_island2":"assets/backgrounds/mushroom_island2.PNG","mushroom_island3":"assets/backgrounds/mushroom_island3.PNG","mushroom_island4":"assets/backgrounds/mushroom_island4.PNG","neon_city_island1":"assets/backgrounds/neon_city_island1.PNG","neon_city_island2":"assets/backgrounds/neon_city_island2.PNG","neon_city_island3":"assets/backgrounds/neon_city_island3.PNG","neon_city_island4":"assets/backgrounds/neon_city_island4.PNG","second":"assets/backgrounds/second.webp","shop":"assets/backgrounds/shop.webp","snowy_peaks_island1":"assets/backgrounds/snowy_peaks_island1.PNG","snowy_peaks_island2":"assets/backgrounds/snowy_peaks_island2.PNG","snowy_peaks_island3":"assets/backgrounds/snowy_peaks_island3.PNG","snowy_peaks_island4":"assets/backgrounds/snowy_peaks_island4.PNG","title":"assets/backgrounds/title.png"};
   const CHARACTER_MAP = {"boy_blue":"assets/characters/boy_blue.webp","boy_brown":"assets/characters/boy_brown.webp","boy_green":"assets/characters/boy_green.webp","elf_blue":"assets/characters/elf_blue.webp","elf_green":"assets/characters/elf_green.webp","elf_red":"assets/characters/elf_red.webp","fairy_green":"assets/characters/fairy_green.webp","fairy_purple":"assets/characters/fairy_purple.webp","fairy_red":"assets/characters/fairy_red.webp","girl_blue":"assets/characters/girl_blue.webp","girl_brown":"assets/characters/girl_brown.webp","girl_green":"assets/characters/girl_green.webp","pirate_blue":"assets/characters/pirate_blue.webp","pirate_brown":"assets/characters/pirate_brown.webp","pirate_green":"assets/characters/pirate_green.webp","wizard_blue":"assets/characters/wizard_blue.webp","wizard_green":"assets/characters/wizard_green.webp","wizard_red":"assets/characters/wizard_red.webp"};
   const ITEMS_MAP = {"artifact":"assets/items/artifact.png","bamboo":"assets/items/bamboo.png","banana":"assets/items/banana.png","box_close":"assets/items/box_close.png","box_open":"assets/items/box_open.png","bubble":"assets/items/bubble.png","butterfly":"assets/items/butterfly.png","candy":"assets/items/candy.png","cherry":"assets/items/cherry.png","cookie":"assets/items/cookie.png","coral":"assets/items/coral.png","crab_blue":"assets/items/crab_blue.png","hibiscus":"assets/items/hibiscus.png","jellyfish":"assets/items/jellyfish.png","key":"assets/items/key.webp","leaf":"assets/items/leaf.png","lollipop":"assets/items/lollipop.png","mushroom":"assets/items/mushroom.png","pawprint":"assets/items/pawprint.png","pearl_blue":"assets/items/pearl_blue.png","pearl_red":"assets/items/pearl_red.png","samurai_monkey":"assets/items/samurai_monkey.png","shell_blue":"assets/items/shell_blue.png","shell_red":"assets/items/shell_red.png","spore":"assets/items/spore.png","starfish":"assets/items/starfish.png","stone_blue":"assets/items/stone_blue.png"};
@@ -1902,6 +1953,8 @@
     earnedArtifacts: buildInitialOwnedArtifacts(),
     completionArtifact: null,
     keyLockAbort: null,
+    villainHp: 20,
+    heroHp: 3,
   };
   const STAGES = buildStagePlan();
 
@@ -1937,6 +1990,7 @@
     if(type === "true_false") return "true_false";
     if(type === "text_task") return "text_task";
     if(type === "five_tasks") return "five_tasks";
+    if(type === "boss_mix") return "animation";
     return type;
   }
 
@@ -1954,6 +2008,9 @@
     if(t === "true_false") return "Read the statement and choose True or False.";
     if(t === "text_task") return "Read the task and type the correct answer.";
     if(t === "five_tasks") return "Solve all five tasks to continue.";
+    if(t === "dice_multiply") return "Tap the dice to roll, then multiply!";
+    if(t === "fortune_wheel") return "Spin the wheel and win a reward!";
+    if(t === "number_grid") return "Find the answer to the math problem in the grid!";
     return "Complete the task to continue.";
   }
 
@@ -1971,6 +2028,9 @@
     if(t === "true_false") return "Correct! You knew it!";
     if(t === "text_task") return "Correct answer!";
     if(t === "five_tasks") return "All five tasks solved!";
+    if(t === "dice_multiply") return "Correct! Great multiplication!";
+    if(t === "fortune_wheel") return "The wheel has spoken!";
+    if(t === "number_grid") return "Found it! Ship sunk!";
     return "Success!";
   }
 
@@ -1987,10 +2047,11 @@
 
   function buildStagePlan(){
     const src = Array.isArray(LESSON.stages) ? LESSON.stages : [];
+    const count = src.length || 6;
     const fallback = src[src.length - 1] || { type: "choice", options: [{label:"A",correct:true}], question: "Choose", coins: 0 };
     const plan = [];
-    for(let i = 0; i < 6; i++){
-      const pick = src[i] || (i === 5 ? fallback : src[Math.min(i, src.length - 1)] || fallback);
+    for(let i = 0; i < count; i++){
+      const pick = src[i] || (i === count - 1 ? fallback : src[Math.min(i, src.length - 1)] || fallback);
       plan.push({...pick, _stageNo: i + 1});
     }
     return plan;
@@ -2323,7 +2384,15 @@
       "pair_1", "pair_2", "pair_3", "pair1", "pair2", "pair3",
       "lock1_sum", "lock2_sum", "lock3_sum",
       "post_story_text",
-      "statement", "correct_answer", "prompt", "tasks"
+      "statement", "correct_answer", "prompt", "tasks",
+      "multiplier1", "multiplier2",
+      "artifact_key",
+      "grid_numbers",
+      "draggables", "drop_zones", "required_per_zone", "prefill_per_zone",
+      "items", "correct_order",
+      "numbers_text", "group1_name", "group2_name", "group1_values", "group2_values",
+      "timer_example_a", "timer_example_b", "timer_example_c",
+      "timer_answer_a", "timer_answer_b", "timer_answer_c", "timer_seconds"
     ];
     for(const k of pass){
       if(round[k] !== undefined) out[k] = round[k];
@@ -2362,6 +2431,25 @@
     if(resolveEngineType(out.type) === "choice" && !out.question){
       out.question = round.question ?? round.prompt ?? round.instruction ?? out.question ?? "";
     }
+
+    // Compatibility bridge: drag_drop with correct_id on drop_zones → accept_zone_ids + required_per_zone
+    if(
+      resolveEngineType(out.type) === "drag_drop" &&
+      Array.isArray(out.drop_zones) &&
+      out.drop_zones.some((z) => z.correct_id)
+    ){
+      const byId = {};
+      (out.draggables || []).forEach((d) => { byId[String(d.id)] = d; });
+      const rpz = {};
+      out.drop_zones.forEach((z) => {
+        if(!z.correct_id) return;
+        rpz[z.id] = 1;
+        const d = byId[String(z.correct_id)];
+        if(d && !Array.isArray(d.accept_zone_ids)) d.accept_zone_ids = [z.id];
+      });
+      if(!out.required_per_zone) out.required_per_zone = rpz;
+    }
+
     if (base && base.background != null && String(base.background).trim() !== "") {
       out.background = base.background;
     }
@@ -2397,6 +2485,7 @@
   function updateStageControls(){
     const skip = $("stageSkipBtn");
     skip.textContent = "⏭ Skip Stage " + (state.stageIndex + 1);
+    skip.classList.toggle("hidden", state.stageIndex === STAGES.length - 1);
   }
 
   function advanceToNextStage(){
@@ -2428,7 +2517,10 @@
   function markSuccess(stage){
     if(state.stageSolved) return;
     state.stageSolved = true;
-    if(state.stageIndex === STAGES.length - 1) bossHit();
+    if(state.stageIndex === STAGES.length - 1){
+      bossHit();
+      decreaseVillainHp(2);
+    }
     const base = STAGES[state.stageIndex];
     const rounds = Array.isArray(base.rounds) ? base.rounds : [];
     const nRounds = rounds.length;
@@ -2527,13 +2619,20 @@
       const xPct = nz <= 1 ? 50 : (100 / (nz + 1)) * (idx + 1);
       zoneWrap.style.cssText += posStyle(xPct, dockY);
 
-      const img = makeImg(
-        "game-img",
-        z.image_key,
-        "width:100%;height:100%;object-fit:contain;position:relative;opacity:1;filter:drop-shadow(0 6px 10px rgba(0,0,0,.35));",
-        z.image_kind === "item" ? "item" : "target"
-      );
-      zoneWrap.appendChild(img);
+      if(z.image_key){
+        const img = makeImg(
+          "game-img",
+          z.image_key,
+          "width:100%;height:100%;object-fit:contain;position:relative;opacity:1;filter:drop-shadow(0 6px 10px rgba(0,0,0,.35));",
+          z.image_kind === "item" ? "item" : "target"
+        );
+        zoneWrap.appendChild(img);
+      } else if(z.label){
+        const lbl = document.createElement("div");
+        lbl.className = "zone-text-label";
+        lbl.textContent = String(z.label);
+        zoneWrap.appendChild(lbl);
+      }
       const need = Number(required[z.id] ?? 0);
       const needBadge = document.createElement("div");
       needBadge.className = "zone-need";
@@ -2557,7 +2656,15 @@
 
     draggables.forEach((d, i) => {
       const spot = draggableSpots[i];
-      const draggable = makeImg("game-img draggable", d.image_key, posStyle(spot.x, spot.y));
+      let draggable;
+      if(d.image_key){
+        draggable = makeImg("game-img draggable", d.image_key, posStyle(spot.x, spot.y));
+      } else {
+        draggable = document.createElement("div");
+        draggable.className = "dd-text-chip";
+        draggable.style.cssText = posStyle(spot.x, spot.y);
+        draggable.textContent = String(d.label || d.id);
+      }
       draggable.dataset.id = d.id;
       draggable.dataset.start = draggable.style.cssText;
       enablePointerDrag(draggable, (x, y) => {
@@ -2976,6 +3083,12 @@
       input.addEventListener("keydown", (e) => {
         if(e.key === "Enter") input.blur();
       });
+      let _fillTimer;
+      input.addEventListener("input", () => {
+        clearTimeout(_fillTimer);
+        if(String(input.value).trim() === "") return;
+        _fillTimer = setTimeout(() => input.blur(), 1200);
+      });
       input.onchange = () => {
         const ok = Number(input.value) === Number(entry.answer);
         if(ok){
@@ -2987,6 +3100,7 @@
           input.classList.add("bad");
           setTimeout(() => input.classList.remove("bad"), 200);
           shake(input);
+          onWrongAnswer();
         }
       };
 
@@ -3026,6 +3140,7 @@
           setTimeout(() => markSuccess(stage), 140);
         }else{
           shake(btn);
+          onWrongAnswer();
         }
       };
       box.appendChild(btn);
@@ -3062,6 +3177,7 @@
           btn.classList.add("bad");
           setTimeout(() => btn.classList.remove("bad"), 240);
           shake(btn);
+          onWrongAnswer();
         }
       };
       row.appendChild(btn);
@@ -3100,10 +3216,17 @@
         input.classList.add("bad");
         setTimeout(() => input.classList.remove("bad"), 220);
         shake(input);
+        onWrongAnswer();
       }
     }
     input.addEventListener("change", checkTextAnswer);
     input.addEventListener("keydown", (e) => { if(e.key === "Enter"){ e.preventDefault(); checkTextAnswer(); } });
+    let _ttTimer;
+    input.addEventListener("input", () => {
+      clearTimeout(_ttTimer);
+      if(String(input.value).trim() === "") return;
+      _ttTimer = setTimeout(() => checkTextAnswer(), 1200);
+    });
     box.appendChild(input);
     lane.appendChild(box);
   }
@@ -3139,10 +3262,17 @@
           input.classList.add("bad");
           setTimeout(() => input.classList.remove("bad"), 220);
           shake(input);
+          onWrongAnswer();
         }
       }
       input.addEventListener("change", checkFive);
       input.addEventListener("keydown", (e) => { if(e.key === "Enter"){ e.preventDefault(); checkFive(); } });
+      let _fiveTimer;
+      input.addEventListener("input", () => {
+        clearTimeout(_fiveTimer);
+        if(String(input.value).trim() === "") return;
+        _fiveTimer = setTimeout(() => checkFive(), 1200);
+      });
       const makeSeg = (txt) => {
         const s = document.createElement("span");
         s.className = "five-seg";
@@ -3154,6 +3284,359 @@
       if(parts[1] && parts[1].trim()) row.appendChild(makeSeg(parts[1]));
       wrap.appendChild(row);
     });
+    lane.appendChild(wrap);
+  }
+
+  function renderDiceMultiply(stage){
+    const roundIdx = state.stagePracticeDone || 0;
+    const mult = roundIdx < 3 ? (stage.multiplier1 || 3) : (stage.multiplier2 || 5);
+    var diceVal = null;
+    var rolled  = false;
+
+    const wrap = document.createElement("div");
+    wrap.style.cssText = "position:absolute;top:50%;left:50%;transform:translate(-50%,-60%);display:flex;flex-direction:column;align-items:center;gap:24px;";
+
+    /* ── octahedron (d8) geometry ── */
+    var DM_NUMS  = [3,5,2,6,7,9,10,13];
+    var DM_VERTS = [[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]];
+    var DM_FACES = [[0,2,4],[1,4,2],[0,4,3],[1,3,4],[0,5,2],[1,2,5],[0,3,5],[1,5,3]];
+    var DM_NORMS = [[1,1,1],[-1,1,1],[1,-1,1],[-1,-1,1],[1,1,-1],[-1,1,-1],[1,-1,-1],[-1,-1,-1]];
+    var DM_SQ3   = Math.sqrt(3);
+    var DM_ANG   = Math.atan(1/Math.SQRT2);
+    var DM_LAND  = [
+      {rx:Math.PI/4,    ry:-DM_ANG},{rx:Math.PI/4,    ry:+DM_ANG},
+      {rx:-Math.PI/4,   ry:-DM_ANG},{rx:-Math.PI/4,   ry:+DM_ANG},
+      {rx:3*Math.PI/4,  ry:-DM_ANG},{rx:3*Math.PI/4,  ry:+DM_ANG},
+      {rx:-3*Math.PI/4, ry:-DM_ANG},{rx:-3*Math.PI/4, ry:+DM_ANG}
+    ];
+    var CW=360,CH=360,CCX=180,CCY=180,CSCALE=132,CFOV=750;
+    var dRx=0.5, dRy=0.3, dmAnim;
+
+    const canvas = document.createElement("canvas");
+    canvas.width=CW; canvas.height=CH;
+    canvas.className = "dm-canvas";
+    const dCtx = canvas.getContext("2d");
+
+    function dmRotV(v){
+      var x=v[0],y=v[1],z=v[2];
+      var y2=y*Math.cos(dRx)-z*Math.sin(dRx), z2=y*Math.sin(dRx)+z*Math.cos(dRx);
+      y=y2; z=z2;
+      var x2=x*Math.cos(dRy)+z*Math.sin(dRy), z3=-x*Math.sin(dRy)+z*Math.cos(dRy);
+      return [x2,y,z3];
+    }
+    function dmProj(v){
+      var r=dmRotV(v),x=r[0],y=r[1],z=r[2],f=CFOV/(CFOV+z*CSCALE);
+      return [CCX+x*CSCALE*f, CCY-y*CSCALE*f, z];
+    }
+    function dmNz(n){ return dmRotV([n[0]/DM_SQ3,n[1]/DM_SQ3,n[2]/DM_SQ3])[2]; }
+
+    function dmDraw(){
+      dCtx.clearRect(0,0,CW,CH);
+      var pts=DM_VERTS.map(dmProj);
+      var vis=[];
+      DM_FACES.forEach(function(f,i){
+        var nz=dmNz(DM_NORMS[i]);
+        if(nz<=0.05) return;
+        vis.push({i:i,f:f,nz:nz,avgZ:(pts[f[0]][2]+pts[f[1]][2]+pts[f[2]][2])/3});
+      });
+      vis.sort(function(a,b){return a.avgZ-b.avgZ;});
+      vis.forEach(function(item){
+        var f=item.f,nz=item.nz;
+        var p0=pts[f[0]],p1=pts[f[1]],p2=pts[f[2]];
+        var mx=(p0[0]+p1[0]+p2[0])/3, my=(p0[1]+p1[1]+p2[1])/3;
+        dCtx.save();
+        dCtx.beginPath();
+        dCtx.moveTo(p0[0],p0[1]); dCtx.lineTo(p1[0],p1[1]);
+        dCtx.lineTo(p2[0],p2[1]); dCtx.closePath();
+        var g=dCtx.createRadialGradient(mx,my,6,mx,my,123);
+        var sh=Math.floor(nz*18);
+        g.addColorStop(0,"rgb("+sh+","+(sh*2+12)+","+(sh*3+18)+")");
+        g.addColorStop(1,"rgb(0,3,7)");
+        dCtx.fillStyle=g; dCtx.fill();
+        dCtx.strokeStyle="rgba(212,160,23,"+(0.5+nz*0.5)+")";
+        dCtx.lineWidth=2+nz;
+        dCtx.shadowColor="#c8920a"; dCtx.shadowBlur=10+nz*9;
+        dCtx.stroke();
+        var fs=Math.max(19,Math.round(46*nz));
+        dCtx.font="bold "+fs+"px 'Fredoka One',sans-serif";
+        dCtx.textAlign="center"; dCtx.textBaseline="middle";
+        dCtx.shadowColor="#e8a820"; dCtx.shadowBlur=20;
+        dCtx.fillStyle="rgba(255,224,100,"+(0.7+nz*0.3)+")";
+        dCtx.fillText(String(DM_NUMS[item.i]),mx,my);
+        dCtx.restore();
+      });
+    }
+
+    function dmIdle(){ if(!canvas.isConnected){cancelAnimationFrame(dmAnim);return;} dRy+=0.010; dRx+=0.003; dmDraw(); dmAnim=requestAnimationFrame(dmIdle); }
+    dmIdle();
+
+    const promptEl = document.createElement("div");
+    promptEl.style.cssText = "font-size:64px;font-weight:700;color:#fff;text-shadow:0 3px 12px rgba(0,0,0,.7);min-height:80px;text-align:center;letter-spacing:2px;";
+    promptEl.textContent = "? × " + mult + " = ?";
+
+    const input = document.createElement("input");
+    input.type = "number";
+    input.className = "answer";
+    input.style.cssText = "width:150px;font-size:56px;text-align:center;padding:10px;border-radius:16px;";
+    input.placeholder = "?";
+    input.autocomplete = "off";
+    input.disabled = true;
+
+    function checkDice(){
+      if(!rolled || input.disabled) return;
+      const val = String(input.value).trim();
+      if(!val) return;
+      if(Number(val) === diceVal * mult){
+        input.disabled = true;
+        input.classList.add("ok");
+        setTimeout(() => markSuccess(stage), 200);
+      } else {
+        input.value = "";
+        input.classList.add("bad");
+        shake(input);
+        setTimeout(() => input.classList.remove("bad"), 300);
+        onWrongAnswer();
+      }
+    }
+    input.addEventListener("change", checkDice);
+    input.addEventListener("keydown", function(e){ if(e.key==="Enter"){e.preventDefault();checkDice();} });
+    var _diceTimer;
+    input.addEventListener("input", function(){
+      clearTimeout(_diceTimer);
+      if(String(input.value).trim()==="") return;
+      _diceTimer = setTimeout(checkDice, 1200);
+    });
+
+    canvas.addEventListener("click", function(){
+      if(rolled || state.stageSolved) return;
+      rolled = true;
+      canvas.style.cursor = "default";
+      cancelAnimationFrame(dmAnim);
+
+      var faceIdx = Math.floor(Math.random()*8);
+      diceVal = DM_NUMS[faceIdx];
+      var ang = DM_LAND[faceIdx];
+      var endRx=ang.rx+3*Math.PI*2, endRy=ang.ry+4*Math.PI*2;
+      var s0rx=dRx, s0ry=dRy, t0=performance.now(), DUR=1900;
+
+      function step(now){
+        var raw=Math.min((now-t0)/DUR,1), t=1-Math.pow(1-raw,4);
+        dRx=s0rx+(endRx-s0rx)*t; dRy=s0ry+(endRy-s0ry)*t;
+        dmDraw();
+        if(raw<1){
+          dmAnim=requestAnimationFrame(step);
+        } else {
+          dRx=endRx+0.04; dRy=endRy+0.05; dmDraw();
+          setTimeout(function(){
+            dRx=endRx; dRy=endRy; dmDraw();
+            setTimeout(function(){
+              promptEl.textContent = diceVal+" × "+mult+" = ?";
+              input.disabled=false; input.focus();
+            },120);
+          },100);
+        }
+      }
+      dmAnim=requestAnimationFrame(step);
+    });
+
+    wrap.appendChild(canvas);
+    wrap.appendChild(promptEl);
+    wrap.appendChild(input);
+    lane.appendChild(wrap);
+  }
+
+  function renderFortuneWheel(stage){
+    const artifactKey = stage.artifact_key || "crown";
+    const sectors = [
+      { label: "+5", type: "coins", coins: 5, color: "#4ade80" },
+      { label: "+10", type: "coins", coins: 10, color: "#facc15" },
+      { label: "+15", type: "coins", coins: 15, color: "#fb923c" },
+      { label: "+20", type: "coins", coins: 20, color: "#f472b6" },
+      { label: "🏆", type: "artifact", color: "#a78bfa" },
+      { label: "🔄", type: "bonus", color: "#38bdf8" },
+    ];
+    const total = sectors.length;
+    let spinning = false;
+
+    const wrap = document.createElement("div");
+    wrap.style.cssText = "display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:20px 12px;";
+
+    // Build wheel canvas
+    const canvas = document.createElement("canvas");
+    canvas.width = 240;
+    canvas.height = 240;
+    canvas.style.cssText = "border-radius:50%;box-shadow:0 4px 24px rgba(0,0,0,.5);";
+    const ctx = canvas.getContext("2d");
+    const cx = 120, cy = 120, r = 114;
+    const sliceAngle = (Math.PI * 2) / total;
+
+    function drawWheel(rotation){
+      ctx.clearRect(0, 0, 240, 240);
+      sectors.forEach((sec, i) => {
+        const start = rotation + i * sliceAngle;
+        const end = start + sliceAngle;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.arc(cx, cy, r, start, end);
+        ctx.closePath();
+        ctx.fillStyle = sec.color;
+        ctx.fill();
+        ctx.strokeStyle = "#fff";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        // label
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(start + sliceAngle / 2);
+        ctx.textAlign = "right";
+        ctx.fillStyle = "#fff";
+        ctx.font = "bold 18px sans-serif";
+        ctx.shadowColor = "rgba(0,0,0,.5)";
+        ctx.shadowBlur = 4;
+        ctx.fillText(sec.label, r - 10, 6);
+        ctx.restore();
+      });
+      // Arrow pointer at top
+      ctx.beginPath();
+      ctx.moveTo(cx, 4);
+      ctx.lineTo(cx - 10, 24);
+      ctx.lineTo(cx + 10, 24);
+      ctx.closePath();
+      ctx.fillStyle = "#fff";
+      ctx.fill();
+    }
+
+    let rotation = 0;
+    drawWheel(rotation);
+
+    const resultEl = document.createElement("div");
+    resultEl.style.cssText = "font-size:22px;font-weight:700;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.6);min-height:32px;text-align:center;";
+
+    const spinBtn = document.createElement("button");
+    spinBtn.className = "primary";
+    spinBtn.textContent = "Spin!";
+    spinBtn.style.cssText = "font-size:20px;padding:10px 32px;";
+
+    spinBtn.addEventListener("click", () => {
+      if(spinning || state.stageSolved) return;
+      spinning = true;
+      spinBtn.disabled = true;
+      resultEl.textContent = "";
+      const totalDeg = 1440 + Math.floor(Math.random() * 360);
+      const totalRad = totalDeg * Math.PI / 180;
+      const duration = 2400;
+      const start = performance.now();
+      const startRot = rotation;
+
+      function animate(now){
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        const ease = 1 - Math.pow(1 - progress, 3);
+        rotation = startRot + totalRad * ease;
+        drawWheel(rotation);
+        if(progress < 1){
+          requestAnimationFrame(animate);
+        } else {
+          // Determine landed sector — pointer is at top (angle = -PI/2 from canvas)
+          const normalised = (((-rotation % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2));
+          const idx = Math.floor((normalised / (Math.PI * 2)) * total) % total;
+          const sec = sectors[idx];
+          if(sec.type === "coins"){
+            addCoins(sec.coins);
+            resultEl.textContent = "You won " + sec.label + " coins!";
+            setTimeout(() => markSuccess(stage), 900);
+          } else if(sec.type === "artifact"){
+            const artImg = artifactPathByKey(artifactKey);
+            state.earnedArtifacts.push({ key: artifactKey, name: titleFromKey(artifactKey), image: artImg, description: "" });
+            resultEl.textContent = "You won the " + titleFromKey(artifactKey) + "!";
+            setTimeout(() => markSuccess(stage), 900);
+          } else {
+            // bonus spin
+            resultEl.textContent = "Bonus spin! Go again!";
+            spinning = false;
+            spinBtn.disabled = false;
+          }
+        }
+      }
+      requestAnimationFrame(animate);
+    });
+
+    wrap.appendChild(canvas);
+    wrap.appendChild(resultEl);
+    wrap.appendChild(spinBtn);
+    lane.appendChild(wrap);
+  }
+
+  function renderNumberGrid(stage){
+    const gridNums = Array.isArray(stage.grid_numbers) ? stage.grid_numbers : [];
+    const correctAnswer = String(stage.answer || "").toUpperCase().trim();
+    const promptText = stage.prompt || stage.instruction || "Find the answer in the grid!";
+
+    const wrap = document.createElement("div");
+    wrap.style.cssText = "display:flex;flex-direction:column;align-items:center;gap:12px;padding:16px 8px;";
+
+    const promptEl = document.createElement("div");
+    promptEl.style.cssText = "font-size:24px;font-weight:700;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.5);text-align:center;";
+    promptEl.textContent = promptText;
+
+    const rows = ["A","B","C","D","E"];
+    const cols = [1,2,3,4,5];
+
+    const tableWrap = document.createElement("div");
+    tableWrap.style.cssText = "overflow:auto;";
+    const table = document.createElement("table");
+    table.style.cssText = "border-collapse:collapse;font-size:15px;";
+
+    // Header row
+    const thead = document.createElement("tr");
+    const cornerTh = document.createElement("th");
+    cornerTh.style.cssText = "width:28px;height:28px;";
+    thead.appendChild(cornerTh);
+    cols.forEach((c) => {
+      const th = document.createElement("th");
+      th.style.cssText = "width:44px;height:28px;text-align:center;color:#fff;font-size:14px;";
+      th.textContent = String(c);
+      thead.appendChild(th);
+    });
+    table.appendChild(thead);
+
+    rows.forEach((rowLetter, rIdx) => {
+      const tr = document.createElement("tr");
+      const rowHdr = document.createElement("th");
+      rowHdr.style.cssText = "text-align:center;color:#fff;font-size:14px;padding-right:4px;";
+      rowHdr.textContent = rowLetter;
+      tr.appendChild(rowHdr);
+      cols.forEach((colNum, cIdx) => {
+        const td = document.createElement("td");
+        const gridIdx = rIdx * 5 + cIdx;
+        const cellVal = String(gridNums[gridIdx] || "");
+        td.style.cssText = "width:44px;height:44px;text-align:center;vertical-align:middle;border:2px solid rgba(255,255,255,.4);border-radius:6px;cursor:pointer;background:rgba(255,255,255,.15);color:#fff;font-size:16px;font-weight:600;transition:background .15s;";
+        td.textContent = cellVal;
+        td.dataset.coord = rowLetter + colNum;
+        td.addEventListener("mouseenter", () => { if(!td.classList.contains("grid-hit")) td.style.background = "rgba(255,255,255,.35)"; });
+        td.addEventListener("mouseleave", () => { if(!td.classList.contains("grid-hit")) td.style.background = "rgba(255,255,255,.15)"; });
+        td.addEventListener("click", () => {
+          if(state.stageSolved) return;
+          if(td.dataset.coord === correctAnswer){
+            td.classList.add("grid-hit");
+            td.style.background = "rgba(74,222,128,.8)";
+            td.style.cursor = "default";
+            setTimeout(() => markSuccess(stage), 250);
+          } else {
+            td.style.background = "rgba(248,113,113,.7)";
+            shake(td);
+            setTimeout(() => { if(!td.classList.contains("grid-hit")) td.style.background = "rgba(255,255,255,.15)"; }, 350);
+            onWrongAnswer();
+          }
+        });
+        tr.appendChild(td);
+      });
+      table.appendChild(tr);
+    });
+
+    tableWrap.appendChild(table);
+    wrap.appendChild(promptEl);
+    wrap.appendChild(tableWrap);
     lane.appendChild(wrap);
   }
 
@@ -3357,8 +3840,8 @@
     const row = document.createElement("div");
     row.className = "corridor-row";
     const correctSideRaw = String(stage.correct_side || stage.correctSide || "").toLowerCase();
-    const left = stage.left_path || { label: stage.left_expression || stage.leftExpression || "Left" };
-    const right = stage.right_path || { label: stage.right_expression || stage.rightExpression || "Right" };
+    const left = { ...(stage.left_path || { label: stage.left_expression || stage.leftExpression || "Left" }) };
+    const right = { ...(stage.right_path || { label: stage.right_expression || stage.rightExpression || "Right" }) };
     if(left.correct == null && right.correct == null){
       if(correctSideRaw === "left" || correctSideRaw === "l"){
         left.correct = true;
@@ -3388,6 +3871,7 @@
           btn.classList.add("bad");
           setTimeout(() => btn.classList.remove("bad"), 240);
           shake(btn);
+          onWrongAnswer();
         }
       };
       row.appendChild(btn);
@@ -3487,23 +3971,7 @@
       nextBtn.className = "seq-submit show balance-next";
       nextBtn.type = "button";
       nextBtn.textContent = "NEXT";
-      nextBtn.onclick = () => {
-        if(state.stageSolved) return;
-        state.stageSolved = true;
-        state.stagePracticeDone += 1;
-        if(state.stagePracticeDone < nRounds){
-          state.stageSolved = false;
-          renderStage(state.stageIndex);
-          return;
-        }
-        const bonus = Number(base.round_bonus_coins != null ? base.round_bonus_coins : 2);
-        addCoins(bonus);
-        addCoins(Number(base.coins != null ? base.coins : stage.coins) || 0);
-        const msg = String(stage.success_message || "").trim()
-          ? stage.success_message
-          : englishSuccessFallback({ ...stage, type: resolveEngineType(stage.type) });
-        showSuccess(msg, () => advanceToNextStage(), "Round " + nRounds + "/" + nRounds + " — stage clear!");
-      };
+      nextBtn.onclick = () => { markSuccess(stage); };
       wrap.appendChild(nextBtn);
     };
 
@@ -3531,15 +3999,23 @@
           inp.classList.add("bad");
           setTimeout(() => inp.classList.remove("bad"), 220);
           shake(inp);
+          onWrongAnswer();
         }
       };
       inp.addEventListener("change", evaluate);
       inp.addEventListener("blur", evaluate);
+      let _balTimer;
+      inp.addEventListener("input", () => {
+        clearTimeout(_balTimer);
+        if(String(inp.value).trim() === "") return;
+        _balTimer = setTimeout(() => inp.blur(), 1200);
+      });
       leftPill.append(document.createTextNode(parts[0] || ""));
       leftPill.appendChild(inp);
       leftPill.append(document.createTextNode(parts.slice(1).join("?") || ""));
     }else{
       leftPill.textContent = leftText;
+      setTimeout(revealNext, 300);
     }
     left.appendChild(leftPill);
 
@@ -4115,10 +4591,11 @@
     const wrap = document.createElement("div");
     wrap.className = "symbol-wrap";
 
-    const defaultKeys = ["shell_blue", "banana", "stone_blue", "cherry", "mushroom", "pearl_blue"];
-    const fallbackA = stage.symbol_item_a || stage.symbolItemA || defaultKeys[0];
-    const fallbackB = stage.symbol_item_b || stage.symbolItemB || defaultKeys[1];
-    const fallbackC = stage.symbol_item_c || stage.symbolItemC || defaultKeys[2];
+    const defaultKeys = ["shell_blue","banana","stone_blue","cherry","mushroom","pearl_blue","starfish","butterfly","coral","jellyfish","candy","lollipop","hibiscus","leaf","bamboo"];
+    const roundOffset = ((state.stagePracticeDone || 0) * 3) % defaultKeys.length;
+    const fallbackA = stage.symbol_item_a || stage.symbolItemA || defaultKeys[roundOffset % defaultKeys.length];
+    const fallbackB = stage.symbol_item_b || stage.symbolItemB || defaultKeys[(roundOffset + 1) % defaultKeys.length];
+    const fallbackC = stage.symbol_item_c || stage.symbolItemC || defaultKeys[(roundOffset + 2) % defaultKeys.length];
     const uniq = [];
     [fallbackA, fallbackB, fallbackC].forEach((k) => {
       if(!uniq.includes(k)) uniq.push(k);
@@ -4186,6 +4663,7 @@
         inp.classList.add("bad");
         setTimeout(() => inp.classList.remove("bad"), 220);
         shake(inp);
+        onWrongAnswer();
       }
     };
     inp.addEventListener("change", evaluate);
@@ -4277,6 +4755,7 @@
         cInput.classList.add("bad");
         setTimeout(() => cInput.classList.remove("bad"), 220);
         shake(cInput);
+        onWrongAnswer();
       }
     };
     cInput.addEventListener("change", evaluate);
@@ -4423,6 +4902,12 @@
           input.addEventListener("keydown", (e) => {
             if(e.key === "Enter") input.blur();
           });
+          let _bossTimer;
+          input.addEventListener("input", () => {
+            clearTimeout(_bossTimer);
+            if(String(input.value).trim() === "") return;
+            _bossTimer = setTimeout(() => input.blur(), 1200);
+          });
           input.onchange = () => {
             const ok = Number(input.value) === Number(entry.answer);
             if(ok){
@@ -4519,6 +5004,9 @@
     if(playerSide){
       playerSide.classList.toggle("stage-boss-hidden", index === STAGES.length - 1);
     }
+    const isBossStage = index === STAGES.length - 1;
+    if(isBossStage && state.stagePracticeDone === 0) initBossHpBar();
+    else if(!isBossStage) hideBossHpBar();
     const instruction = stage.title || stage.question || LESSON.story_hook || "";
     const cleanInstruction = String(instruction).trim() ? instruction : englishStageFallback(engStage);
     if(stage.hide_instruction_label){
@@ -4548,6 +5036,9 @@
     else if(engType === "true_false") renderTrueFalse(stage);
     else if(engType === "text_task") renderTextTask(stage);
     else if(engType === "five_tasks") renderFiveTasks(stage);
+    else if(engType === "dice_multiply") renderDiceMultiply(stage);
+    else if(engType === "fortune_wheel") renderFortuneWheel(stage);
+    else if(engType === "number_grid") renderNumberGrid(stage);
     else {
       setMessage("Unknown stage type: " + stage.type);
     }
@@ -4821,6 +5312,47 @@
     }
   }
 
+  function initBossHpBar(){
+    state.villainHp = 20;
+    state.heroHp = 3;
+    updateBossHpBar();
+    const bar = $("bossHpBar");
+    if(bar) bar.classList.remove("hidden");
+  }
+
+  function hideBossHpBar(){
+    const bar = $("bossHpBar");
+    if(bar) bar.classList.add("hidden");
+  }
+
+  function updateBossHpBar(){
+    const fill = $("villainHpFill");
+    const label = $("villainHpLabel");
+    const hearts = $("heroHearts");
+    if(fill) fill.style.width = Math.max(0, (state.villainHp / 20) * 100) + "%";
+    if(label) label.textContent = "👹 " + Math.max(0, state.villainHp) + " HP";
+    if(hearts) hearts.textContent = "❤️".repeat(Math.max(0, state.heroHp));
+  }
+
+  function decreaseVillainHp(amount){
+    state.villainHp = Math.max(0, state.villainHp - amount);
+    updateBossHpBar();
+    if(state.villainHp === 0){
+      hideBossHpBar();
+    }
+  }
+
+  function decreaseHeroHp(amount){
+    state.heroHp = Math.max(0, state.heroHp - amount);
+    updateBossHpBar();
+  }
+
+  function onWrongAnswer(){
+    if(state.stageIndex === STAGES.length - 1){
+      decreaseHeroHp(1);
+    }
+  }
+
   function showVillainDefeat(cb){
     const villainName = String(LESSON.story?.villain || "the villain");
     const overlay = document.createElement("div");
@@ -4922,12 +5454,14 @@
     state.stagePracticeDone = state.stagePracticeTarget;
     advanceToNextStage();
   });
-  $("introStartBtn").addEventListener("click", () => {
+  function startLesson(){
     $("introScreen").classList.add("hidden");
     state.stageIndex = 0;
     state.stagePracticeDone = 0;
     renderStage(0);
-  });
+  }
+  $("introStartBtn").addEventListener("click", startLesson);
+  $("introSkipBtn").addEventListener("click", startLesson);
   function idxFromOption(options, target){
     return Math.max(0, (options || []).indexOf(target));
   }
