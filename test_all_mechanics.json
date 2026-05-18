@@ -1,0 +1,257 @@
+{
+  "meta": {
+    "student_code": "TEST-ALL",
+    "student_name": "Tester",
+    "island_key": "jelly_bay_island",
+    "character_key": "elf_green",
+    "student_level": 3,
+    "student_coins": 0,
+    "start_coins": 0,
+    "child_inventory": ["crown", "egg"]
+  },
+  "story": {
+    "island_name": "Test Island",
+    "villain": "Bug Monster",
+    "artifact_name": "Debug Crystal",
+    "artifact_emoji": "💎",
+    "artifact_power": "Power to fix all bugs.",
+    "greeting": "Tester, time to check every mechanic!",
+    "act1": "This lesson runs through all available game mechanics — one round each. Use it to verify every stage looks and works correctly.",
+    "act2": "",
+    "act3": "",
+    "goal": "Complete all mechanic stages and defeat the Bug Monster!"
+  },
+  "stages": [
+    {
+      "id": 1,
+      "type": "fill_blank",
+      "title": "Stage 1 — Fill Blank",
+      "background": "jelly_bay_island1",
+      "coins": 5,
+      "success_message": "Fill blank works!",
+      "rounds": [
+        { "inputs": [{ "prompt": "3 × 4 = ?", "answer": "12" }] }
+      ]
+    },
+    {
+      "id": 2,
+      "type": "true_false",
+      "title": "Stage 2 — True or False",
+      "background": "jelly_bay_island1",
+      "coins": 5,
+      "success_message": "True / False works!",
+      "rounds": [
+        { "statement": "4 × 3 = 12", "correct_answer": "true" }
+      ]
+    },
+    {
+      "id": 3,
+      "type": "multi_choice",
+      "title": "Stage 3 — Multi Choice",
+      "background": "jelly_bay_island1",
+      "coins": 5,
+      "success_message": "Multi choice works!",
+      "rounds": [
+        {
+          "question": "5 × 6 = ?",
+          "options": [
+            { "label": "25", "correct": false },
+            { "label": "30", "correct": true },
+            { "label": "35", "correct": false },
+            { "label": "36", "correct": false }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "type": "corridor_choice",
+      "title": "Stage 4 — Corridor Choice",
+      "background": "jelly_bay_island1",
+      "coins": 5,
+      "success_message": "Corridor choice works!",
+      "rounds": [
+        {
+          "question": "3 bags with 5 apples each — how many apples total?",
+          "left_expression": "3 × 5 = 15",
+          "right_expression": "3 + 5 = 8",
+          "correct_side": "left"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "type": "balance_scale",
+      "title": "Stage 5 — Balance Scale",
+      "background": "jelly_bay_island1",
+      "coins": 5,
+      "success_message": "Balance scale works!",
+      "rounds": [
+        { "left_expression": "? + 4 = 10", "right_expression": "10", "answer": "6" }
+      ]
+    },
+    {
+      "id": 6,
+      "type": "symbol_calc",
+      "title": "Stage 6 — Symbol Calc",
+      "background": "jelly_bay_island1",
+      "coins": 5,
+      "success_message": "Symbol calc works!",
+      "rounds": [
+        {
+          "symbol_a": 5,
+          "symbol_b": 3,
+          "symbol_c": 2,
+          "symbol_expression": "A × B + C = ?",
+          "answer": "17"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "type": "find_unknown",
+      "title": "Stage 7 — Find Unknown",
+      "background": "jelly_bay_island1",
+      "coins": 5,
+      "success_message": "Find unknown works!",
+      "rounds": [
+        {
+          "unknown_a": 4,
+          "unknown_b": 3,
+          "unknown_equation": "A × B = C",
+          "answer": "12"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "type": "text_task",
+      "title": "Stage 8 — Text Task",
+      "background": "jelly_bay_island1",
+      "coins": 5,
+      "success_message": "Text task works!",
+      "rounds": [
+        {
+          "prompt": "There are 4 boxes with 6 toys each. How many toys in total?",
+          "answer": "24"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "type": "five_tasks",
+      "title": "Stage 9 — Five Tasks",
+      "background": "jelly_bay_island1",
+      "coins": 5,
+      "success_message": "Five tasks works!",
+      "rounds": [
+        {
+          "tasks": [
+            { "q": "2 × 3 = ?", "a": "6" },
+            { "q": "4 × 2 = ?", "a": "8" },
+            { "q": "5 × 3 = ?", "a": "15" },
+            { "q": "6 × 2 = ?", "a": "12" },
+            { "q": "3 × 4 = ?", "a": "12" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "type": "drag_drop",
+      "title": "Stage 10 — Drag & Drop",
+      "background": "jelly_bay_island1",
+      "coins": 5,
+      "success_message": "Drag drop works!",
+      "rounds": [
+        {
+          "draggables": [
+            { "id": "d1", "label": "6" },
+            { "id": "d2", "label": "8" },
+            { "id": "d3", "label": "12" },
+            { "id": "d4", "label": "15" }
+          ],
+          "drop_zones": [
+            { "id": "z1", "label": "2 × 4 = ?", "correct_id": "d2" },
+            { "id": "z2", "label": "2 × 3 = ?", "correct_id": "d1" },
+            { "id": "z3", "label": "3 × 4 = ?", "correct_id": "d3" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "type": "dice_multiply",
+      "title": "Stage 11 — Dice Multiply 🎲",
+      "background": "jelly_bay_island1",
+      "coins": 5,
+      "success_message": "Dice multiply works!",
+      "rounds": [
+        { "multiplier1": 4, "multiplier2": 4 }
+      ]
+    },
+    {
+      "id": 12,
+      "type": "fortune_wheel",
+      "title": "Stage 12 — Fortune Wheel 🎡",
+      "background": "jelly_bay_island1",
+      "coins": 5,
+      "success_message": "Fortune wheel works!",
+      "rounds": [
+        { "artifact_key": "crown" }
+      ]
+    },
+    {
+      "id": 13,
+      "type": "number_grid",
+      "title": "Stage 13 — Number Grid 🗺️",
+      "background": "jelly_bay_island1",
+      "coins": 5,
+      "success_message": "Number grid works!",
+      "rounds": [
+        {
+          "grid_numbers": "34,21,8,15,42,6,18,30,5,27,12,45,3,24,9,36,7,16,25,48,2,20,14,32,10",
+          "prompt": "3 × 6 = ?",
+          "answer": "B2"
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "type": "boss_mix",
+      "title": "FINAL — Boss Mix ⚔️",
+      "background": "jelly_bay_island1",
+      "coins": 10,
+      "success_message": "All mechanics verified — Bug Monster defeated!",
+      "rounds": [
+        {
+          "type": "fill_blank",
+          "instruction": "Boss round 1 — fill blank",
+          "inputs": [{ "prompt": "9 × 8 = ?", "answer": "72" }]
+        },
+        {
+          "type": "true_false",
+          "instruction": "Boss round 2 — true/false",
+          "statement": "7 × 6 = 42",
+          "correct_answer": "true"
+        },
+        {
+          "type": "corridor_choice",
+          "instruction": "Boss round 3 — corridor",
+          "question": "4 groups of 7 — which is correct?",
+          "left_expression": "4 × 7 = 28",
+          "right_expression": "4 + 7 = 11",
+          "correct_side": "left"
+        }
+      ]
+    }
+  ],
+  "images_needed": {
+    "library": [],
+    "backgrounds": ["jelly_bay_island1"],
+    "items": [],
+    "targets": [],
+    "artifact": { "key": "crown", "name": "Debug Crystal" }
+  },
+  "tutor_notes": []
+}
