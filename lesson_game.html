@@ -180,6 +180,10 @@
       width:42%;
       z-index:5;
     }
+    .izone.boss-full{
+      width:100%;
+      left:0;
+    }
     .right-lane{
       position:absolute;
       inset:0;
@@ -1644,12 +1648,10 @@
     }
     .intro-bg{
       position:absolute;
-      inset:-8%;
-      width:116%;
-      height:116%;
+      inset:0;
+      width:100%;
+      height:100%;
       object-fit:cover;
-      /* Was ~28px (~60% strength); 50/60 → sharper backdrop */
-      filter:blur(23px);
       opacity:.92;
     }
     .intro-layout{
@@ -1661,18 +1663,6 @@
       width:100%;
       max-width:none;
       gap:clamp(8px,1.8vh,20px);
-    }
-    .intro-title-img{
-      display:block;
-      width:auto;
-      /* ×3 from post–asset-tweak size (was max ~1008×308); story text stays small */
-      max-width:min(96vw,3024px);
-      height:auto;
-      max-height:clamp(270px,58.8vh,924px);
-      object-fit:contain;
-      pointer-events:none;
-      filter:drop-shadow(0 18px 44px rgba(0,0,0,.5));
-      margin-top:-8vh;
     }
     .intro-panel{
       position:relative;
@@ -1766,7 +1756,6 @@
       <img class="intro-bg" id="introBg" alt="">
     </div>
     <div class="intro-layout">
-      <img class="intro-title-img" id="introTitleImg" src="assets/backgrounds/title.png" alt="" decoding="async" fetchpriority="high" onerror="this.style.display='none'">
       <div class="intro-panel">
         <div class="intro-story-wrap">
           <div class="intro-story" id="introStory"></div>
@@ -2453,6 +2442,21 @@
     if (base && base.background != null && String(base.background).trim() !== "") {
       out.background = base.background;
     }
+
+    // For drag_sort: auto-generate items from correct_order when items is missing
+    if(
+      resolveEngineType(out.type) === "drag_sort" &&
+      Array.isArray(out.correct_order) && out.correct_order.length > 0 &&
+      (!Array.isArray(out.items) || out.items.length === 0)
+    ){
+      out.items = out.correct_order.map((v, idx) => ({
+        id: "i" + (idx + 1),
+        value: String(v),
+        text: String(v),
+        image_key: out.image_key || "banana",
+      }));
+    }
+
     return out;
   }
 
@@ -5001,10 +5005,11 @@
     const engType = resolveEngineType(stage.type);
     const engStage = { ...stage, type: engType };
     const playerSide = $("playerSide");
-    if(playerSide){
-      playerSide.classList.toggle("stage-boss-hidden", index === STAGES.length - 1);
-    }
     const isBossStage = index === STAGES.length - 1;
+    if(playerSide){
+      playerSide.classList.toggle("stage-boss-hidden", isBossStage);
+    }
+    izone.classList.toggle("boss-full", isBossStage);
     if(isBossStage && state.stagePracticeDone === 0) initBossHpBar();
     else if(!isBossStage) hideBossHpBar();
     const instruction = stage.title || stage.question || LESSON.story_hook || "";
