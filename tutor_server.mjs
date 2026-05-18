@@ -465,9 +465,14 @@ function mapExampleToRound(mech, ex, existing) {
         text: t,
         image_key: existing.items?.[idx]?.image_key || "banana",
       }));
+    } else if (Array.isArray(existing.items) && existing.items.length) {
+      // Preserve Claude-generated items when tutor prompt is empty
+      r.items = existing.items;
     }
     if (rule.length) {
       r.correct_order = rule;
+    } else if (Array.isArray(existing.correct_order) && existing.correct_order.length) {
+      r.correct_order = existing.correct_order;
     }
   } else if (mech === "drag_drop") {
     r.screen_item_count = toNumber(ex.screenItemCount, 6);
@@ -475,6 +480,11 @@ function mapExampleToRound(mech, ex, existing) {
     if (Array.isArray(ex.zoneCounts) && ex.zoneCounts.length) {
       r.zone_counts = ex.zoneCounts.map((v) => toNumber(v, 0));
     }
+    // Preserve Claude-generated geometry — draggables/drop_zones live in AI output, not the tutor form
+    if (Array.isArray(existing.draggables) && existing.draggables.length) r.draggables = existing.draggables;
+    if (Array.isArray(existing.drop_zones) && existing.drop_zones.length) r.drop_zones = existing.drop_zones;
+    if (existing.required_per_zone && typeof existing.required_per_zone === "object") r.required_per_zone = existing.required_per_zone;
+    if (existing.prefill_per_zone && typeof existing.prefill_per_zone === "object") r.prefill_per_zone = existing.prefill_per_zone;
   } else if (mech === "key_lock") {
     r.lock_sum_1 = toNumber(ex.lock1Sum, 0);
     r.lock_sum_2 = toNumber(ex.lock2Sum, 0);
