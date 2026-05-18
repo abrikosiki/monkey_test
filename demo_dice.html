@@ -167,6 +167,7 @@ function drawOcta() {
 
 /* ── idle: slow gentle rotation ── */
 function idleLoop() {
+  if(!drawCtx || !drawCtx.canvas.isConnected){ animId = null; return; }
   dRy += 0.010;
   dRx += 0.003;
   drawOcta();

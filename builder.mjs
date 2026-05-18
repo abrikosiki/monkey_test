@@ -2113,6 +2113,7 @@ function buildHtml(
     if(type === "true_false") return "true_false";
     if(type === "text_task") return "text_task";
     if(type === "five_tasks") return "five_tasks";
+    if(type === "boss_mix") return "animation";
     return type;
   }
 
@@ -2505,7 +2506,10 @@ function buildHtml(
       "pair_1", "pair_2", "pair_3", "pair1", "pair2", "pair3",
       "lock1_sum", "lock2_sum", "lock3_sum",
       "post_story_text",
-      "statement", "correct_answer", "prompt", "tasks"
+      "statement", "correct_answer", "prompt", "tasks",
+      "multiplier1", "multiplier2",
+      "artifact_key",
+      "grid_numbers"
     ];
     for(const k of pass){
       if(round[k] !== undefined) out[k] = round[k];
@@ -3446,7 +3450,7 @@ function buildHtml(
       });
     }
 
-    function dmIdle(){ dRy+=0.010; dRx+=0.003; dmDraw(); dmAnim=requestAnimationFrame(dmIdle); }
+    function dmIdle(){ if(!canvas.isConnected){cancelAnimationFrame(dmAnim);return;} dRy+=0.010; dRx+=0.003; dmDraw(); dmAnim=requestAnimationFrame(dmIdle); }
     dmIdle();
 
     const promptEl = document.createElement("div");
@@ -3919,8 +3923,8 @@ function buildHtml(
     const row = document.createElement("div");
     row.className = "corridor-row";
     const correctSideRaw = String(stage.correct_side || stage.correctSide || "").toLowerCase();
-    const left = stage.left_path || { label: stage.left_expression || stage.leftExpression || "Left" };
-    const right = stage.right_path || { label: stage.right_expression || stage.rightExpression || "Right" };
+    const left = { ...(stage.left_path || { label: stage.left_expression || stage.leftExpression || "Left" }) };
+    const right = { ...(stage.right_path || { label: stage.right_expression || stage.rightExpression || "Right" }) };
     if(left.correct == null && right.correct == null){
       if(correctSideRaw === "left" || correctSideRaw === "l"){
         left.correct = true;
@@ -4050,23 +4054,7 @@ function buildHtml(
       nextBtn.className = "seq-submit show balance-next";
       nextBtn.type = "button";
       nextBtn.textContent = "NEXT";
-      nextBtn.onclick = () => {
-        if(state.stageSolved) return;
-        state.stageSolved = true;
-        state.stagePracticeDone += 1;
-        if(state.stagePracticeDone < nRounds){
-          state.stageSolved = false;
-          renderStage(state.stageIndex);
-          return;
-        }
-        const bonus = Number(base.round_bonus_coins != null ? base.round_bonus_coins : 2);
-        addCoins(bonus);
-        addCoins(Number(base.coins != null ? base.coins : stage.coins) || 0);
-        const msg = String(stage.success_message || "").trim()
-          ? stage.success_message
-          : englishSuccessFallback({ ...stage, type: resolveEngineType(stage.type) });
-        showSuccess(msg, () => advanceToNextStage(), "Round " + nRounds + "/" + nRounds + " — stage clear!");
-      };
+      nextBtn.onclick = () => { markSuccess(stage); };
       wrap.appendChild(nextBtn);
     };
 
@@ -4110,6 +4098,7 @@ function buildHtml(
       leftPill.append(document.createTextNode(parts.slice(1).join("?") || ""));
     }else{
       leftPill.textContent = leftText;
+      setTimeout(revealNext, 300);
     }
     left.appendChild(leftPill);
 
@@ -4757,6 +4746,7 @@ function buildHtml(
         inp.classList.add("bad");
         setTimeout(() => inp.classList.remove("bad"), 220);
         shake(inp);
+        onWrongAnswer();
       }
     };
     inp.addEventListener("change", evaluate);
@@ -4848,6 +4838,7 @@ function buildHtml(
         cInput.classList.add("bad");
         setTimeout(() => cInput.classList.remove("bad"), 220);
         shake(cInput);
+        onWrongAnswer();
       }
     };
     cInput.addEventListener("change", evaluate);
