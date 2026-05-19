@@ -336,10 +336,6 @@ function buildHtml(
       width:42%;
       z-index:5;
     }
-    .izone.boss-full{
-      width:100%;
-      left:0;
-    }
     .right-lane{
       position:absolute;
       inset:0;
@@ -5165,7 +5161,6 @@ function buildHtml(
     if(playerSide){
       playerSide.classList.toggle("stage-boss-hidden", isBossStage);
     }
-    izone.classList.toggle("boss-full", isBossStage);
     if(isBossStage && state.stagePracticeDone === 0) initBossHpBar();
     else if(!isBossStage) hideBossHpBar();
     const instruction = stage.title || stage.question || LESSON.story_hook || "";
