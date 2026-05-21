@@ -430,6 +430,12 @@ function mapExampleToRound(mech, ex, existing) {
     r.symbol_c = toNumber(ex.symbolC, 2);
     r.symbol_expression = ex.symbolExpression || "A + B × C";
     r.answer = String(ex.answer ?? "");
+    if (ex.symbolItemA) r.symbol_item_a = ex.symbolItemA;
+    else if (existing.symbol_item_a) r.symbol_item_a = existing.symbol_item_a;
+    if (ex.symbolItemB) r.symbol_item_b = ex.symbolItemB;
+    else if (existing.symbol_item_b) r.symbol_item_b = existing.symbol_item_b;
+    if (ex.symbolItemC) r.symbol_item_c = ex.symbolItemC;
+    else if (existing.symbol_item_c) r.symbol_item_c = existing.symbol_item_c;
   } else if (mech === "find_unknown") {
     r.unknown_a = toNumber(ex.unknownA, 4);
     r.unknown_b = toNumber(ex.unknownB, 6);
