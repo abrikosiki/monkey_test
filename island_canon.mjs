@@ -171,11 +171,11 @@ export function narrativeWithChildNameAtReach(narrative, name) {
     /\b(We must dive in)(\s+)/i,
   ];
   for (const re of patterns) {
-    const m = text.match(re);
-    if (!m) continue;
-    return text.replace(re, (_, phrase, tail) =>
-      tail.startsWith(",") ? `${phrase}, ${nm}${tail}` : `${phrase}, ${nm},${tail}`,
-    );
+    if (!re.test(text)) continue;
+    return text.replace(re, (_, phrase, tail) => {
+      const lower = phrase[0].toLowerCase() + phrase.slice(1);
+      return `${nm}, ${lower}${tail}`;
+    });
   }
   return text;
 }
@@ -210,8 +210,6 @@ export function applyCanonStoryToLesson(lesson, draft) {
   lesson.story.artifact_emoji = canon.artifact_emoji || "⭐";
   lesson.story.greeting = `${name}, your island mission begins now — listen closely.`;
   lesson.story.act1 = narrativeWithChildNameAtReach(canon.narrative, name);
-  lesson.story.act2 = "";
-  lesson.story.act3 = "";
   lesson.story.goal = `${name}, master every math trial, reach the island's core in time, and break Doctor Krit's hold.`;
 }
 

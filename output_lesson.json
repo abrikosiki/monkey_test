@@ -1,1 +1,633 @@
-{"meta":{"student_code":"MONKEY-3007","student_name":"Pirate","island_key":"jelly_bay_island","character_key":"pirate_green","student_level":4,"student_coins":0,"start_coins":0,"child_inventory":["egg","sword","crown","lizard","quardo","freeze_ring","ring_ice","magic_necklace"],"has_freeze_ring":true},"story":{"island_name":"Jelly Bay Island","villain":"Monkey jellyfish king","artifact_name":"Pulse Core","artifact_emoji":"🪼","artifact_power":"The power that binds the jellyfish swarm beneath the bay.","greeting":"Pirate, your island mission begins now — listen closely.","act1":"On Jelly Bay Island, the waters glow with drifting jellyfish, lighting the shore in eerie colors. Beneath the surface rules a monkey jellyfish king, its body entwined with pulsing tentacles, commanding the swarm as one. Enslaved by Doctor Krit, it spreads control through the tides. Deep below the bay lies the Pulse Core that binds them. We must dive in, Pirate, destroy its power, and free the jelly king before the ocean itself turns against us.","act2":"","act3":"","goal":"Pirate, master every math trial, reach the island's core in time, and break Doctor Krit's hold."},"stages":[{"id":1,"type":"five_tasks","title":"Pirate trains before diving into Jelly Bay","background":"jelly_bay_island1","coins":15,"success_message":"Amazing! You solved them all!","rounds":[{"instruction":"Solve all tasks!","tasks":[{"q":"12 ÷ 3 = ?","a":"4"},{"q":"15 ÷ 5 = ?","a":"3"},{"q":"20 ÷ 4 = ?","a":"5"},{"q":"18 ÷ 2 = ?","a":"9"},{"q":"24 ÷ 6 = ?","a":"4"}]},{"instruction":"Solve all tasks!","tasks":[{"q":"16 ÷ 4 = ?","a":"4"},{"q":"21 ÷ 3 = ?","a":"7"},{"q":"30 ÷ 5 = ?","a":"6"},{"q":"27 ÷ 9 = ?","a":"3"},{"q":"14 ÷ 2 = ?","a":"7"}]},{"instruction":"Solve all tasks!","tasks":[{"q":"4 × 3 = ?","a":"12"},{"q":"12 ÷ 4 = ?","a":"3"},{"q":"? × 5 = 25","a":"5"},{"q":"24 ÷ ? = 6","a":"4"},{"q":"2 × 8 = ?","a":"16"}]}]},{"id":2,"type":"text_task","title":"Pirate explores glowing jelly pods","background":"jelly_bay_island2","coins":15,"success_message":"Brilliant! You solved every task!","rounds":[{"instruction":"Pirate finds 4 jelly pods. Each pod has 3 energy crystals. How many crystals are there in total?","prompt":"Pirate finds 4 jelly pods. Each pod has 3 energy crystals. How many crystals are there in total?","answer":"12"},{"instruction":"18 jelly cakes are shared equally onto 3 glowing trays. How many cakes are on each tray?","prompt":"18 jelly cakes are shared equally onto 3 glowing trays. How many cakes are on each tray?","answer":"6"},{"instruction":"There are 5 jelly ships. Each ship carries 6 jellyfish guards. How many guards are there in total?","prompt":"There are 5 jelly ships. Each ship carries 6 jellyfish guards. How many guards are there in total?","answer":"30"},{"instruction":"Pirate finds 24 magic cards. They are shared equally between 4 divers. How many cards does each diver get?","prompt":"Pirate finds 24 magic cards. They are shared equally between 4 divers. How many cards does each diver get?","answer":"6"},{"instruction":"There are 7 glowing rows of sea plants. Each row has 3 plants. How many plants are there in total?","prompt":"There are 7 glowing rows of sea plants. Each row has 3 plants. How many plants are there in total?","answer":"21"}]},{"id":3,"type":"true_false","title":"Pirate checks the current","background":"2","coins":20,"success_message":"You're a math detective!","rounds":[{"instruction":"True or False?","statement":"3 × 4 = 4 × 3","correct_answer":"true"},{"instruction":"True or False?","statement":"20 ÷ 5 = 5 ÷ 20","correct_answer":"false"},{"instruction":"True or False?","statement":"20 coins shared between 5 pirates means each pirate gets 4 coins","correct_answer":"true"},{"instruction":"True or False?","statement":"6 underwater rooms with 4 panels each makes 20 panels in total","correct_answer":"false"},{"instruction":"True or False?","statement":"16 slices shared between 4 plates means each plate has 5 slices","correct_answer":"false"}]},{"id":4,"type":"corridor_choice","title":"Glowing jellyfish surround Pirate","background":"3","coins":20,"success_message":"Perfect choice! You see through the illusion!","rounds":[{"instruction":"Pirate sees 20 glowing jelly orbs shared into 5 groups. Which path shows how many in each group?","question":"Pirate sees 20 glowing jelly orbs shared into 5 groups. Which path shows how many in each group?","left_expression":"20 ÷ 5 = 4","right_expression":"20 × 5 = 100","correct_side":"left"},{"instruction":"Pirate finds 4 treasure chests with 3 pearls each. Which path shows total pearls?","question":"Pirate finds 4 treasure chests with 3 pearls each. Which path shows total pearls?","left_expression":"4 × 3 = 12","right_expression":"4 + 3 = 7","correct_side":"left"},{"instruction":"Pirate sees 5 groups of 4 guards. Then 4 guards leave each group. Which path shows how many remain in total?","question":"Pirate sees 5 groups of 4 guards. Then 4 guards leave each group. Which path shows how many remain in total?","left_expression":"5 × (4 − 4) = 0","right_expression":"5 × 4 − 4 = 16","correct_side":"right"},{"instruction":"Pirate finds 30 energy crystals. They are shared into 5 groups, then each group doubles. Which path shows the final total?","question":"Pirate finds 30 energy crystals. They are shared into 5 groups, then each group doubles. Which path shows the final total?","left_expression":"12","right_expression":"3","correct_side":"left"},{"instruction":"Pirate sees 6 groups of 5 orbs, then 10 disappear. Which path shows how many remain?","question":"Pirate sees 6 groups of 5 orbs, then 10 disappear. Which path shows how many remain?","left_expression":"2","right_expression":"20","correct_side":"right"}]},{"id":5,"type":"symbol_calc","title":"Glowing symbols appear in the water","background":"jelly_bay_island3","coins":25,"success_message":"Outstanding! You cracked the symbol code!","rounds":[{"instruction":"Solve the expression.","symbol_a":4,"symbol_b":3,"symbol_c":2,"symbol_expression":"A × B + C = ?","answer":"14"},{"instruction":"Solve the expression.","symbol_a":6,"symbol_b":5,"symbol_c":4,"symbol_expression":"A × B − C = ?","answer":"26"},{"instruction":"Solve the expression.","symbol_a":20,"symbol_b":5,"symbol_c":3,"symbol_expression":"A ÷ B + C = ?","answer":"7"},{"instruction":"Solve the expression.","symbol_a":24,"symbol_b":4,"symbol_c":2,"symbol_expression":"A ÷ B × C = ?","answer":"12"},{"instruction":"Solve the expression.","symbol_a":30,"symbol_b":5,"symbol_c":4,"symbol_expression":"A ÷ B × C + 2 = ?","answer":"26"}]},{"id":6,"type":"boss_mix","title":"FINAL BATTLE — Pirate vs the Jellyfish King","background":"jelly_bay_island4","coins":30,"success_message":"You freed the bay! The Pulse Core is yours!","rounds":[{"type":"five_tasks","instruction":"Pirate dives into the heart of Jelly Bay and faces the glowing swarm","tasks":[{"q":"36 ÷ 6 = ?","a":"6"},{"q":"45 ÷ 5 = ?","a":"9"},{"q":"28 ÷ 4 = ?","a":"7"},{"q":"32 ÷ 8 = ?","a":"4"},{"q":"54 ÷ 9 = ?","a":"6"}]},{"type":"five_tasks","instruction":"The jellyfish king awakens and the water begins to pulse","tasks":[{"q":"6 × 7 = ?","a":"42"},{"q":"42 ÷ 6 = ?","a":"7"},{"q":"___ × 6 = 36","a":"6"},{"q":"40 ÷ ___ = 8","a":"5"},{"q":"9 × 4 = ?","a":"36"}]},{"type":"text_task","instruction":"The swarm surrounds Pirate as the current grows stronger","prompt":"There are 8 glowing rows of jelly plants. Each row has 4 plants. How many plants are there in total?","answer":"32"},{"type":"text_task","instruction":"The current hides the path to the Pulse Core","prompt":"36 energy crystals are shared equally between some divers. Each diver gets 6 crystals. How many divers are there?","answer":"6"},{"type":"true_false","instruction":"The jellyfish king distorts what is true","statement":"24 ÷ 6 = 4","correct_answer":"true"},{"type":"true_false","instruction":"The water twists Pirate's perception","statement":"6 × 5 + 5 = 30","correct_answer":"false"},{"type":"corridor_choice","instruction":"Pirate fights through the shifting currents","question":"Pirate sees 36 crystals shared into 6 groups, then each group doubles. What is the total?","left_expression":"36 ÷ 6 + 2 = 8","right_expression":"(36 ÷ 6) × 2 = 12","correct_side":"right"},{"type":"corridor_choice","instruction":"The jelly king twists the flow of the ocean","question":"Pirate sees 5 groups of 8 orbs, then 8 disappear. How many remain?","left_expression":"5 × (8 − 8) = 0","right_expression":"5 × 8 − 8 = 32","correct_side":"right"},{"type":"symbol_calc","instruction":"Energy from the Pulse Core begins to surge","symbol_a":36,"symbol_b":6,"symbol_c":3,"symbol_expression":"A ÷ B × C + 2","answer":"20"},{"type":"symbol_calc","instruction":"The jellyfish king channels the power of the Core","symbol_a":48,"symbol_b":6,"symbol_c":4,"symbol_expression":"A ÷ B × C − 4","answer":"28"}]}],"images_needed":{"library":[],"backgrounds":["jelly_bay_island1","jelly_bay_island2","2","3","jelly_bay_island3","jelly_bay_island4"],"items":[],"targets":[],"artifact":{"key":"Focusing_crystal","name":"Pulse Core"}},"tutor_notes":[]}
+{
+  "meta": {
+    "island_key": "snowy_peaks_island",
+    "student_name": "Pirate",
+    "difficulty": "hard",
+    "topic_label": "Negative numbers and mixed operations",
+    "topic_key": "negative_mixed_ops",
+    "character_key": "pirate_green",
+    "child_inventory": [],
+    "has_freeze_ring": false,
+    "student_code": "MONKEY-3007",
+    "student_level": 3,
+    "student_coins": 0,
+    "start_coins": 0
+  },
+  "story": {
+    "island_name": "Snowy Peaks Island",
+    "villain": "Yeti-monkey Viking",
+    "artifact_name": "Frost Core",
+    "artifact_emoji": "❄️",
+    "artifact_power": "Ancient frozen power atop the highest peak.",
+    "greeting": "Pirate, your island mission begins now — listen closely.",
+    "act1": "On Snowy Peaks Island, jagged mountains rise through endless blizzards, where a towering yeti-monkey Viking roams the frozen ridges. Wielding an icy axe and driven by the will of Doctor Krit, it raids anything that dares cross its path. At the highest peak lies the Frost Core, pulsing with ancient power. Pirate, we must reach it, shatter its influence, and free the yeti monkey from Krit's control before the storm swallows the island whole.",
+    "act2": "",
+    "act3": "",
+    "goal": "Pirate, master every math trial, reach the island's core in time, and break Doctor Krit's hold."
+  },
+  "stages": [
+    {
+      "id": 1,
+      "type": "multi_choice",
+      "title": "Choose the correct answer",
+      "background": "snowy_peaks_island1",
+      "coins": 4,
+      "mechanic_reason": "This stage engages logical reasoning with negative numbers and mixed operations, a suitable challenge for Pirate's age and skill level.",
+      "success_message": "Awesome job, Pirate! You've conquered the icy problem!",
+      "rounds": [
+        {
+          "instruction": "(-3) × 4 = ?",
+          "options": [
+            {
+              "id": "A",
+              "label": "-12"
+            },
+            {
+              "id": "B",
+              "label": "12"
+            },
+            {
+              "id": "C",
+              "label": "-7"
+            }
+          ],
+          "correct_option": "A"
+        },
+        {
+          "instruction": "(-8) ÷ (-2) = ?",
+          "options": [
+            {
+              "id": "A",
+              "label": "-4"
+            },
+            {
+              "id": "B",
+              "label": "4"
+            },
+            {
+              "id": "C",
+              "label": "16"
+            }
+          ],
+          "correct_option": "B"
+        },
+        {
+          "instruction": "(-5) × (-3) = ?",
+          "options": [
+            {
+              "id": "A",
+              "label": "-15"
+            },
+            {
+              "id": "B",
+              "label": "15"
+            },
+            {
+              "id": "C",
+              "label": "-8"
+            }
+          ],
+          "correct_option": "B"
+        },
+        {
+          "instruction": "12 ÷ (-4) = ?",
+          "options": [
+            {
+              "id": "A",
+              "label": "3"
+            },
+            {
+              "id": "B",
+              "label": "-48"
+            },
+            {
+              "id": "C",
+              "label": "-3"
+            }
+          ],
+          "correct_option": "C"
+        },
+        {
+          "instruction": "(-2) × (-6) + (-4) = ?",
+          "options": [
+            {
+              "id": "A",
+              "label": "8"
+            },
+            {
+              "id": "B",
+              "label": "-16"
+            },
+            {
+              "id": "C",
+              "label": "16"
+            }
+          ],
+          "correct_option": "A"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "type": "key_lock",
+      "title": "Match keys to locks",
+      "background": "snowy_peaks_island2",
+      "coins": 4,
+      "mechanic_reason": "Key lock challenges reinforce the concept of sum and negative operations, perfect for Pirate's adventurous spirit.",
+      "success_message": "The vault cracks open, revealing icy treasures, Pirate!",
+      "rounds": [
+        {
+          "lock_sum_1": -10,
+          "lock_sum_2": -6,
+          "lock_sum_3": 8,
+          "pair_1": [
+            -5,
+            -5
+          ],
+          "pair_2": [
+            -2,
+            -4
+          ],
+          "pair_3": [
+            4,
+            4
+          ],
+          "key_lock_keys": [
+            -5,
+            -5,
+            -2,
+            -4,
+            4,
+            4
+          ]
+        },
+        {
+          "lock_sum_1": -12,
+          "lock_sum_2": 3,
+          "lock_sum_3": -9,
+          "pair_1": [
+            -6,
+            -6
+          ],
+          "pair_2": [
+            -3,
+            6
+          ],
+          "pair_3": [
+            -4,
+            -5
+          ],
+          "key_lock_keys": [
+            -6,
+            -6,
+            -3,
+            6,
+            -4,
+            -5
+          ]
+        },
+        {
+          "lock_sum_1": 0,
+          "lock_sum_2": -14,
+          "lock_sum_3": 6,
+          "pair_1": [
+            -7,
+            7
+          ],
+          "pair_2": [
+            -6,
+            -8
+          ],
+          "pair_3": [
+            -3,
+            9
+          ],
+          "key_lock_keys": [
+            -7,
+            7,
+            -6,
+            -8,
+            -3,
+            9
+          ]
+        },
+        {
+          "lock_sum_1": -15,
+          "lock_sum_2": 4,
+          "lock_sum_3": -8,
+          "pair_1": [
+            -9,
+            -6
+          ],
+          "pair_2": [
+            -2,
+            6
+          ],
+          "pair_3": [
+            -3,
+            -5
+          ],
+          "key_lock_keys": [
+            -9,
+            -6,
+            -2,
+            6,
+            -3,
+            -5
+          ]
+        },
+        {
+          "lock_sum_1": 10,
+          "lock_sum_2": -18,
+          "lock_sum_3": -5,
+          "pair_1": [
+            4,
+            6
+          ],
+          "pair_2": [
+            -9,
+            -9
+          ],
+          "pair_3": [
+            2,
+            -7
+          ],
+          "key_lock_keys": [
+            4,
+            6,
+            -9,
+            -9,
+            2,
+            -7
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "type": "match_pairs",
+      "title": "Find the two correct answers",
+      "background": "2",
+      "coins": 4,
+      "mechanic_reason": "Matching pairs lets Pirate identify correct answers among closely related options, sharpening focus and accuracy.",
+      "success_message": "You've matched the perfect pair, Pirate!",
+      "rounds": [
+        {
+          "pair_a": "(-3) × 4 = -12",
+          "pair_b": "(-5) + (-7) = -11",
+          "pair_c": "(-6) + (-6) = -12",
+          "pair_d": "8 ÷ (-2) = -3",
+          "correct_pair_1": "A",
+          "correct_pair_2": "C"
+        },
+        {
+          "pair_a": "(-5) × (-2) = -10",
+          "pair_b": "(-8) ÷ 2 = -4",
+          "pair_c": "(-12) ÷ (-3) = -4",
+          "pair_d": "3 × (-4) = -12",
+          "correct_pair_1": "B",
+          "correct_pair_2": "C"
+        },
+        {
+          "pair_a": "(-7) × 2 = -14",
+          "pair_b": "(-4) × (-4) = 16",
+          "pair_c": "(-2) × 7 = 14",
+          "pair_d": "20 ÷ (-2) = -10",
+          "correct_pair_1": "A",
+          "correct_pair_2": "B"
+        },
+        {
+          "pair_a": "(-3) × (-3) = -9",
+          "pair_b": "(-6) × 3 = -18",
+          "pair_c": "18 ÷ (-6) = -3",
+          "pair_d": "(-4) × (-2) = -8",
+          "correct_pair_1": "C",
+          "correct_pair_2": "D"
+        },
+        {
+          "pair_a": "(-4) × 5 = -20",
+          "pair_b": "(-6) × (-3) = -18",
+          "pair_c": "20 ÷ (-1) = -20",
+          "pair_d": "(-3) × 6 = -18",
+          "correct_pair_1": "A",
+          "correct_pair_2": "C"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "type": "true_false",
+      "title": "True or False?",
+      "background": "3",
+      "coins": 4,
+      "mechanic_reason": "True or False statements challenge Pirate to examine the validity of mathematical facts, enhancing critical thinking.",
+      "success_message": "Well done, Pirate! You've found the truth!",
+      "rounds": [
+        {
+          "statement": "(-4) × (-3) = 12",
+          "correct_answer": "true"
+        },
+        {
+          "statement": "(-2) × 5 + 10 = 0",
+          "correct_answer": "true"
+        },
+        {
+          "statement": "(-6) ÷ (-2) = -3",
+          "correct_answer": "false"
+        },
+        {
+          "statement": "(-3) × (-3) = -9",
+          "correct_answer": "false"
+        },
+        {
+          "statement": "(-5) × (-2) + (-10) = 0",
+          "correct_answer": "true"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "type": "symbol_calc",
+      "title": "Crack the symbol code",
+      "background": "snowy_peaks_island3",
+      "coins": 4,
+      "mechanic_reason": "Symbol calculations encourage Pirate to connect abstract symbols with numerical values, bolstering pattern recognition.",
+      "success_message": "Symbolic victory, Pirate! You're unstoppable!",
+      "rounds": [
+        {
+          "symbol_a": -3,
+          "symbol_b": -2,
+          "symbol_c": 2,
+          "symbol_expression": "A × B",
+          "answer": "6",
+          "symbol_item_a": "coral",
+          "symbol_item_b": "bamboo",
+          "symbol_item_c": "pearl_blue"
+        },
+        {
+          "symbol_a": -4,
+          "symbol_b": 3,
+          "symbol_c": 2,
+          "symbol_expression": "A × B + A",
+          "answer": "-16",
+          "symbol_item_a": "coral",
+          "symbol_item_b": "bamboo",
+          "symbol_item_c": "pearl_blue"
+        },
+        {
+          "symbol_a": -5,
+          "symbol_b": -2,
+          "symbol_c": 3,
+          "symbol_expression": "A ÷ B + A",
+          "answer": "-2.5",
+          "symbol_item_a": "coral",
+          "symbol_item_b": "bamboo",
+          "symbol_item_c": "pearl_blue"
+        },
+        {
+          "symbol_a": 3,
+          "symbol_b": -2,
+          "symbol_c": -4,
+          "symbol_expression": "A × (B + C)",
+          "answer": "-18",
+          "symbol_item_a": "coral",
+          "symbol_item_b": "bamboo",
+          "symbol_item_c": "pearl_blue"
+        },
+        {
+          "symbol_a": -3,
+          "symbol_b": -3,
+          "symbol_c": 3,
+          "symbol_expression": "(A × B) ÷ C",
+          "answer": "3",
+          "symbol_item_a": "coral",
+          "symbol_item_b": "bamboo",
+          "symbol_item_c": "pearl_blue"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "type": "boss_mix",
+      "title": "Final Challenge!",
+      "background": "snowy_peaks_island4",
+      "coins": 8,
+      "mechanic_reason": "Combining all previous skills into a single challenge, Pirate must demonstrate mastery over the yeti-monkey's mixed obstacles.",
+      "success_message": "Pirate, you've triumphed over all challenges and secured the Frost Core!",
+      "rounds": [
+        {
+          "instruction": "Final Challenge!",
+          "type": "multi_choice",
+          "prompt": "(-4) + 3 = ?",
+          "options": [
+            {
+              "label": "A",
+              "text": "1"
+            },
+            {
+              "label": "B",
+              "text": "-1"
+            },
+            {
+              "label": "C",
+              "text": "0"
+            }
+          ],
+          "correct_option": "B"
+        },
+        {
+          "instruction": "Final Challenge!",
+          "type": "multi_choice",
+          "prompt": "(-7) × (-2) = ?",
+          "options": [
+            {
+              "label": "A",
+              "text": "14"
+            },
+            {
+              "label": "B",
+              "text": "-14"
+            },
+            {
+              "label": "C",
+              "text": "10"
+            }
+          ],
+          "correct_option": "A"
+        },
+        {
+          "instruction": "Final Challenge!",
+          "type": "key_lock",
+          "lock_sums": [
+            -8,
+            5,
+            7
+          ],
+          "key_lock_keys": [
+            -4,
+            -4,
+            2,
+            3,
+            -1,
+            8
+          ],
+          "pairs": [
+            [
+              -4,
+              -4
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              -1,
+              8
+            ]
+          ]
+        },
+        {
+          "instruction": "Final Challenge!",
+          "type": "key_lock",
+          "lock_sums": [
+            -10,
+            0,
+            12
+          ],
+          "key_lock_keys": [
+            -5,
+            -5,
+            -3,
+            3,
+            6,
+            6
+          ],
+          "pairs": [
+            [
+              -5,
+              -5
+            ],
+            [
+              -3,
+              3
+            ],
+            [
+              6,
+              6
+            ]
+          ]
+        },
+        {
+          "instruction": "Final Challenge!",
+          "type": "match_pairs",
+          "pairs": [
+            {
+              "name": "A",
+              "equation": "(-8) × 3 = -24"
+            },
+            {
+              "name": "B",
+              "equation": "5 + (-5) = 0"
+            },
+            {
+              "name": "C",
+              "equation": "(-7) ÷ 1 = -7"
+            },
+            {
+              "name": "D",
+              "equation": "4 × (-2) = -8"
+            }
+          ],
+          "correct_pairs": [
+            "A",
+            "C"
+          ]
+        },
+        {
+          "instruction": "Final Challenge!",
+          "type": "match_pairs",
+          "pairs": [
+            {
+              "name": "A",
+              "equation": "(-2) × (-5) = 10"
+            },
+            {
+              "name": "B",
+              "equation": "(-3) × 3 = -9"
+            },
+            {
+              "name": "C",
+              "equation": "9 ÷ (-3) = -3"
+            },
+            {
+              "name": "D",
+              "equation": "6 - (-6) = 12"
+            }
+          ],
+          "correct_pairs": [
+            "B",
+            "C"
+          ]
+        },
+        {
+          "instruction": "Final Challenge!",
+          "type": "true_false",
+          "statement": "Adding a negative number always decreases the value.",
+          "correct_answer": "true"
+        },
+        {
+          "instruction": "Final Challenge!",
+          "type": "true_false",
+          "statement": "Negative numbers can be greater than positive numbers.",
+          "correct_answer": "false"
+        },
+        {
+          "instruction": "Final Challenge!",
+          "type": "symbol_calc",
+          "symbol_values": {
+            "A": -2,
+            "B": 5,
+            "C": -3
+          },
+          "expression": "A + B + C",
+          "answer": 0
+        },
+        {
+          "instruction": "Final Challenge!",
+          "type": "symbol_calc",
+          "symbol_values": {
+            "A": 4,
+            "B": -2,
+            "C": 6
+          },
+          "expression": "A × B + C",
+          "answer": -2
+        }
+      ],
+      "artifact": {
+        "emoji": "❄️",
+        "name": "Frost Core",
+        "description": "Creates magical snowstorms"
+      }
+    }
+  ],
+  "images_needed": {
+    "key": "Frost Core",
+    "artifacts": [
+      {
+        "key": "Frost Core",
+        "image_key": "Focusing_crystal"
+      }
+    ]
+  },
+  "tutor_notes": {
+    "block1_script": "Welcome Pirate to Snowy Peaks Island, where the frosty air brings a new adventure!",
+    "block2_hint": "Remind Pirate that numbers have different behavior in the cold.",
+    "block3_tips": [
+      "Encourage Pirate to visualize temperatures for understanding negative operations.",
+      "Use snowball metaphors when discussing number interactions."
+    ],
+    "block5_abstraction": "Negative and mixed operations can be seen as snow-covered hills—sometimes requiring uphill or downhill calculations.",
+    "weak_point_focus": "Help Pirate with examples on adding and multiplying negative numbers."
+  }
+}

@@ -1201,7 +1201,7 @@ async function generateLessonFromDraft(draft, options = {}) {
   const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
   const response = await openai.chat.completions.create({
     model: "gpt-4o",
-    max_tokens: 7000,
+    max_tokens: 16384,
     temperature: 1.0,
     messages: [
       { role: "system", content: SYSTEM_PROMPT },
@@ -1294,8 +1294,8 @@ async function buildLessonFromDraftNoAI(draft) {
     .trim()
     .replace(/\s+/g, "_");
   lesson.meta.island_key = ik;
-  applyIslandLessonCanon(lesson, draft);
   clampLessonAssetKeys(lesson, assetCatalog);
+  applyIslandLessonCanon(lesson, draft);
   if (!lesson.images_needed || typeof lesson.images_needed !== "object") {
     lesson.images_needed = {};
   }

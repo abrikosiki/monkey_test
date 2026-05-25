@@ -108,7 +108,7 @@ crystal_island — "Crystal Island" — crystal monkey golem, focusing crystal, 
 Canon: Evil Doctor Krit is hunting the magical crystals from this island to power up his mind-control machine. He has awakened and taken control of the mind of an ancient crystal monkey golem. We need to reach the focusing crystal first and free the monkey golem from Doctor Krit's control.
 
 ════════════════════════════════════════
-MECHANICS — Claude CHOOSES per stage (15 types)
+MECHANICS — Claude CHOOSES per stage (20 types)
 ════════════════════════════════════════
 
 - drag_sort       — order items into slots
@@ -119,11 +119,11 @@ MECHANICS — Claude CHOOSES per stage (15 types)
 - key_lock        — three sum cards, six numbered keys, two keys per lock (pairs + sums)
 - corridor_choice — left or right path
 - match_pairs     — connect pairs (describe pairs in JSON)
-- number_line     — show/mark number on number line
 - balance_scale   — balance weights
 - build_number    — build number from tens and ones
-- abacus          — light up dot count
 - timer_challenge — solve within 30s (ONLY age >= 7; rare at 7-8; never age 5-6)
+- symbol_calc   — substitute A/B/C values and compute expression
+- find_unknown  — find C from equation with known A and B
 - true_false    — read the statement and tap True or False
 - text_task     — read the task and type the text answer
 - five_tasks    — solve all 5 tasks shown simultaneously on one card
