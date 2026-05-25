@@ -447,34 +447,61 @@ ISLAND THEMING (required):
   For visual mechanics (drag_sort, drag_group), use island item names in titleText and prompt.
 
 EXAMPLE FRESHNESS + DIFFICULTY SLOPE (required):
-  Each stage must follow this exact progression — a different PROBLEM TYPE per round:
+  Each stage must follow this progression — a different PROBLEM TYPE per round,
+  scaled to the chosen difficultyLevel.
 
-  Round 1 — Direct: bare equation or mechanic. Smallest numbers of the stage. Child gets familiar.
-             e.g. "6 × 3 = ?" or drag 6 items into 2 equal groups.
+  CRITICAL: "Round 1 = simplest" means simplest FOR THAT DIFFICULTY LEVEL,
+  not simplest in the entire game. A level-6 lesson must NEVER use a bare
+  single-operation equation like "4 × 3 = ?" even in round 1.
 
-  Round 2 — Themed word problem: same operation wrapped in island story.
-             Numbers slightly larger. Use island vocabulary from the table above.
-             e.g. "4 jellyfish each carry 5 crystals — how many crystals total?"
-
-  Round 3 — Reverse / find-the-unknown: flip the question direction.
-             e.g. "___ × 6 = 42" or "There are 36 crystals split equally into ? jars → 6 jars"
-             Must require the child to work backwards.
-
+  Round 1 — Direct task at the difficulty floor (see MINIMUM FLOOR table below).
+  Round 2 — Themed word problem: same operation wrapped in island story; numbers slightly larger.
+  Round 3 — Reverse / find-the-unknown: child works backwards, e.g. "___ × 6 = 42".
   Round 4 — Multi-step or comparison: two operations, or "which is more?".
-             e.g. "(6 × 4) + 6 = ?" or "Is 7×5 more or less than 6×6?"
-             Biggest numbers of the stage so far.
-
-  Round 5 — Hardest: unexpected angle, inverse, prefill, or surprising combo.
-             e.g. "6 × ___ − 6 = 30" or a 2-step word problem with 3 numbers.
+  Round 5 — Hardest: unexpected angle, inverse, symbolic, or multi-step.
              This round should take the child at least 10 seconds to solve.
 
   STRICTLY FORBIDDEN: writing rounds 1–5 with the same template and only the number changed.
   Every round must feel like a genuinely different challenge.
 
-  NUMBER PROGRESSION within a stage (for the topic being practiced):
-    difficulty 1–3: round 1 numbers ≤ 10, round 5 numbers ≤ 20
-    difficulty 4–6: round 1 numbers ≤ 20, round 5 numbers ≤ 50
-    difficulty 7–10: round 1 numbers ≤ 30, round 5 numbers ≤ 100, multi-step allowed from round 3
+  MINIMUM COMPLEXITY FLOOR BY DIFFICULTY LEVEL (applies to EVERY round, including round 1):
+
+  Level 1–2:
+    • 1 operation, direct, e.g. "4 + 3 = ?" or "7 − 2 = ?"
+    • Round 5 may introduce simple reverse: "? + 3 = 7"
+    • FORBIDDEN: any multiplication or division
+
+  Level 3–4:
+    • Round 1: single ×/÷, e.g. "4 × 3 = ?" or "12 ÷ 4 = ?"
+    • Round 3: reverse required, e.g. "__ × 3 = 12"
+    • Round 5: 2-step or themed word problem
+    • FORBIDDEN: bare addition/subtraction as a full round
+
+  Level 5–6:
+    • Round 1: already uses ≥2 steps OR a reverse equation,
+      e.g. "(4 + 2) × 3 = ?" or "__ × 3 = 18"
+    • STRICTLY FORBIDDEN at level 5–6: bare "4 × 3 = ?" as any round
+    • Round 3: multi-step with grouping, e.g. "(__ + 2) × 3 = 18"
+    • Round 5: 2-operation reverse or grouped expression, e.g. "(6 × __ ) − 4 = 14"
+
+  Level 7–8:
+    • Round 1: multi-step with order of operations,
+      e.g. "4 × (3 + 2) − 6 = ?" or "(-24 ÷ 6) × __ = -12"
+    • STRICTLY FORBIDDEN at level 7–8: any single-operation direct equation in any round
+    • Round 3: symbolic or abstract pattern, misleading options
+    • Round 5: nested expression or algebraic reverse
+
+  Level 9–10:
+    • Round 1: negative numbers + multi-step, e.g. "__ × (−3) + 15 = −6"
+    • STRICTLY FORBIDDEN at level 9–10: any equation without negatives
+    • Round 5: 3+ operations, algebraic or symbolic, nested logic
+
+  NUMBER RANGES (secondary — numbers support difficulty, do NOT define it):
+    level 1–2  → numbers ≤ 10
+    level 3–4  → numbers ≤ 30
+    level 5–6  → numbers ≤ 50
+    level 7–8  → numbers ≤ 100
+    level 9–10 → numbers ≤ 200, negatives included
 
 ════════════════════════════════════════
 ROUND DIVERSITY — STRICT (within each stage)

@@ -216,6 +216,10 @@ ROUNDS (required for new lessons):
 - Array "rounds" with **5** objects. Per-round "instruction" and all type-specific data (draggables, inputs, options, sequence, …) live **inside** each round.
 - **round_bonus_coins** (optional, default 2 on the engine): small reward after each of rounds 1–4. Stage **coins** is the main reward after round 5 (with AMAZING + success_message).
 - Round curve: (1) learn (2) new numbers (3) harder (4) twist (5) inverse or challenge.
+  IMPORTANT: "Round 1 = simplest" is RELATIVE to the difficulty level in the user message.
+  At difficulty 5–6: round 1 must already use ≥2 steps or a reverse equation — bare "4×3=?" is FORBIDDEN.
+  At difficulty 7–8: round 1 must have multi-step/order-of-operations — single-op equations are FORBIDDEN.
+  At difficulty 9–10: round 1 must include negative numbers — any round without negatives is FORBIDDEN.
 - Visual variety rule: avoid reusing the same main image_key set across all rounds of one stage (e.g., not cherries in every round). Rotate assets by round theme.
 - Asset uniqueness rule: inside one stage, rounds may reuse the same image_key for clarity; across different stages in the same lesson, avoid repeating the same primary item/target image_key unless story-critical.
 - **legacy**: flat stage or "practice_tasks" still supported if "rounds" is absent.
