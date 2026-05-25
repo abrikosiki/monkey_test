@@ -871,6 +871,7 @@ CHILD FROM SYSTEM:
 
 LESSON CONTEXT:
 - Difficulty: ${context.difficulty}
+- Difficulty level (1–10): ${context.difficultyLevel != null ? context.difficultyLevel : "(not set — use difficulty label above to infer: easy→3, medium→5, hard→8)"}
 - Topic label: ${context.topicLabel}
 - Topic key: ${context.topicKey}
 - Island key (canonical story + stage backgrounds): ${String(context.islandKey || "").trim() || "(none — lesson generator will still require one island from the system prompt list)"}
@@ -1032,6 +1033,11 @@ function mergeAutofillDraftPayload(parsed, childCode, normalizedChild, tutorProm
       weakPoint: tc.weakPoint ?? parsed.context?.weakPoint ?? prevCtx.weakPoint ?? "",
       notes: tc.notes ?? parsed.context?.notes ?? prevCtx.notes ?? "",
       islandKey: islandKey || prevCtx.islandKey || "",
+      difficultyLevel: (() => {
+        const raw = parsed.context?.difficultyLevel ?? parsed.difficultyLevel ?? prevCtx.difficultyLevel;
+        const n = Number(raw);
+        return Number.isFinite(n) ? Math.max(1, Math.min(10, Math.round(n))) : undefined;
+      })(),
     },
     stages,
     status: "draft",

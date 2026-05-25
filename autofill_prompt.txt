@@ -77,17 +77,117 @@ AGE RULES:
   age 7–8 → all except timer_challenge (use rarely)
   age 9   → all including timer_challenge
 
-DIFFICULTY RULES (parsed from tutor_prompt):
-  level 1–3 → prefer: drag_sort, multi_choice, fill_blank, true_false
-               numbers: age 5–6 up to 10, age 7–9 up to 20
+DIFFICULTY RULES (parsed from tutor_prompt — look for a number 1–10, default 5)
 
-  level 4–6 → add: pattern_input, corridor_choice, balance_scale,
-               drag_group, text_task, five_tasks
-               numbers: age 5–6 up to 10, age 7–9 up to 50
+Parse the numeric difficulty level from tutor_prompt. Output it as "difficultyLevel" (integer) inside context.
 
-  level 7–10 → add: symbol_calc, find_unknown,
-                timer_challenge, match_pairs, key_lock
-                numbers: up to 100, complex expressions allowed
+IMPORTANT: Difficulty is NOT only about bigger numbers.
+Increase difficulty through:
+  - more operations
+  - reverse thinking
+  - missing numbers
+  - order of operations
+  - abstraction
+  - symbolic reasoning
+  - misleading options
+  - multi-step logic
+  - cognitive load
+
+COGNITIVE LOAD BY LEVEL:
+
+Level 1–2:
+  - 1 operation only
+  - direct calculation
+  - no reverse thinking
+  - example: fill_blank level 2 → 4 + __ = 9
+
+Level 3–4:
+  - simple multiplication/division
+  - simple word problems
+  - 1 reverse task may appear
+  - example: fill_blank level 4 → __ × 3 = 12
+
+Level 5–6:
+  - 2-step operations
+  - grouping logic
+  - mixed multiplication/division
+  - reverse equations appear regularly
+  - child may need to choose operation first
+  - example: fill_blank level 6 → (__ + 4) × 3 = 21
+
+Level 7–8:
+  - multi-step expressions
+  - order of operations
+  - symbolic thinking
+  - misleading options
+  - abstract patterns
+  - example: fill_blank level 8 → (-24 ÷ 6) × __ = -12
+
+Level 9–10:
+  - negative numbers
+  - symbolic negatives
+  - algebraic thinking
+  - 3+ operations
+  - nested logic
+  - complex reverse equations
+  - example: fill_blank level 10 → __ × (-3) + 15 = -6
+
+EXPRESSION DEPTH:
+  Level 1–2  → 1 operation
+  Level 3–4  → 2 terms
+  Level 5–6  → 2 operations
+  Level 7–8  → 3 operations
+  Level 9–10 → nested/symbolic expressions
+
+ROUND PROGRESSION (apply inside every stage):
+  Round 1 = confidence / simplest direct task
+  Round 2 = same pattern with bigger numbers or more terms
+  Round 3 = variation / new element added
+  Round 4 = twist or multi-step thinking
+  Round 5 = hardest version (inverse, symbolic, or multi-step)
+
+MECHANICS MUST SCALE WITH DIFFICULTY — do NOT generate the same mechanic
+structure for all levels. A fill_blank at level 2 and level 8 must look
+fundamentally different in structure, not just in numbers.
+
+MECHANICS POOL BY DIFFICULTY LEVEL (combine with age rules):
+  level 1–3  → drag_sort, multi_choice, fill_blank, true_false, drag_group
+  level 4–5  → add: pattern_input, corridor_choice, balance_scale, text_task, five_tasks
+  level 6–7  → add: match_pairs, build_number, number_grid
+  level 8–10 → add: symbol_calc, find_unknown, timer_challenge, key_lock
+
+NUMBER RANGE BY AGE (secondary difficulty rule):
+Numbers should support the difficulty level, but should NOT be the primary
+source of difficulty. Harder lessons should mainly increase logic, abstraction,
+reverse thinking, operation count, symbolic reasoning, and cognitive load.
+
+  Age 5:
+    - typical numbers: 1–10
+    - subtraction stays positive (no negative results)
+    - multiplication/division only with 2, 5, 10
+
+  Age 6:
+    - typical numbers: 1–20
+    - simple multiplication/division
+    - no complex mixed operations
+
+  Age 7:
+    - typical numbers: 1–50
+    - multiplication/division tables
+    - simple mixed operations allowed
+
+  Age 8:
+    - typical numbers: 1–100
+    - multi-step expressions allowed
+    - reverse equations common
+    - negatives allowed only at difficulty 8+
+
+  Age 9:
+    - typical numbers: 1–200
+    - complex mixed operations
+    - symbolic expressions
+    - negatives fully allowed
+    - algebraic thinking begins
 
 ════════════════════════════════════════
 MECHANIC VARIETY RULE (CRITICAL — do not skip)
@@ -471,6 +571,7 @@ Return valid JSON only. No markdown. Start with {
     "topicLabel": "short human label for the math focus",
     "topicKey": "snake_case topic id e.g. number_division",
     "islandKey": "one of the eight allowed island keys above",
+    "difficultyLevel": 5,
     "knows": "optional duplicate of tutorContext.knows",
     "weakPoint": "optional duplicate of tutorContext.weakPoint",
     "notes": ""
