@@ -208,6 +208,41 @@ LESSON MIX RULES (6 stages):
 - NEVER timer_challenge on stage 6 (index 5)
 - Minimum 4 DISTINCT mechanic types in stages 1–5
 
+BOSS_MIX ROUND SCHEMA — each sub-round MUST use the EXACT same field names as regular rounds.
+DO NOT invent alternative schemas (no "lock_sums", no "pairs" array, no "symbol_values", no "correct_pairs").
+Use ONLY these fields per type:
+
+  fill_blank / pattern_input:
+    { "type": "fill_blank", "prompt": "__ × 3 = 12", "answer": 4 }
+
+  multi_choice:
+    { "type": "multi_choice", "prompt": "(-3) × 4 = ?",
+      "options": [{"id":"A","label":"-12"},{"id":"B","label":"12"},{"id":"C","label":"-7"}],
+      "correct_option": "A" }
+
+  true_false:
+    { "type": "true_false", "statement": "(-4) × (-2) = 8", "correct_answer": "true" }
+
+  match_pairs:
+    { "type": "match_pairs",
+      "pair_a": "(-3)×4=-12", "pair_b": "5+(-5)=0", "pair_c": "(-7)÷1=-7", "pair_d": "4×(-2)=-8",
+      "correct_pair_1": "A", "correct_pair_2": "C" }
+
+  key_lock:
+    { "type": "key_lock",
+      "lock_sum_1": -8, "lock_sum_2": 5, "lock_sum_3": 7,
+      "key_lock_keys": [-4,-4,2,3,-1,8],
+      "pair_1": [-4,-4], "pair_2": [2,3], "pair_3": [-1,8] }
+
+  symbol_calc:
+    { "type": "symbol_calc",
+      "symbol_a": -2, "symbol_b": 5, "symbol_c": -3,
+      "symbol_expression": "A + B + C", "answer": 0 }
+
+  find_unknown:
+    { "type": "find_unknown",
+      "unknown_a": 3, "unknown_b": 4, "unknown_equation": "A × __ = 12" }
+
 ════════════════════════════════════════
 STAGES — 6 items, id 1..6
 ════════════════════════════════════════

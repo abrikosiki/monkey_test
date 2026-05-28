@@ -2548,10 +2548,79 @@ function buildHtml(
     if(
       (resolveEngineType(out.type) === "input") &&
       !Array.isArray(out.inputs) &&
-      (round.example != null || round.prompt != null || round.answer != null)
+      (round.example != null || round.prompt != null || round.equation != null || round.expression != null || round.answer != null)
     ){
-      const promptText = round.prompt ?? round.example ?? out.prompt ?? "";
+      const promptText = round.prompt ?? round.equation ?? round.expression ?? round.example ?? out.prompt ?? "";
       out.inputs = [{ prompt: String(promptText), answer: round.answer ?? out.answer ?? "" }];
+    }
+
+    // Compatibility bridge: boss_mix match_pairs rounds may use pairs:[{name,equation}] + correct_pairs:[...]
+    if(
+      out.type === "match_pairs" &&
+      !out.pair_a && !out.pairA &&
+      Array.isArray(round.pairs) && round.pairs.length >= 4
+    ){
+      const letters = ["a","b","c","d"];
+      round.pairs.forEach((p, i) => {
+        const text = p.equation ?? p.text ?? p.label ?? String(p);
+        out["pair_" + letters[i]] = text;
+      });
+      const cp = Array.isArray(round.correct_pairs) ? round.correct_pairs : [];
+      if(!out.correct_pair_1) out.correct_pair_1 = String(cp[0] ?? "").toUpperCase();
+      if(!out.correct_pair_2) out.correct_pair_2 = String(cp[1] ?? "").toUpperCase();
+    }
+
+    // Compatibility bridge: boss_mix key_lock rounds may use lock_sums:[...] array
+    if(
+      out.type === "key_lock" &&
+      !out.lock_sum_1 && out.lock_sum_1 !== 0 &&
+      Array.isArray(round.lock_sums) && round.lock_sums.length >= 3
+    ){
+      out.lock_sum_1 = round.lock_sums[0];
+      out.lock_sum_2 = round.lock_sums[1];
+      out.lock_sum_3 = round.lock_sums[2];
+    }
+    // boss_mix key_lock may use pairs:[...] array instead of pair_1/2/3
+    if(
+      out.type === "key_lock" &&
+      !Array.isArray(out.pair_1) &&
+      Array.isArray(round.pairs) && round.pairs.length >= 3
+    ){
+      out.pair_1 = round.pairs[0];
+      out.pair_2 = round.pairs[1];
+      out.pair_3 = round.pairs[2];
+    }
+
+    // Compatibility bridge: boss_mix symbol_calc rounds may use symbol_values:{A,B,C} + expression
+    if(
+      out.type === "symbol_calc" &&
+      out.symbol_a == null && out.symbolA == null &&
+      round.symbol_values && typeof round.symbol_values === "object"
+    ){
+      out.symbol_a = round.symbol_values.A ?? round.symbol_values.a ?? 4;
+      out.symbol_b = round.symbol_values.B ?? round.symbol_values.b ?? 3;
+      out.symbol_c = round.symbol_values.C ?? round.symbol_values.c ?? 2;
+    }
+    if(
+      out.type === "symbol_calc" &&
+      !out.symbol_expression && !out.symbolExpression &&
+      (round.expression || round.expr)
+    ){
+      out.symbol_expression = round.expression ?? round.expr;
+    }
+
+    // Compatibility bridge: boss_mix multi_choice options with {label:"A",text:"value"} format
+    if(
+      resolveEngineType(out.type) === "choice" &&
+      Array.isArray(out.options) && out.options.length > 0 &&
+      out.options[0].text != null &&
+      (out.options[0].label === "A" || out.options[0].label === "a")
+    ){
+      const correctId = String(round.correct_option ?? round.correctOption ?? "").trim().toUpperCase();
+      out.options = out.options.map((opt, idx) => {
+        const id = String.fromCharCode(65 + idx);
+        return { id, label: String(opt.text ?? opt.label ?? ""), correct: correctId ? id === correctId : (opt.correct === true) };
+      });
     }
 
     // Compatibility bridge: generated multi_choice often sends "correct_option"
