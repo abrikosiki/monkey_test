@@ -1,633 +1,360 @@
 {
   "meta": {
-    "island_key": "snowy_peaks_island",
+    "island_key": "neon_city_island",
     "student_name": "Pirate",
     "difficulty": "hard",
-    "topic_label": "Negative numbers and mixed operations",
-    "topic_key": "negative_mixed_ops",
+    "topic_label": "Multi-step multiplication and division",
+    "topic_key": "multistep_mul_div",
     "character_key": "pirate_green",
-    "child_inventory": [],
-    "has_freeze_ring": false,
+    "child_inventory": ["egg","sword","crown","lizard","quardo","freeze_ring","ring_ice","magic_necklace","antigravity_boots"],
+    "has_freeze_ring": true,
     "student_code": "MONKEY-3007",
-    "student_level": 3,
-    "student_coins": 0,
-    "start_coins": 0
+    "student_level": 5,
+    "student_coins": 22,
+    "start_coins": 22
   },
   "story": {
-    "island_name": "Snowy Peaks Island",
-    "villain": "Yeti-monkey Viking",
-    "artifact_name": "Frost Core",
-    "artifact_emoji": "❄️",
-    "artifact_power": "Ancient frozen power atop the highest peak.",
-    "greeting": "Pirate, your island mission begins now — listen closely.",
-    "act1": "On Snowy Peaks Island, jagged mountains rise through endless blizzards, where a towering yeti-monkey Viking roams the frozen ridges. Wielding an icy axe and driven by the will of Doctor Krit, it raids anything that dares cross its path. At the highest peak lies the Frost Core, pulsing with ancient power. Pirate, we must reach it, shatter its influence, and free the yeti monkey from Krit's control before the storm swallows the island whole.",
-    "act2": "",
-    "act3": "",
-    "goal": "Pirate, master every math trial, reach the island's core in time, and break Doctor Krit's hold."
+    "island_name": "Neon City Island",
+    "villain": "Cyber-enhanced monkey",
+    "artifact_name": "Neon Core",
+    "artifact_emoji": "🌃",
+    "artifact_power": "The city's central power — shut it down to break the signal.",
+    "greeting": "Pirate, your mission on Neon City Island begins now — listen closely.",
+    "act1": "On Neon City Island, glowing towers hum with energy while neon lights flicker through endless streets. In the shadows moves a cyber-enhanced monkey, its mind enslaved by Doctor Krit's signal, controlling the city's systems like a living network. At the heart of the metropolis lies the Neon Core, pulsing with power. We must reach it, shut it down, and free the monkey before the entire city turns against us.",
+    "act2": "The cyber monkey tightens its grip on the city's network. Every system Pirate touches pulses with corrupted energy — but the path to the Neon Core is becoming clear.",
+    "act3": "The Neon Core is within reach. One final push and Doctor Krit's hold over this glowing city will be broken forever.",
+    "goal": "Pirate, solve every challenge, reach the Neon Core, and free the city from Doctor Krit's control."
   },
   "stages": [
     {
       "id": 1,
-      "type": "multi_choice",
-      "title": "Choose the correct answer",
-      "background": "snowy_peaks_island1",
+      "type": "true_false",
+      "title": "Pirate enters Neon City Island",
+      "background": "neon_city_island1",
       "coins": 4,
-      "mechanic_reason": "This stage engages logical reasoning with negative numbers and mixed operations, a suitable challenge for Pirate's age and skill level.",
-      "success_message": "Awesome job, Pirate! You've conquered the icy problem!",
+      "mechanic_reason": "True/false statements warm up the player with multiplication and division facts in a city context.",
+      "success_message": "Sharp thinking, Pirate! The neon streets are yours!",
       "rounds": [
         {
-          "instruction": "(-3) × 4 = ?",
-          "options": [
-            {
-              "id": "A",
-              "label": "-12"
-            },
-            {
-              "id": "B",
-              "label": "12"
-            },
-            {
-              "id": "C",
-              "label": "-7"
-            }
-          ],
-          "correct_option": "A"
+          "title": "Pirate enters Neon City Island",
+          "statement": "6 neon buses with 8 passengers each means there are 48 passengers in total",
+          "correct_answer": "true"
         },
         {
-          "instruction": "(-8) ÷ (-2) = ?",
-          "options": [
-            {
-              "id": "A",
-              "label": "-4"
-            },
-            {
-              "id": "B",
-              "label": "4"
-            },
-            {
-              "id": "C",
-              "label": "16"
-            }
-          ],
-          "correct_option": "B"
+          "title": "The cyber monkey controls the traffic",
+          "statement": "54 energy cubes shared between 6 towers means each tower gets 8 cubes",
+          "correct_answer": "false"
         },
         {
-          "instruction": "(-5) × (-3) = ?",
-          "options": [
-            {
-              "id": "A",
-              "label": "-15"
-            },
-            {
-              "id": "B",
-              "label": "15"
-            },
-            {
-              "id": "C",
-              "label": "-8"
-            }
-          ],
-          "correct_option": "B"
+          "title": "The city lights begin to flicker",
+          "statement": "7 drone groups with 6 drones each makes 42 drones in total",
+          "correct_answer": "true"
         },
         {
-          "instruction": "12 ÷ (-4) = ?",
-          "options": [
-            {
-              "id": "A",
-              "label": "3"
-            },
-            {
-              "id": "B",
-              "label": "-48"
-            },
-            {
-              "id": "C",
-              "label": "-3"
-            }
-          ],
-          "correct_option": "C"
+          "title": "The Neon Core distorts the network",
+          "statement": "63 chips shared between 9 hackers gives each hacker 6 chips",
+          "correct_answer": "false"
         },
         {
-          "instruction": "(-2) × (-6) + (-4) = ?",
-          "options": [
-            {
-              "id": "A",
-              "label": "8"
-            },
-            {
-              "id": "B",
-              "label": "-16"
-            },
-            {
-              "id": "C",
-              "label": "16"
-            }
-          ],
-          "correct_option": "A"
+          "title": "The streets pulse with energy",
+          "statement": "8 power stations with 7 energy cells each creates 56 cells in total",
+          "correct_answer": "true"
         }
       ]
     },
     {
       "id": 2,
-      "type": "key_lock",
-      "title": "Match keys to locks",
-      "background": "snowy_peaks_island2",
+      "type": "text_task",
+      "title": "Pirate walks through the glowing market",
+      "background": "neon_city_island2",
       "coins": 4,
-      "mechanic_reason": "Key lock challenges reinforce the concept of sum and negative operations, perfect for Pirate's adventurous spirit.",
-      "success_message": "The vault cracks open, revealing icy treasures, Pirate!",
+      "mechanic_reason": "Two-step word problems build on multiplication and division with addition/subtraction.",
+      "success_message": "Brilliant, Pirate! You cracked the city's code!",
       "rounds": [
         {
-          "lock_sum_1": -10,
-          "lock_sum_2": -6,
-          "lock_sum_3": 8,
-          "pair_1": [
-            -5,
-            -5
-          ],
-          "pair_2": [
-            -2,
-            -4
-          ],
-          "pair_3": [
-            4,
-            4
-          ],
-          "key_lock_keys": [
-            -5,
-            -5,
-            -2,
-            -4,
-            4,
-            4
-          ]
+          "title": "Pirate walks through the glowing market",
+          "prompt": "8 neon taxis carry 7 passengers each. Then 12 passengers leave the station. How many passengers remain?",
+          "answer": "44"
         },
         {
-          "lock_sum_1": -12,
-          "lock_sum_2": 3,
-          "lock_sum_3": -9,
-          "pair_1": [
-            -6,
-            -6
-          ],
-          "pair_2": [
-            -3,
-            6
-          ],
-          "pair_3": [
-            -4,
-            -5
-          ],
-          "key_lock_keys": [
-            -6,
-            -6,
-            -3,
-            6,
-            -4,
-            -5
-          ]
+          "title": "The cyber monkey hacks the towers",
+          "prompt": "72 energy cubes are shared equally between 8 towers. Then each tower gains 3 more cubes. How many cubes does each tower have now?",
+          "answer": "12"
         },
         {
-          "lock_sum_1": 0,
-          "lock_sum_2": -14,
-          "lock_sum_3": 6,
-          "pair_1": [
-            -7,
-            7
-          ],
-          "pair_2": [
-            -6,
-            -8
-          ],
-          "pair_3": [
-            -3,
-            9
-          ],
-          "key_lock_keys": [
-            -7,
-            7,
-            -6,
-            -8,
-            -3,
-            9
-          ]
+          "title": "Neon drones race above the city",
+          "prompt": "9 drone groups have 8 drones each. Then 18 drones lose power. How many drones still work?",
+          "answer": "54"
         },
         {
-          "lock_sum_1": -15,
-          "lock_sum_2": 4,
-          "lock_sum_3": -8,
-          "pair_1": [
-            -9,
-            -6
-          ],
-          "pair_2": [
-            -2,
-            6
-          ],
-          "pair_3": [
-            -3,
-            -5
-          ],
-          "key_lock_keys": [
-            -9,
-            -6,
-            -2,
-            6,
-            -3,
-            -5
-          ]
+          "title": "Pirate breaks into the control grid",
+          "prompt": "84 data chips are shared equally between 7 hackers. Then each hacker finds 5 extra chips. How many chips does each hacker have?",
+          "answer": "17"
         },
         {
-          "lock_sum_1": 10,
-          "lock_sum_2": -18,
-          "lock_sum_3": -5,
-          "pair_1": [
-            4,
-            6
-          ],
-          "pair_2": [
-            -9,
-            -9
-          ],
-          "pair_3": [
-            2,
-            -7
-          ],
-          "key_lock_keys": [
-            4,
-            6,
-            -9,
-            -9,
-            2,
-            -7
-          ]
+          "title": "The Neon Core overloads the city",
+          "prompt": "9 power towers generate 8 energy cells each. The city immediately uses 26 cells. How many cells remain?",
+          "answer": "46"
         }
       ]
     },
     {
       "id": 3,
-      "type": "match_pairs",
-      "title": "Find the two correct answers",
+      "type": "corridor_choice",
+      "title": "The neon streets shift around Pirate",
       "background": "2",
       "coins": 4,
-      "mechanic_reason": "Matching pairs lets Pirate identify correct answers among closely related options, sharpening focus and accuracy.",
-      "success_message": "You've matched the perfect pair, Pirate!",
+      "mechanic_reason": "Corridor choice tests whether the player correctly applies order of operations vs brackets.",
+      "success_message": "Correct path, Pirate! The city opens up for you!",
       "rounds": [
         {
-          "pair_a": "(-3) × 4 = -12",
-          "pair_b": "(-5) + (-7) = -11",
-          "pair_c": "(-6) + (-6) = -12",
-          "pair_d": "8 ÷ (-2) = -3",
-          "correct_pair_1": "A",
-          "correct_pair_2": "C"
+          "title": "The neon streets shift around Pirate",
+          "question": "Pirate sees 8 charging stations with 7 batteries each, then 12 batteries shut down. Which path shows the remaining batteries?",
+          "left_expression": "8 × 7 − 12 = 44",
+          "right_expression": "8 × (7 − 12) = -40",
+          "correct_side": "left"
         },
         {
-          "pair_a": "(-5) × (-2) = -10",
-          "pair_b": "(-8) ÷ 2 = -4",
-          "pair_c": "(-12) ÷ (-3) = -4",
-          "pair_d": "3 × (-4) = -12",
-          "correct_pair_1": "B",
-          "correct_pair_2": "C"
+          "title": "The cyber network becomes unstable",
+          "question": "72 energy cubes are shared into 8 towers, then each tower triples its energy. Which path shows the final amount per tower?",
+          "left_expression": "72 ÷ 8 × 3 = 27",
+          "right_expression": "72 ÷ (8 × 3) = 3",
+          "correct_side": "left"
         },
         {
-          "pair_a": "(-7) × 2 = -14",
-          "pair_b": "(-4) × (-4) = 16",
-          "pair_c": "(-2) × 7 = 14",
-          "pair_d": "20 ÷ (-2) = -10",
-          "correct_pair_1": "A",
-          "correct_pair_2": "B"
+          "title": "The monkey controls the traffic systems",
+          "question": "9 robot groups carry 7 batteries each, then 14 batteries are destroyed. Which path shows the remaining batteries?",
+          "left_expression": "9 × 7 − 14 = 49",
+          "right_expression": "9 × (7 − 14) = -63",
+          "correct_side": "left"
         },
         {
-          "pair_a": "(-3) × (-3) = -9",
-          "pair_b": "(-6) × 3 = -18",
-          "pair_c": "18 ÷ (-6) = -3",
-          "pair_d": "(-4) × (-2) = -8",
-          "correct_pair_1": "C",
-          "correct_pair_2": "D"
+          "title": "Pirate enters the neon tunnels",
+          "question": "96 chips are shared between 8 hackers, then each hacker gains 4 more chips. Which path shows the final amount per hacker?",
+          "left_expression": "96 ÷ 8 + 4 = 16",
+          "right_expression": "96 ÷ (8 + 4) = 8",
+          "correct_side": "left"
         },
         {
-          "pair_a": "(-4) × 5 = -20",
-          "pair_b": "(-6) × (-3) = -18",
-          "pair_c": "20 ÷ (-1) = -20",
-          "pair_d": "(-3) × 6 = -18",
-          "correct_pair_1": "A",
-          "correct_pair_2": "C"
+          "title": "The Neon Core creates a final illusion",
+          "question": "8 groups of 9 drones fly above the city, then 28 crash. Which path shows how many remain?",
+          "left_expression": "8 × 9 − 28 = 44",
+          "right_expression": "8 × (9 − 28) = -152",
+          "correct_side": "left"
         }
       ]
     },
     {
       "id": 4,
-      "type": "true_false",
-      "title": "True or False?",
+      "type": "symbol_calc",
+      "title": "Neon symbols flash across the towers",
       "background": "3",
       "coins": 4,
-      "mechanic_reason": "True or False statements challenge Pirate to examine the validity of mathematical facts, enhancing critical thinking.",
-      "success_message": "Well done, Pirate! You've found the truth!",
+      "mechanic_reason": "Symbol substitution requires multi-step calculation using larger numbers.",
+      "success_message": "The symbols are decoded, Pirate! The network weakens!",
       "rounds": [
         {
-          "statement": "(-4) × (-3) = 12",
-          "correct_answer": "true"
+          "title": "Neon symbols flash across the towers",
+          "symbol_a": 72,
+          "symbol_b": 8,
+          "symbol_c": 5,
+          "symbol_expression": "A ÷ B × C − 9",
+          "answer": "36"
         },
         {
-          "statement": "(-2) × 5 + 10 = 0",
-          "correct_answer": "true"
+          "title": "The cyber monkey attacks the network",
+          "symbol_a": 96,
+          "symbol_b": 8,
+          "symbol_c": 6,
+          "symbol_expression": "A ÷ B × C + 12",
+          "answer": "84"
         },
         {
-          "statement": "(-6) ÷ (-2) = -3",
-          "correct_answer": "false"
+          "title": "The Neon Core sends corrupted signals",
+          "symbol_a": 108,
+          "symbol_b": 9,
+          "symbol_c": 7,
+          "symbol_expression": "A ÷ B × C − 18",
+          "answer": "66"
         },
         {
-          "statement": "(-3) × (-3) = -9",
-          "correct_answer": "false"
+          "title": "The city systems collapse around Pirate",
+          "symbol_a": 144,
+          "symbol_b": 12,
+          "symbol_c": 8,
+          "symbol_expression": "A ÷ B × C + 20",
+          "answer": "116"
         },
         {
-          "statement": "(-5) × (-2) + (-10) = 0",
-          "correct_answer": "true"
+          "title": "The cyber monkey unleashes full power",
+          "symbol_a": 180,
+          "symbol_b": 12,
+          "symbol_c": 9,
+          "symbol_expression": "A ÷ B × C − 25",
+          "answer": "110"
         }
       ]
     },
     {
       "id": 5,
-      "type": "symbol_calc",
-      "title": "Crack the symbol code",
-      "background": "snowy_peaks_island3",
+      "type": "timer_challenge",
+      "title": "Pirate races through the neon streets",
+      "background": "neon_city_island3",
       "coins": 4,
-      "mechanic_reason": "Symbol calculations encourage Pirate to connect abstract symbols with numerical values, bolstering pattern recognition.",
-      "success_message": "Symbolic victory, Pirate! You're unstoppable!",
+      "mechanic_reason": "Timed challenges test speed and accuracy under pressure with multi-step expressions.",
+      "success_message": "Lightning fast, Pirate! The Neon Core is in sight!",
       "rounds": [
         {
-          "symbol_a": -3,
-          "symbol_b": -2,
-          "symbol_c": 2,
-          "symbol_expression": "A × B",
-          "answer": "6",
-          "symbol_item_a": "coral",
-          "symbol_item_b": "bamboo",
-          "symbol_item_c": "pearl_blue"
+          "title": "Pirate races through the neon streets",
+          "timer_example_a": "48 ÷ 6 × 4",
+          "timer_answer_a": 32,
+          "timer_example_b": "9 × 7 − 18",
+          "timer_answer_b": 45,
+          "timer_example_c": "72 ÷ 8 + 11",
+          "timer_answer_c": 20,
+          "timer_seconds": 30
         },
         {
-          "symbol_a": -4,
-          "symbol_b": 3,
-          "symbol_c": 2,
-          "symbol_expression": "A × B + A",
-          "answer": "-16",
-          "symbol_item_a": "coral",
-          "symbol_item_b": "bamboo",
-          "symbol_item_c": "pearl_blue"
+          "title": "The cyber systems overload",
+          "timer_example_a": "96 ÷ 8 × 5",
+          "timer_answer_a": 60,
+          "timer_example_b": "12 × 9 − 27",
+          "timer_answer_b": 81,
+          "timer_example_c": "84 ÷ 7 + 16",
+          "timer_answer_c": 28,
+          "timer_seconds": 28
         },
         {
-          "symbol_a": -5,
-          "symbol_b": -2,
-          "symbol_c": 3,
-          "symbol_expression": "A ÷ B + A",
-          "answer": "-2.5",
-          "symbol_item_a": "coral",
-          "symbol_item_b": "bamboo",
-          "symbol_item_c": "pearl_blue"
+          "title": "The Neon Core pulses faster",
+          "timer_example_a": "144 ÷ 12 × 6",
+          "timer_answer_a": 72,
+          "timer_example_b": "15 × 8 − 36",
+          "timer_answer_b": 84,
+          "timer_example_c": "108 ÷ 9 + 19",
+          "timer_answer_c": 31,
+          "timer_seconds": 25
         },
         {
-          "symbol_a": 3,
-          "symbol_b": -2,
-          "symbol_c": -4,
-          "symbol_expression": "A × (B + C)",
-          "answer": "-18",
-          "symbol_item_a": "coral",
-          "symbol_item_b": "bamboo",
-          "symbol_item_c": "pearl_blue"
+          "title": "Pirate dodges the drone swarm",
+          "timer_example_a": "180 ÷ 12 × 7",
+          "timer_answer_a": 105,
+          "timer_example_b": "16 × 9 − 44",
+          "timer_answer_b": 100,
+          "timer_example_c": "132 ÷ 11 + 27",
+          "timer_answer_c": 39,
+          "timer_seconds": 22
         },
         {
-          "symbol_a": -3,
-          "symbol_b": -3,
-          "symbol_c": 3,
-          "symbol_expression": "(A × B) ÷ C",
-          "answer": "3",
-          "symbol_item_a": "coral",
-          "symbol_item_b": "bamboo",
-          "symbol_item_c": "pearl_blue"
+          "title": "The city enters critical overload",
+          "timer_example_a": "216 ÷ 12 × 8",
+          "timer_answer_a": 144,
+          "timer_example_b": "18 × 11 − 52",
+          "timer_answer_b": 146,
+          "timer_example_c": "156 ÷ 12 + 41",
+          "timer_answer_c": 54,
+          "timer_seconds": 20
         }
       ]
     },
     {
       "id": 6,
       "type": "boss_mix",
-      "title": "Final Challenge!",
-      "background": "snowy_peaks_island4",
+      "title": "Pirate reaches the Neon Core chamber",
+      "background": "neon_city_island4",
       "coins": 8,
-      "mechanic_reason": "Combining all previous skills into a single challenge, Pirate must demonstrate mastery over the yeti-monkey's mixed obstacles.",
-      "success_message": "Pirate, you've triumphed over all challenges and secured the Frost Core!",
+      "mechanic_reason": "The boss stage mixes all five mechanics for a final multi-skill challenge.",
+      "success_message": "Pirate, you've shut down the Neon Core and freed the city!",
       "rounds": [
         {
-          "instruction": "Final Challenge!",
-          "type": "multi_choice",
-          "prompt": "(-4) + 3 = ?",
-          "options": [
-            {
-              "label": "A",
-              "text": "1"
-            },
-            {
-              "label": "B",
-              "text": "-1"
-            },
-            {
-              "label": "C",
-              "text": "0"
-            }
-          ],
-          "correct_option": "B"
-        },
-        {
-          "instruction": "Final Challenge!",
-          "type": "multi_choice",
-          "prompt": "(-7) × (-2) = ?",
-          "options": [
-            {
-              "label": "A",
-              "text": "14"
-            },
-            {
-              "label": "B",
-              "text": "-14"
-            },
-            {
-              "label": "C",
-              "text": "10"
-            }
-          ],
-          "correct_option": "A"
-        },
-        {
-          "instruction": "Final Challenge!",
-          "type": "key_lock",
-          "lock_sums": [
-            -8,
-            5,
-            7
-          ],
-          "key_lock_keys": [
-            -4,
-            -4,
-            2,
-            3,
-            -1,
-            8
-          ],
-          "pairs": [
-            [
-              -4,
-              -4
-            ],
-            [
-              2,
-              3
-            ],
-            [
-              -1,
-              8
-            ]
-          ]
-        },
-        {
-          "instruction": "Final Challenge!",
-          "type": "key_lock",
-          "lock_sums": [
-            -10,
-            0,
-            12
-          ],
-          "key_lock_keys": [
-            -5,
-            -5,
-            -3,
-            3,
-            6,
-            6
-          ],
-          "pairs": [
-            [
-              -5,
-              -5
-            ],
-            [
-              -3,
-              3
-            ],
-            [
-              6,
-              6
-            ]
-          ]
-        },
-        {
-          "instruction": "Final Challenge!",
-          "type": "match_pairs",
-          "pairs": [
-            {
-              "name": "A",
-              "equation": "(-8) × 3 = -24"
-            },
-            {
-              "name": "B",
-              "equation": "5 + (-5) = 0"
-            },
-            {
-              "name": "C",
-              "equation": "(-7) ÷ 1 = -7"
-            },
-            {
-              "name": "D",
-              "equation": "4 × (-2) = -8"
-            }
-          ],
-          "correct_pairs": [
-            "A",
-            "C"
-          ]
-        },
-        {
-          "instruction": "Final Challenge!",
-          "type": "match_pairs",
-          "pairs": [
-            {
-              "name": "A",
-              "equation": "(-2) × (-5) = 10"
-            },
-            {
-              "name": "B",
-              "equation": "(-3) × 3 = -9"
-            },
-            {
-              "name": "C",
-              "equation": "9 ÷ (-3) = -3"
-            },
-            {
-              "name": "D",
-              "equation": "6 - (-6) = 12"
-            }
-          ],
-          "correct_pairs": [
-            "B",
-            "C"
-          ]
-        },
-        {
-          "instruction": "Final Challenge!",
           "type": "true_false",
-          "statement": "Adding a negative number always decreases the value.",
+          "title": "Pirate reaches the Neon Core chamber",
+          "statement": "144 energy cells shared between 12 towers gives 12 cells per tower",
           "correct_answer": "true"
         },
         {
-          "instruction": "Final Challenge!",
           "type": "true_false",
-          "statement": "Negative numbers can be greater than positive numbers.",
+          "title": "The cyber monkey corrupts the city signals",
+          "statement": "9 drone groups with 8 drones each, minus 12 drones, leaves 68 drones",
           "correct_answer": "false"
         },
         {
-          "instruction": "Final Challenge!",
-          "type": "symbol_calc",
-          "symbol_values": {
-            "A": -2,
-            "B": 5,
-            "C": -3
-          },
-          "expression": "A + B + C",
-          "answer": 0
+          "type": "text_task",
+          "title": "The city begins to collapse",
+          "prompt": "12 neon towers generate 9 energy cells each. Then 38 cells are destroyed by the cyber monkey. How many cells remain?",
+          "answer": "70"
         },
         {
-          "instruction": "Final Challenge!",
+          "type": "text_task",
+          "title": "Pirate hacks the final control system",
+          "prompt": "96 data chips are shared equally between 8 hackers. Then each hacker finds 7 extra chips. How many chips does each hacker have now?",
+          "answer": "19"
+        },
+        {
+          "type": "corridor_choice",
+          "title": "The monkey distorts the neon network",
+          "question": "108 chips are shared between 9 hackers, then each hacker doubles their chips. Which path shows the final amount per hacker?",
+          "left_expression": "108 ÷ 9 × 2 = 24",
+          "right_expression": "108 ÷ (9 × 2) = 6",
+          "correct_side": "left"
+        },
+        {
+          "type": "corridor_choice",
+          "title": "The Neon Core creates a dangerous illusion",
+          "question": "8 groups of 12 drones fly above the city, then 28 crash. Which path shows how many remain?",
+          "left_expression": "8 × 12 − 28 = 68",
+          "right_expression": "8 × (12 − 28) = -128",
+          "correct_side": "left"
+        },
+        {
           "type": "symbol_calc",
-          "symbol_values": {
-            "A": 4,
-            "B": -2,
-            "C": 6
-          },
-          "expression": "A × B + C",
-          "answer": -2
+          "title": "The Neon Core sends corrupted signals",
+          "symbol_a": 216,
+          "symbol_b": 12,
+          "symbol_c": 9,
+          "symbol_expression": "A ÷ B × C − 32",
+          "answer": "130"
+        },
+        {
+          "type": "symbol_calc",
+          "title": "The cyber monkey unleashes full power",
+          "symbol_a": 288,
+          "symbol_b": 12,
+          "symbol_c": 11,
+          "symbol_expression": "A ÷ B × C + 18",
+          "answer": "282"
+        },
+        {
+          "type": "timer_challenge",
+          "title": "Pirate races through collapsing neon streets",
+          "timer_example_a": "144 ÷ 12 × 7",
+          "timer_answer_a": 84,
+          "timer_example_b": "18 × 9 − 46",
+          "timer_answer_b": 116,
+          "timer_example_c": "216 ÷ 12 + 37",
+          "timer_answer_c": 55,
+          "timer_seconds": 18
+        },
+        {
+          "type": "timer_challenge",
+          "title": "Final attack on the Neon Core",
+          "timer_example_a": "288 ÷ 12 × 8",
+          "timer_answer_a": 192,
+          "timer_example_b": "24 × 11 − 58",
+          "timer_answer_b": 206,
+          "timer_example_c": "252 ÷ 12 + 44",
+          "timer_answer_c": 65,
+          "timer_seconds": 15
         }
-      ],
-      "artifact": {
-        "emoji": "❄️",
-        "name": "Frost Core",
-        "description": "Creates magical snowstorms"
-      }
+      ]
     }
   ],
   "images_needed": {
-    "key": "Frost Core",
-    "artifacts": [
-      {
-        "key": "Frost Core",
-        "image_key": "Focusing_crystal"
-      }
-    ]
+    "library": [],
+    "backgrounds": ["neon_city_island1", "neon_city_island2", "neon_city_island3", "neon_city_island4"],
+    "items": [],
+    "targets": [],
+    "artifact": "neon_core",
+    "generate_with_dalle": []
   },
-  "tutor_notes": {
-    "block1_script": "Welcome Pirate to Snowy Peaks Island, where the frosty air brings a new adventure!",
-    "block2_hint": "Remind Pirate that numbers have different behavior in the cold.",
-    "block3_tips": [
-      "Encourage Pirate to visualize temperatures for understanding negative operations.",
-      "Use snowball metaphors when discussing number interactions."
-    ],
-    "block5_abstraction": "Negative and mixed operations can be seen as snow-covered hills—sometimes requiring uphill or downhill calculations.",
-    "weak_point_focus": "Help Pirate with examples on adding and multiplying negative numbers."
-  }
+  "tutor_notes": []
 }
