@@ -4661,22 +4661,10 @@
     wrap.className = "symbol-wrap";
 
     const defaultKeys = ["shell_blue","banana","stone_blue","cherry","mushroom","pearl_blue","starfish","butterfly","coral","jellyfish","candy","lollipop","hibiscus","leaf","bamboo"];
-    const roundOffset = ((state.stagePracticeDone || 0) * 3) % defaultKeys.length;
-    // Always rotate by round — ignore AI-provided items (AI always picks the same 3)
-    const fallbackA = defaultKeys[roundOffset % defaultKeys.length];
-    const fallbackB = defaultKeys[(roundOffset + 1) % defaultKeys.length];
-    const fallbackC = defaultKeys[(roundOffset + 2) % defaultKeys.length];
-    const uniq = [];
-    [fallbackA, fallbackB, fallbackC].forEach((k) => {
-      if(!uniq.includes(k)) uniq.push(k);
-    });
-    for(const k of defaultKeys){
-      if(uniq.length >= 3) break;
-      if(!uniq.includes(k)) uniq.push(k);
-    }
-    const itemA = uniq[0];
-    const itemB = uniq[1];
-    const itemC = uniq[2];
+    const shuffled = [...defaultKeys].sort(() => Math.random() - 0.5);
+    const itemA = shuffled[0];
+    const itemB = shuffled[1];
+    const itemC = shuffled[2];
 
     const rows = [
       { key: "A", img: itemA, value: stage.symbol_a ?? stage.symbolA ?? 4 },
@@ -4749,22 +4737,10 @@
     wrap.className = "symbol-wrap";
 
     const defaultKeys = ["shell_blue","banana","stone_blue","cherry","mushroom","pearl_blue","starfish","butterfly","coral","jellyfish","candy","lollipop","hibiscus","leaf","bamboo"];
-    const roundOffset = ((state.stagePracticeDone || 0) * 3) % defaultKeys.length;
-    // Always rotate by round — ignore AI-provided items
-    const fallbackA = defaultKeys[roundOffset % defaultKeys.length];
-    const fallbackB = defaultKeys[(roundOffset + 1) % defaultKeys.length];
-    const fallbackC = defaultKeys[(roundOffset + 2) % defaultKeys.length];
-    const uniq = [];
-    [fallbackA, fallbackB, fallbackC].forEach((k) => {
-      if(!uniq.includes(k)) uniq.push(k);
-    });
-    for(const k of defaultKeys){
-      if(uniq.length >= 3) break;
-      if(!uniq.includes(k)) uniq.push(k);
-    }
-    const itemA = uniq[0];
-    const itemB = uniq[1];
-    const itemC = uniq[2];
+    const shuffled = [...defaultKeys].sort(() => Math.random() - 0.5);
+    const itemA = shuffled[0];
+    const itemB = shuffled[1];
+    const itemC = shuffled[2];
 
     const rowA = document.createElement("div");
     rowA.className = "symbol-row";
