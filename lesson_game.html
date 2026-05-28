@@ -4662,9 +4662,10 @@
 
     const defaultKeys = ["shell_blue","banana","stone_blue","cherry","mushroom","pearl_blue","starfish","butterfly","coral","jellyfish","candy","lollipop","hibiscus","leaf","bamboo"];
     const roundOffset = ((state.stagePracticeDone || 0) * 3) % defaultKeys.length;
-    const fallbackA = stage.symbol_item_a || stage.symbolItemA || defaultKeys[roundOffset % defaultKeys.length];
-    const fallbackB = stage.symbol_item_b || stage.symbolItemB || defaultKeys[(roundOffset + 1) % defaultKeys.length];
-    const fallbackC = stage.symbol_item_c || stage.symbolItemC || defaultKeys[(roundOffset + 2) % defaultKeys.length];
+    // Always rotate by round — ignore AI-provided items (AI always picks the same 3)
+    const fallbackA = defaultKeys[roundOffset % defaultKeys.length];
+    const fallbackB = defaultKeys[(roundOffset + 1) % defaultKeys.length];
+    const fallbackC = defaultKeys[(roundOffset + 2) % defaultKeys.length];
     const uniq = [];
     [fallbackA, fallbackB, fallbackC].forEach((k) => {
       if(!uniq.includes(k)) uniq.push(k);
@@ -4747,10 +4748,12 @@
     const wrap = document.createElement("div");
     wrap.className = "symbol-wrap";
 
-    const defaultKeys = ["shell_blue", "banana", "stone_blue", "cherry", "mushroom", "pearl_blue"];
-    const fallbackA = stage.unknown_item_a || stage.unknownItemA || defaultKeys[0];
-    const fallbackB = stage.unknown_item_b || stage.unknownItemB || defaultKeys[1];
-    const fallbackC = stage.unknown_item_c || stage.unknownItemC || defaultKeys[2];
+    const defaultKeys = ["shell_blue","banana","stone_blue","cherry","mushroom","pearl_blue","starfish","butterfly","coral","jellyfish","candy","lollipop","hibiscus","leaf","bamboo"];
+    const roundOffset = ((state.stagePracticeDone || 0) * 3) % defaultKeys.length;
+    // Always rotate by round — ignore AI-provided items
+    const fallbackA = defaultKeys[roundOffset % defaultKeys.length];
+    const fallbackB = defaultKeys[(roundOffset + 1) % defaultKeys.length];
+    const fallbackC = defaultKeys[(roundOffset + 2) % defaultKeys.length];
     const uniq = [];
     [fallbackA, fallbackB, fallbackC].forEach((k) => {
       if(!uniq.includes(k)) uniq.push(k);
