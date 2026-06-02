@@ -1,359 +1,338 @@
 {
   "meta": {
-    "island_key": "neon_city_island",
+    "island_key": "blue_crab_island",
     "student_name": "Pirate",
-    "difficulty": "hard",
-    "topic_label": "Multi-step multiplication and division",
-    "topic_key": "multistep_mul_div",
+    "difficulty": "easy",
+    "topic_label": "Multiplication and division basics",
+    "topic_key": "mul_div_basics",
     "character_key": "pirate_green",
     "child_inventory": ["egg","sword","crown","lizard","quardo","freeze_ring","ring_ice","magic_necklace","antigravity_boots"],
     "has_freeze_ring": true,
     "student_code": "MONKEY-3007",
-    "student_level": 5,
+    "student_level": 6,
     "student_coins": 22,
     "start_coins": 22
   },
   "story": {
-    "island_name": "Neon City Island",
-    "villain": "Cyber-enhanced monkey",
-    "artifact_name": "Neon Core",
-    "artifact_emoji": "🌃",
-    "artifact_power": "The city's central power — shut it down to break the signal.",
-    "greeting": "Pirate, your mission on Neon City Island begins now — listen closely.",
-    "act1": "On Neon City Island, glowing towers hum with energy while neon lights flicker through endless streets. In the shadows moves a cyber-enhanced monkey, its mind enslaved by Doctor Krit's signal, controlling the city's systems like a living network. At the heart of the metropolis lies the Neon Core, pulsing with power. We must reach it, shut it down, and free the monkey before the entire city turns against us.",
-    "act2": "The cyber monkey tightens its grip on the city's network. Every system Pirate touches pulses with corrupted energy — but the path to the Neon Core is becoming clear.",
-    "act3": "The Neon Core is within reach. One final push and Doctor Krit's hold over this glowing city will be broken forever.",
-    "goal": "Pirate, solve every challenge, reach the Neon Core, and free the city from Doctor Krit's control."
+    "island_name": "Blue Crab Island",
+    "villain": "Four-armed monkey",
+    "artifact_name": "Tidal Core",
+    "artifact_emoji": "🦀",
+    "artifact_power": "Hidden power beneath the reef that fuels the crab army.",
+    "greeting": "Pirate, your island mission begins now — listen closely.",
+    "act1": "On Blue Crab Island, swarms of snapping blue crabs guard the shores while a four-armed monkey rules from the tide pools, striking with impossible speed. Twisted by the will of Doctor Krit, it commands the crabs like an army. Hidden beneath the reef lies the Tidal Core that fuels its power. Pirate, we must reach it first and break Krit's control before the island is overrun.",
+    "act2": "The four-armed monkey tightens its grip on the shore. Every tide pool Pirate crosses pulses with corrupted energy — but the path to the Tidal Core is becoming clear.",
+    "act3": "The Tidal Core is within reach. One final push and Doctor Krit's hold over this crab-ruled island will be broken forever.",
+    "goal": "Pirate, master every math trial, reach the island's core in time, and break Doctor Krit's hold."
   },
   "stages": [
     {
       "id": 1,
-      "type": "true_false",
-      "title": "Pirate enters Neon City Island",
-      "background": "neon_city_island1",
+      "type": "five_tasks",
+      "title": "Pirate starts revision training",
+      "background": "blue_crab_island1",
       "coins": 4,
-      "mechanic_reason": "True/false statements warm up the player with multiplication and division facts in a city context.",
-      "success_message": "Sharp thinking, Pirate! The neon streets are yours!",
+      "mechanic_reason": "Five tasks per round builds fluency with core multiplication and division facts.",
+      "success_message": "Well done, Pirate! The shore is yours!",
       "rounds": [
         {
-          "title": "Pirate enters Neon City Island",
-          "statement": "6 neon buses with 8 passengers each means there are 48 passengers in total",
-          "correct_answer": "true"
+          "title": "Pirate starts revision training",
+          "tasks": [
+            {"q": "3 × 2 = ?", "a": "6"},
+            {"q": "8 ÷ 2 = ?", "a": "4"},
+            {"q": "4 × 2 = ?", "a": "8"},
+            {"q": "9 ÷ 3 = ?", "a": "3"},
+            {"q": "5 × 1 = ?", "a": "5"}
+          ]
         },
         {
-          "title": "The cyber monkey controls the traffic",
-          "statement": "54 energy cubes shared between 6 towers means each tower gets 8 cubes",
-          "correct_answer": "false"
+          "title": "Pirate reviews multiplication facts",
+          "tasks": [
+            {"q": "2 × 4 = ?", "a": "8"},
+            {"q": "6 ÷ 2 = ?", "a": "3"},
+            {"q": "3 × 3 = ?", "a": "9"},
+            {"q": "8 ÷ 4 = ?", "a": "2"},
+            {"q": "5 × 2 = ?", "a": "10"}
+          ]
         },
         {
-          "title": "The city lights begin to flicker",
-          "statement": "7 drone groups with 6 drones each makes 42 drones in total",
-          "correct_answer": "true"
+          "title": "Pirate practices division",
+          "tasks": [
+            {"q": "12 ÷ 3 = ?", "a": "4"},
+            {"q": "4 × 3 = ?", "a": "12"},
+            {"q": "15 ÷ 5 = ?", "a": "3"},
+            {"q": "2 × 5 = ?", "a": "10"},
+            {"q": "18 ÷ 2 = ?", "a": "9"}
+          ]
         },
         {
-          "title": "The Neon Core distorts the network",
-          "statement": "63 chips shared between 9 hackers gives each hacker 6 chips",
-          "correct_answer": "false"
+          "title": "Pirate solves family facts",
+          "tasks": [
+            {"q": "? × 3 = 12", "a": "4"},
+            {"q": "16 ÷ ? = 4", "a": "4"},
+            {"q": "? × 2 = 10", "a": "5"},
+            {"q": "18 ÷ ? = 3", "a": "6"},
+            {"q": "? × 4 = 8", "a": "2"}
+          ]
         },
         {
-          "title": "The streets pulse with energy",
-          "statement": "8 power stations with 7 energy cells each creates 56 cells in total",
-          "correct_answer": "true"
+          "title": "Pirate is ready for challenges",
+          "tasks": [
+            {"q": "? × 5 = 15", "a": "3"},
+            {"q": "20 ÷ ? = 4", "a": "5"},
+            {"q": "? × 2 = 14", "a": "7"},
+            {"q": "24 ÷ ? = 6", "a": "4"},
+            {"q": "? × 3 = 18", "a": "6"}
+          ]
         }
       ]
     },
     {
       "id": 2,
       "type": "text_task",
-      "title": "Pirate walks through the glowing market",
-      "background": "neon_city_island2",
+      "title": "Pirate visits the market",
+      "background": "blue_crab_island2",
       "coins": 4,
-      "mechanic_reason": "Two-step word problems build on multiplication and division with addition/subtraction.",
-      "success_message": "Brilliant, Pirate! You cracked the city's code!",
+      "mechanic_reason": "Word problems build conceptual understanding of multiplication and division.",
+      "success_message": "Brilliant, Pirate! You cracked the code!",
       "rounds": [
         {
-          "title": "Pirate walks through the glowing market",
-          "prompt": "8 neon taxis carry 7 passengers each. Then 12 passengers leave the station. How many passengers remain?",
-          "answer": "44"
-        },
-        {
-          "title": "The cyber monkey hacks the towers",
-          "prompt": "72 energy cubes are shared equally between 8 towers. Then each tower gains 3 more cubes. How many cubes does each tower have now?",
+          "title": "Pirate visits the market",
+          "prompt": "There are 3 baskets. Each basket has 4 apples. How many apples are there altogether?",
           "answer": "12"
         },
         {
-          "title": "Neon drones race above the city",
-          "prompt": "9 drone groups have 8 drones each. Then 18 drones lose power. How many drones still work?",
-          "answer": "54"
+          "title": "Pirate shares cookies",
+          "prompt": "15 cookies are shared equally between 3 children. How many cookies does each child get?",
+          "answer": "5"
         },
         {
-          "title": "Pirate breaks into the control grid",
-          "prompt": "84 data chips are shared equally between 7 hackers. Then each hacker finds 5 extra chips. How many chips does each hacker have?",
-          "answer": "17"
+          "title": "Pirate finds toy cars",
+          "prompt": "There are 5 toy cars. Each car carries 2 passengers. How many passengers are there in total?",
+          "answer": "10"
         },
         {
-          "title": "The Neon Core overloads the city",
-          "prompt": "9 power towers generate 8 energy cells each. The city immediately uses 26 cells. How many cells remain?",
-          "answer": "46"
+          "title": "Pirate helps at the bakery",
+          "prompt": "18 cupcakes are shared equally onto 3 trays. How many cupcakes go on each tray?",
+          "answer": "6"
+        },
+        {
+          "title": "Pirate counts pencils",
+          "prompt": "There are 4 boxes. Each box has 5 pencils. How many pencils are there altogether?",
+          "answer": "20"
         }
       ]
     },
     {
       "id": 3,
-      "type": "corridor_choice",
-      "title": "The neon streets shift around Pirate",
+      "type": "true_false",
+      "title": "Pirate checks the facts",
       "background": "2",
       "coins": 4,
-      "mechanic_reason": "Corridor choice tests whether the player correctly applies order of operations vs brackets.",
-      "success_message": "Correct path, Pirate! The city opens up for you!",
+      "mechanic_reason": "True/false checks understanding of multiplication and division facts.",
+      "success_message": "Sharp thinking, Pirate!",
       "rounds": [
         {
-          "title": "The neon streets shift around Pirate",
-          "question": "Pirate sees 8 charging stations with 7 batteries each, then 12 batteries shut down. Which path shows the remaining batteries?",
-          "left_expression": "8 × 7 − 12 = 44",
-          "right_expression": "8 × (7 − 12) = -40",
-          "correct_side": "left"
+          "title": "Pirate checks the facts",
+          "statement": "3 × 4 = 12",
+          "correct_answer": "true"
         },
         {
-          "title": "The cyber network becomes unstable",
-          "question": "72 energy cubes are shared into 8 towers, then each tower triples its energy. Which path shows the final amount per tower?",
-          "left_expression": "72 ÷ 8 × 3 = 27",
-          "right_expression": "72 ÷ (8 × 3) = 3",
-          "correct_side": "left"
+          "title": "Pirate spots a mistake",
+          "statement": "15 ÷ 3 = 4",
+          "correct_answer": "false"
         },
         {
-          "title": "The monkey controls the traffic systems",
-          "question": "9 robot groups carry 7 batteries each, then 14 batteries are destroyed. Which path shows the remaining batteries?",
-          "left_expression": "9 × 7 − 14 = 49",
-          "right_expression": "9 × (7 − 14) = -63",
-          "correct_side": "left"
+          "title": "Pirate reviews division",
+          "statement": "18 ÷ 2 = 9",
+          "correct_answer": "true"
         },
         {
-          "title": "Pirate enters the neon tunnels",
-          "question": "96 chips are shared between 8 hackers, then each hacker gains 4 more chips. Which path shows the final amount per hacker?",
-          "left_expression": "96 ÷ 8 + 4 = 16",
-          "right_expression": "96 ÷ (8 + 4) = 8",
-          "correct_side": "left"
+          "title": "Pirate reviews multiplication",
+          "statement": "5 × 2 = 12",
+          "correct_answer": "false"
         },
         {
-          "title": "The Neon Core creates a final illusion",
-          "question": "8 groups of 9 drones fly above the city, then 28 crash. Which path shows how many remain?",
-          "left_expression": "8 × 9 − 28 = 44",
-          "right_expression": "8 × (9 − 28) = -152",
-          "correct_side": "left"
+          "title": "Pirate checks one more fact",
+          "statement": "20 ÷ 5 = 4",
+          "correct_answer": "true"
         }
       ]
     },
     {
       "id": 4,
-      "type": "symbol_calc",
-      "title": "Neon symbols flash across the towers",
+      "type": "fill_blank",
+      "title": "Pirate fills the missing number",
       "background": "3",
       "coins": 4,
-      "mechanic_reason": "Symbol substitution requires multi-step calculation using larger numbers.",
-      "success_message": "The symbols are decoded, Pirate! The network weakens!",
+      "mechanic_reason": "Fill-in-the-blank reinforces finding unknown values in multiplication and division.",
+      "success_message": "Excellent work, Pirate!",
       "rounds": [
         {
-          "title": "Neon symbols flash across the towers",
-          "symbol_a": 72,
-          "symbol_b": 8,
-          "symbol_c": 5,
-          "symbol_expression": "A ÷ B × C − 9",
-          "answer": "36"
+          "title": "Pirate fills the missing number",
+          "prompt": "? × 2 = 8",
+          "answer": "4"
         },
         {
-          "title": "The cyber monkey attacks the network",
-          "symbol_a": 96,
-          "symbol_b": 8,
-          "symbol_c": 6,
-          "symbol_expression": "A ÷ B × C + 12",
-          "answer": "84"
+          "title": "Pirate completes the equation",
+          "prompt": "15 ÷ ? = 3",
+          "answer": "5"
         },
         {
-          "title": "The Neon Core sends corrupted signals",
-          "symbol_a": 108,
-          "symbol_b": 9,
-          "symbol_c": 7,
-          "symbol_expression": "A ÷ B × C − 18",
-          "answer": "66"
+          "title": "Pirate finds the missing value",
+          "prompt": "? × 3 = 18",
+          "answer": "6"
         },
         {
-          "title": "The city systems collapse around Pirate",
-          "symbol_a": 144,
-          "symbol_b": 12,
-          "symbol_c": 8,
-          "symbol_expression": "A ÷ B × C + 20",
-          "answer": "116"
+          "title": "Pirate solves another puzzle",
+          "prompt": "24 ÷ ? = 4",
+          "answer": "6"
         },
         {
-          "title": "The cyber monkey unleashes full power",
-          "symbol_a": 180,
-          "symbol_b": 12,
-          "symbol_c": 9,
-          "symbol_expression": "A ÷ B × C − 25",
-          "answer": "110"
+          "title": "Pirate completes the last equation",
+          "prompt": "? × 4 = 20",
+          "answer": "5"
         }
       ]
     },
     {
       "id": 5,
-      "type": "timer_challenge",
-      "title": "Pirate races through the neon streets",
-      "background": "neon_city_island3",
+      "type": "corridor_choice",
+      "title": "Pirate chooses the correct path",
+      "background": "blue_crab_island3",
       "coins": 4,
-      "mechanic_reason": "Timed challenges test speed and accuracy under pressure with multi-step expressions.",
-      "success_message": "Lightning fast, Pirate! The Neon Core is in sight!",
+      "mechanic_reason": "Corridor choice tests understanding of which operation to apply.",
+      "success_message": "Correct path, Pirate! The Tidal Core is in sight!",
       "rounds": [
         {
-          "title": "Pirate races through the neon streets",
-          "timer_example_a": "48 ÷ 6 × 4",
-          "timer_answer_a": 32,
-          "timer_example_b": "9 × 7 − 18",
-          "timer_answer_b": 45,
-          "timer_example_c": "72 ÷ 8 + 11",
-          "timer_answer_c": 20,
-          "timer_seconds": 30
+          "title": "Pirate chooses the correct path",
+          "question": "4 boxes with 3 apples each. Which path shows the total?",
+          "left_expression": "4 × 3 = 12",
+          "right_expression": "4 + 3 = 7",
+          "correct_side": "left"
         },
         {
-          "title": "The cyber systems overload",
-          "timer_example_a": "96 ÷ 8 × 5",
-          "timer_answer_a": 60,
-          "timer_example_b": "12 × 9 − 27",
-          "timer_answer_b": 81,
-          "timer_example_c": "84 ÷ 7 + 16",
-          "timer_answer_c": 28,
-          "timer_seconds": 28
+          "title": "Pirate follows the map",
+          "question": "15 cookies shared between 3 children. Which path shows how many each child gets?",
+          "left_expression": "15 ÷ 3 = 5",
+          "right_expression": "15 × 3 = 45",
+          "correct_side": "left"
         },
         {
-          "title": "The Neon Core pulses faster",
-          "timer_example_a": "144 ÷ 12 × 6",
-          "timer_answer_a": 72,
-          "timer_example_b": "15 × 8 − 36",
-          "timer_answer_b": 84,
-          "timer_example_c": "108 ÷ 9 + 19",
-          "timer_answer_c": 31,
-          "timer_seconds": 25
+          "title": "Pirate crosses the bridge",
+          "question": "5 cars with 2 passengers each. Which path shows the total?",
+          "left_expression": "5 × 2 = 10",
+          "right_expression": "5 + 2 = 7",
+          "correct_side": "left"
         },
         {
-          "title": "Pirate dodges the drone swarm",
-          "timer_example_a": "180 ÷ 12 × 7",
-          "timer_answer_a": 105,
-          "timer_example_b": "16 × 9 − 44",
-          "timer_answer_b": 100,
-          "timer_example_c": "132 ÷ 11 + 27",
-          "timer_answer_c": 39,
-          "timer_seconds": 22
+          "title": "Pirate reaches the cave",
+          "question": "18 cupcakes shared onto 3 trays. Which path shows cupcakes per tray?",
+          "left_expression": "18 ÷ 3 = 6",
+          "right_expression": "18 − 3 = 15",
+          "correct_side": "left"
         },
         {
-          "title": "The city enters critical overload",
-          "timer_example_a": "216 ÷ 12 × 8",
-          "timer_answer_a": 144,
-          "timer_example_b": "18 × 11 − 52",
-          "timer_answer_b": 146,
-          "timer_example_c": "156 ÷ 12 + 41",
-          "timer_answer_c": 54,
-          "timer_seconds": 20
+          "title": "Pirate reaches the treasure",
+          "question": "4 boxes with 5 pencils each. Which path shows the total?",
+          "left_expression": "4 × 5 = 20",
+          "right_expression": "4 + 5 = 9",
+          "correct_side": "left"
         }
       ]
     },
     {
       "id": 6,
       "type": "boss_mix",
-      "title": "Pirate reaches the Neon Core chamber",
-      "background": "neon_city_island4",
+      "title": "Pirate reaches the Tidal Core",
+      "background": "blue_crab_island4",
       "coins": 8,
-      "mechanic_reason": "The boss stage mixes all five mechanics for a final multi-skill challenge.",
-      "success_message": "Pirate, you've shut down the Neon Core and freed the city!",
+      "mechanic_reason": "The boss stage mixes all mechanics for a final multi-skill challenge.",
+      "success_message": "Pirate, you've shut down the Tidal Core and freed the island!",
       "rounds": [
         {
           "type": "true_false",
-          "title": "Pirate reaches the Neon Core chamber",
-          "statement": "144 energy cells shared between 12 towers gives 12 cells per tower",
+          "title": "Boss Battle Begins",
+          "statement": "6 × 3 = 18",
           "correct_answer": "true"
         },
         {
           "type": "true_false",
-          "title": "The cyber monkey corrupts the city signals",
-          "statement": "9 drone groups with 8 drones each, minus 12 drones, leaves 68 drones",
+          "title": "The Boss Creates Confusion",
+          "statement": "20 ÷ 5 = 5",
           "correct_answer": "false"
         },
         {
           "type": "text_task",
-          "title": "The city begins to collapse",
-          "prompt": "12 neon towers generate 9 energy cells each. Then 38 cells are destroyed by the cyber monkey. How many cells remain?",
-          "answer": "70"
+          "title": "Pirate Attacks the Boss",
+          "prompt": "4 baskets hold 5 apples each. How many apples are there altogether?",
+          "answer": "20"
         },
         {
           "type": "text_task",
-          "title": "Pirate hacks the final control system",
-          "prompt": "96 data chips are shared equally between 8 hackers. Then each hacker finds 7 extra chips. How many chips does each hacker have now?",
-          "answer": "19"
+          "title": "The Boss Loses Power",
+          "prompt": "18 cookies are shared equally between 3 children. How many cookies does each child get?",
+          "answer": "6"
+        },
+        {
+          "type": "fill_blank",
+          "title": "Pirate Breaks the Shield",
+          "prompt": "? × 4 = 16",
+          "answer": "4"
+        },
+        {
+          "type": "fill_blank",
+          "title": "The Shield Cracks",
+          "prompt": "15 ÷ ? = 5",
+          "answer": "3"
         },
         {
           "type": "corridor_choice",
-          "title": "The monkey distorts the neon network",
-          "question": "108 chips are shared between 9 hackers, then each hacker doubles their chips. Which path shows the final amount per hacker?",
-          "left_expression": "108 ÷ 9 × 2 = 24",
-          "right_expression": "108 ÷ (9 × 2) = 6",
+          "title": "Pirate Dodges the Attack",
+          "question": "3 groups of 4. Which path shows the total?",
+          "left_expression": "3 × 4 = 12",
+          "right_expression": "3 + 4 = 7",
           "correct_side": "left"
         },
         {
           "type": "corridor_choice",
-          "title": "The Neon Core creates a dangerous illusion",
-          "question": "8 groups of 12 drones fly above the city, then 28 crash. Which path shows how many remain?",
-          "left_expression": "8 × 12 − 28 = 68",
-          "right_expression": "8 × (12 − 28) = -128",
+          "title": "Final Strike",
+          "question": "20 cookies shared between 5 children. Which path shows how many each child gets?",
+          "left_expression": "20 ÷ 5 = 4",
+          "right_expression": "20 × 5 = 100",
           "correct_side": "left"
         },
         {
-          "type": "symbol_calc",
-          "title": "The Neon Core sends corrupted signals",
-          "symbol_a": 216,
-          "symbol_b": 12,
-          "symbol_c": 9,
-          "symbol_expression": "A ÷ B × C − 32",
-          "answer": "130"
+          "type": "five_tasks",
+          "title": "The Boss Is Weakening",
+          "tasks": [
+            {"q": "2 × 4 = ?", "a": "8"},
+            {"q": "12 ÷ 3 = ?", "a": "4"},
+            {"q": "? × 5 = 10", "a": "2"},
+            {"q": "15 ÷ ? = 3", "a": "5"},
+            {"q": "3 × 3 = ?", "a": "9"}
+          ]
         },
         {
-          "type": "symbol_calc",
-          "title": "The cyber monkey unleashes full power",
-          "symbol_a": 288,
-          "symbol_b": 12,
-          "symbol_c": 11,
-          "symbol_expression": "A ÷ B × C + 18",
-          "answer": "282"
-        },
-        {
-          "type": "timer_challenge",
-          "title": "Pirate races through collapsing neon streets",
-          "timer_example_a": "144 ÷ 12 × 7",
-          "timer_answer_a": 84,
-          "timer_example_b": "18 × 9 − 46",
-          "timer_answer_b": 116,
-          "timer_example_c": "216 ÷ 12 + 37",
-          "timer_answer_c": 55,
-          "timer_seconds": 18
-        },
-        {
-          "type": "timer_challenge",
-          "title": "Final attack on the Neon Core",
-          "timer_example_a": "288 ÷ 12 × 8",
-          "timer_answer_a": 192,
-          "timer_example_b": "24 × 11 − 58",
-          "timer_answer_b": 206,
-          "timer_example_c": "252 ÷ 12 + 44",
-          "timer_answer_c": 65,
-          "timer_seconds": 15
+          "type": "five_tasks",
+          "title": "Victory!",
+          "tasks": [
+            {"q": "4 × 5 = ?", "a": "20"},
+            {"q": "18 ÷ 3 = ?", "a": "6"},
+            {"q": "? × 2 = 12", "a": "6"},
+            {"q": "20 ÷ ? = 4", "a": "5"},
+            {"q": "5 × 4 = ?", "a": "20"}
+          ]
         }
       ]
     }
   ],
   "images_needed": {
     "library": [],
-    "backgrounds": ["neon_city_island1", "neon_city_island2", "neon_city_island3", "neon_city_island4"],
+    "backgrounds": ["blue_crab_island1", "blue_crab_island2", "blue_crab_island3", "blue_crab_island4"],
     "items": [],
     "targets": [],
-    "artifact": "neon_core",
+    "artifact": "tidal_core",
     "generate_with_dalle": []
   },
   "tutor_notes": []
