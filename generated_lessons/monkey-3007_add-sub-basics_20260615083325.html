@@ -1,165 +1,9 @@
-import fs from "fs/promises";
-import path from "path";
-import { applyIslandLessonCanon, CANONICAL_ISLAND_KEYS } from "./island_canon.mjs";
-
-function usage() {
-  console.log("Usage: node builder.mjs <lesson.json> [output.html]");
-}
-
-function escapeHtml(value) {
-  return String(value ?? "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#39;");
-}
-
-function sanitizeLesson(raw) {
-  const lesson = raw?.lesson ?? raw;
-  if (!lesson || typeof lesson !== "object") {
-    throw new Error("Lesson JSON is empty or invalid");
-  }
-  if (!Array.isArray(lesson.stages) || lesson.stages.length === 0) {
-    throw new Error("Lesson JSON must contain non-empty stages[]");
-  }
-  return lesson;
-}
-
-/** Basename without extension; handles .PNG vs .png (path.basename(name, ".png") fails on .PNG). */
-function assetStem(fileName) {
-  const extRaw = path.extname(fileName);
-  if (!extRaw) return fileName;
-  return fileName.slice(0, -extRaw.length);
-}
-
-async function buildBackgroundMap(projectRoot) {
-  const backgroundsDir = path.join(projectRoot, "assets", "backgrounds");
-  const map = {};
-  const allowed = new Set([".webp", ".png", ".jpg", ".jpeg"]);
-
-  try {
-    const entries = await fs.readdir(backgroundsDir, { withFileTypes: true });
-    for (const entry of entries) {
-      if (!entry.isFile()) continue;
-      const ext = path.extname(entry.name).toLowerCase();
-      if (!allowed.has(ext)) continue;
-      const key = assetStem(entry.name);
-      map[key] = `assets/backgrounds/${entry.name}`;
-    }
-  } catch {
-    // Folder may not exist yet; fallback paths will still work.
-  }
-
-  return map;
-}
-
-async function buildCharacterMap(projectRoot) {
-  const charactersDir = path.join(projectRoot, "assets", "characters");
-  const map = {};
-  const allowed = new Set([".webp", ".png", ".jpg", ".jpeg"]);
-
-  try {
-    const entries = await fs.readdir(charactersDir, { withFileTypes: true });
-    for (const entry of entries) {
-      if (!entry.isFile()) continue;
-      const ext = path.extname(entry.name).toLowerCase();
-      if (!allowed.has(ext)) continue;
-      const key = assetStem(entry.name);
-      map[key] = `assets/characters/${entry.name}`;
-    }
-  } catch {
-    // Folder may not exist yet; fallback paths will still work.
-  }
-
-  return map;
-}
-
-async function buildItemsMap(projectRoot) {
-  const itemsDir = path.join(projectRoot, "assets", "items");
-  const map = {};
-  const allowed = new Set([".webp", ".png", ".jpg", ".jpeg"]);
-
-  try {
-    const entries = await fs.readdir(itemsDir, { withFileTypes: true });
-    for (const entry of entries) {
-      if (!entry.isFile()) continue;
-      const ext = path.extname(entry.name).toLowerCase();
-      if (!allowed.has(ext)) continue;
-      const key = assetStem(entry.name);
-      map[key] = `assets/items/${entry.name}`;
-    }
-  } catch {
-    // Folder may not exist yet; fallback paths will still work.
-  }
-
-  return map;
-}
-
-async function buildTargetsMap(projectRoot) {
-  const targetsDir = path.join(projectRoot, "assets", "targets");
-  const map = {};
-  const allowed = new Set([".webp", ".png", ".jpg", ".jpeg"]);
-
-  try {
-    const entries = await fs.readdir(targetsDir, { withFileTypes: true });
-    for (const entry of entries) {
-      if (!entry.isFile()) continue;
-      const ext = path.extname(entry.name).toLowerCase();
-      if (!allowed.has(ext)) continue;
-      const key = assetStem(entry.name);
-      map[key] = `assets/targets/${entry.name}`;
-    }
-  } catch {
-    // Folder may not exist yet; fallback paths will still work.
-  }
-
-  return map;
-}
-
-async function buildArtifactsMap(projectRoot) {
-  const artifactsDir = path.join(projectRoot, "assets", "artifacts");
-  const map = {};
-  const allowed = new Set([".webp", ".png", ".jpg", ".jpeg"]);
-
-  try {
-    const entries = await fs.readdir(artifactsDir, { withFileTypes: true });
-    for (const entry of entries) {
-      if (!entry.isFile()) continue;
-      const ext = path.extname(entry.name).toLowerCase();
-      if (!allowed.has(ext)) continue;
-      const key = assetStem(entry.name);
-      map[key] = `assets/artifacts/${entry.name}`;
-    }
-  } catch {
-    // Folder may not exist yet; runtime fallback can still be used.
-  }
-
-  return map;
-}
-
-function buildHtml(
-  lesson,
-  backgroundMap = {},
-  characterMap = {},
-  itemsMap = {},
-  targetsMap = {},
-  artifactsMap = {},
-) {
-  const title = `${lesson.island_name ?? "Monkey Archipelago"} - ${lesson.meta?.student_name ?? "Player"}`;
-  const payload = JSON.stringify(lesson).replaceAll("</script>", "<\\/script>");
-  const bgPayload = JSON.stringify(backgroundMap).replaceAll("</script>", "<\\/script>");
-  const charPayload = JSON.stringify(characterMap).replaceAll("</script>", "<\\/script>");
-  const itemsPayload = JSON.stringify(itemsMap).replaceAll("</script>", "<\\/script>");
-  const targetsPayload = JSON.stringify(targetsMap).replaceAll("</script>", "<\\/script>");
-  const artifactsPayload = JSON.stringify(artifactsMap).replaceAll("</script>", "<\\/script>");
-
-  return `<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${escapeHtml(title)}</title>
+  <title>Monkey Archipelago - Pirate</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
     :root{
@@ -2043,12 +1887,12 @@ function buildHtml(
   </div>
 
   <script>
-  const LESSON = ${payload};
-  const BACKGROUND_MAP = ${bgPayload};
-  const CHARACTER_MAP = ${charPayload};
-  const ITEMS_MAP = ${itemsPayload};
-  const TARGETS_MAP = ${targetsPayload};
-  const ARTIFACT_MAP = ${artifactsPayload};
+  const LESSON = {"meta":{"island_key":"antigravity_island","student_name":"Pirate","difficulty":"easy","topic_label":"Addition and subtraction basics","topic_key":"add_sub_basics","character_key":"pirate_green","child_inventory":["egg","sword","crown","lizard","quardo","freeze_ring","ring_ice","magic_necklace","antigravity_boots"],"has_freeze_ring":true,"student_code":"MONKEY-3007","student_level":6,"student_coins":22,"start_coins":22},"story":{"island_name":"Antigravity Island","villain":"Flying monkey","artifact_name":"Gravity Anchor","artifact_emoji":"🪶","artifact_power":"The source that warps gravity across the island.","greeting":"Pirate, your island mission begins now — listen closely.","act1":"On Antigravity Island, where rocks float and the sky twists beneath your feet, a flying monkey patrols the air, striking anyone who dares to enter. Its movements are unnatural — guided by the unseen hand of our greatest enemy, Doctor Krit. At the island's core drifts the Gravity Anchor, the source of its power. Pirate, we must reach it, shut it down, and free the flying monkey from Krit's control before the island collapses into chaos.","act2":"The flying monkey tightens its patrol across the sky. Every floating rock Pirate steps on pulses with corrupted energy — but the path to the Gravity Anchor is becoming clear.","act3":"The Gravity Anchor is within reach. One final push and Doctor Krit's hold over this floating island will be broken forever.","goal":"Pirate, master every math trial, reach the island's core in time, and break Doctor Krit's hold."},"theory":{"title":"The Heart Cap Must Be Shared Fairly!","story":["The monkey shaman uses magical mushrooms to control the island.","To break the spell, Pirate must share the mushrooms fairly.","When a mushroom is split into equal parts, each piece becomes a fraction."],"visuals":[{"icon":"🍄","parts":2,"label":"1 out of 2 equal parts = 1/2","name":"One half"},{"icon":"🍄","parts":3,"label":"1 out of 3 equal parts = 1/3","name":"One third"},{"icon":"🍄","parts":4,"label":"1 out of 4 equal parts = 1/4","name":"One quarter"}],"rule":{"text":"Fractions must be equal parts.","correct_label":"Fair split:","correct_icons":["🍄","🍄"],"wrong_label":"Not a fraction:","wrong_icons":["🍄","🍄🍄🍄"]}},"stages":[{"id":1,"type":"five_tasks","title":"Pirate lands on Antigravity Island","background":"antigravity_island1","coins":4,"mechanic_reason":"Five tasks per round builds fluency with core addition and subtraction facts.","success_message":"Well done, Pirate! The floating shore is yours!","rounds":[{"title":"Pirate lands on Antigravity Island","tasks":[{"q":"7 + 2 = ?","a":"9"},{"q":"9 - 4 = ?","a":"5"},{"q":"5 + 3 = ?","a":"8"},{"q":"6 - 2 = ?","a":"4"},{"q":"4 + 4 = ?","a":"8"}]},{"title":"Floating rocks drift overhead","tasks":[{"q":"? + 3 = 8","a":"5"},{"q":"6 - ? = 2","a":"4"},{"q":"? + 2 = 7","a":"5"},{"q":"8 - ? = 5","a":"3"},{"q":"? + 4 = 9","a":"5"}]},{"title":"Pirate follows the gravity trail","tasks":[{"q":"8 + 1 = ?","a":"9"},{"q":"10 - 3 = ?","a":"7"},{"q":"? + 2 = 10","a":"8"},{"q":"9 - ? = 4","a":"5"},{"q":"7 + 2 = ?","a":"9"}]},{"title":"The flying monkey appears","tasks":[{"q":"3 + 5 = ?","a":"8"},{"q":"10 - 4 = ?","a":"6"},{"q":"? + 1 = 9","a":"8"},{"q":"8 - ? = 3","a":"5"},{"q":"6 + 3 = ?","a":"9"}]},{"title":"Pirate enters the floating canyon","tasks":[{"q":"? + 2 = 9","a":"7"},{"q":"9 - ? = 2","a":"7"},{"q":"4 + 5 = ?","a":"9"},{"q":"10 - 2 = ?","a":"8"},{"q":"? + 4 = 10","a":"6"}]}]},{"id":2,"type":"text_task","title":"Pirate collects sky crystals","background":"antigravity_island2","coins":4,"mechanic_reason":"Two-step word problems build conceptual understanding of addition and subtraction.","success_message":"Brilliant, Pirate! You solved it!","rounds":[{"title":"Pirate collects sky crystals","prompt":"Pirate has 3 sky crystals. He finds 4 more. Then he uses 2. How many crystals does he have now?","answer":"5"},{"title":"Floating drones fly away","prompt":"Pirate has 8 drones. 3 fly away. Then 2 new drones arrive. How many drones does Pirate have now?","answer":"7"},{"title":"Energy cells on the island","prompt":"Pirate finds 4 energy cells. Then finds 3 more. Then gives 1 away. How many cells remain?","answer":"6"},{"title":"Repairing the gravity bridge","prompt":"Pirate has 7 bridge parts. He finds 2 more. Then uses 3 parts. How many are left?","answer":"6"},{"title":"The path to the Gravity Anchor","prompt":"Pirate collects 5 keys. Then finds 4 more. Then loses 2. How many keys does Pirate have now?","answer":"7"}]},{"id":3,"type":"pattern_input","title":"Gravity waves form a pattern","background":"2","coins":4,"input_style":"sequence_inline","mechanic_reason":"Pattern sequences train recognition of arithmetic progressions.","success_message":"Pattern cracked, Pirate!","rounds":[{"title":"Gravity waves form a pattern","input_style":"sequence_inline","prompt":"1, 3, 5, ?, 9","answer":"7"},{"title":"Floating stones move in order","input_style":"sequence_inline","prompt":"2, 4, 6, ?, 10","answer":"8"},{"title":"The air currents shift","input_style":"sequence_inline","prompt":"9, 7, 5, ?, 1","answer":"3"},{"title":"Pirate studies the sky","input_style":"sequence_inline","prompt":"1, 2, 3, ?, 5","answer":"4"},{"title":"The Gravity Anchor glows","input_style":"sequence_inline","prompt":"10, 8, 6, ?, 2","answer":"4"}]},{"id":4,"type":"true_false","title":"Pirate checks the signal","background":"3","coins":4,"mechanic_reason":"True/false checks understanding of addition and subtraction facts.","success_message":"Sharp thinking, Pirate!","rounds":[{"title":"Pirate checks the signal","statement":"3 + 4 = 7","correct_answer":"true"},{"title":"Something looks wrong","statement":"8 - 3 = 6","correct_answer":"false"},{"title":"The monkey sends a signal","statement":"2 + 2 = 5","correct_answer":"false"},{"title":"Pirate checks again","statement":"9 - 1 = 8","correct_answer":"true"},{"title":"The signal becomes clearer","statement":"5 + 3 = 8","correct_answer":"true"}]},{"id":5,"type":"corridor_choice","title":"Two floating crates","background":"antigravity_island3","coins":4,"mechanic_reason":"Corridor choice trains comparison — which side has more.","success_message":"Correct path, Pirate! The Gravity Anchor is in sight!","rounds":[{"title":"Two floating crates","question":"Which crate has more crystals?","left_expression":"5 crystals","right_expression":"3 crystals","correct_side":"left"},{"title":"Two energy stations","question":"Which station has more energy cells?","left_expression":"4 cells","right_expression":"7 cells","correct_side":"right"},{"title":"Pirate compares supplies","question":"Which group has more?","left_expression":"8 drones","right_expression":"6 drones","correct_side":"left"},{"title":"The flying monkey watches","question":"Which side has more keys?","left_expression":"5 keys","right_expression":"9 keys","correct_side":"right"},{"title":"Near the Gravity Anchor","question":"Which side has more sky crystals?","left_expression":"10 crystals","right_expression":"7 crystals","correct_side":"left"}]},{"id":6,"type":"boss_mix","title":"Pirate reaches the Gravity Anchor","background":"antigravity_island4","coins":8,"mechanic_reason":"The boss stage mixes all mechanics for a final multi-skill challenge.","success_message":"Pirate, you've shut down the Gravity Anchor and freed the island!","rounds":[{"type":"true_false","title":"Pirate reaches the Gravity Anchor","statement":"7 + 2 = 9","correct_answer":"true"},{"type":"true_false","title":"The flying monkey creates confusion","statement":"10 - 4 = 7","correct_answer":"false"},{"type":"text_task","title":"The storm around the Anchor grows stronger","prompt":"Pirate has 4 gravity crystals. He finds 3 more. Then he uses 2 crystals. How many crystals does he have now?","answer":"5"},{"type":"text_task","title":"The monkey attacks from above","prompt":"Pirate has 8 flying drones. 2 fly away. Then 3 new drones arrive. How many drones does Pirate have now?","answer":"9"},{"type":"pattern_input","title":"The floating rocks reveal a secret","input_style":"sequence_inline","prompt":"2, 4, 6, ?, 10","answer":"8"},{"type":"pattern_input","title":"The Gravity Anchor sends a signal","input_style":"sequence_inline","prompt":"9, 7, 5, ?, 1","answer":"3"},{"type":"corridor_choice","title":"Pirate compares two energy stations","question":"Which station has more energy cells?","left_expression":"6 cells","right_expression":"8 cells","correct_side":"right"},{"type":"corridor_choice","title":"The monkey guards the final path","question":"Which crate has more gravity crystals?","left_expression":"9 crystals","right_expression":"5 crystals","correct_side":"left"},{"type":"five_tasks","title":"Pirate damages the Gravity Anchor","tasks":[{"q":"8 - 3 = ?","a":"5"},{"q":"4 + 5 = ?","a":"9"},{"q":"? + 2 = 8","a":"6"},{"q":"10 - ? = 4","a":"6"},{"q":"7 + 1 = ?","a":"8"}]},{"type":"five_tasks","title":"Final strike! Free the flying monkey","tasks":[{"q":"9 - 2 = ?","a":"7"},{"q":"3 + 6 = ?","a":"9"},{"q":"? + 4 = 10","a":"6"},{"q":"8 - ? = 3","a":"5"},{"q":"5 + 4 = ?","a":"9"}]}]}],"images_needed":{"library":[],"backgrounds":["antigravity_island1","antigravity_island2","antigravity_island3","antigravity_island4"],"items":[],"targets":[],"artifact":"gravity_anchor","generate_with_dalle":[]},"tutor_notes":[]};
+  const BACKGROUND_MAP = {"2":"assets/backgrounds/2.png","3":"assets/backgrounds/3.png","antigravity_island1":"assets/backgrounds/antigravity_island1.PNG","antigravity_island2":"assets/backgrounds/antigravity_island2.PNG","antigravity_island3":"assets/backgrounds/antigravity_island3.PNG","antigravity_island4":"assets/backgrounds/antigravity_island4.PNG","blue_crab_island1":"assets/backgrounds/blue_crab_island1.PNG","blue_crab_island2":"assets/backgrounds/blue_crab_island2.PNG","blue_crab_island3":"assets/backgrounds/blue_crab_island3.PNG","blue_crab_island4":"assets/backgrounds/blue_crab_island4.PNG","cherry_blossom_island1":"assets/backgrounds/cherry_blossom_island1.PNG","cherry_blossom_island2":"assets/backgrounds/cherry_blossom_island2.PNG","cherry_blossom_island3":"assets/backgrounds/cherry_blossom_island3.PNG","cherry_blossom_island4":"assets/backgrounds/cherry_blossom_island4.PNG","crystal_island1":"assets/backgrounds/crystal_island1.PNG","crystal_island2":"assets/backgrounds/crystal_island2.PNG","crystal_island3":"assets/backgrounds/crystal_island3.PNG","crystal_island4":"assets/backgrounds/crystal_island4.PNG","jelly_bay_island1":"assets/backgrounds/jelly_bay_island1.PNG","jelly_bay_island2":"assets/backgrounds/jelly_bay_island2.PNG","jelly_bay_island3":"assets/backgrounds/jelly_bay_island3.PNG","jelly_bay_island4":"assets/backgrounds/jelly_bay_island4.PNG","mushroom_island1":"assets/backgrounds/mushroom_island1.PNG","mushroom_island2":"assets/backgrounds/mushroom_island2.PNG","mushroom_island3":"assets/backgrounds/mushroom_island3.PNG","mushroom_island4":"assets/backgrounds/mushroom_island4.PNG","neon_city_island1":"assets/backgrounds/neon_city_island1.PNG","neon_city_island2":"assets/backgrounds/neon_city_island2.PNG","neon_city_island3":"assets/backgrounds/neon_city_island3.PNG","neon_city_island4":"assets/backgrounds/neon_city_island4.PNG","second":"assets/backgrounds/second.webp","shop":"assets/backgrounds/shop.webp","snowy_peaks_island1":"assets/backgrounds/snowy_peaks_island1.PNG","snowy_peaks_island2":"assets/backgrounds/snowy_peaks_island2.PNG","snowy_peaks_island3":"assets/backgrounds/snowy_peaks_island3.PNG","snowy_peaks_island4":"assets/backgrounds/snowy_peaks_island4.PNG","story_back":"assets/backgrounds/story_back.webp","title":"assets/backgrounds/title.png"};
+  const CHARACTER_MAP = {"boy_blue":"assets/characters/boy_blue.webp","boy_brown":"assets/characters/boy_brown.webp","boy_green":"assets/characters/boy_green.webp","elf_blue":"assets/characters/elf_blue.webp","elf_green":"assets/characters/elf_green.webp","elf_red":"assets/characters/elf_red.webp","fairy_green":"assets/characters/fairy_green.webp","fairy_purple":"assets/characters/fairy_purple.webp","fairy_red":"assets/characters/fairy_red.webp","girl_blue":"assets/characters/girl_blue.webp","girl_brown":"assets/characters/girl_brown.webp","girl_green":"assets/characters/girl_green.webp","pirate_blue":"assets/characters/pirate_blue.webp","pirate_brown":"assets/characters/pirate_brown.webp","pirate_green":"assets/characters/pirate_green.webp","wizard_blue":"assets/characters/wizard_blue.webp","wizard_green":"assets/characters/wizard_green.webp","wizard_red":"assets/characters/wizard_red.webp"};
+  const ITEMS_MAP = {"artifact":"assets/items/artifact.png","bamboo":"assets/items/bamboo.png","banana":"assets/items/banana.png","box_close":"assets/items/box_close.png","box_open":"assets/items/box_open.png","bubble":"assets/items/bubble.png","butterfly":"assets/items/butterfly.png","candy":"assets/items/candy.png","cherry":"assets/items/cherry.png","cookie":"assets/items/cookie.png","coral":"assets/items/coral.png","crab_blue":"assets/items/crab_blue.png","hibiscus":"assets/items/hibiscus.png","jellyfish":"assets/items/jellyfish.png","key":"assets/items/key.webp","leaf":"assets/items/leaf.png","lollipop":"assets/items/lollipop.png","mushroom":"assets/items/mushroom.png","pawprint":"assets/items/pawprint.png","pearl_blue":"assets/items/pearl_blue.png","pearl_red":"assets/items/pearl_red.png","samurai_monkey":"assets/items/samurai_monkey.png","shell_blue":"assets/items/shell_blue.png","shell_red":"assets/items/shell_red.png","spore":"assets/items/spore.png","starfish":"assets/items/starfish.png","stone_blue":"assets/items/stone_blue.png"};
+  const TARGETS_MAP = {"bag_cloth":"assets/targets/bag_cloth.png","basket_wood":"assets/targets/basket_wood.png","basket_woven":"assets/targets/basket_woven.png","bowl_stone":"assets/targets/bowl_stone.png","bowl_wood":"assets/targets/bowl_wood.png","cauldron":"assets/targets/cauldron.png","chest_open":"assets/targets/chest_open.png","totem_1":"assets/targets/totem_1.png","totem_2":"assets/targets/totem_2.png","totem_3":"assets/targets/totem_3.png"};
+  const ARTIFACT_MAP = {"Adventurers_binoculars":"assets/artifacts/Adventurers_binoculars.png","Antigravity_boots":"assets/artifacts/Antigravity_boots.PNG","Focusing_crystal":"assets/artifacts/Focusing_crystal.PNG","Magic_necklace":"assets/artifacts/Magic_necklace.PNG","Mysterious_egg":"assets/artifacts/Mysterious_egg.PNG","Ninja_nunchucks":"assets/artifacts/Ninja_nunchucks.PNG","Spy_phone":"assets/artifacts/Spy_phone.PNG","Tiki_mask":"assets/artifacts/Tiki_mask.PNG","Vanteon_Watch":"assets/artifacts/Vanteon_Watch.PNG","boots_jump":"assets/artifacts/boots_jump.png","box_of_threads":"assets/artifacts/box_of_threads.PNG","cloak_invisible":"assets/artifacts/cloak_invisible.png","crown":"assets/artifacts/crown.webp","dron":"assets/artifacts/dron.webp","egg":"assets/artifacts/egg.webp","glasses":"assets/artifacts/glasses.webp","glasses_mind":"assets/artifacts/glasses_mind.png","lizard":"assets/artifacts/lizard.webp","ring_ice":"assets/artifacts/ring_ice.webp","sword":"assets/artifacts/sword.webp","sword_light":"assets/artifacts/sword_light.png"};
   function buildShopItemsFromArtifacts(){
     const curatedShopItems = [
       { id: "magic_necklace", name: "Magic necklace", price: 75 },
@@ -2168,7 +2012,7 @@ function buildHtml(
   }
 
   function hasCyrillic(value){
-    return /[\\u0400-\\u04FF]/.test(String(value || ""));
+    return /[\u0400-\u04FF]/.test(String(value || ""));
   }
 
   function resolveEngineType(type){
@@ -2438,7 +2282,7 @@ function buildHtml(
   function titleFromKey(key){
     return String(key || "Mystery Artifact")
       .replace(/[_-]+/g, " ")
-      .replace(/\\b\\w/g, (c) => c.toUpperCase());
+      .replace(/\b\w/g, (c) => c.toUpperCase());
   }
 
   function ensureRingIceInventory(){
@@ -2470,7 +2314,7 @@ function buildHtml(
   function collectInventorySlugsForSync(){
     const set = new Set();
     const add = (x) => {
-      const s = String(x || "").trim().toLowerCase().replace(/\\s+/g, "_");
+      const s = String(x || "").trim().toLowerCase().replace(/\s+/g, "_");
       if(s) set.add(s);
     };
     for(const raw of LESSON.meta?.child_inventory || []) add(raw);
@@ -3050,7 +2894,7 @@ function buildHtml(
   function parseNumberList(value){
     if(Array.isArray(value)) return value.map((v) => String(v).trim()).filter(Boolean);
     return String(value || "")
-      .split(/[,\\s]+/)
+      .split(/[,\s]+/)
       .map((v) => v.trim())
       .filter(Boolean);
   }
@@ -3201,7 +3045,7 @@ function buildHtml(
         row.className = "seq-row";
         const promptParts = String(entry.prompt || "")
           .replace(/,/g, " ")
-          .split(/(\\?)/)
+          .split(/(\?)/)
           .map((s) => s.trim())
           .filter(Boolean);
         let blankAdded = false;
@@ -3645,7 +3489,7 @@ function buildHtml(
 
     const promptEl = document.createElement("div");
     promptEl.style.cssText = "font-size:64px;font-weight:700;color:#fff;text-shadow:0 3px 12px rgba(0,0,0,.7);min-height:80px;text-align:center;letter-spacing:2px;";
-    promptEl.textContent = "? \xd7 " + mult + " = ?";
+    promptEl.textContent = "? × " + mult + " = ?";
 
     const input = document.createElement("input");
     input.type = "number";
@@ -3703,7 +3547,7 @@ function buildHtml(
           setTimeout(function(){
             dRx=endRx; dRy=endRy; dmDraw();
             setTimeout(function(){
-              promptEl.textContent = diceVal+" \xd7 "+mult+" = ?";
+              promptEl.textContent = diceVal+" × "+mult+" = ?";
               input.disabled=false; input.focus();
             },120);
           },100);
@@ -4306,7 +4150,7 @@ function buildHtml(
 
   function parseKeyLockRound(stage){
     const splitNums = (raw) => String(raw || "")
-      .split(/[\s,]+/)
+      .split(/[s,]+/)
       .map((s) => s.trim())
       .filter(Boolean)
       .map(Number)
@@ -4893,7 +4737,7 @@ function buildHtml(
     const exprRaw = String(stage.symbol_expression || stage.symbolExpression || "A + B × C");
     const symbolMap = { A: itemA, B: itemB, C: itemC };
     exprRaw
-      .split(/(\\bA\\b|\\bB\\b|\\bC\\b)/g)
+      .split(/(\bA\b|\bB\b|\bC\b)/g)
       .filter(Boolean)
       .forEach((part) => {
         const key = part.trim();
@@ -4978,7 +4822,7 @@ function buildHtml(
     const exprRaw = String(stage.unknown_equation || stage.unknownEquation || "A + B + C = 15");
     const symbolMap = { A: itemA, B: itemB, C: itemC };
     exprRaw
-      .split(/(\\bA\\b|\\bB\\b|\\bC\\b)/g)
+      .split(/(\bA\b|\bB\b|\bC\b)/g)
       .filter(Boolean)
       .forEach((part) => {
         const key = part.trim();
@@ -5299,7 +5143,7 @@ function buildHtml(
 
   /** When meta.island_key is set, backgrounds are always PREFIX+1, PREFIX+2, "2", "3", PREFIX+3, PREFIX+4 (same as tutor server). */
   function islandPackBackgroundForIndex(islandKey, index){
-    const prefix = String(islandKey || "").trim().replace(/\\s+/g, "_");
+    const prefix = String(islandKey || "").trim().replace(/\s+/g, "_");
     if (!prefix) return "";
     const sn = index + 1;
     if (sn === 1) return prefix + "1";
@@ -5908,54 +5752,4 @@ function buildHtml(
   showIntroScreen();
   </script>
 </body>
-</html>`;
-}
-
-async function main() {
-  const [, , inputArg, outputArg] = process.argv;
-  if (!inputArg) {
-    usage();
-    process.exit(1);
-  }
-
-  const inputPath = path.resolve(process.cwd(), inputArg);
-  const outputPath = path.resolve(process.cwd(), outputArg || "game.html");
-
-  const rawText = await fs.readFile(inputPath, "utf-8");
-  const json = JSON.parse(rawText);
-  const lesson = sanitizeLesson(json);
-  const ik = String(lesson.meta?.island_key || "")
-    .trim()
-    .replace(/\s+/g, "_");
-  if (!CANONICAL_ISLAND_KEYS.includes(ik)) {
-    throw new Error(
-      `Lesson JSON needs meta.island_key as one of the eight tutor islands (got: ${JSON.stringify(lesson.meta?.island_key)})`,
-    );
-  }
-  lesson.meta = lesson.meta || {};
-  lesson.meta.island_key = ik;
-  applyIslandLessonCanon(lesson, {
-    child: { name: lesson.meta?.student_name },
-    context: { islandKey: ik },
-  });
-  const backgroundMap = await buildBackgroundMap(process.cwd());
-  const characterMap = await buildCharacterMap(process.cwd());
-  const itemsMap = await buildItemsMap(process.cwd());
-  const targetsMap = await buildTargetsMap(process.cwd());
-  const artifactsMap = await buildArtifactsMap(process.cwd());
-  const html = buildHtml(lesson, backgroundMap, characterMap, itemsMap, targetsMap, artifactsMap);
-
-  await fs.writeFile(outputPath, html, "utf-8");
-  console.log("Generated:", outputPath);
-  console.log("Stages:", lesson.stages.length);
-  console.log("Backgrounds found:", Object.keys(backgroundMap).length);
-  console.log("Characters found:", Object.keys(characterMap).length);
-  console.log("Items found:", Object.keys(itemsMap).length);
-  console.log("Targets found:", Object.keys(targetsMap).length);
-  console.log("Artifacts found:", Object.keys(artifactsMap).length);
-}
-
-main().catch((err) => {
-  console.error("Builder failed:", err.message);
-  process.exit(1);
-});
+</html>
