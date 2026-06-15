@@ -1,10 +1,10 @@
 {
   "meta": {
-    "island_key": "antigravity_island",
+    "island_key": "mushroom_island",
     "student_name": "Pirate",
     "difficulty": "easy",
-    "topic_label": "Addition and subtraction basics",
-    "topic_key": "add_sub_basics",
+    "topic_label": "Introduction to fractions",
+    "topic_key": "intro_fractions",
     "character_key": "pirate_green",
     "child_inventory": ["egg","sword","crown","lizard","quardo","freeze_ring","ring_ice","magic_necklace","antigravity_boots"],
     "has_freeze_ring": true,
@@ -14,15 +14,15 @@
     "start_coins": 22
   },
   "story": {
-    "island_name": "Antigravity Island",
-    "villain": "Flying monkey",
-    "artifact_name": "Gravity Anchor",
-    "artifact_emoji": "🪶",
-    "artifact_power": "The source that warps gravity across the island.",
+    "island_name": "Mushroom Island",
+    "villain": "Monkey shaman",
+    "artifact_name": "Heart Cap",
+    "artifact_emoji": "🍄",
+    "artifact_power": "The fungal heart that powers the shaman's trance.",
     "greeting": "Pirate, your island mission begins now — listen closely.",
-    "act1": "On Antigravity Island, where rocks float and the sky twists beneath your feet, a flying monkey patrols the air, striking anyone who dares to enter. Its movements are unnatural — guided by the unseen hand of our greatest enemy, Doctor Krit. At the island's core drifts the Gravity Anchor, the source of its power. Pirate, we must reach it, shut it down, and free the flying monkey from Krit's control before the island collapses into chaos.",
-    "act2": "The flying monkey tightens its patrol across the sky. Every floating rock Pirate steps on pulses with corrupted energy — but the path to the Gravity Anchor is becoming clear.",
-    "act3": "The Gravity Anchor is within reach. One final push and Doctor Krit's hold over this floating island will be broken forever.",
+    "act1": "On the Island of Mushrooms, a hypnotic monkey shaman has begun bending minds with glowing spores and ancient rhythms. Travelers who breathe the mist fall under his control, becoming part of his silent tribe. Deep in the fungal forest lies the source of his power — the Heart Cap. Pirate, we need to reach it first and break the shaman's trance before the island is lost.",
+    "act2": "The monkey shaman's spores drift through the air. Every step Pirate takes through the fungal forest pulses with ancient magic — but the path to the Heart Cap is becoming clear.",
+    "act3": "The Heart Cap is within reach. One final push and the shaman's trance over this island will be broken forever.",
     "goal": "Pirate, master every math trial, reach the island's core in time, and break Doctor Krit's hold."
   },
   "theory": {
@@ -48,308 +48,300 @@
   "stages": [
     {
       "id": 1,
-      "type": "five_tasks",
-      "title": "Pirate lands on Antigravity Island",
-      "background": "antigravity_island1",
+      "type": "fill_blank",
+      "title": "Pirate enters Mushroom Island",
+      "background": "mushroom_island1",
       "coins": 4,
-      "mechanic_reason": "Five tasks per round builds fluency with core addition and subtraction facts.",
-      "success_message": "Well done, Pirate! The floating shore is yours!",
+      "mechanic_reason": "Fill-in-the-blank introduces fraction notation from the theory screen.",
+      "success_message": "Great work, Pirate! The mushroom trail is clear!",
       "rounds": [
         {
-          "title": "Pirate lands on Antigravity Island",
-          "tasks": [
-            {"q": "7 + 2 = ?", "a": "9"},
-            {"q": "9 - 4 = ?", "a": "5"},
-            {"q": "5 + 3 = ?", "a": "8"},
-            {"q": "6 - 2 = ?", "a": "4"},
-            {"q": "4 + 4 = ?", "a": "8"}
-          ]
+          "title": "Pirate enters Mushroom Island",
+          "prompt": "1 out of 2 equal parts = ___",
+          "answer": "1/2"
         },
         {
-          "title": "Floating rocks drift overhead",
-          "tasks": [
-            {"q": "? + 3 = 8", "a": "5"},
-            {"q": "6 - ? = 2", "a": "4"},
-            {"q": "? + 2 = 7", "a": "5"},
-            {"q": "8 - ? = 5", "a": "3"},
-            {"q": "? + 4 = 9", "a": "5"}
-          ]
+          "title": "Glowing spores fill the forest",
+          "prompt": "1 out of 3 equal parts = ___",
+          "answer": "1/3"
         },
         {
-          "title": "Pirate follows the gravity trail",
-          "tasks": [
-            {"q": "8 + 1 = ?", "a": "9"},
-            {"q": "10 - 3 = ?", "a": "7"},
-            {"q": "? + 2 = 10", "a": "8"},
-            {"q": "9 - ? = 4", "a": "5"},
-            {"q": "7 + 2 = ?", "a": "9"}
-          ]
+          "title": "The shaman's rhythm echoes through the trees",
+          "prompt": "1 out of 4 equal parts = ___",
+          "answer": "1/4"
         },
         {
-          "title": "The flying monkey appears",
-          "tasks": [
-            {"q": "3 + 5 = ?", "a": "8"},
-            {"q": "10 - 4 = ?", "a": "6"},
-            {"q": "? + 1 = 9", "a": "8"},
-            {"q": "8 - ? = 3", "a": "5"},
-            {"q": "6 + 3 = ?", "a": "9"}
-          ]
+          "title": "Pirate follows the mushroom trail",
+          "prompt": "Half = ___",
+          "answer": "1/2"
         },
         {
-          "title": "Pirate enters the floating canyon",
-          "tasks": [
-            {"q": "? + 2 = 9", "a": "7"},
-            {"q": "9 - ? = 2", "a": "7"},
-            {"q": "4 + 5 = ?", "a": "9"},
-            {"q": "10 - 2 = ?", "a": "8"},
-            {"q": "? + 4 = 10", "a": "6"}
-          ]
+          "title": "The Heart Cap glows in the distance",
+          "prompt": "Quarter = ___",
+          "answer": "1/4"
         }
       ]
     },
     {
       "id": 2,
-      "type": "text_task",
-      "title": "Pirate collects sky crystals",
-      "background": "antigravity_island2",
+      "type": "true_false",
+      "title": "Pirate studies the ancient mushrooms",
+      "background": "mushroom_island2",
       "coins": 4,
-      "mechanic_reason": "Two-step word problems build conceptual understanding of addition and subtraction.",
-      "success_message": "Brilliant, Pirate! You solved it!",
+      "mechanic_reason": "True/false checks understanding of fraction notation.",
+      "success_message": "Sharp thinking, Pirate!",
       "rounds": [
         {
-          "title": "Pirate collects sky crystals",
-          "prompt": "Pirate has 3 sky crystals. He finds 4 more. Then he uses 2. How many crystals does he have now?",
-          "answer": "5"
+          "title": "Pirate studies the ancient mushrooms",
+          "statement": "1 out of 2 equal parts is 1/2",
+          "correct_answer": "true"
         },
         {
-          "title": "Floating drones fly away",
-          "prompt": "Pirate has 8 drones. 3 fly away. Then 2 new drones arrive. How many drones does Pirate have now?",
-          "answer": "7"
+          "title": "The spores create an illusion",
+          "statement": "1 out of 4 equal parts is 1/3",
+          "correct_answer": "false"
         },
         {
-          "title": "Energy cells on the island",
-          "prompt": "Pirate finds 4 energy cells. Then finds 3 more. Then gives 1 away. How many cells remain?",
-          "answer": "6"
+          "title": "The shaman tries to confuse Pirate",
+          "statement": "1 out of 3 equal parts is 1/3",
+          "correct_answer": "true"
         },
         {
-          "title": "Repairing the gravity bridge",
-          "prompt": "Pirate has 7 bridge parts. He finds 2 more. Then uses 3 parts. How many are left?",
-          "answer": "6"
+          "title": "Pirate checks the magical symbols",
+          "statement": "1 out of 2 equal parts is 1/4",
+          "correct_answer": "false"
         },
         {
-          "title": "The path to the Gravity Anchor",
-          "prompt": "Pirate collects 5 keys. Then finds 4 more. Then loses 2. How many keys does Pirate have now?",
-          "answer": "7"
+          "title": "The path to the Heart Cap opens",
+          "statement": "1 out of 4 equal parts is called a quarter",
+          "correct_answer": "true"
         }
       ]
     },
     {
       "id": 3,
-      "type": "pattern_input",
-      "title": "Gravity waves form a pattern",
+      "type": "text_task",
+      "title": "Pirate shares a mushroom",
       "background": "2",
       "coins": 4,
-      "input_style": "sequence_inline",
-      "mechanic_reason": "Pattern sequences train recognition of arithmetic progressions.",
-      "success_message": "Pattern cracked, Pirate!",
+      "mechanic_reason": "Word problems build understanding of fractions in context.",
+      "success_message": "Brilliant, Pirate! You solved it!",
       "rounds": [
         {
-          "title": "Gravity waves form a pattern",
-          "input_style": "sequence_inline",
-          "prompt": "1, 3, 5, ?, 9",
-          "answer": "7"
+          "title": "Pirate shares a mushroom",
+          "prompt": "A mushroom is split into 2 equal parts. Pirate takes 1 part. What fraction does Pirate have?",
+          "answer": "1/2"
         },
         {
-          "title": "Floating stones move in order",
-          "input_style": "sequence_inline",
-          "prompt": "2, 4, 6, ?, 10",
-          "answer": "8"
+          "title": "The spores drift through the air",
+          "prompt": "A mushroom is split into 3 equal parts. Pirate takes 1 part. What fraction does Pirate have?",
+          "answer": "1/3"
         },
         {
-          "title": "The air currents shift",
-          "input_style": "sequence_inline",
-          "prompt": "9, 7, 5, ?, 1",
-          "answer": "3"
+          "title": "The shaman watches from afar",
+          "prompt": "A mushroom is split into 4 equal parts. Pirate takes 1 part. What fraction does Pirate have?",
+          "answer": "1/4"
         },
         {
-          "title": "Pirate studies the sky",
-          "input_style": "sequence_inline",
-          "prompt": "1, 2, 3, ?, 5",
-          "answer": "4"
+          "title": "Pirate finds a giant mushroom",
+          "prompt": "Four adventurers share a mushroom equally. Pirate gets one piece. What fraction does Pirate get?",
+          "answer": "1/4"
         },
         {
-          "title": "The Gravity Anchor glows",
-          "input_style": "sequence_inline",
-          "prompt": "10, 8, 6, ?, 2",
-          "answer": "4"
+          "title": "The forest grows quiet",
+          "prompt": "Three travelers share a mushroom equally. Pirate gets one piece. What fraction does Pirate get?",
+          "answer": "1/3"
         }
       ]
     },
     {
       "id": 4,
-      "type": "true_false",
-      "title": "Pirate checks the signal",
+      "type": "corridor_choice",
+      "title": "Pirate follows the glowing path",
       "background": "3",
       "coins": 4,
-      "mechanic_reason": "True/false checks understanding of addition and subtraction facts.",
-      "success_message": "Sharp thinking, Pirate!",
+      "mechanic_reason": "Corridor choice tests recognition of the correct fraction.",
+      "success_message": "Correct path, Pirate! The Heart Cap grows closer!",
       "rounds": [
         {
-          "title": "Pirate checks the signal",
-          "statement": "3 + 4 = 7",
-          "correct_answer": "true"
+          "title": "Pirate follows the glowing path",
+          "question": "Pirate takes 1 part from a mushroom split into 2 equal parts.",
+          "left_expression": "1/2",
+          "right_expression": "1/3",
+          "correct_side": "left"
         },
         {
-          "title": "Something looks wrong",
-          "statement": "8 - 3 = 6",
-          "correct_answer": "false"
+          "title": "The spores swirl around Pirate",
+          "question": "Pirate takes 1 part from a mushroom split into 3 equal parts.",
+          "left_expression": "1/2",
+          "right_expression": "1/3",
+          "correct_side": "right"
         },
         {
-          "title": "The monkey sends a signal",
-          "statement": "2 + 2 = 5",
-          "correct_answer": "false"
+          "title": "The shaman's magic grows stronger",
+          "question": "Pirate takes 1 part from a mushroom split into 4 equal parts.",
+          "left_expression": "1/4",
+          "right_expression": "1/3",
+          "correct_side": "left"
         },
         {
-          "title": "Pirate checks again",
-          "statement": "9 - 1 = 8",
-          "correct_answer": "true"
+          "title": "Pirate approaches the Heart Cap",
+          "question": "Four adventurers share one mushroom equally.",
+          "left_expression": "1/3",
+          "right_expression": "1/4",
+          "correct_side": "right"
         },
         {
-          "title": "The signal becomes clearer",
-          "statement": "5 + 3 = 8",
-          "correct_answer": "true"
+          "title": "The trance begins to weaken",
+          "question": "Three adventurers share one mushroom equally.",
+          "left_expression": "1/3",
+          "right_expression": "1/4",
+          "correct_side": "left"
         }
       ]
     },
     {
       "id": 5,
-      "type": "corridor_choice",
-      "title": "Two floating crates",
-      "background": "antigravity_island3",
+      "type": "five_tasks",
+      "title": "Pirate reviews the mushroom symbols",
+      "background": "mushroom_island3",
       "coins": 4,
-      "mechanic_reason": "Corridor choice trains comparison — which side has more.",
-      "success_message": "Correct path, Pirate! The Gravity Anchor is in sight!",
+      "mechanic_reason": "Five tasks consolidate fraction vocabulary and notation.",
+      "success_message": "Excellent, Pirate! All fractions remembered!",
       "rounds": [
         {
-          "title": "Two floating crates",
-          "question": "Which crate has more crystals?",
-          "left_expression": "5 crystals",
-          "right_expression": "3 crystals",
-          "correct_side": "left"
+          "title": "Pirate reviews the mushroom symbols",
+          "tasks": [
+            {"q": "1 out of 2 equal parts = ?", "a": "1/2"},
+            {"q": "1 out of 3 equal parts = ?", "a": "1/3"},
+            {"q": "1 out of 4 equal parts = ?", "a": "1/4"},
+            {"q": "Half = ?", "a": "1/2"},
+            {"q": "Quarter = ?", "a": "1/4"}
+          ]
         },
         {
-          "title": "Two energy stations",
-          "question": "Which station has more energy cells?",
-          "left_expression": "4 cells",
-          "right_expression": "7 cells",
-          "correct_side": "right"
+          "title": "The spores test Pirate's memory",
+          "tasks": [
+            {"q": "1/2 = ? out of 2 equal parts", "a": "1"},
+            {"q": "1/3 = ? out of 3 equal parts", "a": "1"},
+            {"q": "1/4 = ? out of 4 equal parts", "a": "1"},
+            {"q": "Third = ?", "a": "1/3"},
+            {"q": "Half = ?", "a": "1/2"}
+          ]
         },
         {
-          "title": "Pirate compares supplies",
-          "question": "Which group has more?",
-          "left_expression": "8 drones",
-          "right_expression": "6 drones",
-          "correct_side": "left"
+          "title": "Pirate walks deeper into the forest",
+          "tasks": [
+            {"q": "1 part from 2 equal parts = ?", "a": "1/2"},
+            {"q": "1 part from 3 equal parts = ?", "a": "1/3"},
+            {"q": "1 part from 4 equal parts = ?", "a": "1/4"},
+            {"q": "One third = ?", "a": "1/3"},
+            {"q": "One quarter = ?", "a": "1/4"}
+          ]
         },
         {
-          "title": "The flying monkey watches",
-          "question": "Which side has more keys?",
-          "left_expression": "5 keys",
-          "right_expression": "9 keys",
-          "correct_side": "right"
+          "title": "The Heart Cap pulses softly",
+          "tasks": [
+            {"q": "1/2 means 1 out of ? equal parts", "a": "2"},
+            {"q": "1/3 means 1 out of ? equal parts", "a": "3"},
+            {"q": "1/4 means 1 out of ? equal parts", "a": "4"},
+            {"q": "Half = ?", "a": "1/2"},
+            {"q": "Third = ?", "a": "1/3"}
+          ]
         },
         {
-          "title": "Near the Gravity Anchor",
-          "question": "Which side has more sky crystals?",
-          "left_expression": "10 crystals",
-          "right_expression": "7 crystals",
-          "correct_side": "left"
+          "title": "Pirate prepares for the final battle",
+          "tasks": [
+            {"q": "Quarter = ?", "a": "1/4"},
+            {"q": "Half = ?", "a": "1/2"},
+            {"q": "Third = ?", "a": "1/3"},
+            {"q": "1 out of 4 equal parts = ?", "a": "1/4"},
+            {"q": "1 out of 2 equal parts = ?", "a": "1/2"}
+          ]
         }
       ]
     },
     {
       "id": 6,
       "type": "boss_mix",
-      "title": "Pirate reaches the Gravity Anchor",
-      "background": "antigravity_island4",
+      "title": "Pirate reaches the Heart Cap",
+      "background": "mushroom_island4",
       "coins": 8,
-      "mechanic_reason": "The boss stage mixes all mechanics for a final multi-skill challenge.",
-      "success_message": "Pirate, you've shut down the Gravity Anchor and freed the island!",
+      "mechanic_reason": "The boss stage mixes all mechanics for a final fractions challenge.",
+      "success_message": "Pirate, you've broken the Heart Cap's spell and freed the island!",
       "rounds": [
         {
           "type": "true_false",
-          "title": "Pirate reaches the Gravity Anchor",
-          "statement": "7 + 2 = 9",
+          "title": "Pirate reaches the Heart Cap",
+          "statement": "1 out of 2 equal parts is 1/2",
           "correct_answer": "true"
         },
         {
           "type": "true_false",
-          "title": "The flying monkey creates confusion",
-          "statement": "10 - 4 = 7",
+          "title": "The shaman casts one last illusion",
+          "statement": "1 out of 3 equal parts is 1/4",
           "correct_answer": "false"
         },
         {
           "type": "text_task",
-          "title": "The storm around the Anchor grows stronger",
-          "prompt": "Pirate has 4 gravity crystals. He finds 3 more. Then he uses 2 crystals. How many crystals does he have now?",
-          "answer": "5"
+          "title": "Pirate breaks the trance",
+          "prompt": "A mushroom is split into 4 equal parts. Pirate takes 1 part. What fraction does Pirate have?",
+          "answer": "1/4"
         },
         {
           "type": "text_task",
-          "title": "The monkey attacks from above",
-          "prompt": "Pirate has 8 flying drones. 2 fly away. Then 3 new drones arrive. How many drones does Pirate have now?",
-          "answer": "9"
-        },
-        {
-          "type": "pattern_input",
-          "title": "The floating rocks reveal a secret",
-          "input_style": "sequence_inline",
-          "prompt": "2, 4, 6, ?, 10",
-          "answer": "8"
-        },
-        {
-          "type": "pattern_input",
-          "title": "The Gravity Anchor sends a signal",
-          "input_style": "sequence_inline",
-          "prompt": "9, 7, 5, ?, 1",
-          "answer": "3"
+          "title": "The Heart Cap begins to crack",
+          "prompt": "Three adventurers share one mushroom equally. Pirate gets one piece. What fraction does Pirate get?",
+          "answer": "1/3"
         },
         {
           "type": "corridor_choice",
-          "title": "Pirate compares two energy stations",
-          "question": "Which station has more energy cells?",
-          "left_expression": "6 cells",
-          "right_expression": "8 cells",
-          "correct_side": "right"
-        },
-        {
-          "type": "corridor_choice",
-          "title": "The monkey guards the final path",
-          "question": "Which crate has more gravity crystals?",
-          "left_expression": "9 crystals",
-          "right_expression": "5 crystals",
+          "title": "The spores lose their power",
+          "question": "Pirate takes 1 part from a mushroom split into 2 equal parts.",
+          "left_expression": "1/2",
+          "right_expression": "1/4",
           "correct_side": "left"
         },
         {
+          "type": "corridor_choice",
+          "title": "The shaman's control fades",
+          "question": "Pirate takes 1 part from a mushroom split into 4 equal parts.",
+          "left_expression": "1/3",
+          "right_expression": "1/4",
+          "correct_side": "right"
+        },
+        {
+          "type": "fill_blank",
+          "title": "Pirate remembers the ancient rule",
+          "prompt": "1 out of 3 equal parts = ___",
+          "answer": "1/3"
+        },
+        {
+          "type": "fill_blank",
+          "title": "The Heart Cap glows one last time",
+          "prompt": "1 out of 2 equal parts = ___",
+          "answer": "1/2"
+        },
+        {
           "type": "five_tasks",
-          "title": "Pirate damages the Gravity Anchor",
+          "title": "The final spores disappear",
           "tasks": [
-            {"q": "8 - 3 = ?", "a": "5"},
-            {"q": "4 + 5 = ?", "a": "9"},
-            {"q": "? + 2 = 8", "a": "6"},
-            {"q": "10 - ? = 4", "a": "6"},
-            {"q": "7 + 1 = ?", "a": "8"}
+            {"q": "Half = ?", "a": "1/2"},
+            {"q": "Third = ?", "a": "1/3"},
+            {"q": "Quarter = ?", "a": "1/4"},
+            {"q": "1 out of 2 equal parts = ?", "a": "1/2"},
+            {"q": "1 out of 4 equal parts = ?", "a": "1/4"}
           ]
         },
         {
           "type": "five_tasks",
-          "title": "Final strike! Free the flying monkey",
+          "title": "The monkey shaman is free",
           "tasks": [
-            {"q": "9 - 2 = ?", "a": "7"},
-            {"q": "3 + 6 = ?", "a": "9"},
-            {"q": "? + 4 = 10", "a": "6"},
-            {"q": "8 - ? = 3", "a": "5"},
-            {"q": "5 + 4 = ?", "a": "9"}
+            {"q": "1 out of 3 equal parts = ?", "a": "1/3"},
+            {"q": "Half = ?", "a": "1/2"},
+            {"q": "Quarter = ?", "a": "1/4"},
+            {"q": "1/2 means 1 out of ? equal parts", "a": "2"},
+            {"q": "1/4 means 1 out of ? equal parts", "a": "4"}
           ]
         }
       ]
@@ -357,10 +349,10 @@
   ],
   "images_needed": {
     "library": [],
-    "backgrounds": ["antigravity_island1", "antigravity_island2", "antigravity_island3", "antigravity_island4"],
+    "backgrounds": ["mushroom_island1", "mushroom_island2", "mushroom_island3", "mushroom_island4"],
     "items": [],
     "targets": [],
-    "artifact": "gravity_anchor",
+    "artifact": "heart_cap",
     "generate_with_dalle": []
   },
   "tutor_notes": []
