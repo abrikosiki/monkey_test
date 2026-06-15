@@ -9,9 +9,9 @@
     "child_inventory": ["egg","sword","crown","lizard","quardo","freeze_ring","ring_ice","magic_necklace","antigravity_boots"],
     "has_freeze_ring": true,
     "student_code": "MONKEY-3007",
-    "student_level": 6,
-    "student_coins": 22,
-    "start_coins": 22
+    "student_level": 7,
+    "student_coins": 50,
+    "start_coins": 50
   },
   "story": {
     "island_name": "Mushroom Island",
