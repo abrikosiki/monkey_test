@@ -1,10 +1,10 @@
 {
   "meta": {
-    "island_key": "mushroom_island",
+    "island_key": "cherry_blossom_island",
     "student_name": "Pirate",
-    "difficulty": "easy",
-    "topic_label": "Introduction to fractions",
-    "topic_key": "intro_fractions",
+    "difficulty": "medium",
+    "topic_label": "Multiplication, division and fractions review",
+    "topic_key": "mul_div_fractions_review",
     "character_key": "pirate_green",
     "child_inventory": ["egg","sword","crown","lizard","quardo","freeze_ring","ring_ice","magic_necklace","antigravity_boots"],
     "has_freeze_ring": true,
@@ -14,334 +14,314 @@
     "start_coins": 50
   },
   "story": {
-    "island_name": "Mushroom Island",
-    "villain": "Monkey shaman",
-    "artifact_name": "Heart Cap",
-    "artifact_emoji": "🍄",
-    "artifact_power": "The fungal heart that powers the shaman's trance.",
+    "island_name": "Cherry Blossom Island",
+    "villain": "Monkey samurai",
+    "artifact_name": "Blossom Core",
+    "artifact_emoji": "🌸",
+    "artifact_power": "The sacred power at the heart of the shrine.",
     "greeting": "Pirate, your island mission begins now — listen closely.",
-    "act1": "On the Island of Mushrooms, a hypnotic monkey shaman has begun bending minds with glowing spores and ancient rhythms. Travelers who breathe the mist fall under his control, becoming part of his silent tribe. Deep in the fungal forest lies the source of his power — the Heart Cap. Pirate, we need to reach it first and break the shaman's trance before the island is lost.",
-    "act2": "The monkey shaman's spores drift through the air. Every step Pirate takes through the fungal forest pulses with ancient magic — but the path to the Heart Cap is becoming clear.",
-    "act3": "The Heart Cap is within reach. One final push and the shaman's trance over this island will be broken forever.",
+    "act1": "On Cherry Blossom Island, petals drift through the air like falling snow, covering silent temples and winding paths. Among them moves a monkey samurai, swift and precise, its blade guided by the will of Doctor Krit. It strikes without warning, guarding the island's sacred grounds. At the heart of the shrine lies the Blossom Core, the source of its power. Pirate, we must reach it, break its hold, and free the samurai before the petals fall forever.",
+    "act2": "The monkey samurai's strikes grow faster. Every step Pirate takes through the shrine pulses with ancient energy — but the path to the Blossom Core is becoming clear.",
+    "act3": "The Blossom Core is within reach. One final push and Doctor Krit's hold over this sacred island will be broken forever.",
     "goal": "Pirate, master every math trial, reach the island's core in time, and break Doctor Krit's hold."
-  },
-  "theory": {
-    "title": "The Heart Cap Must Be Shared Fairly!",
-    "story": [
-      "The monkey shaman uses magical mushrooms to control the island.",
-      "To break the spell, Pirate must share the mushrooms fairly.",
-      "When a mushroom is split into equal parts, each piece becomes a fraction."
-    ],
-    "visuals": [
-      { "icon": "🍄", "parts": 2, "label": "1 out of 2 equal parts = 1/2", "name": "One half" },
-      { "icon": "🍄", "parts": 3, "label": "1 out of 3 equal parts = 1/3", "name": "One third" },
-      { "icon": "🍄", "parts": 4, "label": "1 out of 4 equal parts = 1/4", "name": "One quarter" }
-    ],
-    "rule": {
-      "text": "Fractions must be equal parts.",
-      "correct_label": "Fair split:",
-      "correct_icons": ["🍄", "🍄"],
-      "wrong_label": "Not a fraction:",
-      "wrong_icons": ["🍄", "🍄🍄🍄"]
-    }
   },
   "stages": [
     {
       "id": 1,
-      "type": "fill_blank",
-      "title": "Pirate enters Mushroom Island",
-      "background": "mushroom_island1",
+      "type": "five_tasks",
+      "title": "Romy arrives at Cherry Blossom Island",
+      "background": "cherry_blossom_island1",
       "coins": 4,
-      "mechanic_reason": "Fill-in-the-blank introduces fraction notation from the theory screen.",
-      "success_message": "Great work, Pirate! The mushroom trail is clear!",
+      "mechanic_reason": "Five tasks review multiplication, division and fractions together.",
+      "success_message": "Well done! The cherry path is clear!",
       "rounds": [
         {
-          "title": "Pirate enters Mushroom Island",
-          "prompt": "1 out of 2 equal parts = ___",
-          "answer": "1/2"
+          "title": "Romy arrives at Cherry Blossom Island",
+          "tasks": [
+            {"q": "3 × 4 = ?", "a": "12"},
+            {"q": "12 ÷ 3 = ?", "a": "4"},
+            {"q": "Half = ?", "a": "1/2"},
+            {"q": "2 × 5 = ?", "a": "10"},
+            {"q": "Quarter = ?", "a": "1/4"}
+          ]
         },
         {
-          "title": "Glowing spores fill the forest",
-          "prompt": "1 out of 3 equal parts = ___",
-          "answer": "1/3"
+          "title": "Cherry petals cover the path",
+          "tasks": [
+            {"q": "18 ÷ 3 = ?", "a": "6"},
+            {"q": "4 × 5 = ?", "a": "20"},
+            {"q": "1 out of 3 equal parts = ?", "a": "1/3"},
+            {"q": "16 ÷ 4 = ?", "a": "4"},
+            {"q": "6 × 2 = ?", "a": "12"}
+          ]
         },
         {
-          "title": "The shaman's rhythm echoes through the trees",
-          "prompt": "1 out of 4 equal parts = ___",
-          "answer": "1/4"
+          "title": "The monkey samurai is watching",
+          "tasks": [
+            {"q": "? × 4 = 16", "a": "4"},
+            {"q": "15 ÷ ? = 3", "a": "5"},
+            {"q": "Half = ?", "a": "1/2"},
+            {"q": "? × 3 = 18", "a": "6"},
+            {"q": "Third = ?", "a": "1/3"}
+          ]
         },
         {
-          "title": "Pirate follows the mushroom trail",
-          "prompt": "Half = ___",
-          "answer": "1/2"
+          "title": "The petals begin to glow",
+          "tasks": [
+            {"q": "5 × 4 = ?", "a": "20"},
+            {"q": "24 ÷ 6 = ?", "a": "4"},
+            {"q": "Quarter = ?", "a": "1/4"},
+            {"q": "21 ÷ 3 = ?", "a": "7"},
+            {"q": "3 × 6 = ?", "a": "18"}
+          ]
         },
         {
-          "title": "The Heart Cap glows in the distance",
-          "prompt": "Quarter = ___",
-          "answer": "1/4"
+          "title": "Romy reaches the temple",
+          "tasks": [
+            {"q": "? × 5 = 25", "a": "5"},
+            {"q": "24 ÷ ? = 6", "a": "4"},
+            {"q": "1 out of 2 equal parts = ?", "a": "1/2"},
+            {"q": "2 × 8 = ?", "a": "16"},
+            {"q": "18 ÷ 2 = ?", "a": "9"}
+          ]
         }
       ]
     },
     {
       "id": 2,
-      "type": "true_false",
-      "title": "Pirate studies the ancient mushrooms",
-      "background": "mushroom_island2",
+      "type": "text_task",
+      "title": "Romy gathers blossom lanterns",
+      "background": "cherry_blossom_island2",
       "coins": 4,
-      "mechanic_reason": "True/false checks understanding of fraction notation.",
-      "success_message": "Sharp thinking, Pirate!",
+      "mechanic_reason": "Word problems apply multiplication, division and fractions in context.",
+      "success_message": "Brilliant! You solved the shrine's puzzle!",
       "rounds": [
         {
-          "title": "Pirate studies the ancient mushrooms",
-          "statement": "1 out of 2 equal parts is 1/2",
-          "correct_answer": "true"
+          "title": "Romy gathers blossom lanterns",
+          "prompt": "4 trees each have 3 blossom lanterns. How many lanterns are there altogether?",
+          "answer": "12"
         },
         {
-          "title": "The spores create an illusion",
-          "statement": "1 out of 4 equal parts is 1/3",
-          "correct_answer": "false"
+          "title": "Sharing magical flowers",
+          "prompt": "16 cherry flowers are shared equally between 4 children. How many flowers does each child get?",
+          "answer": "4"
         },
         {
-          "title": "The shaman tries to confuse Pirate",
-          "statement": "1 out of 3 equal parts is 1/3",
-          "correct_answer": "true"
+          "title": "A fair mushroom picnic",
+          "prompt": "A pie is shared equally between 4 friends. Romy gets one piece. What fraction of the pie does Romy get?",
+          "answer": "1/4"
         },
         {
-          "title": "Pirate checks the magical symbols",
-          "statement": "1 out of 2 equal parts is 1/4",
-          "correct_answer": "false"
+          "title": "Helping the monkey village",
+          "prompt": "3 baskets each hold 6 apples. How many apples are there altogether?",
+          "answer": "18"
         },
         {
-          "title": "The path to the Heart Cap opens",
-          "statement": "1 out of 4 equal parts is called a quarter",
-          "correct_answer": "true"
+          "title": "The Blossom Core",
+          "prompt": "A magical fruit is shared equally between 2 explorers. Romy gets one piece. What fraction does she get?",
+          "answer": "1/2"
         }
       ]
     },
     {
       "id": 3,
-      "type": "text_task",
-      "title": "Pirate shares a mushroom",
+      "type": "true_false",
+      "title": "The samurai tests Romy",
       "background": "2",
       "coins": 4,
-      "mechanic_reason": "Word problems build understanding of fractions in context.",
-      "success_message": "Brilliant, Pirate! You solved it!",
+      "mechanic_reason": "True/false checks multiplication, division and fraction facts.",
+      "success_message": "Sharp thinking! The samurai is impressed!",
       "rounds": [
         {
-          "title": "Pirate shares a mushroom",
-          "prompt": "A mushroom is split into 2 equal parts. Pirate takes 1 part. What fraction does Pirate have?",
-          "answer": "1/2"
+          "title": "The samurai tests Romy",
+          "statement": "4 × 5 = 20",
+          "correct_answer": "true"
         },
         {
-          "title": "The spores drift through the air",
-          "prompt": "A mushroom is split into 3 equal parts. Pirate takes 1 part. What fraction does Pirate have?",
-          "answer": "1/3"
+          "title": "The samurai raises his blade",
+          "statement": "18 ÷ 3 = 5",
+          "correct_answer": "false"
         },
         {
-          "title": "The shaman watches from afar",
-          "prompt": "A mushroom is split into 4 equal parts. Pirate takes 1 part. What fraction does Pirate have?",
-          "answer": "1/4"
+          "title": "The petals reveal the truth",
+          "statement": "1 out of 2 equal parts = 1/2",
+          "correct_answer": "true"
         },
         {
-          "title": "Pirate finds a giant mushroom",
-          "prompt": "Four adventurers share a mushroom equally. Pirate gets one piece. What fraction does Pirate get?",
-          "answer": "1/4"
+          "title": "The shrine glows with illusions",
+          "statement": "1 out of 4 equal parts = 1/3",
+          "correct_answer": "false"
         },
         {
-          "title": "The forest grows quiet",
-          "prompt": "Three travelers share a mushroom equally. Pirate gets one piece. What fraction does Pirate get?",
-          "answer": "1/3"
+          "title": "The path becomes clear",
+          "statement": "24 ÷ 6 = 4",
+          "correct_answer": "true"
         }
       ]
     },
     {
       "id": 4,
       "type": "corridor_choice",
-      "title": "Pirate follows the glowing path",
+      "title": "The blossom path splits",
       "background": "3",
       "coins": 4,
-      "mechanic_reason": "Corridor choice tests recognition of the correct fraction.",
-      "success_message": "Correct path, Pirate! The Heart Cap grows closer!",
+      "mechanic_reason": "Corridor choice tests selecting the correct value for multiplication, division and fractions.",
+      "success_message": "Correct path! The shrine opens!",
       "rounds": [
         {
-          "title": "Pirate follows the glowing path",
-          "question": "Pirate takes 1 part from a mushroom split into 2 equal parts.",
-          "left_expression": "1/2",
-          "right_expression": "1/3",
-          "correct_side": "left"
-        },
-        {
-          "title": "The spores swirl around Pirate",
-          "question": "Pirate takes 1 part from a mushroom split into 3 equal parts.",
-          "left_expression": "1/2",
-          "right_expression": "1/3",
-          "correct_side": "right"
-        },
-        {
-          "title": "The shaman's magic grows stronger",
-          "question": "Pirate takes 1 part from a mushroom split into 4 equal parts.",
-          "left_expression": "1/4",
-          "right_expression": "1/3",
-          "correct_side": "left"
-        },
-        {
-          "title": "Pirate approaches the Heart Cap",
-          "question": "Four adventurers share one mushroom equally.",
+          "title": "The blossom path splits",
+          "question": "Romy gets one piece from a fruit split into 4 equal parts.",
           "left_expression": "1/3",
           "right_expression": "1/4",
           "correct_side": "right"
         },
         {
-          "title": "The trance begins to weaken",
-          "question": "Three adventurers share one mushroom equally.",
-          "left_expression": "1/3",
+          "title": "Sharing flowers at the shrine",
+          "question": "18 flowers are shared equally between 3 children.",
+          "left_expression": "6",
+          "right_expression": "9",
+          "correct_side": "left"
+        },
+        {
+          "title": "Romy counts apple baskets",
+          "question": "5 baskets hold 4 apples each.",
+          "left_expression": "20",
+          "right_expression": "9",
+          "correct_side": "left"
+        },
+        {
+          "title": "A fruit divided at the temple",
+          "question": "Romy gets one piece from a fruit split into 2 equal parts.",
+          "left_expression": "1/2",
           "right_expression": "1/4",
           "correct_side": "left"
+        },
+        {
+          "title": "Petals in the wind",
+          "question": "24 petals are shared equally between 6 baskets.",
+          "left_expression": "6",
+          "right_expression": "4",
+          "correct_side": "right"
         }
       ]
     },
     {
       "id": 5,
-      "type": "five_tasks",
-      "title": "Pirate reviews the mushroom symbols",
-      "background": "mushroom_island3",
+      "type": "fill_blank",
+      "title": "The Blossom Core shines brighter",
+      "background": "cherry_blossom_island3",
       "coins": 4,
-      "mechanic_reason": "Five tasks consolidate fraction vocabulary and notation.",
-      "success_message": "Excellent, Pirate! All fractions remembered!",
+      "mechanic_reason": "Fill-in-the-blank consolidates all three topics: multiplication, division and fractions.",
+      "success_message": "Excellent! The Blossom Core is within reach!",
       "rounds": [
         {
-          "title": "Pirate reviews the mushroom symbols",
-          "tasks": [
-            {"q": "1 out of 2 equal parts = ?", "a": "1/2"},
-            {"q": "1 out of 3 equal parts = ?", "a": "1/3"},
-            {"q": "1 out of 4 equal parts = ?", "a": "1/4"},
-            {"q": "Half = ?", "a": "1/2"},
-            {"q": "Quarter = ?", "a": "1/4"}
-          ]
+          "title": "The Blossom Core shines brighter",
+          "prompt": "? × 3 = 15",
+          "answer": "5"
         },
         {
-          "title": "The spores test Pirate's memory",
-          "tasks": [
-            {"q": "1/2 = ? out of 2 equal parts", "a": "1"},
-            {"q": "1/3 = ? out of 3 equal parts", "a": "1"},
-            {"q": "1/4 = ? out of 4 equal parts", "a": "1"},
-            {"q": "Third = ?", "a": "1/3"},
-            {"q": "Half = ?", "a": "1/2"}
-          ]
+          "title": "Romy solves the shrine puzzle",
+          "prompt": "24 ÷ ? = 6",
+          "answer": "4"
         },
         {
-          "title": "Pirate walks deeper into the forest",
-          "tasks": [
-            {"q": "1 part from 2 equal parts = ?", "a": "1/2"},
-            {"q": "1 part from 3 equal parts = ?", "a": "1/3"},
-            {"q": "1 part from 4 equal parts = ?", "a": "1/4"},
-            {"q": "One third = ?", "a": "1/3"},
-            {"q": "One quarter = ?", "a": "1/4"}
-          ]
+          "title": "The forest speaks in fractions",
+          "prompt": "1 out of 3 equal parts = ___",
+          "answer": "1/3"
         },
         {
-          "title": "The Heart Cap pulses softly",
-          "tasks": [
-            {"q": "1/2 means 1 out of ? equal parts", "a": "2"},
-            {"q": "1/3 means 1 out of ? equal parts", "a": "3"},
-            {"q": "1/4 means 1 out of ? equal parts", "a": "4"},
-            {"q": "Half = ?", "a": "1/2"},
-            {"q": "Third = ?", "a": "1/3"}
-          ]
+          "title": "The samurai's final test",
+          "prompt": "Half = ___",
+          "answer": "1/2"
         },
         {
-          "title": "Pirate prepares for the final battle",
-          "tasks": [
-            {"q": "Quarter = ?", "a": "1/4"},
-            {"q": "Half = ?", "a": "1/2"},
-            {"q": "Third = ?", "a": "1/3"},
-            {"q": "1 out of 4 equal parts = ?", "a": "1/4"},
-            {"q": "1 out of 2 equal parts = ?", "a": "1/2"}
-          ]
+          "title": "Romy is ready",
+          "prompt": "Quarter = ___",
+          "answer": "1/4"
         }
       ]
     },
     {
       "id": 6,
       "type": "boss_mix",
-      "title": "Pirate reaches the Heart Cap",
-      "background": "mushroom_island4",
+      "title": "Romy reaches the Blossom Core",
+      "background": "cherry_blossom_island4",
       "coins": 8,
-      "mechanic_reason": "The boss stage mixes all mechanics for a final fractions challenge.",
-      "success_message": "Pirate, you've broken the Heart Cap's spell and freed the island!",
+      "mechanic_reason": "Boss stage mixes all mechanics for a final multi-skill challenge.",
+      "success_message": "Pirate, you've freed the samurai and broken the Blossom Core's spell!",
       "rounds": [
         {
           "type": "true_false",
-          "title": "Pirate reaches the Heart Cap",
-          "statement": "1 out of 2 equal parts is 1/2",
+          "title": "Romy reaches the Blossom Core",
+          "statement": "20 ÷ 5 = 4",
           "correct_answer": "true"
         },
         {
           "type": "true_false",
-          "title": "The shaman casts one last illusion",
-          "statement": "1 out of 3 equal parts is 1/4",
+          "title": "The samurai creates confusion",
+          "statement": "1 out of 2 equal parts = 1/3",
           "correct_answer": "false"
         },
         {
           "type": "text_task",
-          "title": "Pirate breaks the trance",
-          "prompt": "A mushroom is split into 4 equal parts. Pirate takes 1 part. What fraction does Pirate have?",
+          "title": "Romy breaks the samurai's shield",
+          "prompt": "A magical blossom is shared equally between 4 explorers. Romy gets one piece. What fraction does she get?",
           "answer": "1/4"
         },
         {
           "type": "text_task",
-          "title": "The Heart Cap begins to crack",
-          "prompt": "Three adventurers share one mushroom equally. Pirate gets one piece. What fraction does Pirate get?",
-          "answer": "1/3"
+          "title": "The Blossom Core starts to crack",
+          "prompt": "6 trees each have 3 glowing flowers. How many flowers are there altogether?",
+          "answer": "18"
         },
         {
           "type": "corridor_choice",
-          "title": "The spores lose their power",
-          "question": "Pirate takes 1 part from a mushroom split into 2 equal parts.",
-          "left_expression": "1/2",
-          "right_expression": "1/4",
+          "title": "Petals swirl around the shrine",
+          "question": "12 petals are shared equally between 3 baskets.",
+          "left_expression": "4",
+          "right_expression": "6",
           "correct_side": "left"
         },
         {
           "type": "corridor_choice",
-          "title": "The shaman's control fades",
-          "question": "Pirate takes 1 part from a mushroom split into 4 equal parts.",
-          "left_expression": "1/3",
-          "right_expression": "1/4",
+          "title": "The samurai's grip weakens",
+          "question": "Romy gets one piece from a fruit split into 3 equal parts.",
+          "left_expression": "1/4",
+          "right_expression": "1/3",
           "correct_side": "right"
         },
         {
           "type": "fill_blank",
-          "title": "Pirate remembers the ancient rule",
-          "prompt": "1 out of 3 equal parts = ___",
-          "answer": "1/3"
+          "title": "Romy charges forward",
+          "prompt": "? × 5 = 20",
+          "answer": "4"
         },
         {
           "type": "fill_blank",
-          "title": "The Heart Cap glows one last time",
-          "prompt": "1 out of 2 equal parts = ___",
-          "answer": "1/2"
+          "title": "The shrine doors open",
+          "prompt": "1 out of 4 equal parts = ___",
+          "answer": "1/4"
         },
         {
           "type": "five_tasks",
-          "title": "The final spores disappear",
+          "title": "The monkey samurai loses balance",
           "tasks": [
+            {"q": "3 × 6 = ?", "a": "18"},
+            {"q": "18 ÷ 3 = ?", "a": "6"},
             {"q": "Half = ?", "a": "1/2"},
-            {"q": "Third = ?", "a": "1/3"},
             {"q": "Quarter = ?", "a": "1/4"},
-            {"q": "1 out of 2 equal parts = ?", "a": "1/2"},
-            {"q": "1 out of 4 equal parts = ?", "a": "1/4"}
+            {"q": "? × 4 = 16", "a": "4"}
           ]
         },
         {
           "type": "five_tasks",
-          "title": "The monkey shaman is free",
+          "title": "Romy frees the monkey samurai",
           "tasks": [
-            {"q": "1 out of 3 equal parts = ?", "a": "1/3"},
-            {"q": "Half = ?", "a": "1/2"},
-            {"q": "Quarter = ?", "a": "1/4"},
-            {"q": "1/2 means 1 out of ? equal parts", "a": "2"},
-            {"q": "1/4 means 1 out of ? equal parts", "a": "4"}
+            {"q": "24 ÷ 6 = ?", "a": "4"},
+            {"q": "5 × 4 = ?", "a": "20"},
+            {"q": "Third = ?", "a": "1/3"},
+            {"q": "? × 5 = 25", "a": "5"},
+            {"q": "16 ÷ 4 = ?", "a": "4"}
           ]
         }
       ]
@@ -349,10 +329,10 @@
   ],
   "images_needed": {
     "library": [],
-    "backgrounds": ["mushroom_island1", "mushroom_island2", "mushroom_island3", "mushroom_island4"],
+    "backgrounds": ["cherry_blossom_island1", "cherry_blossom_island2", "cherry_blossom_island3", "cherry_blossom_island4"],
     "items": [],
     "targets": [],
-    "artifact": "heart_cap",
+    "artifact": "blossom_core",
     "generate_with_dalle": []
   },
   "tutor_notes": []
