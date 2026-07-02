@@ -1,17 +1,17 @@
 {
   "meta": {
     "island_key": "cherry_blossom_island",
-    "student_name": "Pirate",
+    "student_name": "Cleo",
     "difficulty": "medium",
     "topic_label": "Multiplication, division and fractions review",
     "topic_key": "mul_div_fractions_review",
-    "character_key": "pirate_green",
-    "child_inventory": ["egg","sword","crown","lizard","quardo","freeze_ring","ring_ice","magic_necklace","antigravity_boots"],
-    "has_freeze_ring": true,
-    "student_code": "MONKEY-3007",
-    "student_level": 7,
-    "student_coins": 50,
-    "start_coins": 50
+    "character_key": "fairy_purple",
+    "child_inventory": [],
+    "has_freeze_ring": false,
+    "student_code": "MONKEY-8801",
+    "student_level": 1,
+    "student_coins": 92,
+    "start_coins": 92
   },
   "story": {
     "island_name": "Cherry Blossom Island",
@@ -19,11 +19,11 @@
     "artifact_name": "Blossom Core",
     "artifact_emoji": "🌸",
     "artifact_power": "The sacred power at the heart of the shrine.",
-    "greeting": "Pirate, your island mission begins now — listen closely.",
-    "act1": "On Cherry Blossom Island, petals drift through the air like falling snow, covering silent temples and winding paths. Among them moves a monkey samurai, swift and precise, its blade guided by the will of Doctor Krit. It strikes without warning, guarding the island's sacred grounds. At the heart of the shrine lies the Blossom Core, the source of its power. Pirate, we must reach it, break its hold, and free the samurai before the petals fall forever.",
-    "act2": "The monkey samurai's strikes grow faster. Every step Pirate takes through the shrine pulses with ancient energy — but the path to the Blossom Core is becoming clear.",
+    "greeting": "Cleo, your island mission begins now — listen closely.",
+    "act1": "On Cherry Blossom Island, petals drift through the air like falling snow, covering silent temples and winding paths. Among them moves a monkey samurai, swift and precise, its blade guided by the will of Doctor Krit. It strikes without warning, guarding the island's sacred grounds. At the heart of the shrine lies the Blossom Core, the source of its power. Cleo, we must reach it, break its hold, and free the samurai before the petals fall forever.",
+    "act2": "The monkey samurai's strikes grow faster. Every step Cleo takes through the shrine pulses with ancient energy — but the path to the Blossom Core is becoming clear.",
     "act3": "The Blossom Core is within reach. One final push and Doctor Krit's hold over this sacred island will be broken forever.",
-    "goal": "Pirate, master every math trial, reach the island's core in time, and break Doctor Krit's hold."
+    "goal": "Cleo, master every math trial, reach the island's core in time, and break Doctor Krit's hold."
   },
   "stages": [
     {
@@ -211,7 +211,7 @@
       "title": "The Blossom Core shines brighter",
       "background": "cherry_blossom_island3",
       "coins": 4,
-      "mechanic_reason": "Fill-in-the-blank consolidates all three topics: multiplication, division and fractions.",
+      "mechanic_reason": "Fill-in-the-blank consolidates all three topics.",
       "success_message": "Excellent! The Blossom Core is within reach!",
       "rounds": [
         {
@@ -248,7 +248,7 @@
       "background": "cherry_blossom_island4",
       "coins": 8,
       "mechanic_reason": "Boss stage mixes all mechanics for a final multi-skill challenge.",
-      "success_message": "Pirate, you've freed the samurai and broken the Blossom Core's spell!",
+      "success_message": "Cleo, you've freed the samurai and broken the Blossom Core's spell!",
       "rounds": [
         {
           "type": "true_false",
