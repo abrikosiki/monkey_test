@@ -132,7 +132,7 @@
       <div class="header-row">
         <div>
           <h1>Monkey Archipelago Tutor</h1>
-          <div class="sub">Single-page tutor workspace with child lookup, structured 6-stage editing, autosave, Claude generation, lesson build, and preview.</div>
+          <div class="sub">Single-page tutor workspace with child lookup, structured 9-stage editing, autosave, Claude generation, lesson build, and preview.</div>
         </div>
         <div class="stack" style="align-items:flex-end">
           <div class="status-pill" id="autosaveStatus">Ready</div>
@@ -274,7 +274,7 @@
       dice_multiply: "Set multiplier1 (rounds 1–3) and multiplier2 (rounds 4–5). Same values apply to all 5 rounds.",
       fortune_wheel: "Choose the artifact the wheel can give. Coin sectors are fixed. Same values apply to all 5 rounds.",
       number_grid: "Round 1: write 25 grid numbers (comma-separated). Every round: math prompt + cell coordinate answer (e.g. B3).",
-      boss_mix: "Stage 6 boss battle — write 2 NEW harder examples per mechanic from stages 1–5 (10 rounds total).",
+      boss_mix: "Stage 9 boss battle — write 2 NEW harder examples per mechanic from stages 1–8 (16 rounds total).",
     };
 
     const MECHANIC_TEMPLATES = {
@@ -686,7 +686,7 @@
         lab.className = "jump-label";
         lab.textContent = "К этапу:";
         host.appendChild(lab);
-        for (let n = 1; n <= 6; n++) {
+        for (let n = 1; n <= 9; n++) {
           const b = document.createElement("button");
           b.type = "button";
           b.className = "ghost small";
@@ -717,8 +717,8 @@
         setAutosaveStatus("Выберите остров");
         return;
       }
-      if (!Array.isArray(state.draft.stages) || state.draft.stages.length !== 6) {
-        setAutosaveStatus("Черновик должен содержать 6 этапов");
+      if (!Array.isArray(state.draft.stages) || state.draft.stages.length !== 9) {
+        setAutosaveStatus("Черновик должен содержать 9 этапов");
         return;
       }
       state.manualMechanicsMode = true;
@@ -1186,28 +1186,28 @@
       return { ...buildExampleTemplate(mechanic, roundNumber), ...tpl, roundNumber, bossMechanic: mechanic };
     }
 
-    function syncBossMixExamples(stage6) {
-      const stages15 = (state.draft?.stages || []).slice(0, 5);
-      if (!Array.isArray(stage6.examples)) stage6.examples = [];
-      for (let groupIdx = 0; groupIdx < 5; groupIdx++) {
-        const srcMechanic = stages15[groupIdx]?.mechanic || "fill_blank";
+    function syncBossMixExamples(stage9) {
+      const stages18 = (state.draft?.stages || []).slice(0, 8);
+      if (!Array.isArray(stage9.examples)) stage9.examples = [];
+      for (let groupIdx = 0; groupIdx < 8; groupIdx++) {
+        const srcMechanic = stages18[groupIdx]?.mechanic || "fill_blank";
         for (let pairIdx = 0; pairIdx < 2; pairIdx++) {
           const exIdx = groupIdx * 2 + pairIdx;
-          const ex = stage6.examples[exIdx];
+          const ex = stage9.examples[exIdx];
           if (!ex || typeof ex !== "object" || ex.bossMechanic !== srcMechanic) {
-            stage6.examples[exIdx] = buildBossExampleTemplate(srcMechanic, exIdx + 1);
+            stage9.examples[exIdx] = buildBossExampleTemplate(srcMechanic, exIdx + 1);
           } else {
             ex.roundNumber = exIdx + 1;
           }
         }
       }
-      stage6.examples = stage6.examples.slice(0, 10);
+      stage9.examples = stage9.examples.slice(0, 16);
     }
 
-    function renderBossMixExamples(card, stage6) {
-      const stages15 = (state.draft?.stages || []).slice(0, 5);
-      for (let groupIdx = 0; groupIdx < 5; groupIdx++) {
-        const srcMechanic = stages15[groupIdx]?.mechanic || "fill_blank";
+    function renderBossMixExamples(card, stage9) {
+      const stages18 = (state.draft?.stages || []).slice(0, 8);
+      for (let groupIdx = 0; groupIdx < 8; groupIdx++) {
+        const srcMechanic = stages18[groupIdx]?.mechanic || "fill_blank";
         const mecLabel = (state.mechanics || []).find((m) => m.id === srcMechanic)?.label || srcMechanic;
         const groupHeader = document.createElement("div");
         groupHeader.style.cssText = "margin-top:16px;padding:10px 12px;background:#122746;border:1px solid #f1be4f55;border-radius:12px;font-weight:700;color:#f1be4f;font-size:14px;";
@@ -1215,7 +1215,7 @@
         card.appendChild(groupHeader);
         for (let pairIdx = 0; pairIdx < 2; pairIdx++) {
           const exIdx = groupIdx * 2 + pairIdx;
-          const example = stage6.examples[exIdx];
+          const example = stage9.examples[exIdx];
           if (!example) continue;
           const ex = document.createElement("div");
           ex.className = "example";
@@ -1258,11 +1258,11 @@
           option.textContent = m.id;
           picker.appendChild(option);
         }
-        if (stage.stageNumber === 6) {
+        if (stage.stageNumber === 9) {
           stage.mechanic = "boss_mix";
           picker.value = "boss_mix";
           picker.disabled = true;
-          picker.title = "Stage 6 is always the Boss Stage";
+          picker.title = "Stage 9 is always the Boss Stage";
         } else {
           picker.value = stage.mechanic || "";
           picker.dataset.role = "mechanic-picker";
@@ -1309,13 +1309,13 @@
           card.appendChild(why);
         }
 
-        const isBossStage = stage.stageNumber === 6;
+        const isBossStage = stage.stageNumber === 9;
 
         const chips = document.createElement("div");
         chips.className = "chips";
         [
-          isBossStage ? "10 boss rounds" : `Rounds: ${(stage.examples || []).length}`,
-          stage.stageNumber === 1 || stage.stageNumber === 6 ? "Unique background" : "Fixed background",
+          isBossStage ? "16 boss rounds" : `Rounds: ${(stage.examples || []).length}`,
+          stage.stageNumber === 1 || stage.stageNumber === 9 ? "Unique background" : "Fixed background",
           stage.mechanic || "No mechanic selected"
         ].forEach((text) => {
           const chip = document.createElement("span");
@@ -1327,9 +1327,9 @@
         const stageRule = document.createElement("div");
         stageRule.className = "stage-rule";
         if (isBossStage) {
-          stageRule.textContent = "Stage 6 — Boss Battle! Write 2 NEW harder examples per mechanic from stages 1–5 (10 rounds total). These examples must be harder than anything in the previous stages.";
+          stageRule.textContent = "Stage 9 — Boss Battle! Write 2 NEW harder examples per mechanic from stages 1–8 (16 rounds total). These examples must be harder than anything in the previous stages.";
         } else {
-          stageRule.textContent = `Stage ${stage.stageNumber} should contain exactly 5 tutor-written math examples. Story, assets, villain, artifact, and all child-facing text are generated automatically.`;
+          stageRule.textContent = `Stage ${stage.stageNumber} — write tutor math examples (flexible count: 2–7 rounds). Story, assets, villain, artifact, and all child-facing text are generated automatically.`;
         }
         card.appendChild(stageRule);
 
@@ -1483,10 +1483,10 @@
           island_key: islandKey,
         });
         state.draft = af.draft;
-        // Stage 6 is always boss_mix; sync boss examples from stages 1–5
-        if (Array.isArray(state.draft.stages) && state.draft.stages[5]) {
-          state.draft.stages[5].mechanic = "boss_mix";
-          syncBossMixExamples(state.draft.stages[5]);
+        // Stage 9 is always boss_mix; sync boss examples from stages 1–8
+        if (Array.isArray(state.draft.stages) && state.draft.stages[8]) {
+          state.draft.stages[8].mechanic = "boss_mix";
+          syncBossMixExamples(state.draft.stages[8]);
         }
         $("tutorPromptInput").value = state.draft.tutorPrompt || tutorPrompt;
         const start = await post("/api/generate", { draft: state.draft });
@@ -1546,10 +1546,10 @@
           regenBtn.textContent = "Building... 1/3 — asking AI";
         }
         const draftForGenerate = clone(state.draft);
-        // Stage 6 is always boss_mix — enforce before sending
-        if (Array.isArray(draftForGenerate.stages) && draftForGenerate.stages[5]) {
-          draftForGenerate.stages[5].mechanic = "boss_mix";
-          syncBossMixExamples(draftForGenerate.stages[5]);
+        // Stage 9 is always boss_mix — enforce before sending
+        if (Array.isArray(draftForGenerate.stages) && draftForGenerate.stages[8]) {
+          draftForGenerate.stages[8].mechanic = "boss_mix";
+          syncBossMixExamples(draftForGenerate.stages[8]);
         }
         const start = await post("/api/generate", { draft: draftForGenerate, manualStrict: true });
         const jobId = start.jobId;

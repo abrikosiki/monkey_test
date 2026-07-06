@@ -11,7 +11,7 @@ OUTPUT ROOT STRUCTURE
 {
   "meta": { ... },
   "story": { ... },
-  "stages": [ ... exactly 6 stages ... ],
+  "stages": [ ... exactly 9 stages ... ],
   "images_needed": { ... },
   "tutor_notes": { ... }
 }
@@ -60,26 +60,29 @@ ISLAND KEY (technical — ties story + PNG backgrounds):
 STAGE "background" — THE ONLY CORRECT WORLD SEQUENCE (read fully; wrong JSON breaks the game):
 World art for lessons uses ONLY: (A) four PNGs per island named {meta.island_key}1 … {meta.island_key}4, and (B) two shared cave PNGs whose JSON keys are exactly the strings "2" and "3" (not island-prefixed).
 
-Define PREFIX = meta.island_key (full snake_case token, no digits at the end). Output exactly six stages with "id" 1 through 6 in order. Each stage's "background" field MUST be:
+Define PREFIX = meta.island_key (full snake_case token, no digits at the end). Output exactly nine stages with "id" 1 through 9 in order. Each stage's "background" field MUST be:
 
   id 1 → PREFIX + "1"     (concatenation: e.g. PREFIX neon_city_island → "neon_city_island1")
   id 2 → PREFIX + "2"
-  id 3 → "2"              (literal one-character key: shared cave — NOT PREFIX+"2", NOT PREFIX+"3")
-  id 4 → "3"              (literal one-character key: shared cave — NOT PREFIX+"3")
-  id 5 → PREFIX + "3"     (third island art — digit 3 after PREFIX)
-  id 6 → PREFIX + "4"     (fourth island art — digit 4 after PREFIX)
+  id 3 → "2"              (literal one-character key: shared cave)
+  id 4 → "3"              (literal one-character key: shared cave)
+  id 5 → PREFIX + "3"
+  id 6 → PREFIX + "4"
+  id 7 → "2"              (shared cave again)
+  id 8 → PREFIX + "3"     (island art repeated for second half)
+  id 9 → PREFIX + "4"     (final boss stage)
 
-This pattern is IDENTICAL for every allowed island; only PREFIX changes. Do not substitute jungle/beach/cave_entrance/stage1_generated or any other token for stages 1–6 unless the user message's REQUIRED STAGE BACKGROUNDS block explicitly lists something else (it will list these six strings).
+This pattern is IDENTICAL for every allowed island; only PREFIX changes. Do not substitute jungle/beach/cave_entrance/stage1_generated or any other token.
 
 FORBIDDEN mistakes:
-- Putting island art on stage 3 or 4 (those stages are ONLY "2" and "3").
-- Using PREFIX+"4" on stage 5 (stage 5 is PREFIX+"3"; stage 6 is PREFIX+"4").
+- Putting island art on stages 3, 4, or 7 (those stages are ONLY "2", "3", "2").
+- Using PREFIX+"4" on stages 5 or 8 (those are PREFIX+"3"; stages 6 and 9 are PREFIX+"4").
 - Using cave_entrance, cave_deep, jungle_path, jungle_temple, stage1_generated, stage6_generated for this island pipeline.
 - Reordering or skipping digits.
 
-Examples (same structure, swap PREFIX): jelly_bay_island → jelly_bay_island1, jelly_bay_island2, 2, 3, jelly_bay_island3, jelly_bay_island4. blue_crab_island → blue_crab_island1, blue_crab_island2, 2, 3, blue_crab_island3, blue_crab_island4.
+Examples (same structure, swap PREFIX): jelly_bay_island → jelly_bay_island1, jelly_bay_island2, 2, 3, jelly_bay_island3, jelly_bay_island4, 2, jelly_bay_island3, jelly_bay_island4.
 
-When the user message includes a "REQUIRED STAGE BACKGROUNDS" block, copy those six "background" strings into stages[0]…stages[5] exactly (they are precomputed for PREFIX).
+When the user message includes a "REQUIRED STAGE BACKGROUNDS" block, copy those nine "background" strings into stages[0]…stages[8] exactly (they are precomputed for PREFIX).
 
 STORY CANON — choose the ONE row whose island_key matches meta.island_key. Ground story.island_name, villain, artifact, and acts in that row. Doctor Krit is the mind-control villain. Keep tone cinematic, silly-not-scary. Older "island 9-12" packs are retired; do not invent alternate island packs unless island_key is missing from the user message (then pick any row from the list below and set meta.island_key to match).
 
@@ -130,7 +133,7 @@ MECHANICS — Claude CHOOSES per stage (20 types)
 - dice_multiply — child rolls dice, multiplies by preset number; multiplier1 (rounds 1-3), multiplier2 (rounds 4-5)
 - fortune_wheel — spin the wheel to land on coin or artifact reward; artifactKey field sets the prize
 - number_grid   — 5×5 grid of numbers; child taps cell matching the math answer; rows A-E, cols 1-5; answer field = coordinate like "B3"
-- boss_mix      — ONLY stage 6: 10 rounds mixing the 5 mechanics from stages 1–5; each round carries its own "type" field
+- boss_mix      — ONLY stage 9: 16 rounds mixing the 8 mechanics from stages 1–8; each round carries its own "type" field
 
 For builder compatibility you MAY output legacy aliases where needed:
 - multi_choice → same schema as "choice" but type MUST be "multi_choice" in JSON
@@ -195,18 +198,18 @@ NUMBER RANGE BY AGE (secondary — numbers support difficulty, not define it):
   Age 8 → 1–100; multi-step allowed; negatives only at level 8+
   Age 9 → 1–200; full negatives; symbolic; algebraic thinking
 
-LESSON MIX RULES (6 stages):
-- Exactly 6 stages. When meta.island_key is set, each stage "background" MUST follow the six-token island pattern (see STAGE "background" TOKENS above) — same rule for every allowed island; do not invent a different progression.
+LESSON MIX RULES (9 stages):
+- Exactly 9 stages. When meta.island_key is set, each stage "background" MUST follow the nine-token island pattern (see STAGE "background" TOKENS above) — same rule for every allowed island; do not invent a different progression.
 - No stage has a fixed required mechanic — pick freely based on age + difficulty. Any mechanic can appear at any position.
 - Distribute across categories for variety (at least 1 of each in the lesson):
     VISUAL:    drag_sort | drag_group | fortune_wheel
     CHOICE:    multi_choice | corridor_choice | true_false | match_pairs | number_grid
     TYPING:    fill_blank | pattern_input | text_task | find_unknown | dice_multiply
     CHALLENGE: five_tasks | balance_scale | key_lock | symbol_calc | timer_challenge | build_number
-- Stage 6: MUST use type "boss_mix". Output stage 6 with type "boss_mix" and 10 rounds — each round has its own "type" field matching one of the mechanics from stages 1–5 (2 rounds per mechanic in order). When the tutor draft sets mechanic "boss_mix", applyDraftToLessonStages will replace all rounds from the draft; output any valid placeholder rounds.
+- Stage 9: MUST use type "boss_mix". Output stage 9 with type "boss_mix" and 16 rounds — each round has its own "type" field matching one of the mechanics from stages 1–8 (2 rounds per mechanic in order). When the tutor draft sets mechanic "boss_mix", applyDraftToLessonStages will replace all rounds from the draft; output any valid placeholder rounds.
 - NEVER same mechanic type two stages in a row (compare "type" field; boss_mix is unique)
-- NEVER timer_challenge on stage 6 (index 5)
-- Minimum 4 DISTINCT mechanic types in stages 1–5
+- NEVER timer_challenge on stage 9 (index 8)
+- Minimum 6 DISTINCT mechanic types in stages 1–8
 
 BOSS_MIX ROUND SCHEMA — each sub-round MUST use the EXACT same field names as regular rounds.
 DO NOT invent alternative schemas (no "lock_sums", no "pairs" array, no "symbol_values", no "correct_pairs").
@@ -244,13 +247,13 @@ Use ONLY these fields per type:
       "unknown_a": 3, "unknown_b": 4, "unknown_equation": "A × __ = 12" }
 
 ════════════════════════════════════════
-STAGES — 6 items, id 1..6
+STAGES — 9 items, id 1..9
 ════════════════════════════════════════
 
 ROUNDS (required for new lessons):
-- Array "rounds" with **5** objects. Per-round "instruction" and all type-specific data (draggables, inputs, options, sequence, …) live **inside** each round.
-- **round_bonus_coins** (optional, default 2 on the engine): small reward after each of rounds 1–4. Stage **coins** is the main reward after round 5 (with AMAZING + success_message).
-- Round curve: (1) learn (2) new numbers (3) harder (4) twist (5) inverse or challenge.
+- Array "rounds" with **2–7 objects** (flexible — tutor decides per stage). Per-round "instruction" and all type-specific data (draggables, inputs, options, sequence, …) live **inside** each round.
+- **round_bonus_coins** (optional, default 2 on the engine): small reward after each non-final round. Stage **coins** is the main reward after the last round (with AMAZING + success_message).
+- Round curve: start simple, increase difficulty toward the final round. Across 2–7 rounds: open gently → build → challenge. Adapt curve length to round count.
   IMPORTANT: "Round 1 = simplest" is RELATIVE to the difficulty level in the user message.
   At difficulty 5–6: round 1 must already use ≥2 steps or a reverse equation — bare "4×3=?" is FORBIDDEN.
   At difficulty 7–8: round 1 must have multi-step/order-of-operations — single-op equations are FORBIDDEN.
@@ -260,7 +263,7 @@ ROUNDS (required for new lessons):
 - **legacy**: flat stage or "practice_tasks" still supported if "rounds" is absent.
 
 Each stage includes at minimum:
-"id" (integer 1..6, one per stage in lesson order), "type" (one of 15 OR "animation" for pure finale), "title", "background" (must follow the six-string island sequence when meta.island_key is set — see ISLAND section), "coins", "mechanic_reason", "success_message", "rounds" (5),
+"id" (integer 1..9, one per stage in lesson order), "type" (one of 15 OR "animation" for pure finale), "title", "background" (must follow the nine-string island sequence when meta.island_key is set — see ISLAND section), "coins", "mechanic_reason", "success_message", "rounds" (2–7),
 plus optional "round_bonus_coins" and "instruction" at stage level (only if no rounds — prefer per-round instruction).
 
 GLOBAL UI TEMPLATE RULE:
@@ -456,16 +459,18 @@ block1_script, block2_hint, block3_tips (array), block5_abstraction, weak_point_
 SELF-CHECK
 ════════════════════════════════════════
 
-□ 6 stages?
+□ 9 stages?
 □ meta.island_key set to one allowed token when the tutor draft specifies an island?
-□ Stage ids 1..6 and backgrounds exactly: PREFIX+1, PREFIX+2, "2", "3", PREFIX+3, PREFIX+4 where PREFIX = meta.island_key?
-□ Stages 3 and 4 backgrounds are literally "2" and "3" (not PREFIX+2 / PREFIX+3)?
+□ Stage ids 1..9 and backgrounds exactly: PREFIX+1, PREFIX+2, "2", "3", PREFIX+3, PREFIX+4, "2", PREFIX+3, PREFIX+4 where PREFIX = meta.island_key?
+□ Stages 3, 4, 7 backgrounds are literally "2", "3", "2" (not island-prefixed)?
 □ No cave_entrance, cave_deep, jungle_path, jungle_temple, stage1_generated, or stage6_generated in any stage background for island lessons?
 □ story.act1, act2, act3, goal present?
 □ story.greeting, act1, act2, act3, goal each include meta.student_name at least once?
 □ mechanic_reason on every stage?
 □ No duplicate consecutive types?
-□ timer_challenge not on stage 1 or 6?
-□ At least 3 different mechanics in lesson?
+□ timer_challenge not on stage 9?
+□ At least 6 different mechanics in stages 1–8?
+□ Stage 9 is boss_mix with 16 rounds (2 per mechanic for stages 1–8)?
+□ Each stage has 2–7 rounds (flexible)?
 □ images_needed has { key: "artifact", ... }?
 □ Valid JSON, no trailing commas

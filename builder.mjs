@@ -5312,6 +5312,9 @@ function buildHtml(
     if (sn === 4) return "3";
     if (sn === 5) return prefix + "3";
     if (sn === 6) return prefix + "4";
+    if (sn === 7) return "2";
+    if (sn === 8) return prefix + "3";
+    if (sn === 9) return prefix + "4";
     return "";
   }
 
@@ -5350,7 +5353,7 @@ function buildHtml(
 
   function finishLesson(){
     clearStage();
-    const stage6 = STAGES[5] || {};
+    const stage6 = STAGES[STAGES.length - 1] || {};
     const artifactFromJson = stage6.artifact || null;
     const hasAnimationStage = STAGES.some((s) => s.type === "animation");
     if(hasAnimationStage || (artifactFromJson && artifactFromJson.key)){
@@ -5374,7 +5377,7 @@ function buildHtml(
   }
 
   function showEndingStoryScreen(){
-    const stage6 = STAGES[5] || {};
+    const stage6 = STAGES[STAGES.length - 1] || {};
     const text = String(
       stage6.post_story_text ||
       "The Monkey King is free! The King thanks you and gives you his Crown. But Doctor Krit is still out there — and the next island will be even more dangerous. Well done, hero!"

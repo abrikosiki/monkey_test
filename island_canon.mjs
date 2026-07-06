@@ -12,6 +12,9 @@ export const ISLAND_STAGE_BG_KEYS = {
     4: "3",
     5: "cherry_blossom_island3",
     6: "cherry_blossom_island4",
+    7: "2",
+    8: "cherry_blossom_island3",
+    9: "cherry_blossom_island4",
   },
   jelly_bay_island: {
     1: "jelly_bay_island1",
@@ -20,6 +23,9 @@ export const ISLAND_STAGE_BG_KEYS = {
     4: "3",
     5: "jelly_bay_island3",
     6: "jelly_bay_island4",
+    7: "2",
+    8: "jelly_bay_island3",
+    9: "jelly_bay_island4",
   },
   snowy_peaks_island: {
     1: "snowy_peaks_island1",
@@ -28,6 +34,9 @@ export const ISLAND_STAGE_BG_KEYS = {
     4: "3",
     5: "snowy_peaks_island3",
     6: "snowy_peaks_island4",
+    7: "2",
+    8: "snowy_peaks_island3",
+    9: "snowy_peaks_island4",
   },
   neon_city_island: {
     1: "neon_city_island1",
@@ -36,6 +45,9 @@ export const ISLAND_STAGE_BG_KEYS = {
     4: "3",
     5: "neon_city_island3",
     6: "neon_city_island4",
+    7: "2",
+    8: "neon_city_island3",
+    9: "neon_city_island4",
   },
   blue_crab_island: {
     1: "blue_crab_island1",
@@ -44,6 +56,9 @@ export const ISLAND_STAGE_BG_KEYS = {
     4: "3",
     5: "blue_crab_island3",
     6: "blue_crab_island4",
+    7: "2",
+    8: "blue_crab_island3",
+    9: "blue_crab_island4",
   },
   antigravity_island: {
     1: "antigravity_island1",
@@ -52,6 +67,9 @@ export const ISLAND_STAGE_BG_KEYS = {
     4: "3",
     5: "antigravity_island3",
     6: "antigravity_island4",
+    7: "2",
+    8: "antigravity_island3",
+    9: "antigravity_island4",
   },
   mushroom_island: {
     1: "mushroom_island1",
@@ -60,6 +78,9 @@ export const ISLAND_STAGE_BG_KEYS = {
     4: "3",
     5: "mushroom_island3",
     6: "mushroom_island4",
+    7: "2",
+    8: "mushroom_island3",
+    9: "mushroom_island4",
   },
   crystal_island: {
     1: "crystal_island1",
@@ -68,6 +89,9 @@ export const ISLAND_STAGE_BG_KEYS = {
     4: "3",
     5: "crystal_island3",
     6: "crystal_island4",
+    7: "2",
+    8: "crystal_island3",
+    9: "crystal_island4",
   },
 };
 

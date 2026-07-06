@@ -43,7 +43,7 @@ const MECHANICS = [
   { id: "dice_multiply", label: "🎲 Dice Multiply", description: "Child rolls a dice and multiplies by a set number." },
   { id: "fortune_wheel", label: "🎡 Fortune Wheel", description: "Spin the wheel to land on a coin or artifact reward." },
   { id: "number_grid", label: "🗺️ Number Grid", description: "5×5 grid — child finds the cell containing the math answer." },
-  { id: "boss_mix", label: "⚔️ Boss Stage", description: "Final battle — 2 hard examples per each of the 5 stage mechanics (10 rounds total)." },
+  { id: "boss_mix", label: "⚔️ Boss Stage", description: "Final battle (stage 9) — 2 hard examples per each of the 8 stage mechanics (16 rounds total)." },
 ];
 
 const DEFAULT_STAGE_BACKGROUNDS = {
@@ -283,7 +283,7 @@ function buildAssetKeyConstraintBlock(catalog) {
     formatAllowedKeySection("ITEMS — draggables, items[], tap/symbol/corridor PNGs (movable or symbolic objects):", catalog.items),
     formatAllowedKeySection("TARGETS — drop_zones, goal_image_key, bowl_image_key, totem_targets (containers, bowls, chests, portals):", catalog.targets),
     formatAllowedKeySection("CHARACTERS — meta.character_key only:", catalog.characters),
-    formatAllowedKeySection("ARTIFACTS — stage 6 artifact.key and images_needed.artifact.key:", catalog.artifacts),
+    formatAllowedKeySection("ARTIFACTS — stage 9 artifact.key and images_needed.artifact.key:", catalog.artifacts),
     "Rules:",
     "- drop_zone.image_kind \"item\" only if that exact token also appears under ITEMS; otherwise omit image_kind or use a TARGET token.",
     "- If you need a jungle/beach/cave mood, still pick ONLY background tokens from BACKGROUNDS above.",
@@ -526,7 +526,7 @@ function applyDraftToLessonStages(lesson, draft) {
   for (let i = 0; i < stageCount; i++) {
     const lStage = lesson.stages[i] || {};
     const dStage = draft.stages[i] || {};
-    if (i === 5) dStage.mechanic = "boss_mix"; // stage 6 is always boss_mix
+    if (i === 8) dStage.mechanic = "boss_mix"; // stage 9 is always boss_mix
     lStage.type = dStage.mechanic || lStage.type;
     lStage.background = dStage.background || lStage.background;
     const dExamples = Array.isArray(dStage.examples) ? dStage.examples : [];
@@ -560,15 +560,15 @@ function applyDraftToLessonStages(lesson, draft) {
       }
     } else {
       const rounds = [];
-      for (let j = 0; j < Math.max(5, dExamples.length, lStage.rounds.length); j++) {
+      const roundCount = Math.max(dExamples.length, lStage.rounds.length);
+      for (let j = 0; j < roundCount; j++) {
         const ex = dExamples[j] || {};
         const existing = lStage.rounds[j] || {};
         if (ex.titleText && !lStage.title) lStage.title = ex.titleText;
         const r = mapExampleToRound(mech, ex, existing);
         rounds.push(r);
-        if (rounds.length >= 5) break;
       }
-      lStage.rounds = rounds.slice(0, 5);
+      lStage.rounds = rounds;
     }
 
     lesson.stages[i] = lStage;
@@ -581,10 +581,10 @@ const DRAG_MECHANICS = new Set(["drag_sort", "drag_group"]);
 function buildStrictManualStageShell(lesson, draft) {
   const srcStages = Array.isArray(lesson?.stages) ? lesson.stages : [];
   const out = [];
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < 9; i++) {
     const fromLesson = srcStages[i] || {};
     const fromDraft = draft?.stages?.[i] || {};
-    const mech = (i === 5 ? "boss_mix" : null) || fromDraft.mechanic || fromLesson.type || "fill_blank";
+    const mech = (i === 8 ? "boss_mix" : null) || fromDraft.mechanic || fromLesson.type || "fill_blank";
     // Drag mechanics need AI-generated draggables/drop_zones — keep their rounds
     const keepRounds = DRAG_MECHANICS.has(mech) ? (fromLesson.rounds || []) : [];
     out.push({
@@ -602,13 +602,13 @@ function buildStrictManualStageShell(lesson, draft) {
 }
 
 function stageTemplate(stageNumber, islandKey = "") {
-  const isBoss = stageNumber === 6;
+  const isBoss = stageNumber === 9;
   const mechanic = isBoss ? "boss_mix" : "fill_blank";
   return {
     stageNumber,
     mechanic,
     background: stageBackgroundFor(stageNumber, islandKey),
-    examples: Array.from({ length: isBoss ? 10 : 5 }, (_, idx) => {
+    examples: Array.from({ length: isBoss ? 16 : 5 }, (_, idx) => {
       const ex = exampleTemplate(stageNumber, idx + 1);
       if (isBoss) ex.bossMechanic = "";
       return ex;
@@ -644,7 +644,7 @@ function buildDefaultDraft() {
       topicKey: "custom_math_lesson",
       islandKey: defaultIslandKey,
     },
-    stages: Array.from({ length: 6 }, (_, idx) => stageTemplate(idx + 1, defaultIslandKey)),
+    stages: Array.from({ length: 9 }, (_, idx) => stageTemplate(idx + 1, defaultIslandKey)),
     status: "draft",
     updatedAt: new Date().toISOString(),
   };
@@ -877,15 +877,15 @@ LESSON CONTEXT:
 - Island key (canonical story + stage backgrounds): ${String(context.islandKey || "").trim() || "(none — lesson generator will still require one island from the system prompt list)"}
 
 ${formatRequiredStageBackgroundsBlock(context.islandKey)}
-If an island key is set above, every stage "background" in your JSON MUST match the REQUIRED STAGE BACKGROUNDS list — no other background tokens for stages 1–6.
+If an island key is set above, every stage "background" in your JSON MUST match the REQUIRED STAGE BACKGROUNDS list — no other background tokens for stages 1–9.
 
 RULES:
 - English only
 - Use English alphabet only (no Cyrillic letters in any text field)
 - Return ONLY valid JSON
 - Use root fields: meta, story, stages, images_needed, tutor_notes
-- Exactly 6 stages
-- Exactly 5 rounds per stage
+- Exactly 9 stages
+- Flexible rounds per stage (2–7, as specified by the tutor)
 - Keep the tutor's mechanics and example math content
 - Tutor input includes mechanics and math examples only. Invent story, villain, artifact names (text), instructions, and tutor notes — but every visual key (backgrounds, image_key, character_key, artifact image key) MUST be copied exactly from the ALLOWED ASSET KEYS block below. Never invent asset filenames or keys.
 - Use child system data in meta and completion flow
@@ -927,7 +927,7 @@ function validateDraft(draft) {
   const errors = [];
   if (!draft?.childCode) errors.push("Child code is required");
   if (!draft?.child) errors.push("Child must be fetched before generation");
-  if (!Array.isArray(draft?.stages) || draft.stages.length !== 6) errors.push("Draft must have 6 stages");
+  if (!Array.isArray(draft?.stages) || draft.stages.length !== 9) errors.push("Draft must have 9 stages");
   const islandKey = String(draft?.context?.islandKey || "")
     .trim()
     .replace(/\s+/g, "_");
@@ -939,7 +939,7 @@ function validateDraft(draft) {
     if (stage.mechanic === "boss_mix") {
       if (!Array.isArray(stage.examples)) errors.push(`Stage ${stage.stageNumber} examples must be an array`);
     } else {
-      if (!Array.isArray(stage.examples) || stage.examples.length !== 5) errors.push(`Stage ${stage.stageNumber} must have exactly 5 examples`);
+      if (!Array.isArray(stage.examples) || stage.examples.length < 2) errors.push(`Stage ${stage.stageNumber} must have at least 2 examples`);
     }
   }
   return errors;
@@ -953,23 +953,23 @@ function coerceMechanic(id, fallback) {
   return fallback;
 }
 
-/** Ensures 6 stages with safe mechanics and correct example counts. Stage 6 is always boss_mix. */
+/** Ensures 9 stages with safe mechanics and correct example counts. Stage 9 is always boss_mix. */
 function normalizeAutofillStages(rawStages, islandKey) {
   const list = Array.isArray(rawStages) ? rawStages : [];
   const islandBg = getIslandStageBackgroundKeys(String(islandKey || "").trim());
   const stages = [];
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < 9; i++) {
     const stageNumber = i + 1;
     const incoming = list[i] || {};
     let mechanic = coerceMechanic(incoming.mechanic, stageTemplate(stageNumber).mechanic);
-    if (stageNumber === 6) mechanic = "boss_mix";
+    if (stageNumber === 9) mechanic = "boss_mix";
 
     const isBoss = mechanic === "boss_mix";
     const examplesIn = Array.isArray(incoming.examples) ? incoming.examples : [];
     const examples = [];
 
     if (isBoss) {
-      for (let groupIdx = 0; groupIdx < 5; groupIdx++) {
+      for (let groupIdx = 0; groupIdx < 8; groupIdx++) {
         const stageMechanic = stages[groupIdx]?.mechanic || "fill_blank";
         for (let pairIdx = 0; pairIdx < 2; pairIdx++) {
           const exIdx = groupIdx * 2 + pairIdx;
@@ -979,7 +979,8 @@ function normalizeAutofillStages(rawStages, islandKey) {
         }
       }
     } else {
-      for (let r = 0; r < 5; r++) {
+      const roundCount = Math.max(examplesIn.length, 5);
+      for (let r = 0; r < roundCount; r++) {
         const base = exampleTemplate(stageNumber, r + 1);
         const ex = examplesIn[r] && typeof examplesIn[r] === "object" ? examplesIn[r] : {};
         examples.push({
@@ -1137,7 +1138,7 @@ async function generateAutofillDraft(body) {
   }
 
   const system = buildAutofillSystemPrompt(childBlock, tutorPrompt);
-  let userMsg = `Generate the lesson draft JSON for child code ${childCode}. Output tutorContext, context (topicLabel, topicKey, islandKey, knows, weakPoint, notes), and stages (6 unique mechanics, 5 rounds each); fields must match each chosen mechanic.`;
+  let userMsg = `Generate the lesson draft JSON for child code ${childCode}. Output tutorContext, context (topicLabel, topicKey, islandKey, knows, weakPoint, notes), and stages (9 stages, 8 unique mechanics + boss_mix stage 9, flexible rounds 2–7 per stage); fields must match each chosen mechanic.`;
   if (forcedIsland) {
     userMsg += `\n\nTUTOR-SELECTED ISLAND (mandatory — do not change):\n- context.islandKey MUST be exactly: "${forcedIsland}"\n- Set every stage "background" to the six-step pattern for this island (see ISLAND KEY section in system prompt).\n`;
   }
@@ -1175,7 +1176,7 @@ function validateLessonShape(lesson) {
   if (!ik) errors.push("Missing meta.island_key");
   else if (!CANONICAL_ISLAND_KEYS.includes(ik)) errors.push(`Invalid meta.island_key: ${ik}`);
   if (!lesson.story) errors.push("Missing story");
-  if (!Array.isArray(lesson.stages) || lesson.stages.length !== 6) errors.push("stages must be exactly 6");
+  if (!Array.isArray(lesson.stages) || lesson.stages.length !== 9) errors.push("stages must be exactly 9");
   return errors;
 }
 
@@ -1276,7 +1277,7 @@ async function buildLessonFromDraftNoAI(draft) {
       : {
           meta: {},
           story: {},
-          stages: Array.from({ length: 6 }, (_, i) => ({ id: i + 1, rounds: [] })),
+          stages: Array.from({ length: 9 }, (_, i) => ({ id: i + 1, rounds: [] })),
           images_needed: {},
           tutor_notes: [],
         };
