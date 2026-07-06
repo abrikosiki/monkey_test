@@ -5306,14 +5306,12 @@ function buildHtml(
     const prefix = String(islandKey || "").trim().replace(/\\s+/g, "_");
     if (!prefix) return "";
     const sn = index + 1;
-    if (sn === 1) return prefix + "1";
-    if (sn === 2) return prefix + "2";
-    if (sn === 3) return "2";
-    if (sn === 4) return "3";
-    if (sn === 5) return prefix + "3";
-    if (sn === 6) return prefix + "4";
-    if (sn === 7) return "2";
-    if (sn === 8) return prefix + "3";
+    // Iron rule: bg1×2, bg2×2, cave2×1, cave3×1, bg3×2, bg4×1(boss)
+    if (sn === 1 || sn === 2) return prefix + "1";
+    if (sn === 3 || sn === 4) return prefix + "2";
+    if (sn === 5) return "2";
+    if (sn === 6) return "3";
+    if (sn === 7 || sn === 8) return prefix + "3";
     if (sn === 9) return prefix + "4";
     return "";
   }
