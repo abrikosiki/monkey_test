@@ -299,6 +299,13 @@
         <p class="hint" style="margin-top:6px;margin-bottom:14px">Sets the lesson art sequence and the island story Doctor Krit arc.</p>
         <label class="muted" style="font-size:12px;display:block;margin-bottom:8px">Lesson focus</label>
         <textarea id="tutorPromptInput" class="textarea-lesson" placeholder="What are we working on today?&#10;e.g. division up to 30, confuses with subtraction,&#10;add word problems"></textarea>
+        <label style="display:flex;align-items:center;gap:10px;margin-top:14px;cursor:pointer;user-select:none">
+          <input type="checkbox" id="includeTheoryCheck" style="width:18px;height:18px;flex-shrink:0;cursor:pointer;accent-color:#4a9eff">
+          <span style="font-size:14px;line-height:1.4">
+            <strong>Add theory screen</strong>
+            <span class="muted" style="font-size:12px;display:block;margin-top:1px">Shows a visual explanation card before stage 1 — use for new concepts only</span>
+          </span>
+        </label>
         <button type="button" class="ghost btn-manual-mechanics" id="openManualMechanicsBtn" disabled>
           ✏️ Ручной режим: выбрать механики и заполнить все 6 этапов
         </button>
@@ -541,6 +548,9 @@
       if ($("islandSelect")) {
         state.draft.context.islandKey = $("islandSelect").value.trim();
       }
+      if ($("includeTheoryCheck")) {
+        state.draft.context.includeTheory = $("includeTheoryCheck").checked;
+      }
       state.draft.updatedAt = new Date().toISOString();
     }
 
@@ -572,6 +582,9 @@
         $("tutorPromptInput").value = state.draft.tutorPrompt || "";
       }
       fillIslandSelectOptions();
+      if ($("includeTheoryCheck")) {
+        $("includeTheoryCheck").checked = !!state.draft.context?.includeTheory;
+      }
       const fetchedCode = state.draft.child?.childCode || "";
       if (state.draft.confirmedChildCode !== fetchedCode) {
         state.draft.confirmedChildCode = "";

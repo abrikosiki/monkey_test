@@ -1624,50 +1624,59 @@ function buildHtml(
     .completion-reload:hover{transform:translateY(-2px)}
     .completion-reload:active{transform:translateY(3px)}
     .theory-screen{
-      position:fixed;inset:0;z-index:360;display:none;align-items:flex-start;justify-content:center;
-      background:rgba(4,10,22,.90);backdrop-filter:blur(10px);overflow-y:auto;padding:20px 0;
+      position:fixed;inset:0;z-index:360;display:none;align-items:center;justify-content:center;
+      background:rgba(4,10,22,.93);backdrop-filter:blur(14px);
     }
     .theory-screen.on{display:flex}
     .theory-card{
-      width:min(92vw,680px);background:rgba(8,18,33,.97);border:2px solid rgba(244,208,63,.45);
-      border-radius:22px;padding:28px 22px;display:flex;flex-direction:column;gap:16px;
-      animation:completionIn .35s ease both;margin:auto;
+      width:min(96vw,840px);background:rgba(8,18,33,.98);border:2px solid rgba(244,208,63,.5);
+      border-radius:26px;padding:32px 28px 26px;display:flex;flex-direction:column;gap:20px;
+      animation:completionIn .35s ease both;
+      box-shadow:0 32px 70px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.05);
     }
     .theory-title{
-      font-family:'Fredoka One',cursive;font-size:24px;color:var(--sand);
-      text-align:center;line-height:1.3;
+      font-family:'Fredoka One',cursive;font-size:28px;color:var(--sand);
+      text-align:center;line-height:1.2;text-shadow:0 2px 10px rgba(0,0,0,.4);
     }
-    .theory-story{font-size:16px;line-height:1.65;color:#c8dff0;text-align:center}
-    .theory-story p{margin:0 0 6px}
-    .theory-visuals{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+    .theory-fact{
+      font-size:16px;color:rgba(200,223,240,.65);text-align:center;margin-top:-12px;font-style:italic;
+    }
+    .theory-story{display:none}
+    .theory-visuals{display:flex;gap:12px;justify-content:center}
     .theory-visual{
-      background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);
-      border-radius:14px;padding:12px 14px;text-align:center;
-      display:flex;flex-direction:column;align-items:center;gap:5px;min-width:90px;
+      flex:1;max-width:230px;
+      background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.11);
+      border-radius:18px;padding:18px 14px 14px;text-align:center;
+      display:flex;flex-direction:column;align-items:center;gap:7px;
     }
-    .theory-vis-top{font-size:26px}
-    .theory-vis-arrow{color:rgba(255,255,255,.45);font-size:15px}
-    .theory-vis-parts{display:flex;gap:3px;align-items:center;font-size:20px}
-    .theory-vis-sep{color:rgba(255,255,255,.35);font-size:13px;margin:0 1px}
-    .theory-vis-label{font-size:13px;color:var(--sand);font-weight:700;margin-top:2px}
-    .theory-vis-name{font-size:12px;color:#90b8d8}
-    .theory-rule{
-      background:rgba(255,255,255,.05);border:1px solid rgba(255,200,50,.22);
-      border-radius:12px;padding:13px 15px;display:flex;flex-direction:column;gap:8px;
+    .theory-vis-top{display:flex;align-items:center;justify-content:center;line-height:1}
+    .theory-vis-img{width:clamp(44px,5vw,62px);height:clamp(44px,5vw,62px);object-fit:contain;filter:drop-shadow(0 3px 10px rgba(0,0,0,.45))}
+    .theory-vis-arrow{color:rgba(255,255,255,.3);font-size:18px}
+    .theory-vis-parts{display:flex;gap:5px;align-items:center;flex-wrap:wrap;justify-content:center}
+    .theory-vis-part-img{width:clamp(16px,1.9vw,26px);height:clamp(16px,1.9vw,26px);object-fit:contain;filter:drop-shadow(0 2px 4px rgba(0,0,0,.35))}
+    .theory-vis-sep{color:rgba(255,255,255,.22);font-size:14px;margin:0 1px}
+    .theory-vis-label{font-size:17px;color:var(--sand);font-weight:700;margin-top:2px}
+    .theory-vis-eq{font-size:clamp(13px,1.5vw,18px);color:var(--sand);font-weight:700;line-height:1.35;text-align:center;margin-top:4px;letter-spacing:.01em}
+    .theory-vis-name{font-size:13px;color:#90b8d8;letter-spacing:.03em}
+    .theory-examples{display:flex;gap:10px;justify-content:center}
+    .theory-ex-pill{
+      flex:1;max-width:360px;border-radius:14px;padding:12px 16px;
+      display:flex;align-items:center;gap:10px;font-size:15px;
     }
-    .theory-rule-warn{color:#ffd94a;font-size:15px;font-weight:700}
-    .theory-rule-row{display:flex;align-items:center;gap:8px;font-size:15px;flex-wrap:wrap}
-    .theory-rule-ok{color:#5ecc7b;font-weight:700;white-space:nowrap}
-    .theory-rule-bad{color:#e85555;font-weight:700;white-space:nowrap}
-    .theory-rule-icons{display:flex;gap:4px;align-items:center;font-size:18px}
+    .theory-ex-ok{background:rgba(94,204,123,.10);border:1.5px solid rgba(94,204,123,.28)}
+    .theory-ex-bad{background:rgba(232,85,85,.08);border:1.5px solid rgba(232,85,85,.24)}
+    .theory-ex-label{font-weight:700;white-space:nowrap}
+    .theory-ex-icons{display:flex;gap:4px;align-items:center;font-size:22px}
+    .theory-rule{display:none}
     .theory-gotit{
-      align-self:center;padding:12px 38px;border:none;border-radius:999px;cursor:pointer;
-      background:linear-gradient(135deg,#f9d423,#e67e22);color:#1a0a00;
-      font-family:'Fredoka One',cursive;font-size:21px;
-      box-shadow:0 5px 0 #8b4513;transition:transform .1s,box-shadow .1s;
+      align-self:stretch;padding:15px 38px;border:none;border-radius:999px;cursor:pointer;
+      background:linear-gradient(135deg,#ffcf66,#f3a93f);color:#1d1606;
+      font-family:'Fredoka One',cursive;font-size:24px;letter-spacing:.03em;
+      box-shadow:0 5px 0 #9b6b21,0 10px 26px rgba(0,0,0,.35);
+      transition:transform .1s,box-shadow .1s,filter .1s;
     }
-    .theory-gotit:hover{transform:translateY(-2px)}
-    .theory-gotit:active{transform:translateY(3px);box-shadow:0 2px 0 #8b4513}
+    .theory-gotit:hover{transform:translateY(-2px);filter:brightness(1.08)}
+    .theory-gotit:active{transform:translateY(3px);box-shadow:0 2px 0 #9b6b21}
     .story-screen,.shop-screen{
       position:fixed;inset:0;z-index:340;display:none;align-items:center;justify-content:center;
       background:rgba(4,10,22,.82);backdrop-filter:blur(8px);
@@ -2305,13 +2314,13 @@ function buildHtml(
       if(target) return target;
       const fb = firstMapPath(TARGETS_MAP);
       if(fb) return fb;
-      return "assets/targets/" + key + ".png";
+      return "assets/targets/" + key + ".webp";
     }
     const item = fuzzyFindPath(ITEMS_MAP, key);
     if(item) return item;
     const fbItem = firstMapPath(ITEMS_MAP);
     if(fbItem) return fbItem;
-    return "assets/items/" + key + ".png";
+    return "assets/items/" + key + ".webp";
   }
 
   function placeholderEmoji(key){
@@ -2333,12 +2342,12 @@ function buildHtml(
   function backgroundPath(bgKey){
     const k = String(bgKey || "").trim();
     if(!k) return "";
-    if(k === "2") return "assets/backgrounds/2.png";
-    if(k === "3") return "assets/backgrounds/3.png";
-    if(/_island[1-4]$/.test(k)) return "assets/backgrounds/" + k + ".PNG";
+    if(k === "2") return "assets/backgrounds/2.webp";
+    if(k === "3") return "assets/backgrounds/3.webp";
+    if(/_island[1-4]$/.test(k)) return "assets/backgrounds/" + k + ".webp";
     const mapped = fuzzyFindPath(BACKGROUND_MAP, k);
     if(mapped) return mapped;
-    return "assets/backgrounds/" + k + ".png";
+    return "assets/backgrounds/" + k + ".webp";
   }
 
   /** Ordered URLs for stage BG img — disk map first, then common extensions (PNG casing varies). */
@@ -2347,7 +2356,7 @@ function buildHtml(
     if(!k) return [];
     const primary = backgroundPath(k);
     const base = "assets/backgrounds/" + k;
-    const extras = [".PNG", ".png", ".webp", ".jpg", ".jpeg"].map((ext) => base + ext);
+    const extras = [".webp", ".PNG", ".png", ".jpg", ".jpeg"].map((ext) => base + ext);
     return [...new Set([primary, ...extras].filter(Boolean))];
   }
 
@@ -2386,7 +2395,7 @@ function buildHtml(
     if(ARTIFACT_MAP[key]) return ARTIFACT_MAP[key];
     const fuzzy = fuzzyFindPath(ARTIFACT_MAP, key);
     if(fuzzy) return fuzzy;
-    return "assets/artifacts/" + key + ".png";
+    return "assets/artifacts/" + key + ".webp";
   }
 
   const PRELOADED_ASSETS = new Set();
@@ -5720,58 +5729,79 @@ function buildHtml(
     const card = $("theoryCard");
     card.innerHTML = "";
 
+    // Title
     const title = document.createElement("div");
     title.className = "theory-title";
     title.textContent = theory.title || "";
     card.appendChild(title);
 
-    const storyLines = Array.isArray(theory.story) ? theory.story : (theory.story ? [theory.story] : []);
-    if(storyLines.length){
-      const story = document.createElement("div");
-      story.className = "theory-story";
-      storyLines.forEach(line => {
-        const p = document.createElement("p");
-        p.textContent = line;
-        story.appendChild(p);
-      });
-      card.appendChild(story);
+    // One-line fact (rule.text only — no story paragraphs)
+    if(theory.rule && theory.rule.text){
+      const fact = document.createElement("div");
+      fact.className = "theory-fact";
+      fact.textContent = theory.rule.text;
+      card.appendChild(fact);
     }
 
+    // Visual examples — two rendering modes: "split" (fractions) and "equation" (everything else)
     if(Array.isArray(theory.visuals) && theory.visuals.length){
       const wrap = document.createElement("div");
       wrap.className = "theory-visuals";
       theory.visuals.forEach(v => {
         const box = document.createElement("div");
         box.className = "theory-visual";
+
+        // Helper: build an <img> for an item key
+        function makeItemImg(key, cls){
+          const img = document.createElement("img");
+          img.className = cls;
+          img.src = imagePathByKey(key, "item");
+          img.alt = key || "";
+          img.onerror = function(){ this.style.display="none"; };
+          return img;
+        }
+
+        // Top icon
         const top = document.createElement("div");
         top.className = "theory-vis-top";
-        top.textContent = v.icon || "•";
+        top.appendChild(makeItemImg(v.icon, "theory-vis-img"));
         box.appendChild(top);
-        const arrow = document.createElement("div");
-        arrow.className = "theory-vis-arrow";
-        arrow.textContent = "↓";
-        box.appendChild(arrow);
-        const parts = document.createElement("div");
-        parts.className = "theory-vis-parts";
-        const n = Number(v.parts) || 2;
-        for(let i = 0; i < n; i++){
-          if(i > 0){
-            const sep = document.createElement("span");
-            sep.className = "theory-vis-sep";
-            sep.textContent = "|";
-            parts.appendChild(sep);
+
+        if(v.type === "equation"){
+          // Equation mode: image + math equation below
+          if(v.label){
+            const eq = document.createElement("div");
+            eq.className = "theory-vis-eq";
+            eq.textContent = v.label;
+            box.appendChild(eq);
           }
-          const s = document.createElement("span");
-          s.textContent = v.icon || "•";
-          parts.appendChild(s);
+        } else {
+          // Split mode (fractions): image → N small images in a row
+          const arrow = document.createElement("div");
+          arrow.className = "theory-vis-arrow";
+          arrow.textContent = "↓";
+          box.appendChild(arrow);
+          const partsRow = document.createElement("div");
+          partsRow.className = "theory-vis-parts";
+          const n = Math.max(2, Math.min(6, Number(v.parts) || 2));
+          for(let i = 0; i < n; i++){
+            if(i > 0){
+              const sep = document.createElement("span");
+              sep.className = "theory-vis-sep";
+              sep.textContent = "|";
+              partsRow.appendChild(sep);
+            }
+            partsRow.appendChild(makeItemImg(v.icon, "theory-vis-part-img"));
+          }
+          box.appendChild(partsRow);
+          if(v.label){
+            const lbl = document.createElement("div");
+            lbl.className = "theory-vis-label";
+            lbl.textContent = v.label;
+            box.appendChild(lbl);
+          }
         }
-        box.appendChild(parts);
-        if(v.label){
-          const lbl = document.createElement("div");
-          lbl.className = "theory-vis-label";
-          lbl.textContent = v.label;
-          box.appendChild(lbl);
-        }
+
         if(v.name){
           const nm = document.createElement("div");
           nm.className = "theory-vis-name";
@@ -5783,49 +5813,43 @@ function buildHtml(
       card.appendChild(wrap);
     }
 
-    if(theory.rule && typeof theory.rule === "object"){
-      const ruleBox = document.createElement("div");
-      ruleBox.className = "theory-rule";
-      if(theory.rule.text){
-        const warn = document.createElement("div");
-        warn.className = "theory-rule-warn";
-        warn.textContent = "⚠️ " + theory.rule.text;
-        ruleBox.appendChild(warn);
-      }
-      const makeRuleRow = (badgeClass, prefix, label, icons) => {
+    // Correct / wrong examples as compact pills
+    if(theory.rule && (theory.rule.correct_label || theory.rule.wrong_label)){
+      const exRow = document.createElement("div");
+      exRow.className = "theory-examples";
+      const makeEx = (cls, prefix, label, icons) => {
         if(!label) return;
-        const row = document.createElement("div");
-        row.className = "theory-rule-row";
-        const badge = document.createElement("span");
-        badge.className = badgeClass;
-        badge.textContent = prefix + " " + label;
-        row.appendChild(badge);
+        const pill = document.createElement("div");
+        pill.className = "theory-ex-pill " + cls;
+        const lbl = document.createElement("span");
+        lbl.className = "theory-ex-label";
+        lbl.style.color = cls.includes("ok") ? "#5ecc7b" : "#e85555";
+        lbl.textContent = prefix + " " + label;
+        pill.appendChild(lbl);
         if(Array.isArray(icons) && icons.length){
-          const icWrap = document.createElement("div");
-          icWrap.className = "theory-rule-icons";
-          icons.forEach((ic, i) => {
-            if(i > 0){
-              const sep = document.createElement("span");
-              sep.style.cssText = "color:rgba(255,255,255,.35);font-size:13px";
-              sep.textContent = "|";
-              icWrap.appendChild(sep);
-            }
-            const s = document.createElement("span");
-            s.textContent = ic;
-            icWrap.appendChild(s);
+          const ic = document.createElement("div");
+          ic.className = "theory-ex-icons";
+          icons.forEach(key => {
+            const img = document.createElement("img");
+            img.src = imagePathByKey(key, "item");
+            img.alt = key || "";
+            img.style.cssText = "width:28px;height:28px;object-fit:contain;filter:drop-shadow(0 2px 4px rgba(0,0,0,.4))";
+            img.onerror = function(){ this.style.display="none"; };
+            ic.appendChild(img);
           });
-          row.appendChild(icWrap);
+          pill.appendChild(ic);
         }
-        ruleBox.appendChild(row);
+        exRow.appendChild(pill);
       };
-      makeRuleRow("theory-rule-ok", "✅", theory.rule.correct_label, theory.rule.correct_icons);
-      makeRuleRow("theory-rule-bad", "❌", theory.rule.wrong_label, theory.rule.wrong_icons);
-      card.appendChild(ruleBox);
+      makeEx("theory-ex-ok", "✅", theory.rule.correct_label, theory.rule.correct_icons);
+      makeEx("theory-ex-bad", "❌", theory.rule.wrong_label, theory.rule.wrong_icons);
+      card.appendChild(exRow);
     }
 
+    // GO button
     const btn = document.createElement("button");
     btn.className = "theory-gotit";
-    btn.textContent = "Got it! →";
+    btn.textContent = "Let's go! →";
     btn.addEventListener("click", () => {
       $("theoryScreen").classList.remove("on");
       onDone();

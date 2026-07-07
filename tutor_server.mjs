@@ -915,7 +915,7 @@ LESSON CONTEXT:
 - Difficulty level (1–10): ${context.difficultyLevel != null ? context.difficultyLevel : "(not set — use difficulty label above to infer: easy→3, medium→5, hard→8)"}
 - Topic label: ${context.topicLabel}
 - Topic key: ${context.topicKey}
-- Island key (canonical story + stage backgrounds): ${String(context.islandKey || "").trim() || "(none — lesson generator will still require one island from the system prompt list)"}
+- Island key (canonical story + stage backgrounds): ${String(context.islandKey || "").trim() || "(none — lesson generator will still require one island from the system prompt list)"}${context.learningObjective ? `\n- Learning objective: ${context.learningObjective}` : ""}${context.keyConcepts?.length ? `\n- Key concepts (use these for theory.visuals and theory.rule): ${context.keyConcepts.join(", ")}` : ""}
 
 ${formatRequiredStageBackgroundsBlock(context.islandKey)}
 If an island key is set above, every stage "background" in your JSON MUST match the REQUIRED STAGE BACKGROUNDS list — no other background tokens for stages 1–9.
@@ -924,7 +924,7 @@ RULES:
 - English only
 - Use English alphabet only (no Cyrillic letters in any text field)
 - Return ONLY valid JSON
-- Use root fields: meta, story, stages, images_needed, tutor_notes
+- Use root fields: meta, story, theory, stages, images_needed, tutor_notes (theory is optional — see instruction below)
 - Exactly 9 stages
 - Flexible rounds per stage (2–7, as specified by the tutor)
 - Keep the tutor's mechanics and example math content
@@ -935,6 +935,10 @@ RULES:
 - Global: never show intermediate '+2' round popup; after correct round move directly to next round.
 - Opening screen story must be highly engaging for kids 5-9: cinematic island intro, silly-not-scary monkey villain with a specific ridiculous action causing the math problem, personal hero mission by child name, and clear artifact treasure with magical power.
 - Story JSON should include: island_name, villain, artifact_name, artifact_emoji, artifact_power, greeting, act1, act2, act3, goal.
+${context.includeTheory
+  ? `- Theory screen: the tutor has requested a theory screen. Include a "theory" object with: title (5-8 words, island-themed), rule.text (ONE sentence — the core math fact), rule.correct_label + correct_icons, rule.wrong_label + wrong_icons, and visuals array (2-4 items with icon/type/parts/label/name). Use type "split" for fractions/division visuals, "equation" for everything else.`
+  : `- Theory screen: the tutor has NOT requested a theory screen. Set "theory": null in the output — do not generate any theory content.`
+}
 - drag_sort template: one draggable PNG per number from tutor numbers list, each token has its own number badge, tokens start in lower area, target lines centered higher, rule defines exact final order.
 - drag_group template: two large group squares with centered names from group1/group2 names; numbers list defines exact token count; correct drop glows green and token (image+number) disappears; wrong drop flashes red and token returns.
 - pattern_input template: sequence_inline like beach_lesson stage 3; red only after input finish (blur/change); green on correct; show NEXT button after correct; NEXT opens next round immediately with no +2 round popup.
@@ -1904,6 +1908,13 @@ const server = http.createServer(async (req, res) => {
 
       // Run autofill with this pre-built prompt
       const autofillResult = await generateAutofillDraft({ childCode, tutorPrompt });
+      // Inject plan-level metadata into draft context so lesson generator can build theory
+      if (autofillResult && typeof autofillResult === "object") {
+        autofillResult.context = autofillResult.context || {};
+        if (entry.key_concepts?.length) autofillResult.context.keyConcepts = entry.key_concepts;
+        if (entry.learning_objective) autofillResult.context.learningObjective = entry.learning_objective;
+        writeJson(DRAFT_FILE, autofillResult);
+      }
       sendJson(res, 200, { ok: true, draft: autofillResult, lessonEntry: entry });
       return;
     }

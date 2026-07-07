@@ -11,6 +11,7 @@ OUTPUT ROOT STRUCTURE
 {
   "meta": { ... },
   "story": { ... },
+  "theory": { ... },
   "stages": [ ... exactly 9 stages ... ],
   "images_needed": { ... },
   "tutor_notes": { ... }
@@ -52,6 +53,73 @@ AGE CALIBRATION:
 - age 7-8: medium sentences, playful surprise, one vivid unexpected detail.
 - age 9: richer wording allowed, slightly more complex narrative tone.
 
+════════════════════════════════════════
+THEORY SCREEN (shown once before stage 1)
+════════════════════════════════════════
+
+"theory": {
+  "title": "Short punchy title (5-8 words, island-themed, exciting)",
+  "rule": {
+    "text": "The core math rule in ONE sentence — plain language, no jargon.",
+    "correct_label": "2-4 word label for the correct example",
+    "correct_icons": ["item_key", "item_key"],
+    "wrong_label": "2-4 word label for the wrong example",
+    "wrong_icons": ["item_key", "item_key", "item_key"]
+  },
+  "visuals": [
+    { "type": "split|equation", "icon": "emoji", "parts": 2, "label": "...", "name": "..." },
+    ...
+  ]
+}
+
+ISLAND → ITEM KEYS (use these stems for "icon" — they map to real PNG/WebP images in assets/items/):
+  cherry_blossom_island → cherry, butterfly, leaf, hibiscus
+  jelly_bay_island      → jellyfish, bubble, coral, pearl_blue, shell_blue, starfish
+  snowy_peaks_island    → stone_blue, bamboo, leaf, pearl_blue
+  neon_city_island      → key, candy, lollipop, cookie, box_close
+  blue_crab_island      → crab_blue, coral, starfish, shell_red, pearl_red
+  antigravity_island    → stone_blue, bamboo, leaf, pearl_blue
+  mushroom_island       → mushroom, spore, leaf, bamboo
+  crystal_island        → stone_blue, pearl_blue, pearl_red, shell_blue
+
+VISUAL TYPES — choose type per visual based on the topic:
+
+  type: "split"   — one thing divided into equal parts (FRACTIONS ONLY)
+    icon  = item key from the island list above (e.g. "mushroom")
+    parts = integer 2–6 (how many equal pieces)
+    label = fraction notation: "1/2", "1/3", "3/4"
+    name  = English name: "One half", "One third", "Three quarters"
+    Example for fractions lesson on mushroom_island:
+      {"type":"split","icon":"mushroom","parts":2,"label":"1/2","name":"One half"}
+      {"type":"split","icon":"mushroom","parts":3,"label":"1/3","name":"One third"}
+      {"type":"split","icon":"mushroom","parts":4,"label":"1/4","name":"One quarter"}
+
+  type: "equation" — any topic that is NOT splitting (multiplication, addition, unknowns, place value, etc.)
+    icon  = item key from the island list above
+    label = the full worked example as a short math string
+    name  = what this example shows (3–5 words)
+    (parts field is ignored for this type — omit it)
+    Examples by topic:
+      Multiplication:    {"type":"equation","icon":"crab_blue","label":"3 × 4 = 12","name":"Three groups of four"}
+      Division:          {"type":"equation","icon":"crab_blue","label":"12 ÷ 4 = 3","name":"Sharing equally"}
+      Missing number:    {"type":"equation","icon":"stone_blue","label":"? + 6 = 10  →  10 − 6 = 4","name":"Work backwards"}
+      Addition to 100:   {"type":"equation","icon":"cherry","label":"47 + 35 = 82","name":"Add tens then units"}
+      Place value:       {"type":"equation","icon":"pearl_blue","label":"324 = 300 + 20 + 4","name":"Hundreds, Tens, Units"}
+      Number bonds:      {"type":"equation","icon":"mushroom","label":"6 + 4 = 10","name":"Bond to 10"}
+      Commutative law:   {"type":"equation","icon":"pearl_red","label":"3 × 5 = 5 × 3","name":"Swap — same answer"}
+      Times table row:   {"type":"equation","icon":"jellyfish","label":"7 × 8 = 56","name":"Seven eights"}
+
+THEORY RULES:
+- title: 5-8 words, ties the math concept to the island villain/theme. Exciting, not textbook.
+- rule.text: ONE sentence only. The single most important math fact for this lesson. No "remember that" preamble.
+- rule.correct_icons / wrong_icons: use item keys from the island list. correct = equal/valid example, wrong = unequal/invalid.
+- visuals: 2-4 items total. Use type "split" ONLY for fraction lessons; use "equation" for everything else.
+- "icon" must be a key from the island's item list above — never an emoji, never an invented key.
+- Each visual's label must be a complete, correct math expression a child can read instantly.
+- SKIP "theory" entirely only for pure speed/fluency drills where there is no new concept.
+- NO story text. NO multi-sentence explanation. Visuals + one fact + GO button only.
+
+════════════════════════════════════════
 ISLAND KEY (technical — ties story + PNG backgrounds):
 - Set "meta"."island_key" to exactly ONE snake_case token from this list (must match the tutor draft / user message when an island key is given):
   cherry_blossom_island | jelly_bay_island | snowy_peaks_island | neon_city_island | blue_crab_island | antigravity_island | mushroom_island | crystal_island
@@ -467,6 +535,10 @@ SELF-CHECK
 □ Stage ids 1..9 and backgrounds exactly: PREFIX+1, PREFIX+1, PREFIX+2, PREFIX+2, "2", "3", PREFIX+3, PREFIX+3, PREFIX+4 where PREFIX = meta.island_key?
 □ Stages 5 and 6 backgrounds are literally "2" and "3" (not island-prefixed)?
 □ No cave_entrance, cave_deep, jungle_path, jungle_temple, stage1_generated, or stage6_generated in any stage background for island lessons?
+□ theory present? (unless pure fluency drill — then omit)
+□ theory.title is 5-8 words, island-themed?
+□ theory.rule.text is ONE sentence?
+□ theory.visuals has 2-4 items with icon/parts/label/name?
 □ story.act1, act2, act3, goal present?
 □ story.greeting, act1, act2, act3, goal each include meta.student_name at least once?
 □ mechanic_reason on every stage?
