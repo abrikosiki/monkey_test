@@ -19,12 +19,19 @@ const PREFERRED_PORT = Number(process.env.PORT || process.env.TUTOR_UI_PORT || 8
 const SYSTEM_PROMPT = fs.readFileSync(path.join(__dirname, "system_prompt.txt"), "utf-8");
 const PLAN_PROMPT = fs.readFileSync(path.join(__dirname, "plan_prompt.txt"), "utf-8");
 const UI_FILE = path.join(__dirname, "tutor_ui.html");
+// Mutable data that must survive redeploys (tutor-created plans, generated lessons).
+// On Railway, set PERSIST_DIR to a mounted volume (e.g. /data) so this data is not
+// wiped when the container is rebuilt. Locally it defaults to the repo dir, so all
+// paths stay exactly as before.
+const PERSIST_DIR = process.env.PERSIST_DIR || __dirname;
+if (!fs.existsSync(PERSIST_DIR)) fs.mkdirSync(PERSIST_DIR, { recursive: true });
+
 const OUT_FILE = path.join(__dirname, "output_lesson.json");
-const GENERATED_LESSONS_DIR = path.join(__dirname, "generated_lessons");
+const GENERATED_LESSONS_DIR = path.join(PERSIST_DIR, "generated_lessons");
 const DATA_DIR = path.join(__dirname, "tutor_data");
 const DRAFT_FILE = path.join(DATA_DIR, "current_draft.json");
 const CHILDREN_FILE = path.join(DATA_DIR, "children.json");
-const PLANS_DIR = path.join(DATA_DIR, "plans");
+const PLANS_DIR = path.join(PERSIST_DIR, "tutor_data", "plans");
 if (!fs.existsSync(PLANS_DIR)) fs.mkdirSync(PLANS_DIR, { recursive: true });
 const generationJobs = new Map();
 
@@ -1752,10 +1759,10 @@ const server = http.createServer(async (req, res) => {
       const fileName = buildGeneratedHtmlFilename(lesson);
       const sessionId = Date.now() + "_" + Math.random().toString(36).slice(2, 8);
       const sessionFile = path.join(DATA_DIR, `session_${sessionId}.json`);
-      const outputRelativePath = path.join("generated_lessons", fileName);
+      const outputPath = path.join(GENERATED_LESSONS_DIR, fileName);
       try {
         fs.writeFileSync(sessionFile, JSON.stringify(lesson, null, 2), "utf-8");
-        const output = await runNodeScript(["builder.mjs", sessionFile, outputRelativePath]);
+        const output = await runNodeScript(["builder.mjs", sessionFile, outputPath]);
         sendJson(res, 200, {
           ok: true,
           output,

@@ -1,5 +1,12 @@
 # Railway: билд через Dockerfile из корня репозитория.
 # Переменные в Dashboard → сервис → Variables (те же, что в локальном .env).
+#
+# ВАЖНО (сохранность данных): планы обучения и сгенерированные уроки создаются в
+# рантайме и по умолчанию лежат в файловой системе контейнера, которая стирается при
+# каждом деплое. Чтобы они сохранялись:
+#   1. Dashboard → сервис → Volumes → New Volume, mount path = /data
+#   2. Dashboard → сервис → Variables → добавить PERSIST_DIR=/data
+# После этого сервер хранит tutor_data/plans и generated_lessons на volume.
 
 [build]
 builder = "DOCKERFILE"
