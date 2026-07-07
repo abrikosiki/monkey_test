@@ -1885,6 +1885,7 @@ const server = http.createServer(async (req, res) => {
     if (req.method === "POST" && url.pathname === "/api/lesson-from-plan") {
       const body = JSON.parse((await readBody(req)) || "{}");
       const { childCode, lessonNum } = body;
+      const includeTheory = body.includeTheory === true;
       if (!childCode || !lessonNum) { sendJson(res, 400, { ok: false, error: "childCode and lessonNum required" }); return; }
       const file = path.join(PLANS_DIR, `${childCode}.json`);
       if (!fs.existsSync(file)) { sendJson(res, 404, { ok: false, error: "Plan not found for this child" }); return; }
@@ -1913,9 +1914,9 @@ const server = http.createServer(async (req, res) => {
         autofillResult.context = autofillResult.context || {};
         if (entry.key_concepts?.length) autofillResult.context.keyConcepts = entry.key_concepts;
         if (entry.learning_objective) autofillResult.context.learningObjective = entry.learning_objective;
-        // Plan lessons introduce new concepts — request the theory screen so the
-        // generator emits a "theory" object (shown before stage 1).
-        autofillResult.context.includeTheory = true;
+        // Theory screen is opt-in per lesson (checkbox on the plan card). When on,
+        // the generator emits a "theory" object shown before stage 1.
+        autofillResult.context.includeTheory = includeTheory;
         writeJson(DRAFT_FILE, autofillResult);
       }
       sendJson(res, 200, { ok: true, draft: autofillResult, lessonEntry: entry });

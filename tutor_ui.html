@@ -1992,7 +1992,11 @@
 
         const actionHtml = isDone
           ? `<div class="done-badge">✅ Done${lesson.file ? ` <a href="/generated-lessons/${lesson.file}" target="_blank" style="color:var(--blue);font-size:11px;margin-left:4px">open →</a>` : ""}</div>`
-          : `<button class="primary btn-create" onclick="createLessonFromPlan('${plan.child_code}', ${lesson.num})">Create Lesson ${lesson.num}</button>`;
+          : `<label style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px;cursor:pointer;user-select:none;font-size:13px;color:var(--muted,#9fb4c9)">
+               <input type="checkbox" id="theoryCheck-${lesson.num}" style="width:16px;height:16px;flex-shrink:0;accent-color:#4a9eff;cursor:pointer">
+               <span>📖 Add theory screen</span>
+             </label>
+             <button class="primary btn-create" onclick="createLessonFromPlan('${plan.child_code}', ${lesson.num})">Create Lesson ${lesson.num}</button>`;
 
         return `<div class="lesson-card ${cls}">
           <div class="lesson-num">Lesson ${lesson.num}</div>
@@ -2008,6 +2012,7 @@
 
     async function createLessonFromPlan(childCode, lessonNum) {
       const btn = event.target;
+      const includeTheory = document.getElementById(`theoryCheck-${lessonNum}`)?.checked === true;
       btn.disabled = true;
       btn.textContent = "Generating…";
       const progressEl = $("planLessonGenProgress");
@@ -2018,7 +2023,7 @@
       resultEl.classList.add("hidden");
       statusEl.textContent = "1/3 — Preparing draft…";
       try {
-        const data = await post("/api/lesson-from-plan", { childCode, lessonNum });
+        const data = await post("/api/lesson-from-plan", { childCode, lessonNum, includeTheory });
         if (!data.ok) throw new Error(data.error);
         state.draft = data.draft || state.draft;
         state.planContext = { childCode, lessonNum };
