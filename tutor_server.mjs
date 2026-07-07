@@ -1827,14 +1827,24 @@ const server = http.createServer(async (req, res) => {
       if (!childCode) { sendJson(res, 400, { ok: false, error: "childCode required" }); return; }
       const child = await fetchChildRecord(childCode);
       const pkg = Number(profile?.package) || 8;
+      const ageVal = profile?.age || child.age || "unknown";
+      const genderVal = profile?.gender || "not specified";
       const userMsg = [
-        `Child: ${child.name}, Code: ${child.childCode}`,
-        `Grade / age: ${profile?.grade || "unknown"}`,
-        `Topics mastered: ${profile?.mastered || "basic arithmetic"}`,
-        `Weak points: ${profile?.weak || "none specified"}`,
-        `Strong points: ${profile?.strong || "none specified"}`,
+        `== CHILD PROFILE ==`,
+        `Name: ${child.name}`,
+        `Age: ${ageVal} years old`,
+        `Gender: ${genderVal}`,
+        `Grade / year group: ${profile?.grade || "not specified"}`,
+        `Game level (adventures completed): ${child.level}`,
+        ``,
+        `== DIAGNOSTIC ==`,
+        `Topics mastered: ${profile?.mastered || "not specified"}`,
+        `Weak points: ${profile?.weak || "not specified"}`,
+        `Strong points: ${profile?.strong || "not specified"}`,
+        ``,
+        `== PLAN REQUEST ==`,
         `Lesson package: ${pkg} lessons`,
-        `Current game level: ${child.level}`,
+        `Generate a personalised ${pkg}-lesson learning plan for this child.`,
       ].join("\n");
 
       const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -1844,8 +1854,8 @@ const server = http.createServer(async (req, res) => {
           { role: "system", content: PLAN_PROMPT },
           { role: "user", content: userMsg },
         ],
-        temperature: 0.7,
-        max_tokens: 3000,
+        temperature: 0.4,
+        max_tokens: 6000,
       });
       const raw = aiRes.choices[0]?.message?.content || "[]";
       let lessons;
@@ -1881,13 +1891,16 @@ const server = http.createServer(async (req, res) => {
       // Build a rich tutorPrompt from the plan entry
       const tutorPrompt = [
         `Topic: ${entry.topic}`,
+        entry.learning_objective ? `Learning objective: ${entry.learning_objective}` : "",
         `Island: ${entry.island}`,
         `Difficulty: ${entry.difficulty} out of 10`,
-        `Mechanics for stages 1-8: ${(entry.mechanics || []).join(", ")}`,
+        `Mechanics for stages 1-8 (use exactly these, in any order): ${(entry.mechanics || []).join(", ")}`,
         `Stage 9: boss_mix`,
+        entry.key_concepts?.length ? `Key concepts to cover: ${entry.key_concepts.join(", ")}` : "",
         entry.rationale ? `Context: ${entry.rationale}` : "",
         plan.profile?.weak ? `Child weak points: ${plan.profile.weak}` : "",
-      ].filter(Boolean).join(". ");
+        entry.assessment_focus ? `Tutor note: ${entry.assessment_focus}` : "",
+      ].filter(Boolean).join("\n");
 
       // Run autofill with this pre-built prompt
       const autofillResult = await generateAutofillDraft({ childCode, tutorPrompt });
