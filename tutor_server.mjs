@@ -1822,7 +1822,7 @@ const server = http.createServer(async (req, res) => {
 
     // ── POST /api/generate-plan — AI generates learning plan ─────────────
     if (req.method === "POST" && url.pathname === "/api/generate-plan") {
-      const body = await readBody(req);
+      const body = JSON.parse((await readBody(req)) || "{}");
       const { childCode, profile } = body;
       if (!childCode) { sendJson(res, 400, { ok: false, error: "childCode required" }); return; }
       const child = await fetchChildRecord(childCode);
@@ -1869,7 +1869,7 @@ const server = http.createServer(async (req, res) => {
 
     // ── POST /api/lesson-from-plan — pre-fill draft from plan entry ───────
     if (req.method === "POST" && url.pathname === "/api/lesson-from-plan") {
-      const body = await readBody(req);
+      const body = JSON.parse((await readBody(req)) || "{}");
       const { childCode, lessonNum } = body;
       if (!childCode || !lessonNum) { sendJson(res, 400, { ok: false, error: "childCode and lessonNum required" }); return; }
       const file = path.join(PLANS_DIR, `${childCode}.json`);
@@ -1900,7 +1900,7 @@ const server = http.createServer(async (req, res) => {
       const parts = url.pathname.split("/");
       const code = decodeURIComponent(parts[3]);
       const num = Number(parts[5]);
-      const body = await readBody(req);
+      const body = JSON.parse((await readBody(req)) || "{}");
       const file = path.join(PLANS_DIR, `${code}.json`);
       if (!fs.existsSync(file)) { sendJson(res, 404, { ok: false, error: "Plan not found" }); return; }
       const plan = JSON.parse(fs.readFileSync(file, "utf-8"));
