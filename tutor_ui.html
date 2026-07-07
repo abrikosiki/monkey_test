@@ -124,6 +124,38 @@
     .edit-toolbar{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
     .edit-toolbar button{padding:12px 18px;font-size:15px}
     @media (max-width:1100px){.layout{grid-template-columns:1fr}.field-grid,.field-grid.three{grid-template-columns:1fr}}
+
+    /* ── Plans Dashboard ── */
+    .tabs{display:flex;gap:8px;margin-bottom:22px}
+    .tab-btn{padding:10px 20px;border-radius:12px;font-weight:700;font-size:14px;cursor:pointer;border:1px solid var(--line);background:var(--panel-2);color:var(--muted);transition:all .18s}
+    .tab-btn.active{background:var(--teal);color:#062717;border-color:var(--teal)}
+    .plans-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-top:18px}
+    .plan-card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px;cursor:pointer;transition:border-color .18s,transform .15s}
+    .plan-card:hover{border-color:var(--teal);transform:translateY(-2px)}
+    .plan-card-name{font-size:18px;font-weight:800;margin-bottom:4px}
+    .plan-card-code{font-size:12px;color:var(--muted);margin-bottom:12px}
+    .plan-progress-bar{height:6px;border-radius:4px;background:var(--line);overflow:hidden;margin-bottom:6px}
+    .plan-progress-fill{height:100%;background:var(--teal);border-radius:4px;transition:width .4s}
+    .plan-progress-label{font-size:12px;color:var(--muted)}
+    .lesson-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin-top:20px}
+    .lesson-card{background:var(--panel);border:2px solid var(--line);border-radius:16px;padding:16px;position:relative;transition:border-color .18s}
+    .lesson-card.done{border-color:#2f6f55;background:#0d2218}
+    .lesson-card.current{border-color:var(--teal)}
+    .lesson-card.pending{opacity:.6}
+    .lesson-num{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+    .lesson-topic{font-size:15px;font-weight:800;margin-bottom:8px;line-height:1.3}
+    .lesson-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px;font-size:12px;color:var(--muted)}
+    .lesson-diff{display:flex;gap:2px}
+    .diff-dot{width:8px;height:8px;border-radius:50%;background:var(--line)}
+    .diff-dot.on{background:var(--gold)}
+    .lesson-card .btn-create{width:100%;padding:10px;font-size:13px;font-weight:800}
+    .lesson-card .done-badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#6ee0a8;font-weight:700}
+    .new-plan-form{max-width:520px;margin:0 auto}
+    .new-plan-form .field-grid{gap:12px;margin-top:16px}
+    .back-plans-btn{background:none;border:none;color:var(--blue);cursor:pointer;font-weight:700;font-size:14px;padding:0;margin-bottom:18px;display:inline-flex;align-items:center;gap:6px}
+    .plan-detail-header{display:flex;align-items:center;gap:16px;margin-bottom:6px;flex-wrap:wrap}
+    .plan-child-name{font-size:26px;font-weight:900}
+    .plan-child-sub{font-size:13px;color:var(--muted);margin-top:2px}
   </style>
 </head>
 <body>
@@ -139,6 +171,91 @@
         </div>
       </div>
     </div>
+
+    <!-- Tab navigation -->
+    <div class="tabs">
+      <button class="tab-btn active" id="tabLesson" onclick="switchTab('lesson')">✏️ Create Lesson</button>
+      <button class="tab-btn" id="tabPlans" onclick="switchTab('plans')">📋 Learning Plans</button>
+    </div>
+
+    <!-- ══ PLANS VIEW ══════════════════════════════════════════════════════ -->
+    <div id="plansView" class="hidden">
+
+      <!-- Dashboard: list of all plans -->
+      <div id="plansDashboard">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+          <div>
+            <h2 style="margin-bottom:4px">Learning Plans</h2>
+            <div class="sub">Each child's personalised lesson sequence.</div>
+          </div>
+          <button class="primary" onclick="showNewPlanForm()">+ New Plan</button>
+        </div>
+        <div class="plans-grid" id="plansGrid">
+          <div class="muted" style="grid-column:1/-1;padding:24px 0;text-align:center">Loading plans…</div>
+        </div>
+      </div>
+
+      <!-- New plan form -->
+      <div id="newPlanView" class="hidden">
+        <button class="back-plans-btn" onclick="showDashboard()">← Back to plans</button>
+        <div class="new-plan-form">
+          <div class="center-card">
+            <h2 style="margin-bottom:4px">New Learning Plan</h2>
+            <p class="muted" style="font-size:13px;margin-top:4px">Enter the child's code and profile — AI will build a personalised lesson sequence.</p>
+            <div style="margin-top:16px">
+              <label>Child code</label>
+              <div class="find-row">
+                <input id="planChildCodeInput" placeholder="MONKEY-3007" autocomplete="off" />
+                <button class="ghost" id="planFindChildBtn" onclick="planFetchChild()">Find</button>
+              </div>
+              <div id="planChildPreview" class="hint" style="margin-top:10px">Enter a child code and tap Find.</div>
+            </div>
+            <div class="field-grid" style="margin-top:16px">
+              <div>
+                <label>Grade / Age</label>
+                <input id="planGrade" placeholder="e.g. Grade 3, age 8" />
+              </div>
+              <div>
+                <label>Lesson package</label>
+                <select id="planPackage">
+                  <option value="8">8 lessons</option>
+                  <option value="16">16 lessons</option>
+                </select>
+              </div>
+              <div class="full">
+                <label>Topics mastered</label>
+                <input id="planMastered" placeholder="e.g. addition, subtraction, times tables 2–5" />
+              </div>
+              <div class="full">
+                <label>Weak points</label>
+                <input id="planWeak" placeholder="e.g. fractions, word problems, division" />
+              </div>
+              <div class="full">
+                <label>Strong points</label>
+                <input id="planStrong" placeholder="e.g. mental arithmetic, patterns" />
+              </div>
+            </div>
+            <button class="primary btn-generate" id="generatePlanBtn" onclick="generatePlan()" style="margin-top:18px" disabled>✨ Generate Plan</button>
+            <div id="planGenStatus" class="hint" style="margin-top:10px"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Plan detail: lesson cards -->
+      <div id="planDetailView" class="hidden">
+        <button class="back-plans-btn" onclick="showDashboard()">← Back to plans</button>
+        <div class="plan-detail-header">
+          <img id="planDetailAvatar" src="" style="width:56px;height:68px;object-fit:contain;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12)" />
+          <div>
+            <div class="plan-child-name" id="planDetailName">—</div>
+            <div class="plan-child-sub" id="planDetailSub">—</div>
+          </div>
+        </div>
+        <div class="lesson-cards-grid" id="lessonCardsGrid"></div>
+      </div>
+
+    </div>
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
 
     <div class="quick-flow" id="quickFlow">
       <div class="center-card" id="stepChildCard">
@@ -1505,6 +1622,7 @@
         renderProgressLines(3, [true, true, true, false]);
         const build = await post("/api/build-lesson", { lesson: state.lesson });
         state.generatedLessonUrl = build.generatedFileUrl || "/lesson_game.html";
+        state.lastGeneratedFileName = build.generatedFileName || "";
         $("previewBtn").href = state.generatedLessonUrl;
 
         renderProgressLines(3, [true, true, true, true]);
@@ -1562,6 +1680,7 @@
         if (regenBtn) regenBtn.textContent = "Building... 3/3 — building HTML";
         const build = await post("/api/build-lesson", { lesson: state.lesson });
         state.generatedLessonUrl = build.generatedFileUrl || "/lesson_game.html";
+        state.lastGeneratedFileName = build.generatedFileName || "";
         $("previewBtn").href = state.generatedLessonUrl;
         state.manualMechanicsMode = false;
         state.workflowStep = 3;
@@ -1686,6 +1805,203 @@
       setAutosaveStatus("Init failed");
       log("Init failed: " + err.message);
     });
+
+    // ══════════════════════════════════════════════════════════════════════
+    // PLANS DASHBOARD
+    // ══════════════════════════════════════════════════════════════════════
+
+    const ISLAND_EMOJI = {
+      cherry_blossom_island:"🌸", jelly_bay_island:"🪼", snowy_peaks_island:"❄️",
+      neon_city_island:"🌃", blue_crab_island:"🦀", antigravity_island:"🪶",
+      mushroom_island:"🍄", crystal_island:"💎"
+    };
+
+    let activePlanCode = null;
+    let planChildData = null;
+
+    function switchTab(tab) {
+      const isPlans = tab === "plans";
+      $("tabLesson").classList.toggle("active", !isPlans);
+      $("tabPlans").classList.toggle("active", isPlans);
+      $("plansView").classList.toggle("hidden", !isPlans);
+      $("quickFlow").classList.toggle("hidden", isPlans);
+      $("editPanel").classList.toggle("hidden", true);
+      if (isPlans) loadPlans();
+    }
+
+    async function loadPlans() {
+      showDashboard();
+      const grid = $("plansGrid");
+      grid.innerHTML = '<div class="muted" style="grid-column:1/-1;padding:24px 0;text-align:center">Loading…</div>';
+      try {
+        const data = await get("/api/plans");
+        if (!data.ok || !data.plans.length) {
+          grid.innerHTML = '<div class="muted" style="grid-column:1/-1;padding:24px 0;text-align:center">No plans yet. Create the first one!</div>';
+          return;
+        }
+        grid.innerHTML = data.plans.map(p => {
+          const pct = p.total ? Math.round(p.done / p.total * 100) : 0;
+          return `<div class="plan-card" onclick="openPlan('${p.child_code}')">
+            <div class="plan-card-name">${p.child_name}</div>
+            <div class="plan-card-code">${p.child_code} · ${p.package} lessons</div>
+            <div class="plan-progress-bar"><div class="plan-progress-fill" style="width:${pct}%"></div></div>
+            <div class="plan-progress-label">${p.done} of ${p.total} lessons done</div>
+          </div>`;
+        }).join("");
+      } catch(e) {
+        grid.innerHTML = `<div class="muted" style="grid-column:1/-1;padding:24px">Error: ${e.message}</div>`;
+      }
+    }
+
+    function showDashboard() {
+      $("plansDashboard").classList.remove("hidden");
+      $("newPlanView").classList.add("hidden");
+      $("planDetailView").classList.add("hidden");
+    }
+
+    function showNewPlanForm() {
+      $("plansDashboard").classList.add("hidden");
+      $("newPlanView").classList.remove("hidden");
+      $("planDetailView").classList.add("hidden");
+    }
+
+    async function planFetchChild() {
+      const code = $("planChildCodeInput").value.trim();
+      if (!code) return;
+      $("planChildPreview").textContent = "Looking up…";
+      $("generatePlanBtn").disabled = true;
+      planChildData = null;
+      try {
+        const data = await post("/api/child/fetch", { childCode: code });
+        if (!data.ok) throw new Error(data.error);
+        planChildData = data.child;
+        $("planChildPreview").innerHTML = `<strong>${data.child.name}</strong> · Level ${data.child.level} · ${data.child.childCode} <span style="color:var(--teal)">✓</span>`;
+        $("generatePlanBtn").disabled = false;
+      } catch(e) {
+        $("planChildPreview").textContent = "Not found: " + e.message;
+      }
+    }
+
+    async function generatePlan() {
+      if (!planChildData) return;
+      const btn = $("generatePlanBtn");
+      const status = $("planGenStatus");
+      btn.disabled = true;
+      btn.textContent = "Generating…";
+      status.textContent = "AI is building the lesson sequence…";
+      try {
+        const data = await post("/api/generate-plan", {
+          childCode: planChildData.childCode,
+          profile: {
+            grade:    $("planGrade").value.trim(),
+            mastered: $("planMastered").value.trim(),
+            weak:     $("planWeak").value.trim(),
+            strong:   $("planStrong").value.trim(),
+            package:  Number($("planPackage").value),
+          }
+        });
+        if (!data.ok) throw new Error(data.error);
+        status.textContent = `Plan with ${data.plan.lessons.length} lessons created!`;
+        setTimeout(() => openPlan(data.plan.child_code), 800);
+      } catch(e) {
+        status.textContent = "Error: " + e.message;
+        btn.disabled = false;
+        btn.textContent = "✨ Generate Plan";
+      }
+    }
+
+    async function openPlan(code) {
+      activePlanCode = code;
+      $("plansDashboard").classList.add("hidden");
+      $("newPlanView").classList.add("hidden");
+      $("planDetailView").classList.remove("hidden");
+      $("lessonCardsGrid").innerHTML = '<div class="muted" style="grid-column:1/-1;padding:24px">Loading…</div>';
+      try {
+        const data = await get(`/api/plans/${encodeURIComponent(code)}`);
+        if (!data.ok) throw new Error(data.error);
+        renderPlanDetail(data.plan);
+      } catch(e) {
+        $("lessonCardsGrid").innerHTML = `<div class="muted">${e.message}</div>`;
+      }
+    }
+
+    function renderPlanDetail(plan) {
+      $("planDetailName").textContent = plan.child_name;
+      const done = plan.lessons.filter(l => l.status === "done").length;
+      $("planDetailSub").textContent = `${plan.child_code} · ${done}/${plan.lessons.length} lessons done`;
+      $("planDetailAvatar").src = `assets/characters/${plan.lessons[0]?.character_key || "pirate_green"}.webp`;
+
+      // Find the first pending lesson (the "current" one)
+      const nextNum = plan.lessons.find(l => l.status !== "done")?.num ?? null;
+
+      $("lessonCardsGrid").innerHTML = plan.lessons.map(lesson => {
+        const isDone    = lesson.status === "done";
+        const isCurrent = lesson.num === nextNum;
+        const cls = isDone ? "done" : isCurrent ? "current" : "pending";
+        const emoji = ISLAND_EMOJI[lesson.island] || "🏝️";
+        const diffDots = Array.from({length:5}, (_,i) =>
+          `<div class="diff-dot ${i < Math.ceil(lesson.difficulty/2) ? 'on' : ''}"></div>`
+        ).join("");
+
+        const actionHtml = isDone
+          ? `<div class="done-badge">✅ Done${lesson.file ? ` <a href="/generated-lessons/${lesson.file}" target="_blank" style="color:var(--blue);font-size:11px;margin-left:4px">open →</a>` : ""}</div>`
+          : `<button class="primary btn-create" onclick="createLessonFromPlan('${plan.child_code}', ${lesson.num})">Create Lesson ${lesson.num}</button>`;
+
+        return `<div class="lesson-card ${cls}">
+          <div class="lesson-num">Lesson ${lesson.num}</div>
+          <div class="lesson-topic">${lesson.topic}</div>
+          <div class="lesson-meta">
+            <span>${emoji} ${(lesson.island||"").replace(/_/g," ")}</span>
+            <div class="lesson-diff">${diffDots}</div>
+          </div>
+          ${actionHtml}
+        </div>`;
+      }).join("");
+    }
+
+    async function createLessonFromPlan(childCode, lessonNum) {
+      const btn = event.target;
+      btn.disabled = true;
+      btn.textContent = "Preparing…";
+      try {
+        const data = await post("/api/lesson-from-plan", { childCode, lessonNum });
+        if (!data.ok) throw new Error(data.error);
+        // Switch to Create Lesson tab and auto-generate
+        switchTab("lesson");
+        // Apply the draft returned
+        if (data.draft) {
+          state.draft = data.draft;
+          syncDraftToInputs();
+          renderChildPreview();
+          updateChildConfirmationState();
+          updateWorkflowUI();
+        }
+        // Store plan context so we can update status after build
+        state.planContext = { childCode, lessonNum };
+        // Auto-start generation
+        await runQuickLessonPipeline();
+      } catch(e) {
+        btn.disabled = false;
+        btn.textContent = `Create Lesson ${lessonNum}`;
+        alert("Error: " + e.message);
+      }
+    }
+
+    // After a lesson is built from a plan, mark it done and save the file reference
+    const _origMarkSessionLessonReady = markSessionLessonReady;
+    markSessionLessonReady = function() {
+      _origMarkSessionLessonReady.apply(this, arguments);
+      if (state.planContext) {
+        const { childCode, lessonNum } = state.planContext;
+        const fileName = state.lastGeneratedFileName || "";
+        fetch(`/api/plans/${encodeURIComponent(childCode)}/lesson/${lessonNum}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: "done", file: fileName, completed_at: new Date().toISOString().slice(0,10) })
+        });
+        state.planContext = null;
+      }
+    };
   </script>
 </body>
 </html>

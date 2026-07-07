@@ -17,12 +17,15 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const HOST = process.env.TUTOR_UI_HOST || "0.0.0.0";
 const PREFERRED_PORT = Number(process.env.PORT || process.env.TUTOR_UI_PORT || 8787);
 const SYSTEM_PROMPT = fs.readFileSync(path.join(__dirname, "system_prompt.txt"), "utf-8");
+const PLAN_PROMPT = fs.readFileSync(path.join(__dirname, "plan_prompt.txt"), "utf-8");
 const UI_FILE = path.join(__dirname, "tutor_ui.html");
 const OUT_FILE = path.join(__dirname, "output_lesson.json");
 const GENERATED_LESSONS_DIR = path.join(__dirname, "generated_lessons");
 const DATA_DIR = path.join(__dirname, "tutor_data");
 const DRAFT_FILE = path.join(DATA_DIR, "current_draft.json");
 const CHILDREN_FILE = path.join(DATA_DIR, "children.json");
+const PLANS_DIR = path.join(DATA_DIR, "plans");
+if (!fs.existsSync(PLANS_DIR)) fs.mkdirSync(PLANS_DIR, { recursive: true });
 const generationJobs = new Map();
 
 // Load example bank for few-shot injection in autofill
@@ -1762,6 +1765,121 @@ const server = http.createServer(async (req, res) => {
       }
       const examples = generateProblems(mechanic, topic, level, count);
       sendJson(res, 200, { ok: true, mechanic, topic, level, examples });
+      return;
+    }
+
+    // ── GET /api/plans — list all saved learning plans ───────────────────
+    if (req.method === "GET" && url.pathname === "/api/plans") {
+      const files = fs.readdirSync(PLANS_DIR).filter(f => f.endsWith(".json"));
+      const plans = files.map(f => {
+        try {
+          const p = JSON.parse(fs.readFileSync(path.join(PLANS_DIR, f), "utf-8"));
+          const done = (p.lessons || []).filter(l => l.status === "done").length;
+          return { child_code: p.child_code, child_name: p.child_name, package: p.package, done, total: (p.lessons || []).length, created_at: p.created_at };
+        } catch { return null; }
+      }).filter(Boolean);
+      sendJson(res, 200, { ok: true, plans });
+      return;
+    }
+
+    // ── GET /api/plans/:code — get one plan ───────────────────────────────
+    if (req.method === "GET" && url.pathname.startsWith("/api/plans/")) {
+      const code = decodeURIComponent(url.pathname.replace("/api/plans/", "")).trim();
+      const file = path.join(PLANS_DIR, `${code}.json`);
+      if (!fs.existsSync(file)) { sendJson(res, 404, { ok: false, error: "Plan not found" }); return; }
+      sendJson(res, 200, { ok: true, plan: JSON.parse(fs.readFileSync(file, "utf-8")) });
+      return;
+    }
+
+    // ── POST /api/generate-plan — AI generates learning plan ─────────────
+    if (req.method === "POST" && url.pathname === "/api/generate-plan") {
+      const body = await readBody(req);
+      const { childCode, profile } = body;
+      if (!childCode) { sendJson(res, 400, { ok: false, error: "childCode required" }); return; }
+      const child = await fetchChildRecord(childCode);
+      const pkg = Number(profile?.package) || 8;
+      const userMsg = [
+        `Child: ${child.name}, Code: ${child.childCode}`,
+        `Grade / age: ${profile?.grade || "unknown"}`,
+        `Topics mastered: ${profile?.mastered || "basic arithmetic"}`,
+        `Weak points: ${profile?.weak || "none specified"}`,
+        `Strong points: ${profile?.strong || "none specified"}`,
+        `Lesson package: ${pkg} lessons`,
+        `Current game level: ${child.level}`,
+      ].join("\n");
+
+      const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+      const aiRes = await openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [
+          { role: "system", content: PLAN_PROMPT },
+          { role: "user", content: userMsg },
+        ],
+        temperature: 0.7,
+        max_tokens: 3000,
+      });
+      const raw = aiRes.choices[0]?.message?.content || "[]";
+      let lessons;
+      try {
+        const cleaned = raw.replace(/^```json\s*/i, "").replace(/^```\s*/i, "").replace(/```\s*$/i, "").trim();
+        lessons = JSON.parse(cleaned);
+      } catch {
+        sendJson(res, 500, { ok: false, error: "AI returned invalid plan JSON" }); return;
+      }
+      if (!Array.isArray(lessons) || lessons.length === 0) {
+        sendJson(res, 500, { ok: false, error: "AI returned empty plan" }); return;
+      }
+      // Normalise: ensure status field
+      lessons = lessons.map(l => ({ ...l, status: "pending" }));
+
+      const plan = { child_code: child.childCode, child_name: child.name, created_at: new Date().toISOString().slice(0, 10), package: pkg, profile: profile || {}, lessons };
+      fs.writeFileSync(path.join(PLANS_DIR, `${child.childCode}.json`), JSON.stringify(plan, null, 2));
+      sendJson(res, 200, { ok: true, plan });
+      return;
+    }
+
+    // ── POST /api/lesson-from-plan — pre-fill draft from plan entry ───────
+    if (req.method === "POST" && url.pathname === "/api/lesson-from-plan") {
+      const body = await readBody(req);
+      const { childCode, lessonNum } = body;
+      if (!childCode || !lessonNum) { sendJson(res, 400, { ok: false, error: "childCode and lessonNum required" }); return; }
+      const file = path.join(PLANS_DIR, `${childCode}.json`);
+      if (!fs.existsSync(file)) { sendJson(res, 404, { ok: false, error: "Plan not found for this child" }); return; }
+      const plan = JSON.parse(fs.readFileSync(file, "utf-8"));
+      const entry = plan.lessons.find(l => l.num === Number(lessonNum));
+      if (!entry) { sendJson(res, 404, { ok: false, error: `Lesson ${lessonNum} not found in plan` }); return; }
+
+      // Build a rich tutorPrompt from the plan entry
+      const tutorPrompt = [
+        `Topic: ${entry.topic}`,
+        `Island: ${entry.island}`,
+        `Difficulty: ${entry.difficulty} out of 10`,
+        `Mechanics for stages 1-8: ${(entry.mechanics || []).join(", ")}`,
+        `Stage 9: boss_mix`,
+        entry.rationale ? `Context: ${entry.rationale}` : "",
+        plan.profile?.weak ? `Child weak points: ${plan.profile.weak}` : "",
+      ].filter(Boolean).join(". ");
+
+      // Run autofill with this pre-built prompt
+      const autofillResult = await generateAutofillDraft({ childCode, tutorPrompt });
+      sendJson(res, 200, { ok: true, draft: autofillResult, lessonEntry: entry });
+      return;
+    }
+
+    // ── PATCH /api/plans/:code/lesson/:num — update lesson status ─────────
+    if (req.method === "PATCH" && /^\/api\/plans\/[^/]+\/lesson\/\d+$/.test(url.pathname)) {
+      const parts = url.pathname.split("/");
+      const code = decodeURIComponent(parts[3]);
+      const num = Number(parts[5]);
+      const body = await readBody(req);
+      const file = path.join(PLANS_DIR, `${code}.json`);
+      if (!fs.existsSync(file)) { sendJson(res, 404, { ok: false, error: "Plan not found" }); return; }
+      const plan = JSON.parse(fs.readFileSync(file, "utf-8"));
+      const lesson = plan.lessons.find(l => l.num === num);
+      if (!lesson) { sendJson(res, 404, { ok: false, error: "Lesson not found" }); return; }
+      Object.assign(lesson, body);
+      fs.writeFileSync(file, JSON.stringify(plan, null, 2));
+      sendJson(res, 200, { ok: true, plan });
       return;
     }
 
