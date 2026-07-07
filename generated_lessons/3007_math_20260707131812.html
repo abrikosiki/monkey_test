@@ -1468,56 +1468,50 @@
     .completion-reload:hover{transform:translateY(-2px)}
     .completion-reload:active{transform:translateY(3px)}
     .theory-screen{
-      position:fixed;inset:0;z-index:360;display:none;align-items:center;justify-content:center;
-      background:rgba(4,10,22,.93);backdrop-filter:blur(14px);
+      position:fixed;inset:0;z-index:360;display:none;align-items:flex-start;justify-content:center;
+      background:rgba(4,10,22,.90);backdrop-filter:blur(10px);overflow-y:auto;padding:20px 0;
     }
     .theory-screen.on{display:flex}
     .theory-card{
-      width:min(96vw,840px);background:rgba(8,18,33,.98);border:2px solid rgba(244,208,63,.5);
-      border-radius:26px;padding:32px 28px 26px;display:flex;flex-direction:column;gap:20px;
-      animation:completionIn .35s ease both;
-      box-shadow:0 32px 70px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.05);
+      width:min(92vw,680px);background:rgba(8,18,33,.97);border:2px solid rgba(244,208,63,.45);
+      border-radius:22px;padding:28px 22px;display:flex;flex-direction:column;gap:16px;
+      animation:completionIn .35s ease both;margin:auto;
     }
     .theory-title{
-      font-family:'Fredoka One',cursive;font-size:28px;color:var(--sand);
-      text-align:center;line-height:1.2;text-shadow:0 2px 10px rgba(0,0,0,.4);
+      font-family:'Fredoka One',cursive;font-size:24px;color:var(--sand);
+      text-align:center;line-height:1.3;
     }
-    .theory-fact{
-      font-size:16px;color:rgba(200,223,240,.65);text-align:center;margin-top:-12px;font-style:italic;
-    }
-    .theory-story{display:none}
-    .theory-visuals{display:flex;gap:12px;justify-content:center}
+    .theory-story{font-size:16px;line-height:1.65;color:#c8dff0;text-align:center}
+    .theory-story p{margin:0 0 6px}
+    .theory-visuals{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
     .theory-visual{
-      flex:1;max-width:230px;
-      background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.11);
-      border-radius:18px;padding:18px 14px 14px;text-align:center;
-      display:flex;flex-direction:column;align-items:center;gap:7px;
+      background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);
+      border-radius:14px;padding:12px 14px;text-align:center;
+      display:flex;flex-direction:column;align-items:center;gap:5px;min-width:90px;
     }
-    .theory-vis-top{font-size:40px;line-height:1}
-    .theory-vis-arrow{color:rgba(255,255,255,.3);font-size:18px}
-    .theory-vis-parts{display:flex;gap:4px;align-items:center;font-size:26px;flex-wrap:wrap;justify-content:center}
-    .theory-vis-sep{color:rgba(255,255,255,.22);font-size:16px;margin:0 2px}
-    .theory-vis-label{font-size:17px;color:var(--sand);font-weight:700;margin-top:2px}
-    .theory-vis-name{font-size:13px;color:#90b8d8;letter-spacing:.03em}
-    .theory-examples{display:flex;gap:10px;justify-content:center}
-    .theory-ex-pill{
-      flex:1;max-width:360px;border-radius:14px;padding:12px 16px;
-      display:flex;align-items:center;gap:10px;font-size:15px;
+    .theory-vis-top{font-size:26px}
+    .theory-vis-arrow{color:rgba(255,255,255,.45);font-size:15px}
+    .theory-vis-parts{display:flex;gap:3px;align-items:center;font-size:20px}
+    .theory-vis-sep{color:rgba(255,255,255,.35);font-size:13px;margin:0 1px}
+    .theory-vis-label{font-size:13px;color:var(--sand);font-weight:700;margin-top:2px}
+    .theory-vis-name{font-size:12px;color:#90b8d8}
+    .theory-rule{
+      background:rgba(255,255,255,.05);border:1px solid rgba(255,200,50,.22);
+      border-radius:12px;padding:13px 15px;display:flex;flex-direction:column;gap:8px;
     }
-    .theory-ex-ok{background:rgba(94,204,123,.10);border:1.5px solid rgba(94,204,123,.28)}
-    .theory-ex-bad{background:rgba(232,85,85,.08);border:1.5px solid rgba(232,85,85,.24)}
-    .theory-ex-label{font-weight:700;white-space:nowrap}
-    .theory-ex-icons{display:flex;gap:4px;align-items:center;font-size:22px}
-    .theory-rule{display:none}
+    .theory-rule-warn{color:#ffd94a;font-size:15px;font-weight:700}
+    .theory-rule-row{display:flex;align-items:center;gap:8px;font-size:15px;flex-wrap:wrap}
+    .theory-rule-ok{color:#5ecc7b;font-weight:700;white-space:nowrap}
+    .theory-rule-bad{color:#e85555;font-weight:700;white-space:nowrap}
+    .theory-rule-icons{display:flex;gap:4px;align-items:center;font-size:18px}
     .theory-gotit{
-      align-self:stretch;padding:15px 38px;border:none;border-radius:999px;cursor:pointer;
-      background:linear-gradient(135deg,#ffcf66,#f3a93f);color:#1d1606;
-      font-family:'Fredoka One',cursive;font-size:24px;letter-spacing:.03em;
-      box-shadow:0 5px 0 #9b6b21,0 10px 26px rgba(0,0,0,.35);
-      transition:transform .1s,box-shadow .1s,filter .1s;
+      align-self:center;padding:12px 38px;border:none;border-radius:999px;cursor:pointer;
+      background:linear-gradient(135deg,#f9d423,#e67e22);color:#1a0a00;
+      font-family:'Fredoka One',cursive;font-size:21px;
+      box-shadow:0 5px 0 #8b4513;transition:transform .1s,box-shadow .1s;
     }
-    .theory-gotit:hover{transform:translateY(-2px);filter:brightness(1.08)}
-    .theory-gotit:active{transform:translateY(3px);box-shadow:0 2px 0 #9b6b21}
+    .theory-gotit:hover{transform:translateY(-2px)}
+    .theory-gotit:active{transform:translateY(3px);box-shadow:0 2px 0 #8b4513}
     .story-screen,.shop-screen{
       position:fixed;inset:0;z-index:340;display:none;align-items:center;justify-content:center;
       background:rgba(4,10,22,.82);backdrop-filter:blur(8px);
@@ -1893,7 +1887,7 @@
   </div>
 
   <script>
-  const LESSON = {"meta":{"island_key":"snowy_peaks_island","student_name":"Romy","character_key":"pirate_green","child_inventory":[],"has_freeze_ring":false,"student_code":"MONKEY-3007","student_level":7,"student_coins":50,"start_coins":50},"story":{"island_name":"Snowy Peaks Island","villain":"Yeti-monkey Viking","artifact_name":"Frost Core","artifact_emoji":"❄️","artifact_power":"Ancient frozen power atop the highest peak.","greeting":"Romy, your island mission begins now — listen closely.","act1":"On Snowy Peaks Island, jagged mountains rise through endless blizzards, where a towering yeti-monkey Viking roams the frozen ridges. Wielding an icy axe and driven by the will of Doctor Krit, it raids anything that dares cross its path. At the highest peak lies the Frost Core, pulsing with ancient power. Romy, we must reach it, shatter its influence, and free the yeti monkey from Krit's control before the storm swallows the island whole.","act2":"Suddenly, from above, a yeti-monkey Viking slides down an icy slope, swinging an axe made of glistening ice. It's clearly puzzled by the mathematics of its own weather patterns and starts unwittingly causing chaos!","act3":"Your mission, Romy, is to restore order by solving the pattern conundrums created by the bungling yeti-monkey. In return, you'll claim the magical Frost Bracelet!","goal":"Romy, master every math trial, reach the island's core in time, and break Doctor Krit's hold."},"stages":[{"id":1,"type":"five_tasks","title":"Yeti's Number Race","background":"snowy_peaks_island1","coins":10,"mechanic_reason":"This stage requires solving multiple math expressions, ideal for practicing patterns and reinforcing arithmetic skills.","success_message":"Great job, Romy! You've conquered the Yeti's Number Race!","rounds":[{"title":"Romy arrives at Snowy Peaks Island","tasks":[{"q":"2, 4, 6, 8, ?","a":"10"},{"q":"5, 10, 15, ?, 25","a":"20"},{"q":"3, 6, 9, ?, 15","a":"12"},{"q":"10, 20, 30, ?","a":"40"},{"q":"1, 2, 4, 8, ?","a":"16"}]},{"title":"The blizzard begins to swirl","tasks":[{"q":"4, 8, 12, ?, 20","a":"16"},{"q":"7, 14, 21, ?","a":"28"},{"q":"100, 90, 80, ?","a":"70"},{"q":"6, 12, 18, ?","a":"24"},{"q":"50, 45, 40, ?","a":"35"}]},{"title":"Snowflakes fall in patterns","tasks":[{"q":"2, 5, 8, ?, 14","a":"11"},{"q":"3, 9, 27, ?","a":"81"},{"q":"99, 88, 77, ?","a":"66"},{"q":"4, 8, 16, 32, ?","a":"64"},{"q":"15, 12, 9, ?, 3","a":"6"}]},{"title":"Climbing the frozen peaks","tasks":[{"q":"3, 7, 11, ?, 19","a":"15"},{"q":"5, 10, 20, ?, 80","a":"40"},{"q":"18, 15, 12, ?","a":"9"},{"q":"1, 3, 9, 27, ?","a":"81"},{"q":"10, 8, 6, ?, 2","a":"4"}]},{"title":"The yeti-monkey Viking appears","tasks":[{"q":"6, 12, 18, 24, ?","a":"30"},{"q":"2, 4, 8, 16, ?","a":"32"},{"q":"25, 20, 15, ?","a":"10"},{"q":"7, 14, 21, ?, 35","a":"28"},{"q":"9, 18, 27, ?","a":"36"}]}]},{"id":2,"type":"pattern_input","title":"Avalanche Sequence Alert","background":"snowy_peaks_island1","coins":10,"mechanic_reason":"Pattern recognition helps in understanding sequences, an important math concept.","success_message":"Excellent, Romy! You solved the Avalanche Sequence Alert!","rounds":[{"title":"Snowflake sequences","prompt":"4, 8, 12, 16, ?","answer":"20"},{"title":"Icy staircase steps","prompt":"3, 6, 9, ?, 15","answer":"12"},{"title":"Viking shield patterns","prompt":"2, 4, 8, ?, 32","answer":"16"},{"title":"Frost crystal formations","prompt":"50, 45, ?, 35, 30","answer":"40"},{"title":"The frozen path to the peak","prompt":"1, 3, 9, ?, 81","answer":"27"}]},{"id":3,"type":"fill_blank","title":"Snowflakes in Order","background":"snowy_peaks_island2","coins":10,"mechanic_reason":"Fill blank challenges strengthen computation and sequence order skills.","success_message":"Well done, Romy! The snowflakes are in order now!","rounds":[{"title":"Snowfall counting","prompt":"10 + 5 = ?","answer":"15"},{"title":"Ice crystal rows","prompt":"6 × 2 = ?","answer":"12"},{"title":"Frozen mountain steps","prompt":"28 − 7 = ?","answer":"21"},{"title":"Viking torch sequence","prompt":"? × 3 = 24","answer":"8"},{"title":"Yeti footprint count","prompt":"18 ÷ 2 = ?","answer":"9"}]},{"id":4,"type":"multi_choice","title":"Yeti's Pattern Puzzle","background":"snowy_peaks_island2","coins":10,"mechanic_reason":"Multiple-choice questions develop decision-making skills and understanding of sequential patterns.","success_message":"Brilliant, Romy! You cracked the Yeti's Pattern Puzzle!","rounds":[{"title":"Which number doesn't belong?","instruction":"2, 4, 7, 8 — which is the odd one out?","options":[{"id":"A","label":"2"},{"id":"B","label":"7"},{"id":"C","label":"8"}],"correct_option":"B"},{"title":"Spot the intruder","instruction":"5, 10, 15, 22 — which doesn't belong?","options":[{"id":"A","label":"5"},{"id":"B","label":"15"},{"id":"C","label":"22"}],"correct_option":"C"},{"title":"Pattern spy","instruction":"3, 6, 9, 13 — which is the odd one out?","options":[{"id":"A","label":"6"},{"id":"B","label":"9"},{"id":"C","label":"13"}],"correct_option":"C"},{"title":"Sequence crasher","instruction":"4, 8, 16, 24 — which doesn't belong? (rule is ×2)","options":[{"id":"A","label":"4"},{"id":"B","label":"16"},{"id":"C","label":"24"}],"correct_option":"C"},{"title":"The fake frost crystal","instruction":"100, 90, 80, 65 — which is the odd one out?","options":[{"id":"A","label":"90"},{"id":"B","label":"80"},{"id":"C","label":"65"}],"correct_option":"C"}]},{"id":5,"type":"true_false","title":"Frosty Judgment Call","background":"2","coins":10,"mechanic_reason":"True/false statements reinforce understanding by needing immediate choice-making.","success_message":"Awesome, Romy! Your frosty judgment was spot on!","rounds":[{"title":"Snowflake truth","statement":"In the pattern 3, 6, 9, 12, the next number is 15.","correct_answer":"true"},{"title":"Frost crystal check","statement":"In the pattern 2, 4, 8, 16, the next number is 24.","correct_answer":"false"},{"title":"Viking code","statement":"In the pattern 50, 45, 40, 35, the next number is 25.","correct_answer":"false"},{"title":"Blizzard of numbers","statement":"In the pattern 1, 3, 9, 27, the rule is multiply by 3.","correct_answer":"true"},{"title":"The peak truth test","statement":"In the pattern 5, 10, 15, 20, the rule is add 4.","correct_answer":"false"}]},{"id":6,"type":"text_task","title":"Snowball Stacking Riddle","background":"3","coins":10,"mechanic_reason":"Text tasks enhance linguistic as well as numerical understanding, ideal for higher cognitive loading.","success_message":"Hooray, Romy! You've solved the snowball riddle!","rounds":[{"title":"Romy builds snow towers","prompt":"Romy stacks snowballs in a pattern: 2, 4, 6, 8. If the pattern continues, how many snowballs are in the 5th stack?","answer":"10"},{"title":"Yeti-Viking footsteps","prompt":"A yeti takes steps in a pattern: 3, then 6, then 9, then 12. How many steps does it take next?","answer":"15"},{"title":"Ice crystals growing","prompt":"An ice crystal doubles in size each day: 1, 2, 4, 8. How big is it on day 5?","answer":"16"},{"title":"Viking candles on the mountain","prompt":"Vikings light candles in a pattern: 5 on Monday, 10 on Tuesday, 15 on Wednesday. How many on Thursday?","answer":"20"},{"title":"The Frost Core countdown","prompt":"A magical ice counter goes down by 15 each minute: 100, 85, 70. What number comes next?","answer":"55"}]},{"id":7,"type":"corridor_choice","title":"Frozen Path Decision","background":"snowy_peaks_island3","coins":10,"mechanic_reason":"This activity enhances logical reasoning and comparison skills.","success_message":"Good choice, Romy! You've chosen the right path!","rounds":[{"title":"Choose the right path","question":"Which side gives the bigger number?","left_expression":"2 × 5","right_expression":"3 × 9","correct_side":"right"},{"title":"Icy crossroads","question":"Which expression is larger?","left_expression":"4 × 7","right_expression":"5 × 4","correct_side":"left"},{"title":"Snowy fork in the road","question":"Which side is bigger?","left_expression":"6 × 9","right_expression":"7 × 7","correct_side":"left"},{"title":"Viking trail split","question":"Which path leads to a bigger number?","left_expression":"8 + 14","right_expression":"3 × 8","correct_side":"right"},{"title":"The peak decision","question":"Which is the larger result?","left_expression":"5 × 9","right_expression":"9 × 4","correct_side":"left"}]},{"id":8,"type":"drag_sort","title":"Equilibrium on the Ice Bridge","background":"snowy_peaks_island3","coins":10,"mechanic_reason":"Ordering numerals visually aids pattern sequencing skills.","success_message":"Great sorting, Romy! You've achieved balance on the ice bridge!","rounds":[{"title":"Sort the snowflakes","instruction":"Sort from smallest to largest","items":[{"id":"i1","value":"15","text":"15","image_key":"snowflake"},{"id":"i2","value":"5","text":"5","image_key":"snowflake"},{"id":"i3","value":"25","text":"25","image_key":"snowflake"},{"id":"i4","value":"10","text":"10","image_key":"snowflake"},{"id":"i5","value":"20","text":"20","image_key":"snowflake"}],"correct_order":["5","10","15","20","25"]},{"title":"Viking steps in order","instruction":"Sort from smallest to largest","items":[{"id":"i1","value":"12","text":"12","image_key":"snowflake"},{"id":"i2","value":"3","text":"3","image_key":"snowflake"},{"id":"i3","value":"9","text":"9","image_key":"snowflake"},{"id":"i4","value":"6","text":"6","image_key":"snowflake"}],"correct_order":["3","6","9","12"]},{"title":"Crystal staircase","instruction":"Sort from smallest to largest","items":[{"id":"i1","value":"8","text":"8","image_key":"snowflake"},{"id":"i2","value":"2","text":"2","image_key":"snowflake"},{"id":"i3","value":"6","text":"6","image_key":"snowflake"},{"id":"i4","value":"4","text":"4","image_key":"snowflake"}],"correct_order":["2","4","6","8"]},{"title":"Ice staircase descending","instruction":"Sort from largest to smallest","items":[{"id":"i1","value":"10","text":"10","image_key":"snowflake"},{"id":"i2","value":"50","text":"50","image_key":"snowflake"},{"id":"i3","value":"30","text":"30","image_key":"snowflake"},{"id":"i4","value":"40","text":"40","image_key":"snowflake"},{"id":"i5","value":"20","text":"20","image_key":"snowflake"}],"correct_order":["50","40","30","20","10"]},{"title":"Final frost sequence","instruction":"Sort from smallest to largest","items":[{"id":"i1","value":"16","text":"16","image_key":"snowflake"},{"id":"i2","value":"1","text":"1","image_key":"snowflake"},{"id":"i3","value":"4","text":"4","image_key":"snowflake"},{"id":"i4","value":"2","text":"2","image_key":"snowflake"},{"id":"i5","value":"8","text":"8","image_key":"snowflake"}],"correct_order":["1","2","4","8","16"]}]},{"id":9,"type":"boss_mix","title":"Ultimate Pattern Showdown","background":"snowy_peaks_island4","coins":10,"mechanic_reason":"A mix of all prior mechanics allows comprehensive evaluation of skills.","success_message":"Incredible, Romy! You've mastered the ultimate pattern showdown!","rounds":[{"type":"five_tasks","title":"Quick pattern sprint!","tasks":[{"q":"5, 10, 15, ?, 25","a":"20"},{"q":"3, 6, 9, ?","a":"12"},{"q":"4, 8, 16, ?","a":"32"},{"q":"100, 90, 80, ?","a":"70"},{"q":"7, 14, 21, ?","a":"28"}]},{"type":"five_tasks","title":"Keep going, Romy!","tasks":[{"q":"2, 6, 18, ?","a":"54"},{"q":"20, 24, ?","a":"28"},{"q":"5, 10, ?","a":"20"},{"q":"30, 25, ?","a":"20"},{"q":"9, 18, 27, ?","a":"36"}]},{"type":"pattern_input","title":"Complete the sequence","prompt":"6, 12, 18, ?, 30","answer":"24"},{"type":"pattern_input","title":"What comes next?","prompt":"5, 10, 20, ?, 80","answer":"40"},{"type":"fill_blank","title":"Find the missing number","prompt":"20 + 5 = ?","answer":"25"},{"type":"fill_blank","title":"Fill the blank","prompt":"? × 2 = 16","answer":"8"},{"type":"multi_choice","title":"Odd one out","instruction":"8, 16, 24, 35 — which doesn't belong?","options":[{"id":"A","label":"8"},{"id":"B","label":"24"},{"id":"C","label":"35"}],"correct_option":"C"},{"type":"multi_choice","title":"Spot the intruder","instruction":"10, 20, 30, 38 — which doesn't belong?","options":[{"id":"A","label":"10"},{"id":"B","label":"30"},{"id":"C","label":"38"}],"correct_option":"C"},{"type":"true_false","title":"True or false?","statement":"In the pattern 2, 4, 8, 16 the next number is 32.","correct_answer":"true"},{"type":"true_false","title":"Check the rule","statement":"In the pattern 10, 20, 30 the rule is add 15.","correct_answer":"false"},{"type":"text_task","title":"Snow pattern puzzle","prompt":"Snow piles grow in a pattern: 3, 6, 9, 12. How many snowballs in the 5th pile?","answer":"15"},{"type":"text_task","title":"Torch doubling","prompt":"Viking torches double each night: 4, 8, 16. How many torches on the 4th night?","answer":"32"},{"type":"corridor_choice","title":"Which is bigger?","question":"Which side gives the bigger result?","left_expression":"3 × 8","right_expression":"5 × 6","correct_side":"right"},{"type":"corridor_choice","title":"Pick the winner","question":"Which expression is larger?","left_expression":"9 × 5","right_expression":"6 × 7","correct_side":"left"},{"type":"drag_sort","title":"Sort the frost crystals","instruction":"Smallest to largest","items":[{"id":"i1","value":"9","text":"9","image_key":"snowflake"},{"id":"i2","value":"3","text":"3","image_key":"snowflake"},{"id":"i3","value":"6","text":"6","image_key":"snowflake"}],"correct_order":["3","6","9"]},{"type":"drag_sort","title":"Order the Viking drums","instruction":"Smallest to largest","items":[{"id":"i1","value":"24","text":"24","image_key":"snowflake"},{"id":"i2","value":"6","text":"6","image_key":"snowflake"},{"id":"i3","value":"12","text":"12","image_key":"snowflake"},{"id":"i4","value":"18","text":"18","image_key":"snowflake"}],"correct_order":["6","12","18","24"]}]}],"images_needed":{"key":"artifact","name":"Frost Bracelet","description":"controls the chill of winter"},"tutor_notes":{"block1_script":"Welcome Romy to the majestic Snowy Peaks Island, where a yeti-monkey Viking challenges your math skills!","block2_hint":"Look for hidden patterns in the numbers; they often reveal the path forward!","block3_tips":["Encourage Romy to think about sequences logically and look for arithmetic relationships.","Highlight how solving patterns can uncover hidden treasures like the Frost Bracelet."],"block5_abstraction":"Understanding patterns enhances abstract thinking, where numbers become sequences to unravel.","weak_point_focus":"If Romy struggles, focus on filling in sequences before advancing to more complex tasks."}};
+  const LESSON = {"meta":{"island_key":"jelly_bay_island","student_name":"Romy","character_key":"boy_blue","child_inventory":[],"has_freeze_ring":false,"student_code":"3007","student_level":3,"student_coins":0,"start_coins":0},"story":{"island_name":"Jelly Bay Island","villain":"Monkey jellyfish king","artifact_name":"Pulse Core","artifact_emoji":"🪼","artifact_power":"The power that binds the jellyfish swarm beneath the bay.","greeting":"Romy, your island mission begins now — listen closely.","act1":"On Jelly Bay Island, the waters glow with drifting jellyfish, lighting the shore in eerie colors. Beneath the surface rules a monkey jellyfish king, its body entwined with pulsing tentacles, commanding the swarm as one. Enslaved by Doctor Krit, it spreads control through the tides. Deep below the bay lies the Pulse Core that binds them. Romy, we must dive in, destroy its power, and free the jelly king before the ocean itself turns against us.","act2":"But beware! The sneaky Monkey Fishbowl King is up to mischief! He's mixing up the glowing fractions of jellyfish, causing chaos.","act3":"Romy, your mission is to sort out this tangled mess. If you succeed, the Pulse Core will be yours.","goal":"Romy, master every math trial, reach the island's core in time, and break Doctor Krit's hold."},"stages":[{"id":1,"type":"multi_choice","title":"Jellyfish divide treasure!","background":"jelly_bay_island1","mechanic_reason":"Multi-choice introduces fractions by allowing Romy to visually assess simple fraction problems, ideal for level 3 difficulty.","success_message":"Great job, Romy! You've spotted the glow!","rounds":[{"instruction":"There are 4 jelly pods, each filled equally. 1 is glowing. What fraction glows?","options":[{"id":"A","label":"1/4"},{"id":"B","label":"1/2"},{"id":"C","label":"3/4"}],"correct_option":"A"},{"instruction":"A reef with 5 jelly pods, 2 are glowing. What fraction is glowing?","options":[{"id":"A","label":"2/5"},{"id":"B","label":"3/5"},{"id":"C","label":"2/4"}],"correct_option":"A"},{"instruction":"Out of 6 jellyfish, 3 are glowing. What fraction of them glow?","options":[{"id":"A","label":"1/6"},{"id":"B","label":"1/2"},{"id":"C","label":"3/6"}],"correct_option":"C"},{"instruction":"8 jellyfish, 4 glowing. What's the glowing fraction?","options":[{"id":"A","label":"1/2"},{"id":"B","label":"4/8"},{"id":"C","label":"3/8"}],"correct_option":"A"},{"instruction":"","options":[{"id":"A","label":""},{"id":"B","label":""},{"id":"C","label":""}],"correct_option":"A"}]},{"id":2,"type":"drag_group","title":"Group the glowing pods!","background":"jelly_bay_island1","mechanic_reason":"Drag group helps categorize numbers into simple groups, reinforcing the concept of distributing items by characteristics.","success_message":"You're getting the hang of this, Romy!","rounds":[{"numbers_text":"1, 2, 3, 4, 5","group1_name":"Glowing","group2_name":"Not Glowing","group1_values":"1, 2","group2_values":"3, 4, 5"},{"numbers_text":"6, 7, 8, 9","group1_name":"Even","group2_name":"Odd","group1_values":"6, 8","group2_values":"7, 9"},{"numbers_text":"10, 11, 12, 13, 14","group1_name":"Glowing","group2_name":"Dull","group1_values":"10, 12, 14","group2_values":"11, 13"},{"numbers_text":"","group1_name":"Group 1","group2_name":"Group 2","group1_values":"","group2_values":""},{"numbers_text":"","group1_name":"Group 1","group2_name":"Group 2","group1_values":"","group2_values":""}]},{"id":3,"type":"fill_blank","title":"Jelly King’s division!","background":"jelly_bay_island2","mechanic_reason":"Fill in the blank prompts direct computation, ideal for learning even distribution in level 3 tasks.","success_message":"Divide and conquer, nicely done Romy!","rounds":[{"instruction":"8 jellyfish split equally in 2. Each should get __ jellyfish.","example":"8 jellyfish split equally in 2. Each should get __ jellyfish.","prompt":"8 jellyfish split equally in 2. Each should get __ jellyfish.","answer":"4"},{"instruction":"A reef split into 3 equal zones. Each zone has __ jellyfish if 6 total.","example":"A reef split into 3 equal zones. Each zone has __ jellyfish if 6 total.","prompt":"A reef split into 3 equal zones. Each zone has __ jellyfish if 6 total.","answer":"2"},{"instruction":"12 jellyfish share evenly in 4 groups. Each group has __ jellyfish.","example":"12 jellyfish share evenly in 4 groups. Each group has __ jellyfish.","prompt":"12 jellyfish share evenly in 4 groups. Each group has __ jellyfish.","answer":"3"},{"example":"","prompt":"","answer":""},{"example":"","prompt":"","answer":""}]},{"id":4,"type":"true_false","title":"Jelly truth or myth?","background":"jelly_bay_island2","mechanic_reason":"True or false tasks help Romy work on critical thinking, a suitable skill at level 3.","success_message":"You've separated fact from fiction, Romy!","rounds":[{"statement":"Half of 10 is 5.","correct_answer":"true"},{"statement":"One third of 9 jellyfish is 4.","correct_answer":"false"},{"statement":"A quarter of 8 jellyfish is 2.","correct_answer":"true"},{"statement":"","correct_answer":"true"},{"statement":"","correct_answer":"true"}]},{"id":5,"type":"drag_sort","title":"Organize glowing fractions!","background":"2","mechanic_reason":"Sorting fractions visually helps Romy understand numerical order and sizing.","success_message":"Fractions sorted perfectly, Romy!","rounds":[{"instruction":"1/4, 1/3, 1/2","items":[{"id":"i1","value":"1/4","text":"1/4","image_key":"banana"},{"id":"i2","value":"1/3","text":"1/3","image_key":"banana"},{"id":"i3","value":"1/2","text":"1/2","image_key":"banana"}],"correct_order":["1/4","1/3","1/2"]},{"instruction":"2/3, 3/4, 1/4, 1/2","items":[{"id":"i1","value":"2/3","text":"2/3","image_key":"banana"},{"id":"i2","value":"3/4","text":"3/4","image_key":"banana"},{"id":"i3","value":"1/4","text":"1/4","image_key":"banana"},{"id":"i4","value":"1/2","text":"1/2","image_key":"banana"}],"correct_order":["1/4","1/2","2/3","3/4"]},{},{},{}]},{"id":6,"type":"text_task","title":"Jelly adventures resumed!","background":"3","mechanic_reason":"Text tasks allow Romy to form full answers, applying comprehension to mathematical concepts.","success_message":"You've solved the jelly puzzle, Romy!","rounds":[{"instruction":"A jelly pod holds 12 jewels equally in 3 parts. How many jewels per part?","prompt":"A jelly pod holds 12 jewels equally in 3 parts. How many jewels per part?","answer":"4"},{"instruction":"12 glowing pearls are shared between 4 mermaids. How many pearls per mermaid?","prompt":"12 glowing pearls are shared between 4 mermaids. How many pearls per mermaid?","answer":"3"},{"prompt":"","answer":""},{"prompt":"","answer":""},{"prompt":"","answer":""}]},{"id":7,"type":"corridor_choice","title":"Choose the jelly path!","background":"jelly_bay_island3","mechanic_reason":"Corridor choice introduces comparison between fractions, essential for level 3 skill building.","success_message":"You took the right path, Romy!","rounds":[{"instruction":"Which path holds more glowing jellyfish?","question":"Which path holds more glowing jellyfish?","left_expression":"1/3 of 9","right_expression":"1/2 of 9","correct_side":"right"},{"instruction":"Which path shows a higher fraction?","question":"Which path shows a higher fraction?","left_expression":"3/4 of 8","right_expression":"2/3 of 12","correct_side":"right"},{"question":"","left_expression":"","right_expression":"","correct_side":"left"},{"question":"","left_expression":"","right_expression":"","correct_side":"left"},{"question":"","left_expression":"","right_expression":"","correct_side":"left"}]},{"id":8,"type":"build_number","title":"Construct the jelly core!","background":"jelly_bay_island3","mechanic_reason":"Building numbers from parts aids in understanding numerical construction and decomposition.","success_message":"You built it brilliantly, Romy!","rounds":[{"base_number":12,"parts_count":3},{"base_number":16,"parts_count":4},{"base_number":24,"parts_count":3},{"base_number":24,"parts_count":3},{"base_number":24,"parts_count":3}]},{"id":9,"type":"boss_mix","title":"Jelly Bay Finale: The Pulse Core","background":"jelly_bay_island4","mechanic_reason":"Boss mix consolidates learning by revisiting key mechanics with escalating difficulty.","success_message":"You've saved Jelly Bay Island, Romy!","rounds":[{"type":"multi_choice","prompt":"Half of the reef's jellyfish are glowing. If there are 4, how many glow?","options":[{"id":"A","label":"2"},{"id":"B","label":"3"},{"id":"C","label":"1"}],"correct_option":"A"},{"type":"multi_choice","prompt":"3 out of 6 jelly pods are glowing. What's the glowing fraction?","options":[{"id":"A","label":"2/3"},{"id":"B","label":"1/3"},{"id":"C","label":"1/2"}],"correct_option":"C"},{"type":"drag_group","instruction":"Sort jellyfish by color!","numbers":[15,16,17,18,19],"group_1":{"name":"Bright","correct_numbers":[15,17]},"group_2":{"name":"Dull","correct_numbers":[16,18,19]}},{"type":"drag_group","instruction":"Separate glowing from dull numbers!","numbers":[3,6,9,12,15],"group_1":{"name":"Glowing","correct_numbers":[3,9,12]},"group_2":{"name":"Dull","correct_numbers":[6,15]}},{"type":"fill_blank","prompt":"8 split in 4 gives __ each.","answer":2},{"type":"fill_blank","prompt":"Divide 12 by 3 to get __.","answer":4},{"type":"true_false","statement":"4 is half of 8.","correct_answer":"true"},{"type":"true_false","statement":"5 is half of 10.","correct_answer":"true"},{"type":"drag_sort","numbers":["1/5","1/6","1/4"],"correct_order":["1/6","1/5","1/4"]},{"type":"drag_sort","numbers":["2/4","3/5","1/2"],"correct_order":["1/2","2/4","3/5"]},{"type":"text_task","prompt":"How many parts if 12 splits evenly in 6?","answer":"2"},{"type":"text_task","prompt":"Equally split 8 pearls among 4 people, how many each?","answer":"2"},{"type":"corridor_choice","prompt":"Which path has more jellyfish?","left":"1/2 of 10","right":"2/3 of 9","correct_side":"right"},{"type":"corridor_choice","prompt":"Which is the larger fraction?","left":"3/4 of 8","right":"3/5 of 10","correct_side":"left"},{"type":"build_number","instruction":"Combine to match the jelly number!","base_number":20,"parts_count":4},{"type":"build_number","instruction":"Recreate the jelly formation number!","base_number":24,"parts_count":6}]}],"images_needed":{"key":"artifact","file":"Pulse_Core.webp"},"tutor_notes":{"block1_script":"Introduce the concept of fractions through visual jellyfish examples.","block2_hint":"Encourage Romy to think about how dividing a number affects the groups.","block3_tips":["Fractions represent parts of a whole.","Look for visual clues in the jelly examples."],"block5_abstraction":"Understanding fractions as division of a whole number into equal parts.","weak_point_focus":"Focus on comparing fractions to help make informed decisions in challenges."}};
   const BACKGROUND_MAP = {"2":"assets/backgrounds/2.png","3":"assets/backgrounds/3.png","antigravity_island1":"assets/backgrounds/antigravity_island1.PNG","antigravity_island2":"assets/backgrounds/antigravity_island2.PNG","antigravity_island3":"assets/backgrounds/antigravity_island3.PNG","antigravity_island4":"assets/backgrounds/antigravity_island4.PNG","blue_crab_island1":"assets/backgrounds/blue_crab_island1.PNG","blue_crab_island2":"assets/backgrounds/blue_crab_island2.PNG","blue_crab_island3":"assets/backgrounds/blue_crab_island3.PNG","blue_crab_island4":"assets/backgrounds/blue_crab_island4.PNG","cherry_blossom_island1":"assets/backgrounds/cherry_blossom_island1.PNG","cherry_blossom_island2":"assets/backgrounds/cherry_blossom_island2.PNG","cherry_blossom_island3":"assets/backgrounds/cherry_blossom_island3.PNG","cherry_blossom_island4":"assets/backgrounds/cherry_blossom_island4.PNG","crystal_island1":"assets/backgrounds/crystal_island1.PNG","crystal_island2":"assets/backgrounds/crystal_island2.PNG","crystal_island3":"assets/backgrounds/crystal_island3.PNG","crystal_island4":"assets/backgrounds/crystal_island4.PNG","jelly_bay_island1":"assets/backgrounds/jelly_bay_island1.PNG","jelly_bay_island2":"assets/backgrounds/jelly_bay_island2.PNG","jelly_bay_island3":"assets/backgrounds/jelly_bay_island3.PNG","jelly_bay_island4":"assets/backgrounds/jelly_bay_island4.PNG","mushroom_island1":"assets/backgrounds/mushroom_island1.PNG","mushroom_island2":"assets/backgrounds/mushroom_island2.PNG","mushroom_island3":"assets/backgrounds/mushroom_island3.PNG","mushroom_island4":"assets/backgrounds/mushroom_island4.PNG","neon_city_island1":"assets/backgrounds/neon_city_island1.PNG","neon_city_island2":"assets/backgrounds/neon_city_island2.PNG","neon_city_island3":"assets/backgrounds/neon_city_island3.PNG","neon_city_island4":"assets/backgrounds/neon_city_island4.PNG","second":"assets/backgrounds/second.webp","shop":"assets/backgrounds/shop.webp","snowy_peaks_island1":"assets/backgrounds/snowy_peaks_island1.PNG","snowy_peaks_island2":"assets/backgrounds/snowy_peaks_island2.PNG","snowy_peaks_island3":"assets/backgrounds/snowy_peaks_island3.PNG","snowy_peaks_island4":"assets/backgrounds/snowy_peaks_island4.PNG","story_back":"assets/backgrounds/story_back.webp","title":"assets/backgrounds/title.png"};
   const CHARACTER_MAP = {"boy_blue":"assets/characters/boy_blue.webp","boy_brown":"assets/characters/boy_brown.webp","boy_green":"assets/characters/boy_green.webp","elf_blue":"assets/characters/elf_blue.webp","elf_green":"assets/characters/elf_green.webp","elf_red":"assets/characters/elf_red.webp","fairy_green":"assets/characters/fairy_green.webp","fairy_purple":"assets/characters/fairy_purple.webp","fairy_red":"assets/characters/fairy_red.webp","girl_blue":"assets/characters/girl_blue.webp","girl_brown":"assets/characters/girl_brown.webp","girl_green":"assets/characters/girl_green.webp","pirate_blue":"assets/characters/pirate_blue.webp","pirate_brown":"assets/characters/pirate_brown.webp","pirate_green":"assets/characters/pirate_green.webp","wizard_blue":"assets/characters/wizard_blue.webp","wizard_green":"assets/characters/wizard_green.webp","wizard_red":"assets/characters/wizard_red.webp"};
   const ITEMS_MAP = {"artifact":"assets/items/artifact.png","bamboo":"assets/items/bamboo.png","banana":"assets/items/banana.png","box_close":"assets/items/box_close.png","box_open":"assets/items/box_open.png","bubble":"assets/items/bubble.png","butterfly":"assets/items/butterfly.png","candy":"assets/items/candy.png","cherry":"assets/items/cherry.png","cookie":"assets/items/cookie.png","coral":"assets/items/coral.png","crab_blue":"assets/items/crab_blue.png","hibiscus":"assets/items/hibiscus.png","jellyfish":"assets/items/jellyfish.png","key":"assets/items/key.webp","leaf":"assets/items/leaf.png","lollipop":"assets/items/lollipop.png","mushroom":"assets/items/mushroom.png","pawprint":"assets/items/pawprint.png","pearl_blue":"assets/items/pearl_blue.png","pearl_red":"assets/items/pearl_red.png","samurai_monkey":"assets/items/samurai_monkey.png","shell_blue":"assets/items/shell_blue.png","shell_red":"assets/items/shell_red.png","spore":"assets/items/spore.png","starfish":"assets/items/starfish.png","stone_blue":"assets/items/stone_blue.png"};
@@ -5570,21 +5564,23 @@
     const card = $("theoryCard");
     card.innerHTML = "";
 
-    // Title
     const title = document.createElement("div");
     title.className = "theory-title";
     title.textContent = theory.title || "";
     card.appendChild(title);
 
-    // One-line fact (rule.text only — no story paragraphs)
-    if(theory.rule && theory.rule.text){
-      const fact = document.createElement("div");
-      fact.className = "theory-fact";
-      fact.textContent = theory.rule.text;
-      card.appendChild(fact);
+    const storyLines = Array.isArray(theory.story) ? theory.story : (theory.story ? [theory.story] : []);
+    if(storyLines.length){
+      const story = document.createElement("div");
+      story.className = "theory-story";
+      storyLines.forEach(line => {
+        const p = document.createElement("p");
+        p.textContent = line;
+        story.appendChild(p);
+      });
+      card.appendChild(story);
     }
 
-    // Visual examples (icon → split into parts)
     if(Array.isArray(theory.visuals) && theory.visuals.length){
       const wrap = document.createElement("div");
       wrap.className = "theory-visuals";
@@ -5631,40 +5627,49 @@
       card.appendChild(wrap);
     }
 
-    // Correct / wrong examples as compact pills
-    if(theory.rule && (theory.rule.correct_label || theory.rule.wrong_label)){
-      const exRow = document.createElement("div");
-      exRow.className = "theory-examples";
-      const makeEx = (cls, emoji, label, icons) => {
+    if(theory.rule && typeof theory.rule === "object"){
+      const ruleBox = document.createElement("div");
+      ruleBox.className = "theory-rule";
+      if(theory.rule.text){
+        const warn = document.createElement("div");
+        warn.className = "theory-rule-warn";
+        warn.textContent = "⚠️ " + theory.rule.text;
+        ruleBox.appendChild(warn);
+      }
+      const makeRuleRow = (badgeClass, prefix, label, icons) => {
         if(!label) return;
-        const pill = document.createElement("div");
-        pill.className = "theory-ex-pill " + cls;
-        const lbl = document.createElement("span");
-        lbl.className = "theory-ex-label";
-        lbl.style.color = cls.includes("ok") ? "#5ecc7b" : "#e85555";
-        lbl.textContent = emoji + " " + label;
-        pill.appendChild(lbl);
+        const row = document.createElement("div");
+        row.className = "theory-rule-row";
+        const badge = document.createElement("span");
+        badge.className = badgeClass;
+        badge.textContent = prefix + " " + label;
+        row.appendChild(badge);
         if(Array.isArray(icons) && icons.length){
-          const ic = document.createElement("div");
-          ic.className = "theory-ex-icons";
-          icons.forEach(i => {
+          const icWrap = document.createElement("div");
+          icWrap.className = "theory-rule-icons";
+          icons.forEach((ic, i) => {
+            if(i > 0){
+              const sep = document.createElement("span");
+              sep.style.cssText = "color:rgba(255,255,255,.35);font-size:13px";
+              sep.textContent = "|";
+              icWrap.appendChild(sep);
+            }
             const s = document.createElement("span");
-            s.textContent = i;
-            ic.appendChild(s);
+            s.textContent = ic;
+            icWrap.appendChild(s);
           });
-          pill.appendChild(ic);
+          row.appendChild(icWrap);
         }
-        exRow.appendChild(pill);
+        ruleBox.appendChild(row);
       };
-      makeEx("theory-ex-ok", "✅", theory.rule.correct_label, theory.rule.correct_icons);
-      makeEx("theory-ex-bad", "❌", theory.rule.wrong_label, theory.rule.wrong_icons);
-      card.appendChild(exRow);
+      makeRuleRow("theory-rule-ok", "✅", theory.rule.correct_label, theory.rule.correct_icons);
+      makeRuleRow("theory-rule-bad", "❌", theory.rule.wrong_label, theory.rule.wrong_icons);
+      card.appendChild(ruleBox);
     }
 
-    // GO button
     const btn = document.createElement("button");
     btn.className = "theory-gotit";
-    btn.textContent = "Let's go! →";
+    btn.textContent = "Got it! →";
     btn.addEventListener("click", () => {
       $("theoryScreen").classList.remove("on");
       onDone();
