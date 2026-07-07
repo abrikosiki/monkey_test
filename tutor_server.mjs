@@ -752,51 +752,63 @@ async function fetchChildRecord(code) {
   const lookupColumn = process.env.SUPABASE_CHILD_LOOKUP_COLUMN || "code";
 
   if (supabaseUrl && serviceKey) {
-    const base = String(supabaseUrl).replace(/\/+$/, "");
-    const url = `${base}/rest/v1/${encodeURIComponent(table)}?${encodeURIComponent(lookupColumn)}=eq.${encodeURIComponent(childCode)}&select=*`;
-    const res = await fetch(url, {
-      headers: {
-        apikey: serviceKey,
-        Authorization: `Bearer ${serviceKey}`,
-        Accept: "application/json",
-      },
-    });
-    const text = await res.text();
-    if (!res.ok) {
-      let detail = text;
-      try {
-        const j = JSON.parse(text);
-        detail = j.message || j.error_description || j.details || text;
-      } catch {
-        /* keep raw text */
-      }
-      throw new Error(`Supabase ${res.status}: ${detail}`);
-    }
-    let rows;
     try {
-      rows = JSON.parse(text || "[]");
-    } catch {
-      throw new Error("Supabase returned invalid JSON");
+      const base = String(supabaseUrl).replace(/\/+$/, "");
+      const url = `${base}/rest/v1/${encodeURIComponent(table)}?${encodeURIComponent(lookupColumn)}=eq.${encodeURIComponent(childCode)}&select=*`;
+      const res = await fetch(url, {
+        headers: {
+          apikey: serviceKey,
+          Authorization: `Bearer ${serviceKey}`,
+          Accept: "application/json",
+        },
+      });
+      const text = await res.text();
+      if (!res.ok) {
+        let detail = text;
+        try {
+          const j = JSON.parse(text);
+          detail = j.message || j.error_description || j.details || text;
+        } catch {
+          /* keep raw text */
+        }
+        throw new Error(`Supabase ${res.status}: ${detail}`);
+      }
+      let rows;
+      try {
+        rows = JSON.parse(text || "[]");
+      } catch {
+        throw new Error("Supabase returned invalid JSON");
+      }
+      if (!Array.isArray(rows)) {
+        throw new Error(`Supabase returned unexpected response for ${childCode}`);
+      }
+      const record = rows[0] || null;
+      if (!record) {
+        throw new Error(
+          `Ребёнок с кодом «${childCode}» не найден. Проверь код в таблице ${table}, колонку ${lookupColumn}, и что строка есть в той же базе, что в SUPABASE_URL.`,
+        );
+      }
+      const normalized = normalizeChild(record);
+      if (!normalized.childCode) {
+        normalized.childCode = childCode;
+      }
+      return normalized;
+    } catch (supabaseErr) {
+      // Fall through to local JSON only on network errors (TypeError: fetch failed)
+      if (supabaseErr.cause || supabaseErr.message?.includes("fetch failed") || supabaseErr.message?.includes("ECONNREFUSED") || supabaseErr.message?.includes("ENOTFOUND")) {
+        console.warn(`[fetchChild] Supabase unreachable, falling back to local JSON: ${supabaseErr.message}`);
+      } else {
+        throw supabaseErr;
+      }
     }
-    if (!Array.isArray(rows)) {
-      throw new Error(`Supabase returned unexpected response for ${childCode}`);
-    }
-    const record = rows[0] || null;
-    if (!record) {
-      throw new Error(
-        `Ребёнок с кодом «${childCode}» не найден. Проверь код в таблице ${table}, колонку ${lookupColumn}, и что строка есть в той же базе, что в SUPABASE_URL.`,
-      );
-    }
-    const normalized = normalizeChild(record);
-    if (!normalized.childCode) {
-      normalized.childCode = childCode;
-    }
-    return normalized;
   }
 
   const local = readJson(CHILDREN_FILE, []);
   const record = Array.isArray(local)
-    ? local.find((item) => String(item.child_code || item.code) === childCode)
+    ? local.find((item) => {
+        const c = String(item.child_code || item.code || "");
+        return c === childCode || c === `MONKEY-${childCode}` || c.replace(/^MONKEY-/i, "") === childCode;
+      })
     : null;
   if (!record) throw new Error(`Child ${childCode} not found in local tutor_data/children.json`);
   return normalizeChild(record);

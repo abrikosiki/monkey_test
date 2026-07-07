@@ -12,5 +12,12 @@
     "coins": 92,
     "level": 1,
     "character_key": "fairy_purple"
+  },
+  {
+    "child_code": "MONKEY-3007",
+    "name": "Romy",
+    "coins": 50,
+    "level": 7,
+    "character_key": "pirate_green"
   }
 ]
