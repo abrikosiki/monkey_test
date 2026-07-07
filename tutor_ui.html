@@ -71,6 +71,9 @@
     .find-row{display:flex;gap:10px;align-items:stretch}
     .find-row input{font-size:16px;padding:14px 14px;flex:1;min-width:0}
     .find-row button{flex-shrink:0;padding:14px 18px;font-size:15px}
+    .code-prefix-wrap{display:flex;align-items:center;flex:1;background:var(--input-bg,#0e1e36);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0}
+    .code-prefix{padding:0 0 0 14px;font-size:16px;font-weight:700;color:var(--muted);white-space:nowrap;user-select:none;pointer-events:none}
+    .code-suffix-input{border:none!important;border-radius:0!important;background:transparent!important;padding:14px 14px 14px 4px!important;flex:1;min-width:0;outline:none;font-size:16px}
     .confirm-actions{display:flex;flex-direction:column;gap:10px;margin-top:16px}
     .confirm-actions .primary{width:100%;padding:14px;font-size:15px}
     .confirm-actions .ghost{width:100%;background:transparent;border:1px solid var(--line);padding:12px}
@@ -173,13 +176,8 @@
     </div>
 
     <!-- Tab navigation -->
-    <div class="tabs">
-      <button class="tab-btn active" id="tabLesson" onclick="switchTab('lesson')">✏️ Create Lesson</button>
-      <button class="tab-btn" id="tabPlans" onclick="switchTab('plans')">📋 Learning Plans</button>
-    </div>
-
     <!-- ══ PLANS VIEW ══════════════════════════════════════════════════════ -->
-    <div id="plansView" class="hidden">
+    <div id="plansView">
 
       <!-- Dashboard: list of all plans -->
       <div id="plansDashboard">
@@ -205,15 +203,30 @@
             <div style="margin-top:16px">
               <label>Child code</label>
               <div class="find-row">
-                <input id="planChildCodeInput" placeholder="MONKEY-3007" autocomplete="off" />
+                <div class="code-prefix-wrap">
+                  <span class="code-prefix">MONKEY-</span>
+                  <input id="planChildCodeInput" placeholder="3007" autocomplete="off" class="code-suffix-input" />
+                </div>
                 <button class="ghost" id="planFindChildBtn" onclick="planFetchChild()">Find</button>
               </div>
               <div id="planChildPreview" class="hint" style="margin-top:10px">Enter a child code and tap Find.</div>
             </div>
             <div class="field-grid" style="margin-top:16px">
               <div>
-                <label>Grade / Age</label>
-                <input id="planGrade" placeholder="e.g. Grade 3, age 8" />
+                <label>Age (years)</label>
+                <input id="planAge" type="number" min="4" max="18" placeholder="e.g. 8" />
+              </div>
+              <div>
+                <label>Gender</label>
+                <select id="planGender">
+                  <option value="">— not specified —</option>
+                  <option value="female">Girl</option>
+                  <option value="male">Boy</option>
+                </select>
+              </div>
+              <div>
+                <label>Grade / Level</label>
+                <input id="planGrade" placeholder="e.g. Grade 3" />
               </div>
               <div>
                 <label>Lesson package</label>
@@ -252,17 +265,26 @@
           </div>
         </div>
         <div class="lesson-cards-grid" id="lessonCardsGrid"></div>
+        <div id="planLessonGenProgress" class="hidden" style="margin-top:24px;padding:20px;background:var(--panel);border:1px solid var(--line);border-radius:16px;text-align:center">
+          <div id="planLessonGenStatus" style="font-size:15px;margin-bottom:12px">Generating…</div>
+          <div id="planLessonGenResult" class="hidden" style="display:flex;flex-direction:column;align-items:center;gap:10px">
+            <a id="planLessonDownloadBtn" class="button-link secondary download-lesson" href="#" style="display:inline-block">⬇ Download Lesson</a>
+          </div>
+        </div>
       </div>
 
     </div>
     <!-- ═══════════════════════════════════════════════════════════════════ -->
 
-    <div class="quick-flow" id="quickFlow">
+    <div class="quick-flow hidden" id="quickFlow">
       <div class="center-card" id="stepChildCard">
         <h2>Find your student</h2>
         <label class="muted" style="font-size:12px;display:block;margin-bottom:8px">Child code</label>
         <div class="find-row">
-          <input id="childCodeInput" placeholder="MONKEY-4821" autocomplete="off" />
+          <div class="code-prefix-wrap">
+            <span class="code-prefix">MONKEY-</span>
+            <input id="childCodeInput" placeholder="4821" autocomplete="off" class="code-suffix-input" />
+          </div>
           <button class="ghost" id="findChildBtn" type="button">Find</button>
         </div>
         <div id="childPreview" class="hint" style="margin-top:14px">Enter a child code and tap Find.</div>
@@ -484,9 +506,9 @@
       return data;
     }
 
-    async function post(path, body) {
+    async function post(path, body, method = "POST") {
       const res = await fetch(path, {
-        method: "POST",
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body || {}),
       });
@@ -499,9 +521,17 @@
       return data;
     }
 
+    function getCodeFromSuffixInput(id) {
+      const suffix = $(id).value.trim().replace(/^MONKEY-/i, "");
+      return suffix ? "MONKEY-" + suffix : "";
+    }
+    function setCodeSuffixInput(id, fullCode) {
+      $(id).value = String(fullCode || "").replace(/^MONKEY-/i, "");
+    }
+
     function syncContextInputsToDraft() {
       if (!state.draft) return;
-      state.draft.childCode = $("childCodeInput").value.trim();
+      state.draft.childCode = getCodeFromSuffixInput("childCodeInput");
       if ($("tutorPromptInput")) {
         state.draft.tutorPrompt = $("tutorPromptInput").value.trim();
       }
@@ -537,7 +567,7 @@
 
     function syncDraftToInputs() {
       if (!state.draft) return;
-      $("childCodeInput").value = state.draft.childCode || "";
+      setCodeSuffixInput("childCodeInput", state.draft.childCode);
       if ($("tutorPromptInput")) {
         $("tutorPromptInput").value = state.draft.tutorPrompt || "";
       }
@@ -552,7 +582,7 @@
 
     function isChildConfirmed() {
       const d = state.draft;
-      const inputCode = $("childCodeInput").value.trim();
+      const inputCode = getCodeFromSuffixInput("childCodeInput");
       if (!d?.child || !d.confirmedChildCode) return false;
       return d.confirmedChildCode === d.child.childCode && inputCode === d.child.childCode;
     }
@@ -589,9 +619,9 @@
 
     function updateWorkflowUI() {
       const w = state.workflowStep;
-      $("stepChildCard").classList.toggle("hidden", w !== 1);
-      $("stepPromptCard").classList.toggle("hidden", w !== 2);
-      $("stepGenCard").classList.toggle("hidden", w !== 3);
+      $("stepChildCard")?.classList.toggle("hidden", w !== 1);
+      $("stepPromptCard")?.classList.toggle("hidden", w !== 2);
+      $("stepGenCard")?.classList.toggle("hidden", w !== 3);
     }
 
     function sleep(ms) {
@@ -688,7 +718,7 @@
         ok.type = "button";
         ok.className = "primary";
         ok.textContent = "Confirm — this is my student";
-        ok.disabled = !child.childCode || $("childCodeInput").value.trim() !== child.childCode;
+        ok.disabled = !child.childCode || getCodeFromSuffixInput("childCodeInput") !== child.childCode;
         ok.onclick = confirmChild;
         const wrong = document.createElement("button");
         wrong.type = "button";
@@ -1497,7 +1527,7 @@
 
     async function fetchChild() {
       try {
-        const childCode = $("childCodeInput").value.trim();
+        const childCode = getCodeFromSuffixInput("childCodeInput");
         if (!childCode) throw new Error("Enter child code first");
         setAutosaveStatus("Fetching child...");
         const data = await post("/api/child/fetch", { childCode });
@@ -1516,7 +1546,7 @@
     }
 
     function confirmChild() {
-      const childCode = $("childCodeInput").value.trim();
+      const childCode = getCodeFromSuffixInput("childCodeInput");
       const fetchedCode = state.draft?.child?.childCode || "";
       if (!childCode || !fetchedCode || childCode !== fetchedCode) {
         setAutosaveStatus("Find a matching student first");
@@ -1798,7 +1828,8 @@
 
       updateChildConfirmationState();
 
-      // Autosave disabled: tutor opted to keep data only in current page session.
+      // Plans is the default view — load on startup
+      loadPlans();
     }
 
     init().catch((err) => {
@@ -1820,13 +1851,7 @@
     let planChildData = null;
 
     function switchTab(tab) {
-      const isPlans = tab === "plans";
-      $("tabLesson").classList.toggle("active", !isPlans);
-      $("tabPlans").classList.toggle("active", isPlans);
-      $("plansView").classList.toggle("hidden", !isPlans);
-      $("quickFlow").classList.toggle("hidden", isPlans);
-      $("editPanel").classList.toggle("hidden", true);
-      if (isPlans) loadPlans();
+      if (tab === "plans") loadPlans();
     }
 
     async function loadPlans() {
@@ -1866,7 +1891,7 @@
     }
 
     async function planFetchChild() {
-      const code = $("planChildCodeInput").value.trim();
+      const code = getCodeFromSuffixInput("planChildCodeInput");
       if (!code) return;
       $("planChildPreview").textContent = "Looking up…";
       $("generatePlanBtn").disabled = true;
@@ -1888,11 +1913,19 @@
       const status = $("planGenStatus");
       btn.disabled = true;
       btn.textContent = "Generating…";
-      status.textContent = "AI is building the lesson sequence…";
+      status.textContent = "Saving child profile…";
       try {
+        const age = $("planAge").value.trim();
+        const gender = $("planGender").value;
+        if (age || gender) {
+          await post("/api/child/update", { childCode: planChildData.childCode, age: age || undefined, gender: gender || undefined }, "PATCH");
+        }
+        status.textContent = "AI is building the lesson sequence…";
         const data = await post("/api/generate-plan", {
           childCode: planChildData.childCode,
           profile: {
+            age:      age,
+            gender:   gender,
             grade:    $("planGrade").value.trim(),
             mastered: $("planMastered").value.trim(),
             weak:     $("planWeak").value.trim(),
@@ -1915,6 +1948,7 @@
       $("plansDashboard").classList.add("hidden");
       $("newPlanView").classList.add("hidden");
       $("planDetailView").classList.remove("hidden");
+      $("planLessonGenProgress").classList.add("hidden");
       $("lessonCardsGrid").innerHTML = '<div class="muted" style="grid-column:1/-1;padding:24px">Loading…</div>';
       try {
         const data = await get(`/api/plans/${encodeURIComponent(code)}`);
@@ -1962,28 +1996,41 @@
     async function createLessonFromPlan(childCode, lessonNum) {
       const btn = event.target;
       btn.disabled = true;
-      btn.textContent = "Preparing…";
+      btn.textContent = "Generating…";
+      const progressEl = $("planLessonGenProgress");
+      const statusEl   = $("planLessonGenStatus");
+      const resultEl   = $("planLessonGenResult");
+      const downloadBtn = $("planLessonDownloadBtn");
+      progressEl.classList.remove("hidden");
+      resultEl.classList.add("hidden");
+      statusEl.textContent = "1/3 — Preparing draft…";
       try {
         const data = await post("/api/lesson-from-plan", { childCode, lessonNum });
         if (!data.ok) throw new Error(data.error);
-        // Switch to Create Lesson tab and auto-generate
-        switchTab("lesson");
-        // Apply the draft returned
-        if (data.draft) {
-          state.draft = data.draft;
-          syncDraftToInputs();
-          renderChildPreview();
-          updateChildConfirmationState();
-          updateWorkflowUI();
-        }
-        // Store plan context so we can update status after build
+        state.draft = data.draft || state.draft;
         state.planContext = { childCode, lessonNum };
-        // Auto-start generation
-        await runQuickLessonPipeline();
+
+        statusEl.textContent = "2/3 — AI is generating the lesson…";
+        const startRes = await post("/api/generate", { draft: state.draft });
+        if (!startRes.jobId) throw new Error("Generation job did not start");
+        const result = await pollGenerateJob(startRes.jobId);
+        state.lesson = result.lesson;
+
+        statusEl.textContent = "3/3 — Building HTML…";
+        const build = await post("/api/build-lesson", { lesson: state.lesson });
+        state.lastGeneratedFileName = build.generatedFileName || "";
+        state.generatedLessonUrl = build.generatedFileUrl || "/lesson_game.html";
+
+        downloadBtn.href = state.generatedLessonUrl;
+        downloadBtn.setAttribute("download", state.lastGeneratedFileName);
+        statusEl.textContent = `✅ Lesson ${lessonNum} ready!`;
+        resultEl.classList.remove("hidden");
+        markSessionLessonReady();
+        setTimeout(() => openPlan(childCode), 1200);
       } catch(e) {
+        statusEl.textContent = "❌ " + e.message;
         btn.disabled = false;
         btn.textContent = `Create Lesson ${lessonNum}`;
-        alert("Error: " + e.message);
       }
     }
 

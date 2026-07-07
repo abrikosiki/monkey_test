@@ -1605,6 +1605,35 @@ const server = http.createServer(async (req, res) => {
       return;
     }
 
+    if (req.method === "PATCH" && url.pathname === "/api/child/update") {
+      try {
+        const { childCode, age, gender } = JSON.parse((await readBody(req)) || "{}");
+        if (!childCode) { sendJson(res, 400, { ok: false, error: "childCode required" }); return; }
+        const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
+        const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY;
+        const table = process.env.SUPABASE_CHILDREN_TABLE || "children";
+        const lookupColumn = process.env.SUPABASE_CHILD_LOOKUP_COLUMN || "code";
+        if (!supabaseUrl || !serviceKey) { sendJson(res, 200, { ok: true, skipped: "no supabase" }); return; }
+        const base = String(supabaseUrl).replace(/\/+$/, "");
+        const row = {};
+        if (age !== undefined && age !== null && age !== "") row.age = Number(age);
+        if (gender !== undefined && gender !== "") row.gender = gender;
+        if (Object.keys(row).length === 0) { sendJson(res, 200, { ok: true, skipped: "nothing to update" }); return; }
+        row.updated_at = new Date().toISOString();
+        const patchUrl = `${base}/rest/v1/${encodeURIComponent(table)}?${encodeURIComponent(lookupColumn)}=eq.${encodeURIComponent(childCode)}`;
+        const patchRes = await fetch(patchUrl, {
+          method: "PATCH",
+          headers: { apikey: serviceKey, Authorization: `Bearer ${serviceKey}`, "Content-Type": "application/json", Prefer: "return=minimal" },
+          body: JSON.stringify(row),
+        });
+        if (!patchRes.ok) { const t = await patchRes.text(); throw new Error(`Supabase PATCH ${patchRes.status}: ${t}`); }
+        sendJson(res, 200, { ok: true });
+      } catch (e) {
+        sendJson(res, 500, { ok: false, error: e.message });
+      }
+      return;
+    }
+
     if (req.method === "OPTIONS" && url.pathname === "/api/lesson-complete") {
       res.writeHead(204, corsLessonCompleteHeaders());
       res.end();
