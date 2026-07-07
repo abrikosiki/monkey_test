@@ -1,0 +1,238 @@
+{
+  "multiplication": [
+    {
+      "mechanic": "text_task",
+      "difficulty_range": [1, 3],
+      "prompt": "4 monkeys each hold 3 bananas. How many bananas altogether?",
+      "answer": "12"
+    },
+    {
+      "mechanic": "text_task",
+      "difficulty_range": [1, 3],
+      "prompt": "There are 5 treasure chests. Each chest holds 2 gems. How many gems total?",
+      "answer": "10"
+    },
+    {
+      "mechanic": "text_task",
+      "difficulty_range": [1, 3],
+      "prompt": "A wizard has 3 bags of magic dust. Each bag has 4 pinches. How many pinches total?",
+      "answer": "12"
+    },
+    {
+      "mechanic": "text_task",
+      "difficulty_range": [4, 6],
+      "prompt": "Each pirate ship carries 6 chests of gold. There are 7 ships. How many chests total?",
+      "answer": "42"
+    },
+    {
+      "mechanic": "text_task",
+      "difficulty_range": [4, 6],
+      "prompt": "A crystal cave has 8 walls. Each wall has 9 glowing gems. How many gems altogether?",
+      "answer": "72"
+    },
+    {
+      "mechanic": "text_task",
+      "difficulty_range": [4, 6],
+      "prompt": "The hero plants 6 rows of magic seeds. Each row has 7 seeds. How many seeds are planted?",
+      "answer": "42"
+    },
+    {
+      "mechanic": "text_task",
+      "difficulty_range": [7, 10],
+      "prompt": "A spell book has 12 chapters. Each chapter contains 15 spells. How many spells are in the book?",
+      "answer": "180"
+    },
+    {
+      "mechanic": "text_task",
+      "difficulty_range": [7, 10],
+      "prompt": "The island factory makes 24 potions each hour. In 8 hours, how many potions does it produce?",
+      "answer": "192"
+    }
+  ],
+  "division": [
+    {
+      "mechanic": "text_task",
+      "difficulty_range": [1, 3],
+      "prompt": "12 candy pieces are shared equally among 4 friends. How many does each friend get?",
+      "answer": "3"
+    },
+    {
+      "mechanic": "text_task",
+      "difficulty_range": [1, 3],
+      "prompt": "There are 10 apples and 5 baskets. If apples are split equally, how many per basket?",
+      "answer": "2"
+    },
+    {
+      "mechanic": "text_task",
+      "difficulty_range": [4, 6],
+      "prompt": "A shopkeeper has 35 potions and puts 7 in each box. How many boxes does he fill?",
+      "answer": "5"
+    },
+    {
+      "mechanic": "text_task",
+      "difficulty_range": [4, 6],
+      "prompt": "The explorer finds 48 gold coins and splits them equally into 6 bags. How many coins per bag?",
+      "answer": "8"
+    },
+    {
+      "mechanic": "text_task",
+      "difficulty_range": [4, 6],
+      "prompt": "The pirate crew caught 56 fish and shared them equally among 8 sailors. How many fish per sailor?",
+      "answer": "7"
+    },
+    {
+      "mechanic": "text_task",
+      "difficulty_range": [7, 10],
+      "prompt": "A wizard made 90 spell scrolls and tied them into bundles of 9. How many bundles did he make?",
+      "answer": "10"
+    },
+    {
+      "mechanic": "text_task",
+      "difficulty_range": [7, 10],
+      "prompt": "The castle vault holds 144 diamonds arranged in rows of 12. How many rows are there?",
+      "answer": "12"
+    }
+  ],
+  "addition": [
+    {
+      "mechanic": "text_task",
+      "difficulty_range": [1, 3],
+      "prompt": "There are 5 red fish and 6 blue fish in the magic pond. How many fish are there?",
+      "answer": "11"
+    },
+    {
+      "mechanic": "text_task",
+      "difficulty_range": [1, 3],
+      "prompt": "The hero found 4 coins in a cave and 7 coins on the beach. How many coins total?",
+      "answer": "11"
+    },
+    {
+      "mechanic": "text_task",
+      "difficulty_range": [4, 6],
+      "prompt": "The island market has 23 magic wands and receives a shipment of 18 more. How many wands now?",
+      "answer": "41"
+    },
+    {
+      "mechanic": "text_task",
+      "difficulty_range": [4, 6],
+      "prompt": "A hero collects 34 coins in the morning and 27 in the afternoon. How many coins total?",
+      "answer": "61"
+    },
+    {
+      "mechanic": "text_task",
+      "difficulty_range": [7, 10],
+      "prompt": "Three treasure chests hold 156, 89, and 47 gold coins respectively. How many coins in total?",
+      "answer": "292"
+    }
+  ],
+  "subtraction": [
+    {
+      "mechanic": "text_task",
+      "difficulty_range": [1, 3],
+      "prompt": "There are 9 stars in the sky. When morning comes, 4 disappear. How many stars are left?",
+      "answer": "5"
+    },
+    {
+      "mechanic": "text_task",
+      "difficulty_range": [1, 3],
+      "prompt": "The monkey had 8 bananas but ate 3. How many bananas are left?",
+      "answer": "5"
+    },
+    {
+      "mechanic": "text_task",
+      "difficulty_range": [4, 6],
+      "prompt": "A treasure chest had 50 gold coins. A pirate took 23. How many coins remain?",
+      "answer": "27"
+    },
+    {
+      "mechanic": "text_task",
+      "difficulty_range": [4, 6],
+      "prompt": "The magic forest had 64 fireflies. When morning came, 38 flew away. How many stayed?",
+      "answer": "26"
+    },
+    {
+      "mechanic": "text_task",
+      "difficulty_range": [7, 10],
+      "prompt": "A wizard started with 200 spell points. After three battles he used 47, 63, and 38 points. How many remain?",
+      "answer": "52"
+    }
+  ],
+  "mixed": [
+    {
+      "mechanic": "text_task",
+      "difficulty_range": [4, 6],
+      "prompt": "The hero has 3 bags with 7 crystals each, then finds 5 more crystals in a cave. How many total?",
+      "answer": "26"
+    },
+    {
+      "mechanic": "text_task",
+      "difficulty_range": [4, 6],
+      "prompt": "A bakery makes 24 muffins in the morning and 18 in the afternoon, then sells 15. How many are left?",
+      "answer": "27"
+    },
+    {
+      "mechanic": "text_task",
+      "difficulty_range": [5, 7],
+      "prompt": "A ship has 6 sailors, each carrying 4 swords. The captain takes 8 swords for the vault. How many swords remain with the crew?",
+      "answer": "16"
+    },
+    {
+      "mechanic": "text_task",
+      "difficulty_range": [7, 10],
+      "prompt": "A merchant buys 5 boxes each containing 12 gems, then sells 28 gems at the market. How many gems remain?",
+      "answer": "32"
+    }
+  ],
+  "patterns": [
+    {
+      "mechanic": "pattern_input",
+      "difficulty_range": [1, 3],
+      "prompt": "2, 4, 6, ?, 10",
+      "answer": "8"
+    },
+    {
+      "mechanic": "pattern_input",
+      "difficulty_range": [1, 3],
+      "prompt": "5, 10, 15, ?, 25",
+      "answer": "20"
+    },
+    {
+      "mechanic": "pattern_input",
+      "difficulty_range": [3, 6],
+      "prompt": "3, 6, ?, 12, 15",
+      "answer": "9"
+    },
+    {
+      "mechanic": "pattern_input",
+      "difficulty_range": [3, 6],
+      "prompt": "7, 14, 21, ?, 35",
+      "answer": "28"
+    },
+    {
+      "mechanic": "pattern_input",
+      "difficulty_range": [6, 10],
+      "prompt": "4, 12, ?, 108, 324",
+      "answer": "36"
+    }
+  ],
+  "fractions": [
+    {
+      "mechanic": "text_task",
+      "difficulty_range": [5, 7],
+      "prompt": "A pizza is cut into 8 equal slices. The hero eats 3 slices. What fraction of the pizza is left?",
+      "answer": "5/8"
+    },
+    {
+      "mechanic": "text_task",
+      "difficulty_range": [5, 7],
+      "prompt": "A treasure map is split into 4 equal parts. The hero explores 1 part. How many parts remain unexplored?",
+      "answer": "3"
+    },
+    {
+      "mechanic": "text_task",
+      "difficulty_range": [7, 10],
+      "prompt": "Half of the 24 gems in a chest are rubies. A quarter of those rubies are giant-sized. How many giant rubies are there?",
+      "answer": "3"
+    }
+  ]
+}

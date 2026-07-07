@@ -10,6 +10,8 @@ import {
   applyIslandLessonCanon,
   getIslandStageBgMap,
 } from "./island_canon.mjs";
+import { verifyAndFixLesson } from "./math_verifier.mjs";
+import { generateProblems, SUPPORTED_MECHANICS } from "./math_generator.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const HOST = process.env.TUTOR_UI_HOST || "0.0.0.0";
@@ -22,6 +24,30 @@ const DATA_DIR = path.join(__dirname, "tutor_data");
 const DRAFT_FILE = path.join(DATA_DIR, "current_draft.json");
 const CHILDREN_FILE = path.join(DATA_DIR, "children.json");
 const generationJobs = new Map();
+
+// Load example bank for few-shot injection in autofill
+const EXAMPLE_BANK_FILE = path.join(DATA_DIR, "example_bank.json");
+let exampleBank = null;
+try { exampleBank = JSON.parse(fs.readFileSync(EXAMPLE_BANK_FILE, "utf-8")); } catch { /* optional */ }
+
+function getWordBankExamples(tutorPrompt, difficultyLevel, count = 5) {
+  if (!exampleBank) return [];
+  const p = String(tutorPrompt || "").toLowerCase();
+  const level = Number(difficultyLevel) || 5;
+  let key = "mixed";
+  if (/multipl/i.test(p)) key = "multiplication";
+  else if (/divis/i.test(p)) key = "division";
+  else if (/\badd\b|addition/i.test(p)) key = "addition";
+  else if (/subtract|minus/i.test(p)) key = "subtraction";
+  else if (/pattern|sequence/i.test(p)) key = "patterns";
+  else if (/fraction/i.test(p)) key = "fractions";
+  const bucket = exampleBank[key] || exampleBank["mixed"] || [];
+  const filtered = bucket.filter(e => {
+    const [lo, hi] = e.difficulty_range || [1, 10];
+    return level >= lo && level <= hi;
+  });
+  return (filtered.length ? filtered : bucket).slice(0, count);
+}
 
 const MECHANICS = [
   { id: "drag_sort", label: "Drag Sort", description: "Arrange values in the correct order." },
@@ -1138,7 +1164,19 @@ async function generateAutofillDraft(body) {
   }
 
   const system = buildAutofillSystemPrompt(childBlock, tutorPrompt);
+
+  // Parse difficulty from tutor prompt for word bank lookup
+  const diffMatch = tutorPrompt.match(/\b([1-9]|10)\b/);
+  const diffLevel = diffMatch ? Number(diffMatch[1]) : 5;
+  const bankExamples = getWordBankExamples(tutorPrompt, diffLevel, 5);
+
   let userMsg = `Generate the lesson draft JSON for child code ${childCode}. Output tutorContext, context (topicLabel, topicKey, islandKey, knows, weakPoint, notes), and stages (9 stages, 8 unique mechanics + boss_mix stage 9, flexible rounds 2–7 per stage); fields must match each chosen mechanic.`;
+
+  if (bankExamples.length > 0) {
+    userMsg += `\n\nEXAMPLE QUALITY PROBLEMS (use as inspiration for word problem rounds — adapt to island theme, do not copy verbatim):\n` +
+      bankExamples.map(e => `- "${e.prompt}" → answer: ${e.answer}`).join("\n");
+  }
+
   if (forcedIsland) {
     userMsg += `\n\nTUTOR-SELECTED ISLAND (mandatory — do not change):\n- context.islandKey MUST be exactly: "${forcedIsland}"\n- Set every stage "background" to the six-step pattern for this island (see ISLAND KEY section in system prompt).\n`;
   }
@@ -1242,6 +1280,12 @@ async function generateLessonFromDraft(draft, options = {}) {
   clampLessonAssetKeys(lesson, assetCatalog);
   /** Canon story + six background stems — always from island pack, not the model. */
   applyIslandLessonCanon(lesson, draft);
+  /** Auto-fix verifiable math answers (corridor_choice, balance_scale, symbol_calc, etc.) */
+  const { fixedCount, log: verifyLog } = verifyAndFixLesson(lesson);
+  if (fixedCount > 0) {
+    lesson.tutor_notes = Array.isArray(lesson.tutor_notes) ? lesson.tutor_notes : [];
+    lesson.tutor_notes.unshift(`[auto-fix] Corrected ${fixedCount} math answer(s): ${verifyLog.join(" | ")}`);
+  }
   const errors = validateLessonShape(lesson);
   if (errors.length) {
     const err = new Error("Generated lesson shape is invalid");
@@ -1692,6 +1736,20 @@ const server = http.createServer(async (req, res) => {
       }
       fs.writeFileSync(OUT_FILE, JSON.stringify(lesson, null, 2), "utf-8");
       sendJson(res, 200, { ok: true });
+      return;
+    }
+
+    if (req.method === "GET" && url.pathname === "/api/suggest-examples") {
+      const mechanic = url.searchParams.get("mechanic") || "";
+      const topic = url.searchParams.get("topic") || "mixed";
+      const level = Number(url.searchParams.get("level") || "5");
+      const count = Math.min(Number(url.searchParams.get("count") || "5"), 20);
+      if (!SUPPORTED_MECHANICS.includes(mechanic)) {
+        sendJson(res, 400, { ok: false, error: `mechanic must be one of: ${SUPPORTED_MECHANICS.join(", ")}` });
+        return;
+      }
+      const examples = generateProblems(mechanic, topic, level, count);
+      sendJson(res, 200, { ok: true, mechanic, topic, level, examples });
       return;
     }
 
