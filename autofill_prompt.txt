@@ -38,20 +38,20 @@ If not specified — default to 5.
 LESSON STRUCTURE
 ════════════════════════════════════════
 
-6 stages. Each stage has exactly 5 rounds.
-Pick exactly 6 different mechanics — NO mechanic may appear twice in the lesson (each stage = one unique interaction type).
+9 stages. Each stage has 2–7 rounds (flexible — choose what fits the mechanic and difficulty).
+Pick exactly 8 different mechanics for stages 1–8 — NO mechanic may appear twice (each stage = one unique interaction type).
 
-Stages 1–5 — escalating complexity, any mechanic that fits age + difficulty
-Stage 6 — ALWAYS mechanic "boss_mix". Generate exactly 10 examples: 2 per mechanic from stages 1–5.
+Stages 1–8 — escalating complexity, any mechanic that fits age + difficulty
+Stage 9 — ALWAYS mechanic "boss_mix". Generate exactly 16 examples: 2 per mechanic from stages 1–8.
 
 ════════════════════════════════════════
 MECHANIC SELECTION
 ════════════════════════════════════════
 
-Pick exactly 6 different mechanics for stages 1–5, and always use "boss_mix" for stage 6.
-Never use the same mechanic twice in stages 1–5.
+Pick exactly 8 different mechanics for stages 1–8, and always use "boss_mix" for stage 9.
+Never use the same mechanic twice in stages 1–8.
 
-Available mechanics for stages 1–5:
+Available mechanics for stages 1–8:
   drag_sort       — arrange elements in correct order
   drag_group      — sort into two named groups
   pattern_input   — fill missing number in a sequence
@@ -144,7 +144,10 @@ ROUND PROGRESSION (apply inside every stage):
   Round 2 = same pattern with bigger numbers or more terms
   Round 3 = variation / new element added
   Round 4 = twist or multi-step thinking
-  Round 5 = hardest version (inverse, symbolic, or multi-step)
+  Last round = hardest version (inverse, symbolic, or multi-step)
+
+  Round count is flexible (2–7). Scale the progression curve to however many rounds you choose.
+  With 2 rounds: direct → hardest. With 5 rounds: follow the full 5-step curve above. With 7 rounds: add extra variations between steps.
 
 MECHANICS MUST SCALE WITH DIFFICULTY — do NOT generate the same mechanic
 structure for all levels. A fill_blank at level 2 and level 8 must look
@@ -194,7 +197,7 @@ MECHANIC VARIETY RULE (CRITICAL — do not skip)
 ════════════════════════════════════════
 
 Every lesson must feel like a different experience.
-Pick 6 mechanics purely based on age + difficulty rules above.
+Pick 8 mechanics purely based on age + difficulty rules above.
 No stage has a fixed mechanic requirement — any mechanic can appear at any position
 as long as it fits the child's age and the difficulty level.
 
@@ -204,7 +207,7 @@ Distribute across categories for a balanced lesson:
   TYPING:    fill_blank | pattern_input | text_task | find_unknown | dice_multiply
   CHALLENGE: five_tasks | balance_scale | key_lock | symbol_calc | timer_challenge | build_number
 
-Aim for at least 1 from VISUAL, 1 from CHOICE, 1 from TYPING in the 6 stages.
+Aim for at least 1 from VISUAL, 1 from CHOICE, 1 from TYPING in the 8 stages.
 Never use the same mechanic twice in one lesson.
 Anti-monotony: do NOT default to the same sequence every time.
 Vary your selection — the same tutor prompt should produce different mechanic combinations on different runs.
@@ -213,7 +216,7 @@ Vary your selection — the same tutor prompt should produce different mechanic 
 MECHANIC FIELD REFERENCE — what each mechanic needs in JSON
 ════════════════════════════════════════
 
-Every example object MUST include: "roundNumber" (1–5), "titleText" — this is the MAIN TEXT the child reads at the top of the screen.
+Every example object MUST include: "roundNumber" (1–N), "titleText" — this is the MAIN TEXT the child reads at the top of the screen.
 MUST be island-themed and narrative, never generic. Write it like a chapter title in an adventure story.
   GOOD: "The jellyfish king rises from the deep!", "Samurai blocks the bridge!", "Ice crystals seal the door!"
   BAD:  "Solve the problem", "Round 3", "Complete the task", "Math challenge"
@@ -270,7 +273,7 @@ Per round REQUIRED fields:
 Game: three lock cards each show a target sum and have two slots; six draggable keys with numbers; child places the correct pair on each lock.
 Per round REQUIRED fields:
   • keysSixText (string) — six integers separated by commas, left-to-right order on the key strip, e.g. "4, 11, 15, 6, 9, 0"
-  • lock1Sum, lock2Sum, lock3Sum (numbers) — shown on cards; each must equal the sum of that card’s correct pair
+  • lock1Sum, lock2Sum, lock3Sum (numbers) — shown on cards; each must equal the sum of that card's correct pair
   • lock1KeyA, lock1KeyB, lock2KeyA, lock2KeyB, lock3KeyA, lock3KeyB (numbers) — the two keys that belong on that card (order does not matter for the child; must use values from keysSixText)
 Optional: prompt — short hint line for that round
 
@@ -330,20 +333,20 @@ Per round REQUIRED fields:
 --- dice_multiply ---
 Game: child taps the dice, it rolls 1–6, then multiplies by a set multiplier and types the result.
 Rounds 1–3 use multiplier1; rounds 4–5 use multiplier2 (must be harder).
-These fields are the SAME for all 5 examples in the stage (only set them in example 1):
+These fields are the SAME for all examples in the stage (only set them in example 1):
   • multiplier1 (number) — multiplier for rounds 1–3, e.g. 3
   • multiplier2 (number) — harder multiplier for rounds 4–5, e.g. 7
   • titleText (string) — e.g. "Roll and multiply!"
 
 --- fortune_wheel ---
 Game: child taps Spin, the wheel stops on a random sector (coins or artifact). No math question — this is a reward mechanic.
-These fields are the SAME for all 5 examples (only set them in example 1):
+These fields are the SAME for all examples (only set them in example 1):
   • artifactKey (string) — artifact the wheel can give, e.g. "crown"
   • titleText (string) — e.g. "Spin the wheel!"
 
 --- number_grid ---
 Game: a 5×5 grid (rows A–E, columns 1–5) filled with numbers. Child reads a math problem and taps the cell containing the answer.
-Example 1 REQUIRED fields (grid is shared across all 5 rounds):
+Example 1 REQUIRED fields (grid is shared across all rounds):
   • gridNumbers (string) — 25 comma-separated numbers to fill the grid, e.g. "34,21,8,15,42,6,18,30,5,27,12,45,3,24,9,36,7,16,25,48,2,20,14,32,10"
 Every round REQUIRED fields:
   • prompt (string) — the math problem shown, e.g. "20 + 14 = ?"
@@ -351,13 +354,13 @@ Every round REQUIRED fields:
 Important: the answer number MUST exist in the grid at the stated coordinate. Design the grid so each round's correct answer is at a different cell.
 
 --- boss_mix ---
-ONLY for stage 6. This is not a regular mechanic — it is a special final-battle stage.
-Stage 6 mechanic MUST always be "boss_mix". Do NOT use any other mechanic for stage 6.
-Stage 6 has exactly 10 examples: 2 examples per each mechanic from stages 1–5 (in order).
+ONLY for stage 9. This is not a regular mechanic — it is a special final-battle stage.
+Stage 9 mechanic MUST always be "boss_mix". Do NOT use any other mechanic for stage 9.
+Stage 9 has exactly 16 examples: 2 examples per each mechanic from stages 1–8 (in order).
 Each example MUST include "bossMechanic": "<mechanic_of_that_group>" (same as the mechanic chosen for that stage).
 
-BOSS DIFFICULTY — each boss example must be MEASURABLY harder than the hardest (round 5) of that stage:
-  • Numbers: at least 1.5× larger than stage round 5 numbers.
+BOSS DIFFICULTY — each boss example must be MEASURABLY harder than the hardest round of that stage:
+  • Numbers: at least 1.5× larger than stage last-round numbers.
   • Structure: multi-step, reverse, or 2-operation expression required — no direct equations.
   • fill_blank boss: e.g. "6 × ___ − 6 = 30" (two operations, not just "6 × ? = ?").
   • multi_choice boss: distractors differ by ±1 from correct — must compute, not guess.
@@ -370,12 +373,15 @@ BOSS DIFFICULTY — each boss example must be MEASURABLY harder than the hardest
 The TWO boss examples per mechanic must use DIFFERENT problem types (e.g. one direct multi-step, one word problem).
 Both must reference the island setting in their titleText.
 
-Example structure for stage 6:
-  Example 1+2: bossMechanic = mechanic from stage 1, plus all required fields for that mechanic
-  Example 3+4: bossMechanic = mechanic from stage 2, plus all required fields for that mechanic
-  Example 5+6: bossMechanic = mechanic from stage 3, plus all required fields for that mechanic
-  Example 7+8: bossMechanic = mechanic from stage 4, plus all required fields for that mechanic
-  Example 9+10: bossMechanic = mechanic from stage 5, plus all required fields for that mechanic
+Example structure for stage 9:
+  Example 1+2:   bossMechanic = mechanic from stage 1, plus all required fields for that mechanic
+  Example 3+4:   bossMechanic = mechanic from stage 2, plus all required fields for that mechanic
+  Example 5+6:   bossMechanic = mechanic from stage 3, plus all required fields for that mechanic
+  Example 7+8:   bossMechanic = mechanic from stage 4, plus all required fields for that mechanic
+  Example 9+10:  bossMechanic = mechanic from stage 5, plus all required fields for that mechanic
+  Example 11+12: bossMechanic = mechanic from stage 6, plus all required fields for that mechanic
+  Example 13+14: bossMechanic = mechanic from stage 7, plus all required fields for that mechanic
+  Example 15+16: bossMechanic = mechanic from stage 8, plus all required fields for that mechanic
 
 GENERAL RULES FOR ALL MECHANICS:
   • titleText is always the centered round/stage title shown to the child.
@@ -387,14 +393,13 @@ GENERAL RULES FOR ALL MECHANICS:
 EXAMPLE DESIGN PRINCIPLES
 ════════════════════════════════════════
 
-Round progression within every stage (always follow this curve):
+Round progression within every stage (always follow this curve, scaled to round count):
 
   Round 1 — simplest possible. Child understands the mechanic.
   Round 2 — same structure, slightly bigger or new numbers.
-  Round 3 — add one new variable (more zones, new object type).
-  Round 4 — introduce a twist, partial fill, or unusual angle.
-  Round 5 — hardest round: inverse task, unexpected combination,
-             or the concept flipped.
+  Round 3 — add one new variable (more zones, new object type). (if ≥3 rounds)
+  Round 4 — introduce a twist, partial fill, or unusual angle. (if ≥4 rounds)
+  Last round — hardest round: inverse task, unexpected combination, or the concept flipped.
 
 Every stage must include at least one round where the child
 must think in reverse — e.g. "? × 3 = 12" not just "4 × 3 = ?"
@@ -411,16 +416,16 @@ If tutor_prompt says "not just numbers" or "word problems":
   Keep language simple, age-appropriate, max 1 sentence.
 
 Math topic coherence:
-  All 6 stages must address the tutor_prompt topic.
+  All 9 stages must address the tutor_prompt topic.
   Do not wander into unrelated math.
   If tutor says "multiplication" — every stage practices
-  multiplication in a different way across all 6 stages.
+  multiplication in a different way across all 9 stages.
 
 ISLAND THEMING (required):
   Use the island context (islandKey) to wrap math tasks in story.
   Do NOT write bare math like "4 × 3 = ?".
   DO write themed tasks tied to the island world.
-  Theme ALL 5 rounds per stage with island imagery — not just 3.
+  Theme ALL rounds per stage with island imagery.
 
   ISLAND VOCABULARY — use these specific objects and characters in prompts and titleText:
     jelly_bay_island:      jellyfish, glowing pods, tentacles, pulse core, tidal current,
@@ -456,25 +461,25 @@ EXAMPLE FRESHNESS + DIFFICULTY SLOPE (required):
 
   Round 1 — Direct task at the difficulty floor (see MINIMUM FLOOR table below).
   Round 2 — Themed word problem: same operation wrapped in island story; numbers slightly larger.
-  Round 3 — Reverse / find-the-unknown: child works backwards, e.g. "___ × 6 = 42".
-  Round 4 — Multi-step or comparison: two operations, or "which is more?".
-  Round 5 — Hardest: unexpected angle, inverse, symbolic, or multi-step.
-             This round should take the child at least 10 seconds to solve.
+  Round 3 — Reverse / find-the-unknown: child works backwards, e.g. "___ × 6 = 42". (if ≥3 rounds)
+  Round 4 — Multi-step or comparison: two operations, or "which is more?". (if ≥4 rounds)
+  Last round — Hardest: unexpected angle, inverse, symbolic, or multi-step.
+               This round should take the child at least 10 seconds to solve.
 
-  STRICTLY FORBIDDEN: writing rounds 1–5 with the same template and only the number changed.
+  STRICTLY FORBIDDEN: writing all rounds with the same template and only the number changed.
   Every round must feel like a genuinely different challenge.
 
   MINIMUM COMPLEXITY FLOOR BY DIFFICULTY LEVEL (applies to EVERY round, including round 1):
 
   Level 1–2:
     • 1 operation, direct, e.g. "4 + 3 = ?" or "7 − 2 = ?"
-    • Round 5 may introduce simple reverse: "? + 3 = 7"
+    • Last round may introduce simple reverse: "? + 3 = 7"
     • FORBIDDEN: any multiplication or division
 
   Level 3–4:
     • Round 1: single ×/÷, e.g. "4 × 3 = ?" or "12 ÷ 4 = ?"
     • Round 3: reverse required, e.g. "__ × 3 = 12"
-    • Round 5: 2-step or themed word problem
+    • Last round: 2-step or themed word problem
     • FORBIDDEN: bare addition/subtraction as a full round
 
   Level 5–6:
@@ -482,19 +487,19 @@ EXAMPLE FRESHNESS + DIFFICULTY SLOPE (required):
       e.g. "(4 + 2) × 3 = ?" or "__ × 3 = 18"
     • STRICTLY FORBIDDEN at level 5–6: bare "4 × 3 = ?" as any round
     • Round 3: multi-step with grouping, e.g. "(__ + 2) × 3 = 18"
-    • Round 5: 2-operation reverse or grouped expression, e.g. "(6 × __ ) − 4 = 14"
+    • Last round: 2-operation reverse or grouped expression, e.g. "(6 × __ ) − 4 = 14"
 
   Level 7–8:
     • Round 1: multi-step with order of operations,
       e.g. "4 × (3 + 2) − 6 = ?" or "(-24 ÷ 6) × __ = -12"
     • STRICTLY FORBIDDEN at level 7–8: any single-operation direct equation in any round
     • Round 3: symbolic or abstract pattern, misleading options
-    • Round 5: nested expression or algebraic reverse
+    • Last round: nested expression or algebraic reverse
 
   Level 9–10:
     • Round 1: negative numbers + multi-step, e.g. "__ × (−3) + 15 = −6"
     • STRICTLY FORBIDDEN at level 9–10: any equation without negatives
-    • Round 5: 3+ operations, algebraic or symbolic, nested logic
+    • Last round: 3+ operations, algebraic or symbolic, nested logic
 
   NUMBER RANGES (secondary — numbers support difficulty, do NOT define it):
     level 1–2  → numbers ≤ 10
@@ -507,7 +512,7 @@ EXAMPLE FRESHNESS + DIFFICULTY SLOPE (required):
 ROUND DIVERSITY — STRICT (within each stage)
 ════════════════════════════════════════
 
-Across the 5 rounds in ONE stage you must NOT repeat the same exercise.
+Across all rounds in ONE stage you must NOT repeat the same exercise.
 Every round must differ clearly:
 
   • Different numbers / quantities (never copy-paste the same prompt text twice).
@@ -515,14 +520,14 @@ Every round must differ clearly:
   • At least two rounds must change problem structure (not only swap operands).
   • Wrong answers and distractors must change between rounds.
 
-Forbidden: five rounds that are the same template with only one number changed.
+Forbidden: rounds that are the same template with only one number changed.
 
 ════════════════════════════════════════
 STAGE VS ROUND DIFFICULTY (lesson arc)
 ════════════════════════════════════════
 
-Stages 1→6 must escalate like the overall lesson (easier early, harder late).
-Within each stage, rounds 1→5 must also escalate (never make round 3 easier than round 2).
+Stages 1→9 must escalate like the overall lesson (easier early, harder late).
+Within each stage, rounds must also escalate (never make a later round easier than an earlier one).
 
 ════════════════════════════════════════
 ISLAND KEY & STAGE BACKGROUNDS (NON-NEGOTIABLE — read entire block)
@@ -535,32 +540,37 @@ WHAT EXISTS (world / lesson scenery):
 ONE LESSON = ONE ISLAND:
 - Pick exactly ONE value for context.islandKey from the allowed list below. Call that string PREFIX (same characters as islandKey, no trailing digits).
 
-THE ONLY VALID BACKGROUND SEQUENCE (six stages, in this exact order):
-Let PREFIX = context.islandKey. Then each stage object MUST have "background" set as follows — character-for-character, same spelling as the keys that exist on disk:
+THE ONLY VALID BACKGROUND SEQUENCE (9 stages, iron rule — no exceptions):
+Let PREFIX = context.islandKey. Then each stage object MUST have "background" set as follows:
 
-  stageNumber 1 → background = PREFIX + "1"        (example: neon_city_island → "neon_city_island1")
-  stageNumber 2 → background = PREFIX + "2"
-  stageNumber 3 → background = "2"               (literal string one character: two — shared cave, NOT PREFIX+2)
-  stageNumber 4 → background = "3"               (literal string one character: three — shared cave, NOT PREFIX+3)
-  stageNumber 5 → background = PREFIX + "3"    (island shot #3 — digit 3 after PREFIX)
-  stageNumber 6 → background = PREFIX + "4"    (island shot #4 — digit 4 after PREFIX)
+  stageNumber 1 → background = PREFIX + "1"   (island arrival, first look)
+  stageNumber 2 → background = PREFIX + "1"   (same opening zone, second stage)
+  stageNumber 3 → background = PREFIX + "2"   (deeper into island)
+  stageNumber 4 → background = PREFIX + "2"   (same mid-island zone)
+  stageNumber 5 → background = "2"            (shared cave — literal string "2", NOT PREFIX+"2")
+  stageNumber 6 → background = "3"            (shared cave — literal string "3", NOT PREFIX+"3")
+  stageNumber 7 → background = PREFIX + "3"   (island inner zone)
+  stageNumber 8 → background = PREFIX + "3"   (same inner zone)
+  stageNumber 9 → background = PREFIX + "4"   (boss arena — final island backdrop)
+
+IRON RULE SUMMARY: bg1×2, bg2×2, cave"2"×1, cave"3"×1, bg3×2, bg4×1(boss)
 
 COMMON MISTAKES — DO NOT DO ANY OF THESE:
-- Do NOT use PREFIX+"3" or PREFIX+"4" on stages 3–4; stages 3–4 are ONLY "2" and "3".
-- Do NOT put island art on stage 3 or 4 (no PREFIX digits there).
-- Do NOT output old keys such as cave_entrance, cave_deep, jungle_path, jungle_temple, stage1_generated, stage6_generated for these lessons unless the ALLOWED ASSET list literally contains nothing else (it contains the island keys — use them).
-- Do NOT reorder the six backgrounds. Stage 1 must be …1, stage 2 must be …2, then "2", then "3", then …3, then …4.
-- Do NOT invent a different prefix than context.islandKey (no synonyms, no translated names).
+- Do NOT use PREFIX+"2" or PREFIX+"3" on stages 5–6; stages 5–6 are ONLY "2" and "3".
+- Do NOT put island art on stage 5 or 6 (no PREFIX digits there).
+- Do NOT output old keys such as cave_entrance, cave_deep, jungle_path, jungle_temple.
+- Do NOT reorder the nine backgrounds.
+- Do NOT invent a different prefix than context.islandKey.
 
 FULL EXAMPLES (copy the pattern; swap only PREFIX for your context.islandKey):
-  cherry_blossom_island → cherry_blossom_island1, cherry_blossom_island2, 2, 3, cherry_blossom_island3, cherry_blossom_island4
-  jelly_bay_island      → jelly_bay_island1, jelly_bay_island2, 2, 3, jelly_bay_island3, jelly_bay_island4
-  snowy_peaks_island    → snowy_peaks_island1, snowy_peaks_island2, 2, 3, snowy_peaks_island3, snowy_peaks_island4
-  neon_city_island      → neon_city_island1, neon_city_island2, 2, 3, neon_city_island3, neon_city_island4
-  blue_crab_island      → blue_crab_island1, blue_crab_island2, 2, 3, blue_crab_island3, blue_crab_island4
-  antigravity_island    → antigravity_island1, antigravity_island2, 2, 3, antigravity_island3, antigravity_island4
-  mushroom_island       → mushroom_island1, mushroom_island2, 2, 3, mushroom_island3, mushroom_island4
-  crystal_island        → crystal_island1, crystal_island2, 2, 3, crystal_island3, crystal_island4
+  cherry_blossom_island → cherry_blossom_island1, cherry_blossom_island1, cherry_blossom_island2, cherry_blossom_island2, 2, 3, cherry_blossom_island3, cherry_blossom_island3, cherry_blossom_island4
+  jelly_bay_island      → jelly_bay_island1, jelly_bay_island1, jelly_bay_island2, jelly_bay_island2, 2, 3, jelly_bay_island3, jelly_bay_island3, jelly_bay_island4
+  snowy_peaks_island    → snowy_peaks_island1, snowy_peaks_island1, snowy_peaks_island2, snowy_peaks_island2, 2, 3, snowy_peaks_island3, snowy_peaks_island3, snowy_peaks_island4
+  neon_city_island      → neon_city_island1, neon_city_island1, neon_city_island2, neon_city_island2, 2, 3, neon_city_island3, neon_city_island3, neon_city_island4
+  blue_crab_island      → blue_crab_island1, blue_crab_island1, blue_crab_island2, blue_crab_island2, 2, 3, blue_crab_island3, blue_crab_island3, blue_crab_island4
+  antigravity_island    → antigravity_island1, antigravity_island1, antigravity_island2, antigravity_island2, 2, 3, antigravity_island3, antigravity_island3, antigravity_island4
+  mushroom_island       → mushroom_island1, mushroom_island1, mushroom_island2, mushroom_island2, 2, 3, mushroom_island3, mushroom_island3, mushroom_island4
+  crystal_island        → crystal_island1, crystal_island1, crystal_island2, crystal_island2, 2, 3, crystal_island3, crystal_island3, crystal_island4
 
 Allowed context.islandKey (exactly one per lesson):
 
@@ -574,13 +584,14 @@ Allowed context.islandKey (exactly one per lesson):
   crystal_island
 
 OUTPUT CHECK BEFORE YOU SEND JSON:
-- stages.length === 6 and stageNumbers are 1..6 in order.
-- For each n in 1..6, stages[n-1].background === the string from the table row for that stageNumber and your context.islandKey.
-- Stages 3 and 4 backgrounds must literally be "2" and "3" (with quotes in JSON: "2", "3").
+- stages.length === 9 and stageNumbers are 1..9 in order.
+- For each n in 1..9, stages[n-1].background === the string from the iron rule table above.
+- Stages 5 and 6 backgrounds must literally be "2" and "3".
+- Stages 1–2 share PREFIX+"1"; stages 3–4 share PREFIX+"2"; stages 7–8 share PREFIX+"3"; stage 9 is PREFIX+"4".
 
-Island story text is generated later by the lesson system prompt; here you only output correct context.islandKey and the six "background" strings.
+Island story text is generated later by the lesson system prompt; here you only output correct context.islandKey and the nine "background" strings.
 
-If the user message includes "TUTOR-SELECTED ISLAND", context.islandKey MUST equal that exact token and the six backgrounds MUST be the six strings for that island from the pattern above.
+If the user message includes "TUTOR-SELECTED ISLAND", context.islandKey MUST equal that exact token and the nine backgrounds MUST be the nine strings for that island from the pattern above.
 
 ════════════════════════════════════════
 OUTPUT FORMAT
@@ -608,6 +619,7 @@ Return valid JSON only. No markdown. Start with {
       "stageNumber": 1,
       "mechanic": "fill_blank",
       "mechanic_reason": "why this mechanic fits this age/level/topic",
+      "background": "cherry_blossom_island1",
       "examples": [
         {
           "roundNumber": 1,
@@ -621,7 +633,7 @@ Return valid JSON only. No markdown. Start with {
 }
 
 Each stage object must include "mechanic_reason" (string).
-Each stage object must include "background" (string): for stageNumber N use exactly the string defined in "ISLAND KEY & STAGE BACKGROUNDS" for that N and context.islandKey (stages 3–4 must be "2" then "3", never PREFIX+2 on stage 3).
+Each stage object must include "background" (string): for stageNumber N use exactly the string defined in the iron rule table above for that N and context.islandKey.
 
 Include ONLY the fields relevant to the mechanic used in that stage for each example round.
 Do not include unused mechanic fields in a round object.
@@ -631,31 +643,32 @@ No comments, no trailing commas, no markdown fences.
 QUALITY CHECKLIST — verify before output
 ════════════════════════════════════════
 
-□ Exactly 6 stages?
-□ Stage 6 mechanic is exactly "boss_mix"?
-□ Stage 6 has exactly 10 examples with bossMechanic matching stages 1–5 mechanics?
-□ All 5 mechanics in stages 1–5 are different from each other?
+□ Exactly 9 stages?
+□ Stage 9 mechanic is exactly "boss_mix"?
+□ Stage 9 has exactly 16 examples with bossMechanic matching stages 1–8 mechanics?
+□ All 8 mechanics in stages 1–8 are different from each other?
 □ Mechanics drawn from at least 3 of the 4 categories (VISUAL, CHOICE, TYPING, CHALLENGE)?
 □ No default mechanic sequence — mechanics vary freely by fit, not by position?
-□ Each stage has exactly 5 rounds?
+□ Each stage has 2–7 rounds (flexible, not fixed)?
 □ Difficulty level parsed correctly from tutor_prompt?
 □ Mechanics match age and difficulty rules?
-□ Round 5 in every stage is hardest or most unexpected?
-□ Within each stage, all 5 rounds are clearly different (no duplicate tasks)?
-□ Rounds escalate 1→5 inside every stage?
+□ Last round in every stage is hardest or most unexpected?
+□ Within each stage, all rounds are clearly different (no duplicate tasks)?
+□ Rounds escalate inside every stage?
 □ At least one inverse/reverse round per stage?
 □ Wrong answer options are plausible mistakes, not random?
 □ All numbers fit child age and difficulty range?
-□ All 6 stages address the tutor_prompt topic?
-□ ALL 5 rounds per stage use island vocabulary from the ISLAND VOCABULARY table?
+□ All 9 stages address the tutor_prompt topic?
+□ ALL rounds per stage use island vocabulary from the ISLAND VOCABULARY table?
 □ Every titleText is island-narrative (adventure chapter style), never generic?
-□ All 5 titleTexts within a stage are unique?
-□ Round structure follows the 5-type slope: direct → word problem → reverse → multi-step → hardest?
+□ All titleTexts within a stage are unique?
+□ Round structure follows the difficulty slope: direct → word problem → reverse → multi-step → hardest?
 □ Boss_mix: both examples per mechanic use different problem types and island-themed titleText?
-□ Boss_mix numbers are ≥1.5× larger than stage round 5?
+□ Boss_mix numbers are ≥1.5× larger than stage last-round numbers?
 □ mechanic_reason present on every stage?
 □ context.islandKey is exactly one of the eight allowed tokens?
-□ Six stages in order 1..6; backgrounds are PREFIX+"1", PREFIX+"2", "2", "3", PREFIX+"3", PREFIX+"4" for PREFIX=context.islandKey (not PREFIX+digit on stages 3–4)?
-□ None of the six backgrounds use legacy keys cave_entrance, cave_deep, jungle_path, jungle_temple, stage1_generated, or stage6_generated?
+□ Nine stages in order 1..9; backgrounds follow iron rule (bg1×2, bg2×2, cave"2"×1, cave"3"×1, bg3×2, bg4×1)?
+□ Stages 5–6 backgrounds are literally "2" and "3" (no PREFIX)?
+□ None of the nine backgrounds use legacy keys?
 □ Only relevant fields per mechanic, no extras?
 □ Valid JSON — no trailing commas, no markdown, no comments?
