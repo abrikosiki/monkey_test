@@ -1913,6 +1913,9 @@ const server = http.createServer(async (req, res) => {
         autofillResult.context = autofillResult.context || {};
         if (entry.key_concepts?.length) autofillResult.context.keyConcepts = entry.key_concepts;
         if (entry.learning_objective) autofillResult.context.learningObjective = entry.learning_objective;
+        // Plan lessons introduce new concepts — request the theory screen so the
+        // generator emits a "theory" object (shown before stage 1).
+        autofillResult.context.includeTheory = true;
         writeJson(DRAFT_FILE, autofillResult);
       }
       sendJson(res, 200, { ok: true, draft: autofillResult, lessonEntry: entry });
