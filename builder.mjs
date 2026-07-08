@@ -4223,7 +4223,7 @@ function buildHtml(
     wrap.className = "balance-scale-wrap";
     const scale = document.createElement("img");
     scale.className = "balance-scale-img";
-    scale.src = "assets/scale_down.png";
+    scale.src = "assets/scale_down.webp";
     scale.alt = "scale";
     wrap.appendChild(scale);
 
@@ -4244,7 +4244,7 @@ function buildHtml(
       right.style.pointerEvents = "none";
       scale.style.opacity = "0.35";
       setTimeout(() => {
-        scale.src = "assets/scale.png";
+        scale.src = "assets/scale.webp";
         scale.style.opacity = "1";
         scale.style.filter = "drop-shadow(0 0 28px rgba(244,208,63,.9)) drop-shadow(0 0 46px rgba(173,216,255,.55))";
         scale.style.transform = "scale(1.04)";
