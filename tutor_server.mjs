@@ -579,6 +579,49 @@ function mapExampleToRound(mech, ex, existing) {
   return r;
 }
 
+// Safely evaluate a simple arithmetic expression (digits + + - × ÷ * / ( ) only).
+// Returns a finite number or null when it cannot be parsed.
+function evalArith(expr) {
+  const s = String(expr).replace(/×/g, "*").replace(/÷/g, "/").trim();
+  if (s === "" || !/^[0-9+\-*/().\s]+$/.test(s)) return null;
+  try {
+    const v = Function(`"use strict"; return (${s});`)();
+    return typeof v === "number" && isFinite(v) ? v : null;
+  } catch {
+    return null;
+  }
+}
+
+// match_pairs renders as "tap the two correct equations": exactly the two flagged
+// options must be TRUE equations and the other two must be FALSE, otherwise the
+// task is ambiguous. The model often makes 3–4 options individually true, or even
+// flags a false equation as correct. This rewrites each "LHS = RHS" option so its
+// truth value matches whether it is one of the two flagged-correct options.
+function fixMatchPairsRound(r) {
+  const letters = ["a", "b", "c", "d"];
+  let cset = [r.correct_pair_1, r.correct_pair_2]
+    .map((x) => String(x || "").trim().toUpperCase())
+    .filter((x) => ["A", "B", "C", "D"].includes(x));
+  cset = [...new Set(cset)];
+  if (cset.length < 2) cset = ["A", "B"];
+  cset = cset.slice(0, 2);
+  r.correct_pair_1 = cset[0];
+  r.correct_pair_2 = cset[1];
+  const correct = new Set(cset);
+  for (const L of letters) {
+    const key = "pair_" + L;
+    const raw = r[key];
+    if (typeof raw !== "string" || !raw.includes("=")) continue;
+    const eq = raw.indexOf("=");
+    const lhs = raw.slice(0, eq);
+    const lv = evalArith(lhs);
+    if (lv === null) continue; // leave non-arithmetic options untouched
+    const target = correct.has(L.toUpperCase()) ? lv : lv + 1;
+    r[key] = `${lhs.trim()} = ${target}`;
+  }
+  return r;
+}
+
 function applyDraftToLessonStages(lesson, draft) {
   if (!lesson || !Array.isArray(lesson.stages) || !draft || !Array.isArray(draft.stages)) return lesson;
   const stageCount = Math.min(lesson.stages.length, draft.stages.length);
@@ -666,6 +709,15 @@ function applyDraftToLessonStages(lesson, draft) {
       // else: no filled source for this mechanic — drop the empty round
     }
     if (repaired.length) bossStage.rounds = repaired;
+  }
+
+  // Make every match_pairs round unambiguous: exactly the two flagged options
+  // are true equations, the other two are false. Covers regular + boss stages.
+  for (const st of lesson.stages) {
+    if (!st || !Array.isArray(st.rounds)) continue;
+    for (const rr of st.rounds) {
+      if ((rr.type || st.type) === "match_pairs") fixMatchPairsRound(rr);
+    }
   }
 
   return lesson;

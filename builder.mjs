@@ -3065,7 +3065,7 @@ function buildHtml(
   }
 
   function renderDragGroup(stage){
-    const all = parseNumberList(stage.numbers_text || stage.numbersText || "");
+    const all = parseNumberList(stage.numbers_text || stage.numbersText || stage.numbers || "");
     const g1Name = String(stage.group1_name || stage.group1Name || "Group 1");
     const g2Name = String(stage.group2_name || stage.group2Name || "Group 2");
     const g1Set = new Set(parseNumberList(stage.group1_values || stage.group1Values || ""));
@@ -4171,7 +4171,7 @@ function buildHtml(
     box.className = "choice-box";
     const q = document.createElement("div");
     q.className = "choice-q";
-    q.textContent = stage.question || stage.prompt || "Find two correct pairs";
+    q.textContent = stage.question || stage.prompt || "Tap the two correct equations";
     box.appendChild(q);
 
     const row = document.createElement("div");
