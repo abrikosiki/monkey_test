@@ -634,6 +634,40 @@ function applyDraftToLessonStages(lesson, draft) {
 
     lesson.stages[i] = lStage;
   }
+
+  // Repair the boss stage: the main generation often leaves complex boss rounds
+  // (drag_sort, drag_group, corridor_choice…) empty. Backfill each empty boss
+  // round from a filled round of the same mechanic in the regular stages (1–8),
+  // and drop any that still have no content so no blank card is shown.
+  const bossStage = lesson.stages[8];
+  if (bossStage && Array.isArray(bossStage.rounds) && bossStage.rounds.length) {
+    const pool = {};
+    for (let s = 0; s < 8; s++) {
+      const st = lesson.stages[s];
+      if (!st || !Array.isArray(st.rounds)) continue;
+      for (const rr of st.rounds) {
+        const tp = rr.type || st.type;
+        if (roundHasContent(tp, rr)) (pool[tp] = pool[tp] || []).push(rr);
+      }
+    }
+    const repaired = [];
+    for (const br of bossStage.rounds) {
+      const tp = br.type;
+      if (roundHasContent(tp, br)) { repaired.push(br); continue; }
+      const src = pool[tp] && pool[tp].length ? pool[tp][repaired.length % pool[tp].length] : null;
+      if (src) {
+        for (const [k, v] of Object.entries(src)) {
+          if (k === "type" || k === "title") continue;
+          if (k === "instruction" && br.instruction) continue; // keep boss story title
+          br[k] = v;
+        }
+        repaired.push(br);
+      }
+      // else: no filled source for this mechanic — drop the empty round
+    }
+    if (repaired.length) bossStage.rounds = repaired;
+  }
+
   return lesson;
 }
 
@@ -701,6 +735,34 @@ function exampleHasContent(mech, ex) {
     case "fortune_wheel":   return has(ex.artifactKey);
     case "number_grid":     return has(ex.prompt) || has(ex.gridNumbers);
     default:                return has(ex.prompt) || has(ex.answer);
+  }
+}
+
+// True when a built round (snake_case fields) has real mechanic content. Used to
+// detect/repair empty boss_mix rounds that the main generation left blank.
+function roundHasContent(type, r) {
+  if (!r || typeof r !== "object") return false;
+  const has = (v) => v !== undefined && v !== null && String(v).trim() !== "";
+  const arr = (v) => Array.isArray(v) && v.length > 0;
+  switch (type) {
+    case "match_pairs":     return has(r.pair_a) || has(r.pair_b) || has(r.pair_c) || has(r.pair_d);
+    case "multi_choice":    return arr(r.options) && r.options.some((o) => has(o && o.label));
+    case "corridor_choice": return has(r.left_expression) || has(r.right_expression);
+    case "true_false":      return has(r.statement);
+    case "balance_scale":   return has(r.left_expression) || has(r.right_expression) || has(r.answer);
+    case "symbol_calc":     return has(r.symbol_expression);
+    case "find_unknown":    return has(r.unknown_equation);
+    case "timer_challenge": return has(r.timer_example_a) || has(r.timer_example_b) || has(r.timer_example_c);
+    case "drag_sort":       return arr(r.items);
+    case "drag_group":      return has(r.group1_values) || has(r.group2_values) || has(r.numbers_text);
+    case "key_lock":        return arr(r.key_lock_keys) && r.key_lock_keys.some((k) => Number(k) !== 0);
+    case "five_tasks":      return arr(r.tasks) && r.tasks.some((t) => has(t && t.q));
+    case "build_number":    return has(r.base_number);
+    case "number_grid":     return arr(r.grid_numbers);
+    case "pattern_input":
+    case "fill_blank":
+    case "text_task":       return has(r.prompt);
+    default:                return has(r.prompt) || has(r.answer);
   }
 }
 
