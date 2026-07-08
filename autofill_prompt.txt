@@ -216,18 +216,20 @@ Vary your selection — the same tutor prompt should produce different mechanic 
 MECHANIC FIELD REFERENCE — what each mechanic needs in JSON
 ════════════════════════════════════════
 
-Every example object MUST include: "roundNumber" (1–N), "titleText" — this is the MAIN TEXT the child reads at the top of the screen.
+Every STAGE object MUST include "stageEssence". Every example (round) object MUST include "roundNumber" and "titleText".
 
-GAMIFICATION RULE (MANDATORY, EVERY ROUND, EVERY MECHANIC):
-Nothing is ever a bare exercise. titleText is a short in-world SENTENCE that frames THIS round's task inside the island adventure — it names the villain, character, artifact, or island items and leads straight into the math. The child should feel they are helping the hero, not "doing a sum". This applies to ALL mechanics, including the numeric ones (fill_blank, balance_scale, pattern_input, symbol_calc, match_pairs): the equation still shows, but the titleText turns it into a story moment.
-  • Length: one sentence, max 14 words. Unique for every round.
-  • MUST reference the island world (villain / character / artifact / themed items).
-  • NEVER a bare number, a bare equation, or a generic label.
-  GOOD: "The Jelly King hid pearls in 3 caves, 6 in each — how many?"
-  GOOD: "Balance the tide scales to wake the Coral Trident!"
-  GOOD: "Sort the samurai's coins: which are divisible by 5?"
-  BAD:  "6 × 3", "Solve the problem", "Round 3", "Complete the task", "Math challenge"
-For mechanics that also have a prompt/question field, keep the math in that field and put the STORY in titleText, so the two together read like a mini-scene.
+TWO TEXT SLOTS (MANDATORY, EVERY MECHANIC) — they must never be identical:
+
+1) "stageEssence" (STAGE level, ONE per stage) — a SHORT phrase (max 8 words) naming the ESSENCE of this stage's task in island theme. It is the SAME for every round of the stage. Shown in the top counter banner for mechanics that display their own text in the play card (fill_blank, pattern_input, multi_choice, match_pairs, text_task, corridor_choice, true_false, five_tasks, drag_sort, drag_group, symbol_calc).
+   GOOD: "Halve the samurai's swords", "Sort the jelly king's pearls", "Balance the tide runes"
+   BAD:  "Round 3", "Solve the problem", a bare equation
+
+2) "titleText" (ROUND level, UNIQUE every round) — a short in-world SENTENCE (max 14 words) that frames THIS round's specific task inside the island adventure: it names the villain / character / artifact / island items and leads straight into the math.
+   GOOD: "The Jelly King hid pearls in 3 caves, 6 in each — how many?"
+   GOOD: "Balance the tide scales to wake the Coral Trident!"
+   BAD:  "6 × 3", "Solve the problem", "Round 3", "Complete the task"
+
+Nothing is ever a bare exercise. Even numeric mechanics (fill_blank, balance_scale, pattern_input, symbol_calc, match_pairs) keep the equation in their own field but wrap it in story through these two texts. For mechanics with a prompt/question field, keep the math in that field.
 
 Then add ONLY the fields listed for that stage's mechanic. Types: strings unless noted as number or array.
 
@@ -617,6 +619,7 @@ Return valid JSON only. No markdown. Start with {
       "stageNumber": 1,
       "mechanic": "fill_blank",
       "mechanic_reason": "why this mechanic fits this age/level/topic",
+      "stageEssence": "short task essence, same all rounds",
       "background": "cherry_blossom_island1",
       "examples": [
         {
@@ -630,7 +633,7 @@ Return valid JSON only. No markdown. Start with {
   ]
 }
 
-Each stage object must include "mechanic_reason" (string).
+Each stage object must include "mechanic_reason" (string) and "stageEssence" (string, max 8 words, same task essence for the whole stage, different from every round's titleText).
 Each stage object must include "background" (string): for stageNumber N use exactly the string defined in the iron rule table above for that N and context.islandKey.
 
 Include ONLY the fields relevant to the mechanic used in that stage for each example round.
@@ -664,6 +667,7 @@ QUALITY CHECKLIST — verify before output
 □ Boss_mix: both examples per mechanic use different problem types and island-themed titleText?
 □ Boss_mix numbers are ≥1.5× larger than stage last-round numbers?
 □ mechanic_reason present on every stage?
+□ stageEssence present on every stage (≤8 words, same for all its rounds, different from titleText)?
 □ context.islandKey is exactly one of the eight allowed tokens?
 □ Nine stages in order 1..9; backgrounds follow iron rule (bg1×2, bg2×2, cave"2"×1, cave"3"×1, bg3×2, bg4×1)?
 □ Stages 5–6 backgrounds are literally "2" and "3" (no PREFIX)?

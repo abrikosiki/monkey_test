@@ -4171,7 +4171,7 @@ function buildHtml(
     box.className = "choice-box";
     const q = document.createElement("div");
     q.className = "choice-q";
-    q.textContent = stage.question || stage.prompt || "Tap the two correct equations";
+    q.textContent = stage.title || stage.question || stage.prompt || "Tap the two correct equations";
     box.appendChild(q);
 
     const row = document.createElement("div");
@@ -5272,8 +5272,15 @@ function buildHtml(
     }
     if(isBossStage && state.stagePracticeDone === 0) initBossHpBar();
     else if(!isBossStage) hideBossHpBar();
-    const instruction = stage.title || stage.question || LESSON.story_hook || "";
-    const cleanInstruction = String(instruction).trim() ? instruction : englishStageFallback(engStage);
+    // Counter banner text. Mechanics that show their own text in the play card get a
+    // CONSTANT per-stage "essence" line here; text-less mechanics (keys, scales, …)
+    // get the UNIQUE per-round story hook instead.
+    const HAS_CARD_TEXT = new Set(["fill_blank","pattern_input","multi_choice","match_pairs","text_task","corridor_choice","true_false","five_tasks","drag_sort","drag_group","symbol_calc"]);
+    const hasCardText = HAS_CARD_TEXT.has(stage.type);
+    const bannerText = hasCardText
+      ? (stage.stage_essence || stage.stageEssence || "")
+      : (stage.title || stage.question || LESSON.story_hook || "");
+    const cleanInstruction = String(bannerText).trim() ? bannerText : englishStageFallback(engStage);
     if(stage.hide_instruction_label){
       $("instruction").textContent = "(" + (state.stagePracticeDone + 1) + "/" + state.stagePracticeTarget + ")";
     }else{

@@ -635,6 +635,10 @@ function applyDraftToLessonStages(lesson, draft) {
     const dExamples = Array.isArray(dStage.examples) ? dStage.examples : [];
     const stageTitleFromDraft = String(dExamples[0]?.titleText || "").trim();
     if (stageTitleFromDraft) lStage.title = stageTitleFromDraft;
+    // Constant per-stage "essence of the task" line (shown in the counter banner for
+    // text mechanics; text-less mechanics show the unique per-round story instead).
+    const stageEssence = String(dStage.stageEssence || dStage.stage_essence || "").trim();
+    if (stageEssence) lStage.stage_essence = stageEssence;
     if (!Array.isArray(lStage.rounds)) lStage.rounds = [];
 
     const mech = dStage.mechanic || lStage.type;
@@ -673,6 +677,7 @@ function applyDraftToLessonStages(lesson, draft) {
         const r = mapExampleToRound(mech, ex, existing);
         // Per-round themed story hook shown above the mechanic (Variant A gamification).
         if (ex.titleText) r.title = String(ex.titleText).trim();
+        if (stageEssence) r.stage_essence = stageEssence;
         rounds.push(r);
       }
       lStage.rounds = rounds;
@@ -1226,6 +1231,10 @@ function normalizeAutofillStages(rawStages, islandKey) {
     };
     if (incoming.mechanic_reason != null && String(incoming.mechanic_reason).trim() !== "") {
       row.mechanic_reason = String(incoming.mechanic_reason).trim();
+    }
+    const essence = incoming.stageEssence ?? incoming.stage_essence;
+    if (essence != null && String(essence).trim() !== "") {
+      row.stageEssence = String(essence).trim();
     }
     stages.push(row);
   }
