@@ -9,6 +9,7 @@ import {
   CANONICAL_ISLAND_KEYS,
   applyIslandLessonCanon,
   getIslandStageBgMap,
+  ISLAND_STORY_CANON,
 } from "./island_canon.mjs";
 import { verifyAndFixLesson } from "./math_verifier.mjs";
 import { generateProblems, SUPPORTED_MECHANICS } from "./math_generator.mjs";
@@ -1273,6 +1274,27 @@ function mergeAutofillDraftPayload(parsed, childCode, normalizedChild, tutorProm
   return out;
 }
 
+// Full canonical story of every island, injected into the autofill prompt so the
+// model writes round titleText/prompts grounded in the real island narrative
+// (exact villain + artifact), instead of drifting from a static keyword list.
+function formatIslandNarrativesBlock() {
+  const keys =
+    Array.isArray(CANONICAL_ISLAND_KEYS) && CANONICAL_ISLAND_KEYS.length
+      ? CANONICAL_ISLAND_KEYS
+      : Object.keys(ISLAND_STORY_CANON);
+  const lines = [];
+  for (const key of keys) {
+    const c = ISLAND_STORY_CANON[key];
+    if (!c) continue;
+    lines.push(
+      `[${key}] ${c.island_name} — villain: ${c.villain} — artifact: ${c.artifact_name} ${c.artifact_emoji || ""}`.trim()
+    );
+    if (c.narrative) lines.push(c.narrative);
+    lines.push("");
+  }
+  return lines.join("\n").trim();
+}
+
 function buildAutofillSystemPrompt(childBlock, tutorPrompt) {
   const name = String(childBlock.name ?? "Student");
   const age = Number(childBlock.age);
@@ -1288,7 +1310,8 @@ function buildAutofillSystemPrompt(childBlock, tutorPrompt) {
     .replace(/\{\{LEVEL\}\}/g, String(level))
     .replace(/\{\{COINS\}\}/g, String(coins))
     .replace(/\{\{CHARACTER_KEY\}\}/g, ck)
-    .replace(/\{\{TUTOR_PROMPT\}\}/g, tutorPrompt);
+    .replace(/\{\{TUTOR_PROMPT\}\}/g, tutorPrompt)
+    .replace(/\{\{ISLAND_NARRATIVES\}\}/g, formatIslandNarrativesBlock());
 }
 
 function inferChildAgeForAutofill(childPayload, normalizedChild) {

@@ -434,29 +434,20 @@ ISLAND THEMING (required):
   DO write themed tasks tied to the island world.
   Theme ALL rounds per stage with island imagery.
 
-  ISLAND VOCABULARY — use these specific objects and characters in prompts and titleText:
-    jelly_bay_island:      jellyfish, glowing pods, tentacles, pulse core, tidal current,
-                           bioluminescent reef, jelly scouts, crystal vials, jelly king's lair
-    cherry_blossom_island: samurai monkey, petal storm, bamboo bridge, sakura shrine,
-                           throwing stars, honor scroll, koi pond, stone lantern, dojo
-    snowy_peaks_island:    ice crystal, avalanche zone, yeti monkey, frozen waterfall,
-                           snow fortress, blizzard path, ice cave, frost shield, peak tower
-    neon_city_island:      neon tower, pixel portal, electric monkey, code terminal,
-                           hologram key, data stream, cyber bridge, glitch zone, power core
-    blue_crab_island:      crab claw, sunken ship, coral gate, tide pool, captain crab,
-                           sand castle vault, pearl net, barnacle wall, wave rider
-    antigravity_island:    floating boulder, zero-g cave, anti-gravity boots, moon monkey,
-                           orbit path, gravity well, upside-down forest, sky anchor, void crystal
-    mushroom_island:       giant spore, mycelium network, mushroom tower, spore cloud,
-                           cap tunnel, mushroom king, glowing fungi, root maze, spore cannon
-    crystal_island:        crystal shard, resonance pillar, echo chamber, crystal guardian,
-                           prism tower, sound wave, harmonic key, refraction maze, light bridge
+  ISLAND STORY CANON — the authoritative story of every island is written below.
+  When you choose an islandKey, EVERY titleText and prompt MUST be grounded in THAT
+  island's story: use its exact villain and artifact BY NAME, its setting, creatures
+  and imagery, and the mission to free the monkey from Doctor Krit. NEVER invent a
+  different villain, artifact, or setting than the one written for that island.
 
-  EXAMPLE PHRASES (adapt to your topic):
-    "4 jellyfish pods, each holding 3 crystals. How many crystals total?"
-    "The samurai blocked 6 bridges with 5 guards each. Total guards?"
-    "7 neon towers each have 4 glitching floors. How many floors?"
-  For visual mechanics (drag_sort, drag_group), use island item names in titleText and prompt.
+{{ISLAND_NARRATIVES}}
+
+  EXAMPLE PHRASES (keep the island's own villain/artifact, adapt only the math to your topic):
+    jelly_bay_island:      "The jellyfish king hid 3 pods, each with 6 pulse crystals — how many?"
+    cherry_blossom_island: "The monkey samurai guards 4 shrine gates, 5 petals each. Total petals?"
+    neon_city_island:      "Reboot 6 neon towers, each with 3 glitching floors — how many floors?"
+  For visual mechanics (drag_sort, drag_group), draw the item names from that island's own
+  story — its creatures, relics and landmarks — in titleText and prompt.
 
 EXAMPLE FRESHNESS + DIFFICULTY SLOPE (required):
   Each stage must follow this progression — a different PROBLEM TYPE per round,
