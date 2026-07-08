@@ -426,13 +426,17 @@ function mapExampleToRound(mech, ex, existing) {
     r.prompt = ex.prompt || "";
     r.answer = String(ex.answer ?? "");
   } else if (mech === "multi_choice") {
-    r.instruction = ex.prompt || "";
+    r.instruction = ex.prompt || existing.instruction || "";
     r.options = [
       { id: "A", label: String(ex.choiceA ?? "") },
       { id: "B", label: String(ex.choiceB ?? "") },
       { id: "C", label: String(ex.choiceC ?? "") },
     ];
-    r.correct_option = String(ex.correctOption || "A").toUpperCase();
+    // If the autofill draft left all choices blank, fall back to the AI-generated options.
+    if (r.options.every((o) => !o.label.trim()) && Array.isArray(existing.options) && existing.options.length) {
+      r.options = existing.options;
+    }
+    r.correct_option = String(ex.correctOption || existing.correct_option || "A").toUpperCase();
   } else if (mech === "corridor_choice") {
     r.question = ex.prompt || "";
     r.left_expression = ex.leftExpression || "";
@@ -443,12 +447,12 @@ function mapExampleToRound(mech, ex, existing) {
     r.pair_b = ex.pairB || "";
     r.pair_c = ex.pairC || "";
     r.pair_d = ex.pairD || "";
-    r.correct_pair_1 = String(ex.correctPair1 || "A").toUpperCase();
-    r.correct_pair_2 = String(ex.correctPair2 || "B").toUpperCase();
+    r.correct_pair_1 = String(ex.correctPair1 || existing.correct_pair_1 || "A").toUpperCase();
+    r.correct_pair_2 = String(ex.correctPair2 || existing.correct_pair_2 || "B").toUpperCase();
   } else if (mech === "balance_scale") {
-    r.left_expression = ex.leftExpression || "3 + ?";
-    r.right_expression = ex.rightExpression || "7";
-    r.answer = String(ex.answer ?? "");
+    r.left_expression = ex.leftExpression || existing.left_expression || "3 + ?";
+    r.right_expression = ex.rightExpression || existing.right_expression || "7";
+    r.answer = String(ex.answer ?? existing.answer ?? "");
   } else if (mech === "build_number") {
     r.base_number = toNumber(ex.baseNumber, 24);
     r.parts_count = toNumber(ex.partsCount, 3);
@@ -461,11 +465,11 @@ function mapExampleToRound(mech, ex, existing) {
     r.timer_answer_c = String(ex.timerAnswerC ?? "");
     r.timer_seconds = toNumber(ex.timerSeconds, 30);
   } else if (mech === "symbol_calc") {
-    r.symbol_a = toNumber(ex.symbolA, 4);
-    r.symbol_b = toNumber(ex.symbolB, 3);
-    r.symbol_c = toNumber(ex.symbolC, 2);
-    r.symbol_expression = ex.symbolExpression || "A + B × C";
-    r.answer = String(ex.answer ?? "");
+    r.symbol_a = toNumber(ex.symbolA, toNumber(existing.symbol_a, 4));
+    r.symbol_b = toNumber(ex.symbolB, toNumber(existing.symbol_b, 3));
+    r.symbol_c = toNumber(ex.symbolC, toNumber(existing.symbol_c, 2));
+    r.symbol_expression = ex.symbolExpression || existing.symbol_expression || "A + B × C";
+    r.answer = String(ex.answer ?? existing.answer ?? "");
     if (ex.symbolItemA) r.symbol_item_a = ex.symbolItemA;
     else if (existing.symbol_item_a) r.symbol_item_a = existing.symbol_item_a;
     if (ex.symbolItemB) r.symbol_item_b = ex.symbolItemB;
@@ -473,10 +477,10 @@ function mapExampleToRound(mech, ex, existing) {
     if (ex.symbolItemC) r.symbol_item_c = ex.symbolItemC;
     else if (existing.symbol_item_c) r.symbol_item_c = existing.symbol_item_c;
   } else if (mech === "find_unknown") {
-    r.unknown_a = toNumber(ex.unknownA, 4);
-    r.unknown_b = toNumber(ex.unknownB, 6);
-    r.unknown_equation = ex.unknownEquation || "A + B + C = 15";
-    r.answer = String(ex.answer ?? "");
+    r.unknown_a = toNumber(ex.unknownA, toNumber(existing.unknown_a, 4));
+    r.unknown_b = toNumber(ex.unknownB, toNumber(existing.unknown_b, 6));
+    r.unknown_equation = ex.unknownEquation || existing.unknown_equation || "A + B + C = 15";
+    r.answer = String(ex.answer ?? existing.answer ?? "");
   } else if (mech === "drag_group") {
     r.numbers_text = ex.numbersText || "";
     r.group1_name = ex.group1Name || "Group 1";
@@ -530,8 +534,8 @@ function mapExampleToRound(mech, ex, existing) {
     }
     while (r.key_lock_keys.length < 6) r.key_lock_keys.push(0);
   } else if (mech === "true_false") {
-    r.statement = ex.statement || "";
-    r.correct_answer = String(ex.trueOrFalse || "true");
+    r.statement = ex.statement || existing.statement || "";
+    r.correct_answer = String(ex.trueOrFalse || existing.correct_answer || "true");
   } else if (mech === "text_task") {
     r.prompt = ex.prompt || "";
     r.answer = String(ex.answer ?? "");
@@ -543,6 +547,10 @@ function mapExampleToRound(mech, ex, existing) {
       { q: ex.task4 || "", a: String(ex.answer4 ?? "") },
       { q: ex.task5 || "", a: String(ex.answer5 ?? "") },
     ];
+    // If the autofill draft left the five tasks blank, use the AI-generated ones.
+    if (r.tasks.every((t) => !String(t.q).trim()) && Array.isArray(existing.tasks) && existing.tasks.length) {
+      r.tasks = existing.tasks;
+    }
   } else if (mech === "dice_multiply") {
     r.multiplier1 = toNumber(ex.multiplier1, 3);
     r.multiplier2 = toNumber(ex.multiplier2, 4);
@@ -552,6 +560,21 @@ function mapExampleToRound(mech, ex, existing) {
     r.grid_numbers = splitValues(ex.gridNumbers || "");
     r.prompt = ex.prompt || "";
     r.answer = String(ex.answer || "").toUpperCase().trim();
+  }
+
+  // Backfill empty mechanic fields from the AI-generated round. The math content
+  // comes from the autofill draft (ex), but autofill is non-deterministic and
+  // sometimes omits mechanic-specific fields (e.g. match_pairs pair_a/b/c/d),
+  // which otherwise renders as bare "A B C D" with no example. When a field is
+  // empty here, fall back to what the main generation produced for that round.
+  const isEmptyVal = (v) =>
+    v === undefined || v === null || v === "" ||
+    (Array.isArray(v) && v.length === 0);
+  if (existing && typeof existing === "object") {
+    for (const [k, v] of Object.entries(existing)) {
+      if (k === "type" || k === "title" || k === "instruction") continue;
+      if (isEmptyVal(r[k]) && !isEmptyVal(v)) r[k] = v;
+    }
   }
   return r;
 }
