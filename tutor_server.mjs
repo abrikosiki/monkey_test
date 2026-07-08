@@ -1572,7 +1572,13 @@ const server = http.createServer(async (req, res) => {
 
     if (req.method === "GET" && url.pathname.startsWith("/generated-lessons/")) {
       const fileName = path.basename(url.pathname.replace("/generated-lessons/", ""));
-      const filePath = path.join(GENERATED_LESSONS_DIR, fileName);
+      let filePath = path.join(GENERATED_LESSONS_DIR, fileName);
+      if (!fs.existsSync(filePath)) {
+        // Fall back to lessons committed in the repo (legacy builds from before the
+        // volume was mounted, when GENERATED_LESSONS_DIR still pointed at the repo).
+        const repoPath = path.join(__dirname, "generated_lessons", fileName);
+        if (fs.existsSync(repoPath)) filePath = repoPath;
+      }
       if (!fs.existsSync(filePath)) {
         sendJson(res, 404, { ok: false, error: "Generated lesson file not found" });
         return;
