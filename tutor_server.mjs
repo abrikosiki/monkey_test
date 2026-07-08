@@ -655,7 +655,7 @@ function applyDraftToLessonStages(lesson, draft) {
           const srcMech = ex.bossMechanic || "fill_blank";
           const r = mapExampleToRound(srcMech, ex, {});
           r.type = srcMech;
-          if (ex.titleText) r.instruction = ex.titleText;
+          if (ex.titleText) { r.instruction = ex.titleText; r.title = String(ex.titleText).trim(); }
           bossRounds.push(r);
         }
         lStage.rounds = bossRounds;
@@ -670,6 +670,8 @@ function applyDraftToLessonStages(lesson, draft) {
         const existing = lStage.rounds[j] || {};
         if (ex.titleText && !lStage.title) lStage.title = ex.titleText;
         const r = mapExampleToRound(mech, ex, existing);
+        // Per-round themed story hook shown above the mechanic (Variant A gamification).
+        if (ex.titleText) r.title = String(ex.titleText).trim();
         rounds.push(r);
       }
       lStage.rounds = rounds;

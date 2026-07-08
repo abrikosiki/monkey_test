@@ -217,10 +217,17 @@ MECHANIC FIELD REFERENCE — what each mechanic needs in JSON
 ════════════════════════════════════════
 
 Every example object MUST include: "roundNumber" (1–N), "titleText" — this is the MAIN TEXT the child reads at the top of the screen.
-MUST be island-themed and narrative, never generic. Write it like a chapter title in an adventure story.
-  GOOD: "The jellyfish king rises from the deep!", "Samurai blocks the bridge!", "Ice crystals seal the door!"
-  BAD:  "Solve the problem", "Round 3", "Complete the task", "Math challenge"
-Reference the island, villain, artifact, or story tension. Max 8 words. Every round's titleText must be unique.
+
+GAMIFICATION RULE (MANDATORY, EVERY ROUND, EVERY MECHANIC):
+Nothing is ever a bare exercise. titleText is a short in-world SENTENCE that frames THIS round's task inside the island adventure — it names the villain, character, artifact, or island items and leads straight into the math. The child should feel they are helping the hero, not "doing a sum". This applies to ALL mechanics, including the numeric ones (fill_blank, balance_scale, pattern_input, symbol_calc, match_pairs): the equation still shows, but the titleText turns it into a story moment.
+  • Length: one sentence, max 14 words. Unique for every round.
+  • MUST reference the island world (villain / character / artifact / themed items).
+  • NEVER a bare number, a bare equation, or a generic label.
+  GOOD: "The Jelly King hid pearls in 3 caves, 6 in each — how many?"
+  GOOD: "Balance the tide scales to wake the Coral Trident!"
+  GOOD: "Sort the samurai's coins: which are divisible by 5?"
+  BAD:  "6 × 3", "Solve the problem", "Round 3", "Complete the task", "Math challenge"
+For mechanics that also have a prompt/question field, keep the math in that field and put the STORY in titleText, so the two together read like a mini-scene.
 
 Then add ONLY the fields listed for that stage's mechanic. Types: strings unless noted as number or array.
 
