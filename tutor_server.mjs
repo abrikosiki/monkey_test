@@ -619,7 +619,9 @@ function applyDraftToLessonStages(lesson, draft) {
       }
     } else {
       const rounds = [];
-      const roundCount = Math.max(dExamples.length, lStage.rounds.length);
+      // The (trimmed) draft is authoritative for round count — don't extend to the
+      // main generation's length, which would re-introduce empty padded rounds.
+      const roundCount = dExamples.length || lStage.rounds.length;
       for (let j = 0; j < roundCount; j++) {
         const ex = dExamples[j] || {};
         const existing = lStage.rounds[j] || {};
@@ -673,6 +675,33 @@ function stageTemplate(stageNumber, islandKey = "") {
       return ex;
     }),
   };
+}
+
+// True when the autofill model actually filled the mechanic-relevant content for
+// this example. Used to drop empty examples so stages don't get padded with blank
+// rounds (which render as "A B C D" / no example).
+function exampleHasContent(mech, ex) {
+  if (!ex || typeof ex !== "object") return false;
+  const has = (v) => v !== undefined && v !== null && String(v).trim() !== "";
+  switch (mech) {
+    case "match_pairs":     return has(ex.pairA) || has(ex.pairB) || has(ex.pairC) || has(ex.pairD);
+    case "multi_choice":    return has(ex.prompt) || has(ex.choiceA) || has(ex.choiceB) || has(ex.choiceC);
+    case "corridor_choice": return has(ex.leftExpression) || has(ex.rightExpression);
+    case "true_false":      return has(ex.statement);
+    case "balance_scale":   return has(ex.leftExpression) || has(ex.rightExpression) || has(ex.answer);
+    case "symbol_calc":     return has(ex.symbolExpression) || has(ex.symbolA);
+    case "find_unknown":    return has(ex.unknownEquation) || has(ex.unknownA);
+    case "timer_challenge": return has(ex.timerExampleA) || has(ex.timerExampleB) || has(ex.timerExampleC);
+    case "drag_sort":       return has(ex.prompt);
+    case "drag_group":      return has(ex.group1Values) || has(ex.group2Values) || has(ex.numbersText);
+    case "key_lock":        return has(ex.lock1Sum) || has(ex.keysSixText);
+    case "five_tasks":      return has(ex.task1) || has(ex.task2) || has(ex.task3);
+    case "build_number":    return has(ex.baseNumber);
+    case "dice_multiply":   return has(ex.multiplier1) || has(ex.multiplier2);
+    case "fortune_wheel":   return has(ex.artifactKey);
+    case "number_grid":     return has(ex.prompt) || has(ex.gridNumbers);
+    default:                return has(ex.prompt) || has(ex.answer);
+  }
 }
 
 function exampleTemplate(stageNumber, roundNumber) {
@@ -1054,10 +1083,15 @@ function normalizeAutofillStages(rawStages, islandKey) {
         }
       }
     } else {
-      const roundCount = Math.max(examplesIn.length, 5);
+      // Use only examples the autofill model actually filled — do NOT pad to a
+      // fixed 5, which produced empty rounds (e.g. match_pairs "A B C D"). Keep
+      // the design's 2–7 range; drop trailing empties.
+      const filled = examplesIn.filter((ex) => exampleHasContent(mechanic, ex));
+      const source = filled.length >= 2 ? filled : examplesIn;
+      const roundCount = Math.min(Math.max(source.length, 2), 7);
       for (let r = 0; r < roundCount; r++) {
         const base = exampleTemplate(stageNumber, r + 1);
-        const ex = examplesIn[r] && typeof examplesIn[r] === "object" ? examplesIn[r] : {};
+        const ex = source[r] && typeof source[r] === "object" ? source[r] : {};
         examples.push({
           ...base,
           ...ex,
