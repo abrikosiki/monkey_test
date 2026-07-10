@@ -180,18 +180,15 @@ function childLessonFolder(name, code) {
   return folder || "lesson";
 }
 
-// Relative path of a built lesson: "<name>-<code>/<name>_00N.html".
+// Relative path of a built lesson: "<name>-<code>/00N.html".
 // Numbered by the plan lesson number (meta.lesson_num); falls back to a timestamp
 // for manual lessons with no plan number so nothing gets overwritten.
 function buildGeneratedHtmlFilename(lesson) {
-  const name = slugify(lesson?.meta?.student_name || "");
-  const code = slugify(lesson?.meta?.student_code || "");
   const folder = childLessonFolder(lesson?.meta?.student_name, lesson?.meta?.student_code);
-  const prefix = name || code || "lesson";
   const num = Number(lesson?.meta?.lesson_num);
   const base = Number.isFinite(num) && num > 0
-    ? `${prefix}_${String(num).padStart(3, "0")}`
-    : `${prefix}_${new Date().toISOString().replace(/[-:.TZ]/g, "").slice(0, 14)}`;
+    ? String(num).padStart(3, "0")
+    : new Date().toISOString().replace(/[-:.TZ]/g, "").slice(0, 14);
   return `${folder}/${base}.html`;
 }
 
