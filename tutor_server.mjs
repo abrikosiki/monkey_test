@@ -174,11 +174,25 @@ function slugify(value) {
     .replace(/^-+|-+$/g, "");
 }
 
+// Per-child folder name inside generated_lessons/, e.g. "ilmira-monkey-2290".
+function childLessonFolder(name, code) {
+  const folder = [slugify(name), slugify(code)].filter(Boolean).join("-");
+  return folder || "lesson";
+}
+
+// Relative path of a built lesson: "<name>-<code>/<name>_00N.html".
+// Numbered by the plan lesson number (meta.lesson_num); falls back to a timestamp
+// for manual lessons with no plan number so nothing gets overwritten.
 function buildGeneratedHtmlFilename(lesson) {
-  const code = slugify(lesson?.meta?.student_code || "lesson");
-  const topic = slugify(lesson?.meta?.topic_key || lesson?.meta?.topic_label || "math");
-  const stamp = new Date().toISOString().replace(/[-:.TZ]/g, "").slice(0, 14);
-  return `${code}_${topic}_${stamp}.html`;
+  const name = slugify(lesson?.meta?.student_name || "");
+  const code = slugify(lesson?.meta?.student_code || "");
+  const folder = childLessonFolder(lesson?.meta?.student_name, lesson?.meta?.student_code);
+  const prefix = name || code || "lesson";
+  const num = Number(lesson?.meta?.lesson_num);
+  const base = Number.isFinite(num) && num > 0
+    ? `${prefix}_${String(num).padStart(3, "0")}`
+    : `${prefix}_${new Date().toISOString().replace(/[-:.TZ]/g, "").slice(0, 14)}`;
+  return `${folder}/${base}.html`;
 }
 
 function splitValues(raw) {
@@ -1508,6 +1522,10 @@ async function generateLessonFromDraft(draft, options = {}) {
     .trim()
     .replace(/\s+/g, "_");
   lesson.meta.island_key = ik;
+  {
+    const ln = Number(draft?.context?.lessonNum);
+    if (Number.isFinite(ln) && ln > 0) lesson.meta.lesson_num = ln;
+  }
   clampLessonAssetKeys(lesson, assetCatalog);
   /** Canon story + six background stems — always from island pack, not the model. */
   applyIslandLessonCanon(lesson, draft);
@@ -1576,6 +1594,10 @@ async function buildLessonFromDraftNoAI(draft) {
     .trim()
     .replace(/\s+/g, "_");
   lesson.meta.island_key = ik;
+  {
+    const ln = Number(draft?.context?.lessonNum);
+    if (Number.isFinite(ln) && ln > 0) lesson.meta.lesson_num = ln;
+  }
   clampLessonAssetKeys(lesson, assetCatalog);
   applyIslandLessonCanon(lesson, draft);
   if (!lesson.images_needed || typeof lesson.images_needed !== "object") {
@@ -1776,7 +1798,10 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (req.method === "GET" && url.pathname.startsWith("/generated-lessons/")) {
-      const fileName = path.basename(url.pathname.replace("/generated-lessons/", ""));
+      // Keep sub-folders (new per-child layout "<name>-<code>/<name>_00N.html") but
+      // strip any path-traversal segments.
+      const rawRel = decodeURIComponent(url.pathname.replace("/generated-lessons/", ""));
+      const fileName = rawRel.split("/").filter((p) => p && p !== "." && p !== "..").join("/");
       let filePath = path.join(GENERATED_LESSONS_DIR, fileName);
       if (!fs.existsSync(filePath)) {
         // Fall back to lessons committed in the repo (legacy builds from before the
@@ -1971,6 +1996,7 @@ const server = http.createServer(async (req, res) => {
       const sessionId = Date.now() + "_" + Math.random().toString(36).slice(2, 8);
       const sessionFile = path.join(DATA_DIR, `session_${sessionId}.json`);
       const outputPath = path.join(GENERATED_LESSONS_DIR, fileName);
+      fs.mkdirSync(path.dirname(outputPath), { recursive: true });
       try {
         fs.writeFileSync(sessionFile, JSON.stringify(lesson, null, 2), "utf-8");
         const output = await runNodeScript(["builder.mjs", sessionFile, outputPath]);
@@ -2095,6 +2121,10 @@ const server = http.createServer(async (req, res) => {
 
       const plan = { child_code: child.childCode, child_name: child.name, created_at: new Date().toISOString().slice(0, 10), package: pkg, profile: profile || {}, lessons };
       fs.writeFileSync(path.join(PLANS_DIR, `${child.childCode}.json`), JSON.stringify(plan, null, 2));
+      // Pre-create the child's lesson folder so all their lessons land in one place.
+      try {
+        fs.mkdirSync(path.join(GENERATED_LESSONS_DIR, childLessonFolder(child.name, child.childCode)), { recursive: true });
+      } catch {}
       sendJson(res, 200, { ok: true, plan });
       return;
     }
@@ -2132,6 +2162,8 @@ const server = http.createServer(async (req, res) => {
         autofillResult.context = autofillResult.context || {};
         if (entry.key_concepts?.length) autofillResult.context.keyConcepts = entry.key_concepts;
         if (entry.learning_objective) autofillResult.context.learningObjective = entry.learning_objective;
+        // Plan lesson number → drives the built lesson filename (<name>_00N.html).
+        autofillResult.context.lessonNum = Number(lessonNum);
         // Theory screen is opt-in per lesson (checkbox on the plan card). When on,
         // the generator emits a "theory" object shown before stage 1.
         autofillResult.context.includeTheory = includeTheory;
