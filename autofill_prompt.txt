@@ -397,6 +397,15 @@ GENERAL RULES FOR ALL MECHANICS:
   • Use English only in all strings.
   • Numbers in prompts/answers must match age and difficulty rules above.
   • Do not invent extra keys for a mechanic; do not omit required keys.
+  • EVERY task the child TYPES an answer to (fill_blank, pattern_input, symbol_calc,
+    five_tasks, text_task, boss inputs) must be a direct "compute the value" question
+    with exactly ONE clear answer, e.g. "11 × 4 = ?" or "5, 10, ? ".
+    NEVER phrase a typed task as a comparison — no "which is more?", "which is bigger?",
+    "which is less?" in these mechanics: the child cannot know what to type, and if the
+    two sides are equal (e.g. "44 or 11×4") there is no answer at all.
+    Comparisons belong ONLY in multi_choice / corridor_choice / true_false, where the
+    child picks a side. If you want a comparison, use true_false ("44 > 11×4 — true or
+    false?") or multi_choice (options are the two sides), never a text/number input.
 
 ════════════════════════════════════════
 EXAMPLE DESIGN PRINCIPLES
@@ -462,7 +471,9 @@ EXAMPLE FRESHNESS + DIFFICULTY SLOPE (required):
   Round 1 — Direct task at the difficulty floor (see MINIMUM FLOOR table below).
   Round 2 — Themed word problem: same operation wrapped in island story; numbers slightly larger.
   Round 3 — Reverse / find-the-unknown: child works backwards, e.g. "___ × 6 = 42". (if ≥3 rounds)
-  Round 4 — Multi-step or comparison: two operations, or "which is more?". (if ≥4 rounds)
+  Round 4 — Multi-step: two operations (e.g. "6 × 3 + 4 = ?"). A comparison ("which is more?")
+            is allowed ONLY in a pick-a-side mechanic (multi_choice / corridor_choice / true_false),
+            NEVER as a typed-answer task. (if ≥4 rounds)
   Last round — Hardest: unexpected angle, inverse, symbolic, or multi-step.
                This round should take the child at least 10 seconds to solve.
 

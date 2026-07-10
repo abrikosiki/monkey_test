@@ -642,6 +642,12 @@ function buildHtml(
       text-align:center;
       color:var(--sand);
     }
+    .eq-head.eq-story{
+      font-family:'Fredoka One',cursive;
+      font-size:clamp(16px,2.1vw,22px);
+      line-height:1.25;
+      color:var(--sand);
+    }
     .eq-line{
       font-size:clamp(26px,3.6vw,44px);
       text-align:center;
@@ -3199,7 +3205,13 @@ function buildHtml(
     card.className = "eq-card";
     const head = document.createElement("div");
     head.className = "eq-head";
-    head.textContent = "🔐";
+    const storyTitle = String(stage.title || stage.story_hook || "").trim();
+    if(storyTitle){
+      head.classList.add("eq-story");
+      head.textContent = storyTitle;
+    } else {
+      head.textContent = "🔐";
+    }
     card.appendChild(head);
 
     if(stage.input_style === "sequence_inline"){
