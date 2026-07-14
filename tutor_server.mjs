@@ -623,13 +623,28 @@ function fixMatchPairsRound(r) {
   for (const L of letters) {
     const key = "pair_" + L;
     const raw = r[key];
-    if (typeof raw !== "string" || !raw.includes("=")) continue;
-    const eq = raw.indexOf("=");
-    const lhs = raw.slice(0, eq);
-    const lv = evalArith(lhs);
-    if (lv === null) continue; // leave non-arithmetic options untouched
-    const target = correct.has(L.toUpperCase()) ? lv : lv + 1;
-    r[key] = `${lhs.trim()} = ${target}`;
+    const isCorrect = correct.has(L.toUpperCase());
+    if (typeof raw === "string" && raw.includes("=")) {
+      const eq = raw.indexOf("=");
+      const lhs = raw.slice(0, eq);
+      const lv = evalArith(lhs);
+      if (lv === null) continue; // leave non-arithmetic equations untouched
+      const target = isCorrect ? lv : lv + 1;
+      r[key] = `${lhs.trim()} = ${target}`;
+      continue;
+    }
+    // Not an equation (e.g. the model put a bare sequence "3, 6, 9"). match_pairs
+    // renders as "tap the two correct equations", so a non-equation option is always
+    // ambiguous. Synthesize an equation from the option's own numbers: flagged-correct
+    // options get a TRUE equation, the others a FALSE one.
+    const nums = String(raw ?? "")
+      .split(/[^\d]+/)
+      .map((n) => Number(n))
+      .filter((n) => Number.isFinite(n));
+    const a = Number.isFinite(nums[0]) ? nums[0] : (L.charCodeAt(0) - 96) + 2;
+    const b = Number.isFinite(nums[1]) ? nums[1] : (L.charCodeAt(0) - 96) + 3;
+    const sum = a + b;
+    r[key] = `${a} + ${b} = ${isCorrect ? sum : sum + 1}`;
   }
   return r;
 }

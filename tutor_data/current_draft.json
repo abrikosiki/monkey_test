@@ -1,9 +1,9 @@
 {
   "draftId": "current",
-  "childCode": "3007",
-  "confirmedChildCode": "3007",
+  "childCode": "MONKEY-3007",
+  "confirmedChildCode": "MONKEY-3007",
   "child": {
-    "childCode": "3007",
+    "childCode": "MONKEY-3007",
     "name": "Romy",
     "coins": 50,
     "level": 7,
@@ -13,29 +13,39 @@
     "freezeRing": false,
     "age": 8
   },
-  "tutorPrompt": "Topic: Patterns & Sequences. Island: snowy_peaks_island. Difficulty: 5 out of 10. Stage mechanics (1-8): five_tasks, pattern_input, fill_blank, multi_choice, true_false, text_task, corridor_choice, drag_sort. Stage 9: boss_mix.\n\nStage 1 (five_tasks) - Patterns Warm-Up. 5 rounds of 5 quick tasks each about number sequences (what comes next, fill in the gap). Difficulty 5: arithmetic sequences +3 to +15, geometric ×2 and ×3, numbers up to 100.\n\nStage 2 (pattern_input) - Continue the Pattern. Sequences: 4,8,12,16,? | 3,6,9,?,15 | 2,4,8,?,32 | 50,45,?,35,30 | 1,3,9,?,81\n\nStage 3 (fill_blank) - Fill in the Missing Number. Prompts like: 10,15,__,25,30 (+5) | 3,__,12,24 (x2) | 35,28,__,14 (-7) | 3,6,__,12,15 (+3) | 2,6,18,__,162 (x3)\n\nStage 4 (multi_choice) - Odd One Out. Which number breaks the pattern? Sequences where one term does not follow the rule.\n\nStage 5 (true_false) - Is the pattern statement correct? Statements about what comes next or what the rule is.\n\nStage 6 (text_task) - Pattern Word Problems. Story problems about snowballs stacking, yeti footsteps, ice crystals doubling, candles counting, frost core countdown.\n\nStage 7 (corridor_choice) - Which side shows the bigger next number? Compare two sequences side by side.\n\nStage 8 (drag_sort) - Sort numbers in correct ascending or descending sequence order. Items scrambled from sequences like 5,10,15,20,25 or 1,2,4,8,16.\n\nStage 9 (boss_mix) - 16 rounds covering all 8 mechanics (2 per mechanic). Snowy peaks island theme throughout: snowflakes, ice crystals, yeti-monkey Viking, frozen mountain paths.",
+  "tutorPrompt": "Topic: Patterns & Sequences\nLearning objective: By the end of this lesson Romy will continue number and shape patterns, state the rule of a sequence, fill missing terms and spot the odd one out.\nIsland: cherry_blossom_island\nDifficulty: 4 out of 10\nMechanics for stages 1-8 (use exactly these, in any order): pattern_input, drag_sort, fill_blank, multi_choice, true_false, corridor_choice, match_pairs, find_unknown\nStage 9: boss_mix\nKey concepts to cover: continuing patterns, finding the rule, missing terms, odd one out, skip-counting\nContext: Patterns are one of Romy's strengths, so the plan opens here to build confidence before the harder fractions block. It also quietly rehearses skip-counting (2s, 5s, 10s), the backbone she will lean on for fractions and times.\nChild weak points: Fractions (meaning and comparison), telling time on analogue clocks, money and change\nTutor note: Watch whether Romy names the rule aloud before answering. If she only guesses the next term without stating '+3' or '×2', slow down on find_unknown rounds.",
   "context": {
-    "topicLabel": "Patterns & Sequences",
+    "topicLabel": "Patterns & Sequences Mastery",
     "topicKey": "patterns_sequences",
     "difficulty": "hard",
-    "knows": "Romy understands basic sequences and arithmetic operations.",
-    "weakPoint": "Romy needs to practice identifying and continuing patterns and sequences.",
+    "knows": "patterns and sequences",
+    "weakPoint": "fractions, telling time, money and change",
     "tutorNotes": "ALL examples must use negative numbers and mixed operations. Make tasks progressively harder with: multiplication, division, missing numbers, order of operations, inverse thinking.",
-    "islandKey": "snowy_peaks_island",
+    "islandKey": "cherry_blossom_island",
     "notes": "",
-    "difficultyLevel": 5
+    "difficultyLevel": 4,
+    "keyConcepts": [
+      "continuing patterns",
+      "finding the rule",
+      "missing terms",
+      "odd one out",
+      "skip-counting"
+    ],
+    "learningObjective": "By the end of this lesson Romy will continue number and shape patterns, state the rule of a sequence, fill missing terms and spot the odd one out.",
+    "lessonNum": 1,
+    "includeTheory": false
   },
   "stages": [
     {
       "stageNumber": 1,
-      "mechanic": "five_tasks",
-      "background": "snowy_peaks_island1",
+      "mechanic": "pattern_input",
+      "background": "cherry_blossom_island1",
       "examples": [
         {
           "roundNumber": 1,
           "instruction": "",
-          "prompt": "",
-          "answer": "",
+          "prompt": "3, 6, ?, 12, 15",
+          "answer": "9",
           "options": [],
           "leftExpression": "",
           "rightExpression": "",
@@ -43,82 +53,26 @@
           "itemHints": "",
           "targetHints": "",
           "note": "",
-          "titleText": "Yeti's Number Race",
-          "task1": "3, 6, ?, 12, 15",
-          "answer1": "9",
-          "task2": "4, 8, 12, ?, 20",
-          "answer2": "16",
-          "task3": "10, 20, ?, 40",
-          "answer3": "30",
-          "task4": "5, 10, ?, 20",
-          "answer4": "15",
-          "task5": "2, 6, ?, 18",
-          "answer5": "12"
+          "titleText": "Find the missing petal to complete the pattern."
         },
         {
           "roundNumber": 2,
           "instruction": "",
-          "prompt": "",
-          "answer": "",
+          "prompt": "7, 14, 21, ?, 35",
+          "answer": "28",
           "options": [],
           "leftExpression": "",
           "rightExpression": "",
           "correctSide": "",
           "itemHints": "",
           "targetHints": "",
-          "note": ""
+          "note": "",
+          "titleText": "Locate the hidden number in the samurai's shrine pattern."
         },
         {
           "roundNumber": 3,
           "instruction": "",
-          "prompt": "",
-          "answer": "",
-          "options": [],
-          "leftExpression": "",
-          "rightExpression": "",
-          "correctSide": "",
-          "itemHints": "",
-          "targetHints": "",
-          "note": ""
-        },
-        {
-          "roundNumber": 4,
-          "instruction": "",
-          "prompt": "",
-          "answer": "",
-          "options": [],
-          "leftExpression": "",
-          "rightExpression": "",
-          "correctSide": "",
-          "itemHints": "",
-          "targetHints": "",
-          "note": ""
-        },
-        {
-          "roundNumber": 5,
-          "instruction": "",
-          "prompt": "",
-          "answer": "",
-          "options": [],
-          "leftExpression": "",
-          "rightExpression": "",
-          "correctSide": "",
-          "itemHints": "",
-          "targetHints": "",
-          "note": ""
-        }
-      ],
-      "mechanic_reason": "This mechanic provides quick, varied exposure to sequence completion, suitable for warming up at this difficulty."
-    },
-    {
-      "stageNumber": 2,
-      "mechanic": "pattern_input",
-      "background": "snowy_peaks_island1",
-      "examples": [
-        {
-          "roundNumber": 1,
-          "instruction": "",
-          "prompt": "4, 8, 12, 16, ?",
+          "prompt": "10, 15, ?, 25",
           "answer": "20",
           "options": [],
           "leftExpression": "",
@@ -127,77 +81,22 @@
           "itemHints": "",
           "targetHints": "",
           "note": "",
-          "titleText": "Avalanche Sequence Alert"
-        },
-        {
-          "roundNumber": 2,
-          "instruction": "",
-          "prompt": "3, 6, 9, ?, 15",
-          "answer": "12",
-          "options": [],
-          "leftExpression": "",
-          "rightExpression": "",
-          "correctSide": "",
-          "itemHints": "",
-          "targetHints": "",
-          "note": "",
-          "titleText": "Snowfall Pattern Puzzle"
-        },
-        {
-          "roundNumber": 3,
-          "instruction": "",
-          "prompt": "2, 4, 8, ?, 32",
-          "answer": "16",
-          "options": [],
-          "leftExpression": "",
-          "rightExpression": "",
-          "correctSide": "",
-          "itemHints": "",
-          "targetHints": "",
-          "note": "",
-          "titleText": "Crystal Ladder Leap"
-        },
-        {
-          "roundNumber": 4,
-          "instruction": "",
-          "prompt": "50, 45, ?, 35, 30",
-          "answer": "40",
-          "options": [],
-          "leftExpression": "",
-          "rightExpression": "",
-          "correctSide": "",
-          "itemHints": "",
-          "targetHints": "",
-          "note": "",
-          "titleText": "Frozen Steps Mystery"
-        },
-        {
-          "roundNumber": 5,
-          "instruction": "",
-          "prompt": "1, 3, 9, ?, 81",
-          "answer": "27",
-          "options": [],
-          "leftExpression": "",
-          "rightExpression": "",
-          "correctSide": "",
-          "itemHints": "",
-          "targetHints": "",
-          "note": "",
-          "titleText": "Yeti's Challenge"
+          "titleText": "Continue the petal trail: 10, 15, ?, 25"
         }
       ],
-      "mechanic_reason": "This mechanic focuses on inputting the missing number, reinforcing direct participation in identifying patterns."
+      "mechanic_reason": "builds on Romy's strength in patterns at a comfortably challenging level.",
+      "stageEssence": "Complete the petal sequence"
     },
     {
-      "stageNumber": 3,
-      "mechanic": "fill_blank",
-      "background": "snowy_peaks_island2",
+      "stageNumber": 2,
+      "mechanic": "drag_sort",
+      "background": "cherry_blossom_island1",
       "examples": [
         {
           "roundNumber": 1,
           "instruction": "",
-          "prompt": "10, 5, 15, 20",
-          "answer": "5,10,15,20",
+          "prompt": "5, 9, 2, 8, 1",
+          "answer": "1,2,5,8,9",
           "options": [],
           "leftExpression": "",
           "rightExpression": "",
@@ -205,13 +104,13 @@
           "itemHints": "",
           "targetHints": "",
           "note": "",
-          "titleText": "Snowflakes in Order"
+          "titleText": "Order the petals the monkey samurai scattered."
         },
         {
           "roundNumber": 2,
           "instruction": "",
-          "prompt": "4, 12, 8, 16",
-          "answer": "4,8,12,16",
+          "prompt": "12, 4, 6, 11, 3",
+          "answer": "3,4,6,11,12",
           "options": [],
           "leftExpression": "",
           "rightExpression": "",
@@ -219,60 +118,58 @@
           "itemHints": "",
           "targetHints": "",
           "note": "",
-          "titleText": "Yeti Footprint Path"
-        },
-        {
-          "roundNumber": 3,
-          "instruction": "",
-          "prompt": "25, 5, 15, 10",
-          "answer": "5,10,15,25",
-          "options": [],
-          "leftExpression": "",
-          "rightExpression": "",
-          "correctSide": "",
-          "itemHints": "",
-          "targetHints": "",
-          "note": "",
-          "titleText": "Icicle Collection"
-        },
-        {
-          "roundNumber": 4,
-          "instruction": "",
-          "prompt": "",
-          "answer": "",
-          "options": [],
-          "leftExpression": "",
-          "rightExpression": "",
-          "correctSide": "",
-          "itemHints": "",
-          "targetHints": "",
-          "note": ""
-        },
-        {
-          "roundNumber": 5,
-          "instruction": "",
-          "prompt": "",
-          "answer": "",
-          "options": [],
-          "leftExpression": "",
-          "rightExpression": "",
-          "correctSide": "",
-          "itemHints": "",
-          "targetHints": "",
-          "note": ""
+          "titleText": "Sort the petals as they fall from the trees."
         }
       ],
-      "mechanic_reason": "Sorting exercises help Romy understand numerical order within complex sequences."
+      "mechanic_reason": "helps Romy practice ordering skills in a visual and interactive way.",
+      "stageEssence": "Arrange the petal sequence"
+    },
+    {
+      "stageNumber": 3,
+      "mechanic": "corridor_choice",
+      "background": "cherry_blossom_island2",
+      "examples": [
+        {
+          "roundNumber": 1,
+          "instruction": "",
+          "prompt": "Which side is bigger?",
+          "answer": "",
+          "options": [],
+          "leftExpression": "5 × 3",
+          "rightExpression": "16 + 5",
+          "correctSide": "left",
+          "itemHints": "",
+          "targetHints": "",
+          "note": "",
+          "titleText": "Which path leads closer to the Blossom Core?"
+        },
+        {
+          "roundNumber": 2,
+          "instruction": "",
+          "prompt": "Choose the path where the number is higher.",
+          "answer": "",
+          "options": [],
+          "leftExpression": "20 ÷ 2",
+          "rightExpression": "3 × 3",
+          "correctSide": "right",
+          "itemHints": "",
+          "targetHints": "",
+          "note": "",
+          "titleText": "Navigate the paths with numbers: left or right?"
+        }
+      ],
+      "mechanic_reason": "requires Romy to compare and choose paths, introducing decision-making skills.",
+      "stageEssence": "Choose the path through the shrine"
     },
     {
       "stageNumber": 4,
       "mechanic": "multi_choice",
-      "background": "snowy_peaks_island2",
+      "background": "cherry_blossom_island2",
       "examples": [
         {
           "roundNumber": 1,
           "instruction": "",
-          "prompt": "Which number is next? 5, 10, 15, ?",
+          "prompt": "8, 16, 24, ?",
           "answer": "",
           "options": [],
           "leftExpression": "",
@@ -281,16 +178,16 @@
           "itemHints": "",
           "targetHints": "",
           "note": "",
-          "titleText": "Yeti's Pattern Puzzle",
-          "choiceA": "18",
-          "choiceB": "20",
-          "choiceC": "25",
+          "titleText": "Select the next number in the sequence.",
+          "choiceA": "30",
+          "choiceB": "32",
+          "choiceC": "28",
           "correctOption": "B"
         },
         {
           "roundNumber": 2,
           "instruction": "",
-          "prompt": "Select the next number: 7, 14, ?, 28",
+          "prompt": "5, 10, 15, ?",
           "answer": "",
           "options": [],
           "leftExpression": "",
@@ -299,53 +196,15 @@
           "itemHints": "",
           "targetHints": "",
           "note": "",
-          "titleText": "Crystals Under the Snow",
-          "choiceA": "21",
+          "titleText": "What number fits next in the petal sequence?",
+          "choiceA": "18",
           "choiceB": "20",
-          "choiceC": "19",
-          "correctOption": "A"
-        },
-        {
-          "roundNumber": 3,
-          "instruction": "",
-          "prompt": "",
-          "answer": "",
-          "options": [],
-          "leftExpression": "",
-          "rightExpression": "",
-          "correctSide": "",
-          "itemHints": "",
-          "targetHints": "",
-          "note": ""
-        },
-        {
-          "roundNumber": 4,
-          "instruction": "",
-          "prompt": "",
-          "answer": "",
-          "options": [],
-          "leftExpression": "",
-          "rightExpression": "",
-          "correctSide": "",
-          "itemHints": "",
-          "targetHints": "",
-          "note": ""
-        },
-        {
-          "roundNumber": 5,
-          "instruction": "",
-          "prompt": "",
-          "answer": "",
-          "options": [],
-          "leftExpression": "",
-          "rightExpression": "",
-          "correctSide": "",
-          "itemHints": "",
-          "targetHints": "",
-          "note": ""
+          "choiceC": "25",
+          "correctOption": "B"
         }
       ],
-      "mechanic_reason": "Choosing among options reinforces correct pattern recognition with a focus on identifying anomalies."
+      "mechanic_reason": "reinforces Romy's comprehension abilities with quick choices.",
+      "stageEssence": "Find the petal pattern choice"
     },
     {
       "stageNumber": 5,
@@ -364,8 +223,8 @@
           "itemHints": "",
           "targetHints": "",
           "note": "",
-          "titleText": "Frosty Judgment Call",
-          "statement": "Next in 2, 4, 8 is 12",
+          "titleText": "Is this sequence correct? 4, 8, 12, 16, 21",
+          "statement": "4, 8, 12, 16, 21 follows a +4 pattern",
           "trueOrFalse": "false"
         },
         {
@@ -380,62 +239,24 @@
           "itemHints": "",
           "targetHints": "",
           "note": "",
-          "titleText": "Icy Logic Test",
-          "statement": "Following 11, 22, next is 33",
+          "titleText": "Evaluate the patterns: True or False?",
+          "statement": "1, 2, 4, 8 follows doubling",
           "trueOrFalse": "true"
-        },
-        {
-          "roundNumber": 3,
-          "instruction": "",
-          "prompt": "",
-          "answer": "",
-          "options": [],
-          "leftExpression": "",
-          "rightExpression": "",
-          "correctSide": "",
-          "itemHints": "",
-          "targetHints": "",
-          "note": ""
-        },
-        {
-          "roundNumber": 4,
-          "instruction": "",
-          "prompt": "",
-          "answer": "",
-          "options": [],
-          "leftExpression": "",
-          "rightExpression": "",
-          "correctSide": "",
-          "itemHints": "",
-          "targetHints": "",
-          "note": ""
-        },
-        {
-          "roundNumber": 5,
-          "instruction": "",
-          "prompt": "",
-          "answer": "",
-          "options": [],
-          "leftExpression": "",
-          "rightExpression": "",
-          "correctSide": "",
-          "itemHints": "",
-          "targetHints": "",
-          "note": ""
         }
       ],
-      "mechanic_reason": "True/False decision-making encourages critical thinking in verifying pattern rules."
+      "mechanic_reason": "assesses Romy's ability to evaluate the truth of statements quickly.",
+      "stageEssence": "True or false blossom statements"
     },
     {
       "stageNumber": 6,
-      "mechanic": "text_task",
+      "mechanic": "match_pairs",
       "background": "3",
       "examples": [
         {
           "roundNumber": 1,
           "instruction": "",
-          "prompt": "If 2 snowballs double each day, how many after 3 days?",
-          "answer": "16",
+          "prompt": "",
+          "answer": "",
           "options": [],
           "leftExpression": "",
           "rightExpression": "",
@@ -443,13 +264,19 @@
           "itemHints": "",
           "targetHints": "",
           "note": "",
-          "titleText": "Snowball Stacking Riddle"
+          "titleText": "Match the patterns hidden in the petal drift.",
+          "pairA": "3, 6, 9",
+          "pairB": "2, 4, 6",
+          "pairC": "4, 8, 12",
+          "pairD": "5, 10, 15",
+          "correctPair1": "A",
+          "correctPair2": "D"
         },
         {
           "roundNumber": 2,
           "instruction": "",
-          "prompt": "Starting with 5 ice crystals, doubling each day, how many on the 4th day?",
-          "answer": "40",
+          "prompt": "",
+          "answer": "",
           "options": [],
           "leftExpression": "",
           "rightExpression": "",
@@ -457,204 +284,101 @@
           "itemHints": "",
           "targetHints": "",
           "note": "",
-          "titleText": "Mystic Ice Crystal Growth"
-        },
-        {
-          "roundNumber": 3,
-          "instruction": "",
-          "prompt": "",
-          "answer": "",
-          "options": [],
-          "leftExpression": "",
-          "rightExpression": "",
-          "correctSide": "",
-          "itemHints": "",
-          "targetHints": "",
-          "note": ""
-        },
-        {
-          "roundNumber": 4,
-          "instruction": "",
-          "prompt": "",
-          "answer": "",
-          "options": [],
-          "leftExpression": "",
-          "rightExpression": "",
-          "correctSide": "",
-          "itemHints": "",
-          "targetHints": "",
-          "note": ""
-        },
-        {
-          "roundNumber": 5,
-          "instruction": "",
-          "prompt": "",
-          "answer": "",
-          "options": [],
-          "leftExpression": "",
-          "rightExpression": "",
-          "correctSide": "",
-          "itemHints": "",
-          "targetHints": "",
-          "note": ""
+          "titleText": "Pair the blossom patterns that match.",
+          "pairA": "10, 20, 30",
+          "pairB": "7, 14, 21",
+          "pairC": "9, 18, 27",
+          "pairD": "4, 9, 14",
+          "correctPair1": "B",
+          "correctPair2": "C"
         }
       ],
-      "mechanic_reason": "Word problems in narrative form enhance Romy's comprehension of numeric relationships."
+      "mechanic_reason": "develops Romy's ability to recognize pairs of equivalent expressions.",
+      "stageEssence": "Connect the equivalent petal patterns"
     },
     {
       "stageNumber": 7,
-      "mechanic": "corridor_choice",
-      "background": "snowy_peaks_island3",
+      "mechanic": "build_number",
+      "background": "cherry_blossom_island3",
       "examples": [
         {
           "roundNumber": 1,
           "instruction": "",
-          "prompt": "Which side grows faster?",
+          "prompt": "",
           "answer": "",
           "options": [],
-          "leftExpression": "3 × 5",
-          "rightExpression": "10 + 5",
-          "correctSide": "left",
+          "leftExpression": "",
+          "rightExpression": "",
+          "correctSide": "",
           "itemHints": "",
           "targetHints": "",
           "note": "",
-          "titleText": "Frozen Path Decision"
+          "titleText": "Build the number the samurai seeks.",
+          "baseNumber": 45,
+          "partsCount": 3
         },
         {
           "roundNumber": 2,
           "instruction": "",
-          "prompt": "Which side is larger?",
+          "prompt": "",
           "answer": "",
           "options": [],
-          "leftExpression": "7 × 3",
-          "rightExpression": "5 + 17",
-          "correctSide": "left",
+          "leftExpression": "",
+          "rightExpression": "",
+          "correctSide": "",
           "itemHints": "",
           "targetHints": "",
           "note": "",
-          "titleText": "Blizzard Path Choice"
-        },
-        {
-          "roundNumber": 3,
-          "instruction": "",
-          "prompt": "",
-          "answer": "",
-          "options": [],
-          "leftExpression": "",
-          "rightExpression": "",
-          "correctSide": "",
-          "itemHints": "",
-          "targetHints": "",
-          "note": ""
-        },
-        {
-          "roundNumber": 4,
-          "instruction": "",
-          "prompt": "",
-          "answer": "",
-          "options": [],
-          "leftExpression": "",
-          "rightExpression": "",
-          "correctSide": "",
-          "itemHints": "",
-          "targetHints": "",
-          "note": ""
-        },
-        {
-          "roundNumber": 5,
-          "instruction": "",
-          "prompt": "",
-          "answer": "",
-          "options": [],
-          "leftExpression": "",
-          "rightExpression": "",
-          "correctSide": "",
-          "itemHints": "",
-          "targetHints": "",
-          "note": ""
+          "titleText": "Create the number needed to open the gate.",
+          "baseNumber": 36,
+          "partsCount": 2
         }
       ],
-      "mechanic_reason": "Choosing based on comparisons hones skills in evaluating and contrasting pattern continuations."
+      "mechanic_reason": "engages Romy in composing numbers from different components for deeper understanding.",
+      "stageEssence": "Compose blossom numbers"
     },
     {
       "stageNumber": 8,
-      "mechanic": "drag_sort",
-      "background": "snowy_peaks_island3",
+      "mechanic": "number_grid",
+      "background": "cherry_blossom_island3",
       "examples": [
         {
           "roundNumber": 1,
           "instruction": "",
-          "prompt": "",
-          "answer": "7",
+          "prompt": "5 + 7 = ?",
+          "answer": "A5",
           "options": [],
-          "leftExpression": "2 × ?",
-          "rightExpression": "14",
+          "leftExpression": "",
+          "rightExpression": "",
           "correctSide": "",
           "itemHints": "",
           "targetHints": "",
           "note": "",
-          "titleText": "Equilibrium on the Ice Bridge"
+          "gridNumbers": "34,21,8,15,42,6,18,30,5,27,12,45,3,24,9,36,7,16,25,48,2,20,14,32,10",
+          "titleText": "Find the blossom number in the grid."
         },
         {
           "roundNumber": 2,
           "instruction": "",
-          "prompt": "",
-          "answer": "8",
+          "prompt": "9 × 2 = ?",
+          "answer": "E1",
           "options": [],
-          "leftExpression": "? + 8",
-          "rightExpression": "16",
+          "leftExpression": "",
+          "rightExpression": "",
           "correctSide": "",
           "itemHints": "",
           "targetHints": "",
           "note": "",
-          "titleText": "Crystalline Balance"
-        },
-        {
-          "roundNumber": 3,
-          "instruction": "",
-          "prompt": "",
-          "answer": "",
-          "options": [],
-          "leftExpression": "",
-          "rightExpression": "",
-          "correctSide": "",
-          "itemHints": "",
-          "targetHints": "",
-          "note": ""
-        },
-        {
-          "roundNumber": 4,
-          "instruction": "",
-          "prompt": "",
-          "answer": "",
-          "options": [],
-          "leftExpression": "",
-          "rightExpression": "",
-          "correctSide": "",
-          "itemHints": "",
-          "targetHints": "",
-          "note": ""
-        },
-        {
-          "roundNumber": 5,
-          "instruction": "",
-          "prompt": "",
-          "answer": "",
-          "options": [],
-          "leftExpression": "",
-          "rightExpression": "",
-          "correctSide": "",
-          "itemHints": "",
-          "targetHints": "",
-          "note": ""
+          "titleText": "Locate the correct number in the spiral."
         }
       ],
-      "mechanic_reason": "Balancing equations helps Romy understand equivalence and structural outcomes of patterns."
+      "mechanic_reason": "helps Romy practice calculations with complex positioning on a grid.",
+      "stageEssence": "Navigate the blossom number grid"
     },
     {
       "stageNumber": 9,
       "mechanic": "boss_mix",
-      "background": "snowy_peaks_island4",
+      "background": "cherry_blossom_island4",
       "examples": [
         {
           "roundNumber": 1,
@@ -668,7 +392,7 @@
           "itemHints": "",
           "targetHints": "",
           "note": "",
-          "bossMechanic": "five_tasks"
+          "bossMechanic": "pattern_input"
         },
         {
           "roundNumber": 2,
@@ -682,38 +406,10 @@
           "itemHints": "",
           "targetHints": "",
           "note": "",
-          "bossMechanic": "five_tasks"
+          "bossMechanic": "pattern_input"
         },
         {
           "roundNumber": 3,
-          "instruction": "",
-          "prompt": "",
-          "answer": "",
-          "options": [],
-          "leftExpression": "",
-          "rightExpression": "",
-          "correctSide": "",
-          "itemHints": "",
-          "targetHints": "",
-          "note": "",
-          "bossMechanic": "pattern_input"
-        },
-        {
-          "roundNumber": 4,
-          "instruction": "",
-          "prompt": "",
-          "answer": "",
-          "options": [],
-          "leftExpression": "",
-          "rightExpression": "",
-          "correctSide": "",
-          "itemHints": "",
-          "targetHints": "",
-          "note": "",
-          "bossMechanic": "pattern_input"
-        },
-        {
-          "roundNumber": 5,
           "instruction": "",
           "prompt": "",
           "answer": "",
@@ -725,6 +421,34 @@
           "targetHints": "",
           "note": "",
           "bossMechanic": "drag_sort"
+        },
+        {
+          "roundNumber": 4,
+          "instruction": "",
+          "prompt": "",
+          "answer": "",
+          "options": [],
+          "leftExpression": "",
+          "rightExpression": "",
+          "correctSide": "",
+          "itemHints": "",
+          "targetHints": "",
+          "note": "",
+          "bossMechanic": "drag_sort"
+        },
+        {
+          "roundNumber": 5,
+          "instruction": "",
+          "prompt": "",
+          "answer": "",
+          "options": [],
+          "leftExpression": "",
+          "rightExpression": "",
+          "correctSide": "",
+          "itemHints": "",
+          "targetHints": "",
+          "note": "",
+          "bossMechanic": "corridor_choice"
         },
         {
           "roundNumber": 6,
@@ -738,7 +462,7 @@
           "itemHints": "",
           "targetHints": "",
           "note": "",
-          "bossMechanic": "drag_sort"
+          "bossMechanic": "corridor_choice"
         },
         {
           "roundNumber": 7,
@@ -808,7 +532,7 @@
           "itemHints": "",
           "targetHints": "",
           "note": "",
-          "bossMechanic": "text_task"
+          "bossMechanic": "match_pairs"
         },
         {
           "roundNumber": 12,
@@ -822,7 +546,7 @@
           "itemHints": "",
           "targetHints": "",
           "note": "",
-          "bossMechanic": "text_task"
+          "bossMechanic": "match_pairs"
         },
         {
           "roundNumber": 13,
@@ -836,7 +560,7 @@
           "itemHints": "",
           "targetHints": "",
           "note": "",
-          "bossMechanic": "corridor_choice"
+          "bossMechanic": "build_number"
         },
         {
           "roundNumber": 14,
@@ -850,7 +574,7 @@
           "itemHints": "",
           "targetHints": "",
           "note": "",
-          "bossMechanic": "corridor_choice"
+          "bossMechanic": "build_number"
         },
         {
           "roundNumber": 15,
@@ -864,7 +588,7 @@
           "itemHints": "",
           "targetHints": "",
           "note": "",
-          "bossMechanic": "balance_scale"
+          "bossMechanic": "number_grid"
         },
         {
           "roundNumber": 16,
@@ -878,11 +602,12 @@
           "itemHints": "",
           "targetHints": "",
           "note": "",
-          "bossMechanic": "balance_scale"
+          "bossMechanic": "number_grid"
         }
-      ]
+      ],
+      "stageEssence": "Defeat the samurai with mixed puzzles"
     }
   ],
   "status": "draft",
-  "updatedAt": "2026-07-07T13:48:56.952Z"
+  "updatedAt": "2026-07-14T12:20:05.987Z"
 }

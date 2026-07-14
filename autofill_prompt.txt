@@ -273,10 +273,16 @@ Per round REQUIRED fields:
   • correctSide (string) — exactly "left" or "right"
 
 --- match_pairs ---
-Game: four statements A–D; exactly two are correct; child finds both.
+Game: four statements A–D; child taps the two CORRECT ones. It renders as
+"tap the two correct equations", so every option MUST be an EQUATION with "=".
 Per round REQUIRED fields:
-  • pairA, pairB, pairC, pairD (strings) — four lines (can be equations with =)
-  • correctPair1, correctPair2 (strings) — each is one of "A","B","C","D"; must be two DIFFERENT letters for the two true statements
+  • pairA, pairB, pairC, pairD (strings) — four EQUATIONS "LHS = RHS", e.g. "6 + 3 = 9".
+    NEVER a bare sequence ("3, 6, 9"), a single number, or a label — those are
+    ambiguous because the child cannot tell which are "correct".
+    Exactly TWO equations (the two flagged below) must be arithmetically TRUE;
+    the other two must be FALSE (right side off by a little, a plausible mistake).
+  • correctPair1, correctPair2 (strings) — each is one of "A","B","C","D"; the two
+    DIFFERENT letters of the two TRUE equations.
 
 --- key_lock ---
 Game: three lock cards each show a target sum and have two slots; six draggable keys with numbers; child places the correct pair on each lock.
