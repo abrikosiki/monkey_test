@@ -312,56 +312,32 @@
     },
     {
       "id": 8,
-      "type": "number_grid",
-      "title": "Find the fraction for three-fourths of jelly",
+      "type": "corridor_choice",
+      "title": "The Tide Gate of Halves",
       "background": "jelly_bay_island3",
-      "mechanic_reason": "Number grids help Romy connect fractions to their numerical positions.",
-      "success_message": "You found your fraction spot, Romy!",
+      "mechanic_reason": "Choosing which side shows the fraction reinforces reading fraction symbols.",
+      "success_message": "The tide gate swings open!",
+      "stage_essence": "Pick the side that shows the fraction",
       "rounds": [
         {
-          "instruction": "Locate 3/4 on the grid",
-          "grid_numbers": [
-            "1/4",
-            "1/2",
-            "3/4",
-            "1",
-            "1/3",
-            "2/3",
-            "1/5",
-            "2/5",
-            "3/5",
-            "4/5",
-            "1/6",
-            "2/6",
-            "3/6",
-            "3/7",
-            "4/7",
-            "5/7",
-            "1/8",
-            "2/8",
-            "3/8",
-            "4/8",
-            "5/5",
-            "6/6",
-            "2/2",
-            "3/3",
-            "4/4"
-          ],
-          "prompt": "Locate 3/4 on the grid",
-          "answer": "A3",
-          "title": "Find the fraction for three-fourths of jelly",
-          "stage_essence": "Navigate the jelly fraction grid"
+          "question": "The jelly guard shows two paths — which side is ONE HALF?",
+          "prompt": "The jelly guard shows two paths — which side is ONE HALF?",
+          "left_expression": "1/2",
+          "right_expression": "1/4",
+          "correct_side": "left",
+          "title": "The jelly guard hides one half — tap the side that shows it.",
+          "stage_essence": "Pick the side that shows the fraction"
         },
         {
-          "instruction": "Where is 1 on the grid?",
-          "grid_numbers": [],
-          "prompt": "Where is 1 on the grid?",
-          "answer": "A4",
-          "title": "Discover the complete jelly island",
-          "stage_essence": "Navigate the jelly fraction grid"
+          "question": "The tide gate opens only for THREE QUARTERS — which side is it?",
+          "prompt": "The tide gate opens only for THREE QUARTERS — which side is it?",
+          "left_expression": "2/4",
+          "right_expression": "3/4",
+          "correct_side": "right",
+          "title": "Only three quarters lifts the tide gate — choose it.",
+          "stage_essence": "Pick the side that shows the fraction"
         }
-      ],
-      "stage_essence": "Navigate the jelly fraction grid"
+      ]
     },
     {
       "id": 9,
