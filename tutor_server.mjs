@@ -2141,6 +2141,28 @@ const server = http.createServer(async (req, res) => {
       return;
     }
 
+    // ── POST /api/plans/import — save a hand-crafted plan JSON as-is ──────
+    // Lets a tutor-authored plan (built outside the AI generator) be written
+    // straight to PLANS_DIR. Needed because on a persistent volume PLANS_DIR
+    // lives on the volume, not the repo, so committing a plan file does not
+    // surface it — it must be written through the running server.
+    if (req.method === "POST" && url.pathname === "/api/plans/import") {
+      const body = JSON.parse((await readBody(req)) || "{}");
+      const plan = body.plan && typeof body.plan === "object" ? body.plan : null;
+      const code = String(plan?.child_code || body.childCode || "").trim();
+      if (!plan || !Array.isArray(plan.lessons) || plan.lessons.length === 0 || !code) {
+        sendJson(res, 400, { ok: false, error: "plan.child_code and non-empty plan.lessons[] are required" });
+        return;
+      }
+      plan.child_code = code;
+      fs.writeFileSync(path.join(PLANS_DIR, `${code}.json`), JSON.stringify(plan, null, 2));
+      try {
+        fs.mkdirSync(path.join(GENERATED_LESSONS_DIR, childLessonFolder(plan.child_name, code)), { recursive: true });
+      } catch {}
+      sendJson(res, 200, { ok: true, plan });
+      return;
+    }
+
     // ── POST /api/lesson-from-plan — pre-fill draft from plan entry ───────
     if (req.method === "POST" && url.pathname === "/api/lesson-from-plan") {
       const body = JSON.parse((await readBody(req)) || "{}");
