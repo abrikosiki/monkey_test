@@ -624,23 +624,38 @@ function fixMatchPairsRound(r) {
     const key = "pair_" + L;
     const raw = r[key];
     const isCorrect = correct.has(L.toUpperCase());
+    // 1) Clean INTEGER equation the model already gave ("6 + 3 = 9"): keep the LHS,
+    //    set RHS so the truth value matches the flag. Do NOT touch fraction/decimal
+    //    equations here — rewriting "1/2 = 2/4" to "1/2 = 0.5" would show a decimal
+    //    a young child does not know. Those fall through to the synthesis below.
     if (typeof raw === "string" && raw.includes("=")) {
       const eq = raw.indexOf("=");
-      const lhs = raw.slice(0, eq);
+      const lhs = raw.slice(0, eq).trim();
       const lv = evalArith(lhs);
-      if (lv === null) continue; // leave non-arithmetic equations untouched
-      const target = isCorrect ? lv : lv + 1;
-      r[key] = `${lhs.trim()} = ${target}`;
+      if (lv !== null && Number.isInteger(lv)) {
+        r[key] = `${lhs} = ${isCorrect ? lv : lv + 1}`;
+        continue;
+      }
+    }
+    // 2) Fraction option ("1/2 …", "3/4 = 2/4"): synthesize an age-appropriate
+    //    "fraction of a whole" equation with a WHOLE-number answer, staying on-topic:
+    //    n/d of (d×2) = n×2 is true; +1 makes it false.
+    const frac = String(raw ?? "").match(/(\d+)\s*\/\s*(\d+)/);
+    if (frac) {
+      const n = Number(frac[1]);
+      const d = Number(frac[2]) || 1;
+      const whole = d * 2;
+      const ans = n * 2;
+      r[key] = `${n}/${d} of ${whole} = ${isCorrect ? ans : ans + 1}`;
       continue;
     }
-    // Not an equation (e.g. the model put a bare sequence "3, 6, 9"). match_pairs
-    // renders as "tap the two correct equations", so a non-equation option is always
-    // ambiguous. Synthesize an equation from the option's own numbers: flagged-correct
-    // options get a TRUE equation, the others a FALSE one.
+    // 3) Anything else (bare sequence "3, 6, 9", label, single value): synthesize a
+    //    plain integer equation from the option's own numbers — flagged-correct is
+    //    TRUE, the rest FALSE — so the round is never ambiguous.
     const nums = String(raw ?? "")
       .split(/[^\d]+/)
-      .map((n) => Number(n))
-      .filter((n) => Number.isFinite(n));
+      .map((x) => Number(x))
+      .filter((x) => Number.isFinite(x));
     const a = Number.isFinite(nums[0]) ? nums[0] : (L.charCodeAt(0) - 96) + 2;
     const b = Number.isFinite(nums[1]) ? nums[1] : (L.charCodeAt(0) - 96) + 3;
     const sum = a + b;
