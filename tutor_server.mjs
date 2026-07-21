@@ -631,7 +631,12 @@ function fixMatchPairsRound(r) {
     if (typeof raw === "string" && raw.includes("=")) {
       const eq = raw.indexOf("=");
       const lhs = raw.slice(0, eq).trim();
-      const lv = evalArith(lhs);
+      // "1/2 of 8" is the fraction form we teach; evalArith cannot parse it
+      // (letters), so read it here and keep the author's own whole.
+      const ofForm = lhs.match(/^(\d+)\s*\/\s*(\d+)\s+of\s+(\d+)$/i);
+      const lv = ofForm
+        ? (Number(ofForm[3]) * Number(ofForm[1])) / Number(ofForm[2])
+        : evalArith(lhs);
       if (lv !== null && Number.isInteger(lv)) {
         r[key] = `${lhs} = ${isCorrect ? lv : lv + 1}`;
         continue;

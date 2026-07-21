@@ -1,587 +1,856 @@
 {
   "meta": {
-    "island_key": "jelly_bay_island",
+    "island_key": "crystal_island",
+    "difficulty_level": 5,
     "student_name": "Romy",
+    "student_id": "MONKEY-3007",
     "character_key": "pirate_green",
-    "difficulty_level": 4,
     "child_inventory": [],
     "has_freeze_ring": false,
     "student_code": "MONKEY-3007",
     "student_level": 7,
     "student_coins": 50,
     "start_coins": 50,
-    "lesson_num": 2
+    "lesson_num": 3
   },
   "story": {
-    "island_name": "Jelly Bay Island",
-    "villain": "Monkey jellyfish king",
-    "artifact_name": "Pulse Core",
-    "artifact_emoji": "🪼",
-    "artifact_power": "The power that binds the jellyfish swarm beneath the bay.",
+    "island_name": "Crystal Island",
+    "villain": "Crystal monkey golem",
+    "artifact_name": "Focusing crystal",
+    "artifact_emoji": "💎",
+    "artifact_power": "The crystal Doctor Krit needs for his mind-control machine.",
     "greeting": "Romy, your island mission begins now — listen closely.",
-    "act1": "On Jelly Bay Island, the waters glow with drifting jellyfish, lighting the shore in eerie colors. Beneath the surface rules a monkey jellyfish king, its body entwined with pulsing tentacles, commanding the swarm as one. Enslaved by Doctor Krit, it spreads control through the tides. Deep below the bay lies the Pulse Core that binds them. Romy, we must dive in, destroy its power, and free the jelly king before the ocean itself turns against us.",
-    "act2": "The tricky monkey jellyfish king has covered the island with confusing fractions, making everyone unsure of how much of the bay is truly theirs.",
-    "act3": "Your mission, Romy, is to sort out these fractions and restore order to the bay. Do this, and the Coral Trident will be yours!",
+    "act1": "Evil Doctor Krit is hunting the magical crystals from this island to power up his mind-control machine. He has awakened and taken control of the mind of an ancient crystal monkey golem. Romy, we need to reach the focusing crystal first and free the monkey golem from Doctor Krit's control.",
+    "act2": "The mischievous Crystal Monkey Golem, hands glimmering like gemstones, juggles precious crystals, dropping them into tricky puzzles that split and scatter the island's magic.",
+    "act3": "Romy, it's up to you to solve these puzzles and claim the powerful Focusing Crystal. With it, you can unlock the hidden secrets of the island!",
     "goal": "Romy, master every math trial, reach the island's core in time, and break Doctor Krit's hold."
   },
   "theory": {
-    "title": "Discover the Magic of Fractions!",
+    "title": "Crystal Code: Halves, Thirds and Quarters",
     "rule": {
-      "text": "Fractions show parts of a whole.",
-      "correct_label": "Correct parts",
+      "text": "Split a whole into EQUAL parts: 2 parts are halves (1/2), 3 are thirds (1/3), 4 are quarters (1/4).",
+      "correct_label": "Equal parts",
       "correct_icons": [
-        "jellyfish",
-        "bubble"
-      ],
-      "wrong_label": "Incorrect parts",
-      "wrong_icons": [
-        "coral",
         "pearl_blue",
-        "shell_blue"
+        "pearl_blue"
+      ],
+      "wrong_label": "NOT equal parts",
+      "wrong_icons": [
+        "pearl_blue",
+        "starfish",
+        "coral"
       ]
     },
     "visuals": [
       {
         "type": "split",
-        "icon": "jellyfish",
+        "icon": "shell_blue",
         "parts": 2,
         "label": "1/2",
         "name": "One half"
       },
       {
         "type": "split",
-        "icon": "bubble",
-        "parts": 4,
-        "label": "1/4",
-        "name": "One quarter"
-      },
-      {
-        "type": "split",
-        "icon": "bubble",
+        "icon": "shell_blue",
         "parts": 3,
         "label": "1/3",
         "name": "One third"
+      },
+      {
+        "type": "split",
+        "icon": "shell_blue",
+        "parts": 4,
+        "label": "1/4",
+        "name": "One quarter"
       }
     ]
   },
   "stages": [
     {
       "id": 1,
-      "type": "drag_group",
-      "title": "Sort the jellyfish by whole and half",
-      "background": "jelly_bay_island1",
-      "mechanic_reason": "Grouping fractions helps Romy understand part-whole relationships visually.",
-      "success_message": "Great sorting, Romy! You're cleaning the bay.",
+      "type": "drag_sort",
+      "title": "Doctor Krit shuffled two crystal slices — order them smallest first.",
+      "background": "crystal_island1",
+      "coins": 10,
+      "mechanic_reason": "At difficulty 5, ordering smaller fractions adds complexity for age 9.",
+      "success_message": "Great job ordering those slices, Romy!",
       "rounds": [
         {
-          "numbers_text": "1/2, 1/4, 1, 3/4",
-          "group1_name": "Whole",
-          "group2_name": "Not Whole",
-          "group1_values": "1",
-          "group2_values": "1/2, 1/4, 3/4",
-          "all_numbers": [
-            "1/2",
+          "instruction": "1/2, 1/4",
+          "items": [
+            {
+              "id": "i1",
+              "value": "1/2",
+              "text": "1/2",
+              "image_key": "pearl_blue"
+            },
+            {
+              "id": "i2",
+              "value": "1/4",
+              "text": "1/4",
+              "image_key": "pearl_blue"
+            }
+          ],
+          "correct_order": [
             "1/4",
-            "1",
-            "3/4"
+            "1/2"
           ],
-          "group_1_name": "Whole",
-          "group_1_correct_numbers": [
-            "1"
+          "rule": {
+            "correct_order": [
+              "1/4",
+              "1/2"
+            ]
+          },
+          "draggable_items": [
+            {
+              "image_key": "pearl_blue",
+              "starting_position": "lower",
+              "label": "1/2"
+            },
+            {
+              "image_key": "pearl_blue",
+              "starting_position": "lower",
+              "label": "1/4"
+            }
           ],
-          "group_2_name": "Not Whole",
-          "group_2_correct_numbers": [
-            "1/2",
-            "1/4",
-            "3/4"
-          ],
-          "title": "Sort the jellyfish by whole and half",
-          "stage_essence": "Sort jellyfish into fraction groups"
+          "title": "Doctor Krit shuffled two crystal slices — order them smallest first.",
+          "stage_essence": "Order the crystal slices, smallest first"
         },
         {
-          "numbers_text": "1/3, 2/3, 1/2, 1",
-          "group1_name": "Below Half",
-          "group2_name": "Above Half",
-          "group1_values": "1/3, 1/2",
-          "group2_values": "2/3, 1",
-          "all_numbers": [
-            "1/3",
-            "2/3",
-            "1/2",
-            "1"
+          "instruction": "1/2, 1/4, 1/3",
+          "items": [
+            {
+              "id": "i1",
+              "value": "1/2",
+              "text": "1/2",
+              "image_key": "pearl_blue"
+            },
+            {
+              "id": "i2",
+              "value": "1/4",
+              "text": "1/4",
+              "image_key": "pearl_blue"
+            },
+            {
+              "id": "i3",
+              "value": "1/3",
+              "text": "1/3",
+              "image_key": "pearl_blue"
+            }
           ],
-          "group_1_name": "Below Half",
-          "group_1_correct_numbers": [
+          "correct_order": [
+            "1/4",
             "1/3",
             "1/2"
           ],
-          "group_2_name": "Above Half",
-          "group_2_correct_numbers": [
-            "2/3",
-            "1"
+          "rule": {
+            "correct_order": [
+              "1/4",
+              "1/3",
+              "1/2"
+            ]
+          },
+          "draggable_items": [
+            {
+              "image_key": "pearl_blue",
+              "starting_position": "lower",
+              "label": "1/2"
+            },
+            {
+              "image_key": "pearl_blue",
+              "starting_position": "lower",
+              "label": "1/4"
+            },
+            {
+              "image_key": "pearl_blue",
+              "starting_position": "lower",
+              "label": "1/3"
+            }
           ],
-          "title": "Group jellyfish with below and above half",
-          "stage_essence": "Sort jellyfish into fraction groups"
+          "title": "The golem drops three slices into the tunnel — smallest piece first.",
+          "stage_essence": "Order the crystal slices, smallest first"
+        },
+        {
+          "instruction": "1/3, 1/6, 1/2, 1/4",
+          "items": [
+            {
+              "id": "i1",
+              "value": "1/3",
+              "text": "1/3",
+              "image_key": "pearl_blue"
+            },
+            {
+              "id": "i2",
+              "value": "1/6",
+              "text": "1/6",
+              "image_key": "pearl_blue"
+            },
+            {
+              "id": "i3",
+              "value": "1/2",
+              "text": "1/2",
+              "image_key": "pearl_blue"
+            },
+            {
+              "id": "i4",
+              "value": "1/4",
+              "text": "1/4",
+              "image_key": "pearl_blue"
+            }
+          ],
+          "correct_order": [
+            "1/6",
+            "1/4",
+            "1/3",
+            "1/2"
+          ],
+          "rule": {
+            "correct_order": [
+              "1/6",
+              "1/4",
+              "1/3",
+              "1/2"
+            ]
+          },
+          "draggable_items": [
+            {
+              "image_key": "pearl_blue",
+              "starting_position": "lower",
+              "label": "1/6"
+            },
+            {
+              "image_key": "pearl_blue",
+              "starting_position": "lower",
+              "label": "1/4"
+            },
+            {
+              "image_key": "pearl_blue",
+              "starting_position": "lower",
+              "label": "1/3"
+            },
+            {
+              "image_key": "pearl_blue",
+              "starting_position": "lower",
+              "label": "1/2"
+            }
+          ],
+          "title": "Four slices glow inside the geode — line them up from the smallest.",
+          "stage_essence": "Order the crystal slices, smallest first"
         }
       ],
-      "stage_essence": "Sort jellyfish into fraction groups"
+      "stage_essence": "Order the crystal slices, smallest first"
     },
     {
       "id": 2,
       "type": "multi_choice",
-      "title": "Which jelly covers half the bay?",
-      "background": "jelly_bay_island1",
-      "mechanic_reason": "Multi-choice helps Romy make precise connections between fractions and visuals.",
-      "success_message": "Right choice, Romy! The seas are clearing.",
+      "title": "The golem guards a cut geode — name one piece.",
+      "background": "crystal_island1",
+      "coins": 10,
+      "mechanic_reason": "Multi-choice lets Romy think critically about correct fraction naming at level 5.",
+      "success_message": "Correct choice, Romy! You're a fraction master.",
       "rounds": [
         {
-          "instruction": "One jelly covers half the bay. What fraction represents this?",
+          "instruction": "A geode is cut into 4 equal parts. What is ONE part called?",
           "options": [
             {
               "id": "A",
-              "label": "1/2"
+              "label": "one quarter"
             },
             {
               "id": "B",
-              "label": "1/4"
+              "label": "one third"
             },
             {
               "id": "C",
-              "label": "3/4"
+              "label": "one half"
             }
           ],
           "correct_option": "A",
-          "prompt": "Which jelly covers half the bay?",
-          "title": "Which jelly covers half the bay?",
-          "stage_essence": "Choose the correct jelly fraction"
+          "prompt": "A geode is cut into 4 equal parts. What is ONE part called?",
+          "title": "The golem guards a cut geode — name one piece.",
+          "stage_essence": "Name the equal parts"
         },
         {
-          "instruction": "A jelly fills a quarter of the bay. What fraction is this?",
+          "instruction": "Which crystal shows THIRDS?",
           "options": [
             {
               "id": "A",
-              "label": "1/2"
+              "label": "cut into 3 equal parts"
             },
             {
               "id": "B",
-              "label": "1/4"
+              "label": "cut into 2 equal parts"
             },
             {
               "id": "C",
-              "label": "1"
+              "label": "cut into 3 unequal parts"
+            }
+          ],
+          "correct_option": "A",
+          "prompt": "Which crystal shows THIRDS?",
+          "title": "Three tunnels, but only one of them shows thirds.",
+          "stage_essence": "Name the equal parts"
+        },
+        {
+          "instruction": "1/2 of 10 crystals = ?",
+          "options": [
+            {
+              "id": "A",
+              "label": "2"
+            },
+            {
+              "id": "B",
+              "label": "5"
+            },
+            {
+              "id": "C",
+              "label": "10"
             }
           ],
           "correct_option": "B",
-          "prompt": "Spot the jelly filling a quarter bay.",
-          "title": "Spot the jelly filling a quarter bay",
-          "stage_essence": "Choose the correct jelly fraction"
+          "prompt": "1/2 of 10 crystals = ?",
+          "title": "Half the crystal pile opens the stone gate.",
+          "stage_essence": "Name the equal parts"
+        },
+        {
+          "instruction": "Each part of the prism is...",
+          "options": [
+            {
+              "id": "A",
+              "label": "a third"
+            },
+            {
+              "id": "B",
+              "label": "a quarter"
+            },
+            {
+              "id": "C",
+              "label": "a half"
+            }
+          ],
+          "correct_option": "C",
+          "prompt": "Each part of the prism is...",
+          "title": "The golem snaps a prism into two equal parts.",
+          "stage_essence": "Name the equal parts"
         }
       ],
-      "stage_essence": "Choose the correct jelly fraction"
+      "stage_essence": "Name the equal parts"
     },
     {
       "id": 3,
-      "type": "fill_blank",
-      "title": "Complete the jelly circle to make a whole",
-      "background": "jelly_bay_island2",
-      "mechanic_reason": "Fill in the blanks focuses Romy on balance and completeness with fractions.",
-      "success_message": "You've completed the circle, Romy!",
+      "type": "true_false",
+      "title": "Doctor Krit cracks a crystal into two uneven bits.",
+      "background": "crystal_island2",
+      "coins": 10,
+      "mechanic_reason": "True/false challenges Romy's understanding of equal parts in varied contexts.",
+      "success_message": "Great judgment, Romy! You sorted truth from tricks.",
       "rounds": [
         {
-          "instruction": "1/2 + ? = 1",
-          "example": "1/2 + ? = 1",
-          "prompt": "1/2 + ? = 1",
-          "answer": "1/2",
-          "title": "Complete the jelly circle to make a whole",
-          "stage_essence": "Complete the fraction circle"
+          "statement": "A crystal split into 2 UNEQUAL pieces shows one half.",
+          "correct_answer": "false",
+          "title": "Doctor Krit cracks a crystal into two uneven bits.",
+          "stage_essence": "Only EQUAL parts count"
         },
         {
-          "instruction": "? + 1/4 = 1",
-          "example": "? + 1/4 = 1",
-          "prompt": "? + 1/4 = 1",
-          "answer": "3/4",
-          "title": "Fill in the missing jelly fraction",
-          "stage_essence": "Complete the fraction circle"
+          "statement": "A geode cut into 4 equal parts shows quarters.",
+          "correct_answer": "true",
+          "title": "Four matching shards fall out of the geode.",
+          "stage_essence": "Only EQUAL parts count"
+        },
+        {
+          "statement": "One third means one of 3 equal parts.",
+          "correct_answer": "true",
+          "title": "The golem hums an old riddle about thirds.",
+          "stage_essence": "Only EQUAL parts count"
+        },
+        {
+          "statement": "1/4 of 8 crystals is 4 crystals.",
+          "correct_answer": "false",
+          "title": "Eight crystals wait on the narrow ledge.",
+          "stage_essence": "Only EQUAL parts count"
+        },
+        {
+          "statement": "A half is bigger than a quarter of the same crystal.",
+          "correct_answer": "true",
+          "title": "Two pieces of the same crystal — one big, one small.",
+          "stage_essence": "Only EQUAL parts count"
         }
       ],
-      "stage_essence": "Complete the fraction circle"
+      "stage_essence": "Only EQUAL parts count"
     },
     {
       "id": 4,
-      "type": "true_false",
-      "title": "Is half the bay equal to 2 quarters?",
-      "background": "jelly_bay_island2",
-      "mechanic_reason": "True/false challenges Romy's ability to verify fraction concepts independently.",
-      "success_message": "You've untangled the mysteries, Romy!",
+      "type": "fill_blank",
+      "title": "Split 8 crystals in half to power the lamp.",
+      "background": "crystal_island2",
+      "coins": 10,
+      "mechanic_reason": "Fill_blank helps Romy solidify fraction basics through direct calculation.",
+      "success_message": "You're half genius, Romy!",
       "rounds": [
         {
-          "statement": "1/2 = 2/4",
-          "correct_answer": "true",
-          "title": "Is half the bay equal to 2 quarters?",
-          "stage_essence": "Verify jelly fractions"
+          "instruction": "1/2 of 8 =",
+          "example": "1/2 of 8 =",
+          "prompt": "1/2 of 8 =",
+          "answer": "4",
+          "title": "Split 8 crystals in half to power the lamp.",
+          "stage_essence": "Type one equal part"
         },
         {
-          "statement": "3/2 = 1",
-          "correct_answer": "false",
-          "title": "Check if 3/2 makes a whole",
-          "stage_essence": "Verify jelly fractions"
+          "instruction": "1/4 of 12 =",
+          "example": "1/4 of 12 =",
+          "prompt": "1/4 of 12 =",
+          "answer": "3",
+          "title": "A quarter of the shards unlocks the door.",
+          "stage_essence": "Type one equal part"
+        },
+        {
+          "instruction": "1/3 of 9 =",
+          "example": "1/3 of 9 =",
+          "prompt": "1/3 of 9 =",
+          "answer": "3",
+          "title": "One third of the pile feeds the sleeping golem.",
+          "stage_essence": "Type one equal part"
+        },
+        {
+          "instruction": "1/2 of 14 =",
+          "example": "1/2 of 14 =",
+          "prompt": "1/2 of 14 =",
+          "answer": "7",
+          "title": "Halve the last 14 crystals before the tunnel closes.",
+          "stage_essence": "Type one equal part"
         }
       ],
-      "stage_essence": "Verify jelly fractions"
+      "stage_essence": "Type one equal part"
     },
     {
       "id": 5,
-      "type": "match_pairs",
-      "title": "Match jellyfish parts to their pictures",
-      "background": "2",
-      "mechanic_reason": "Matching pairs assists Romy in recognizing equivalent fractions through pictures.",
-      "success_message": "You paired them perfectly, Romy!",
-      "rounds": [
-        {
-          "pair_a": "1/2 of 4 = 2",
-          "pair_b": "1 = 1",
-          "pair_c": "1/4 of 8 = 3",
-          "pair_d": "3/4 of 8 = 7",
-          "correct_pair_1": "A",
-          "correct_pair_2": "B",
-          "title": "Match jellyfish parts to their pictures",
-          "stage_essence": "Pair jellyfish halves and wholes"
-        },
-        {
-          "pair_a": "1/4 of 8 = 3",
-          "pair_b": "3/4 of 8 = 6",
-          "pair_c": "3/3 = 2",
-          "pair_d": "2/4 of 8 = 4",
-          "correct_pair_1": "B",
-          "correct_pair_2": "D",
-          "title": "Find the matching jelly pairs",
-          "stage_essence": "Pair jellyfish halves and wholes"
-        }
-      ],
-      "stage_essence": "Pair jellyfish halves and wholes"
-    },
-    {
-      "id": 6,
-      "type": "text_task",
-      "title": "Write what 1/4 of jelly world means",
-      "background": "3",
-      "mechanic_reason": "Text tasks develop Romy's ability to articulate fraction concepts clearly.",
-      "success_message": "You're a fraction wordsmith, Romy!",
-      "rounds": [
-        {
-          "instruction": "In your words, what does 1/4 mean?",
-          "prompt": "In your words, what does 1/4 mean?",
-          "answer": "One out of four equal parts",
-          "title": "Write what 1/4 of jelly world means",
-          "stage_essence": "Explain jelly fractions with words"
-        },
-        {
-          "instruction": "Describe what 3/3 means in your words:",
-          "prompt": "Describe what 3/3 means in your words:",
-          "answer": "A whole or complete",
-          "title": "Describe what 3/3 represents",
-          "stage_essence": "Explain jelly fractions with words"
-        }
-      ],
-      "stage_essence": "Explain jelly fractions with words"
-    },
-    {
-      "id": 7,
-      "type": "build_number",
-      "title": "Construct a fraction from 2 jelly parts",
-      "background": "jelly_bay_island3",
-      "mechanic_reason": "Building numbers teaches Romy the structure of fractions and wholes visually.",
-      "success_message": "You've built it up, Romy!",
-      "rounds": [
-        {
-          "base_number": 1,
-          "parts_count": 2,
-          "number_of_parts": 2,
-          "title": "Construct a fraction from 2 jelly parts",
-          "stage_essence": "Create fractions from jelly parts"
-        },
-        {
-          "base_number": 1,
-          "parts_count": 4,
-          "number_of_parts": 4,
-          "title": "Build a whole jelly from 4 parts",
-          "stage_essence": "Create fractions from jelly parts"
-        }
-      ],
-      "stage_essence": "Create fractions from jelly parts"
-    },
-    {
-      "id": 8,
       "type": "corridor_choice",
-      "title": "The Tide Gate of Halves",
-      "background": "jelly_bay_island3",
-      "mechanic_reason": "Choosing which side shows the fraction reinforces reading fraction symbols.",
-      "success_message": "The tide gate swings open!",
-      "stage_essence": "Pick the side that shows the fraction",
+      "title": "Two glowing corridors — take the bigger piece.",
+      "background": "2",
+      "coins": 10,
+      "mechanic_reason": "Corridor choice encourages Romy to compare fractional sizes practically.",
+      "success_message": "Right path chosen, Romy!",
       "rounds": [
         {
-          "question": "The jelly guard shows two paths — which side is ONE HALF?",
-          "prompt": "The jelly guard shows two paths — which side is ONE HALF?",
+          "instruction": "Which piece is BIGGER?",
+          "question": "Which piece is BIGGER?",
           "left_expression": "1/2",
           "right_expression": "1/4",
           "correct_side": "left",
-          "title": "The jelly guard hides one half — tap the side that shows it.",
-          "stage_essence": "Pick the side that shows the fraction"
+          "prompt": "Which piece is BIGGER?",
+          "left_example": "1/2",
+          "right_example": "1/4",
+          "title": "Two glowing corridors — take the bigger piece.",
+          "stage_essence": "Run through the bigger piece"
         },
         {
-          "question": "The tide gate opens only for THREE QUARTERS — which side is it?",
-          "prompt": "The tide gate opens only for THREE QUARTERS — which side is it?",
-          "left_expression": "2/4",
-          "right_expression": "3/4",
+          "instruction": "Which piece is SMALLER?",
+          "question": "Which piece is SMALLER?",
+          "left_expression": "1/3",
+          "right_expression": "1/2",
+          "correct_side": "left",
+          "prompt": "Which piece is SMALLER?",
+          "left_example": "1/3",
+          "right_example": "1/2",
+          "title": "The narrow crack fits only the smaller piece.",
+          "stage_essence": "Run through the bigger piece"
+        },
+        {
+          "instruction": "Which side shows QUARTERS?",
+          "question": "Which side shows QUARTERS?",
+          "left_expression": "3 equal parts",
+          "right_expression": "4 equal parts",
           "correct_side": "right",
-          "title": "Only three quarters lifts the tide gate — choose it.",
-          "stage_essence": "Pick the side that shows the fraction"
+          "prompt": "Which side shows QUARTERS?",
+          "left_example": "3 equal parts",
+          "right_example": "4 equal parts",
+          "title": "Only the quarters gate will open for you.",
+          "stage_essence": "Run through the bigger piece"
+        },
+        {
+          "instruction": "Which is more of the same geode?",
+          "question": "Which is more of the same geode?",
+          "left_expression": "1/4",
+          "right_expression": "1/3",
+          "correct_side": "right",
+          "prompt": "Which is more of the same geode?",
+          "left_example": "1/4",
+          "right_example": "1/3",
+          "title": "Same geode, two shares — take the bigger share.",
+          "stage_essence": "Run through the bigger piece"
         }
-      ]
+      ],
+      "stage_essence": "Run through the bigger piece"
+    },
+    {
+      "id": 6,
+      "type": "match_pairs",
+      "title": "Two of the golem's four runes tell the truth.",
+      "background": "3",
+      "coins": 10,
+      "mechanic_reason": "Matching pairs deepen Romy's critical thinking skills.",
+      "success_message": "Pairs matched perfectly, Romy!",
+      "rounds": [
+        {
+          "pair_a": "1/2 of 8 = 4",
+          "pair_b": "1/4 of 8 = 3",
+          "pair_c": "1/3 of 9 = 3",
+          "pair_d": "1/2 of 6 = 4",
+          "correct_pair_1": "A",
+          "correct_pair_2": "C",
+          "title": "Two of the golem's four runes tell the truth.",
+          "stage_essence": "Tap the two TRUE crystal splits"
+        },
+        {
+          "pair_a": "1/4 of 12 = 4",
+          "pair_b": "1/2 of 10 = 5",
+          "pair_c": "1/3 of 12 = 4",
+          "pair_d": "1/4 of 4 = 2",
+          "correct_pair_1": "B",
+          "correct_pair_2": "C",
+          "title": "Pick the honest runes to light the crystal bridge.",
+          "stage_essence": "Tap the two TRUE crystal splits"
+        },
+        {
+          "pair_a": "1/3 of 6 = 2",
+          "pair_b": "1/2 of 12 = 7",
+          "pair_c": "1/4 of 16 = 4",
+          "pair_d": "1/3 of 15 = 6",
+          "correct_pair_1": "A",
+          "correct_pair_2": "C",
+          "title": "Doctor Krit forged two fake runes — find the real ones.",
+          "stage_essence": "Tap the two TRUE crystal splits"
+        }
+      ],
+      "stage_essence": "Tap the two TRUE crystal splits"
+    },
+    {
+      "id": 7,
+      "type": "balance_scale",
+      "title": "Two equal halves must weigh the whole crystal.",
+      "background": "crystal_island3",
+      "coins": 10,
+      "mechanic_reason": "Romy uses math to balance visual weights, enhancing symmetry skills.",
+      "success_message": "Perfectly balanced, Romy!",
+      "rounds": [
+        {
+          "left_expression": "? × 2",
+          "right_expression": "8",
+          "answer": "4",
+          "left_bowl_expression": "? × 2",
+          "right_bowl_expression": "8",
+          "answer_instead_of_question": "4",
+          "title": "Two equal halves must weigh the whole crystal.",
+          "stage_essence": "Equal parts must rebuild the whole"
+        },
+        {
+          "left_expression": "? × 4",
+          "right_expression": "12",
+          "answer": "3",
+          "left_bowl_expression": "? × 4",
+          "right_bowl_expression": "12",
+          "answer_instead_of_question": "3",
+          "title": "Four equal quarters rebuild the broken geode.",
+          "stage_essence": "Equal parts must rebuild the whole"
+        },
+        {
+          "left_expression": "? × 3",
+          "right_expression": "18",
+          "answer": "6",
+          "left_bowl_expression": "? × 3",
+          "right_bowl_expression": "18",
+          "answer_instead_of_question": "6",
+          "title": "Three equal thirds restore the golem's core.",
+          "stage_essence": "Equal parts must rebuild the whole"
+        }
+      ],
+      "stage_essence": "Equal parts must rebuild the whole"
+    },
+    {
+      "id": 8,
+      "type": "text_task",
+      "title": "The golem shares its hoard between four chests.",
+      "background": "crystal_island3",
+      "coins": 10,
+      "mechanic_reason": "Text tasks challenge Romy's ability to interpret math in word problems.",
+      "success_message": "Riddle solved, Romy!",
+      "rounds": [
+        {
+          "instruction": "The golem splits 12 crystals into 4 equal piles. How many crystals are in ONE pile?",
+          "prompt": "The golem splits 12 crystals into 4 equal piles. How many crystals are in ONE pile?",
+          "answer": "3",
+          "title": "The golem shares its hoard between four chests.",
+          "stage_essence": "Solve the crystal cave riddle"
+        },
+        {
+          "instruction": "A geode breaks into 2 equal halves. One half holds 7 gems. How many gems were in the whole geode?",
+          "prompt": "A geode breaks into 2 equal halves. One half holds 7 gems. How many gems were in the whole geode?",
+          "answer": "14",
+          "title": "Half a geode is already in your hands.",
+          "stage_essence": "Solve the crystal cave riddle"
+        },
+        {
+          "instruction": "Romy shares 15 shards into 3 equal groups. How many shards are in each group?",
+          "prompt": "Romy shares 15 shards into 3 equal groups. How many shards are in each group?",
+          "answer": "5",
+          "title": "Three friends split the shards fairly.",
+          "stage_essence": "Solve the crystal cave riddle"
+        }
+      ],
+      "stage_essence": "Solve the crystal cave riddle"
     },
     {
       "id": 9,
       "type": "boss_mix",
-      "title": "Conquer the Fractions!",
-      "background": "jelly_bay_island4",
-      "mechanic_reason": "A mix of tasks ensures Romy can apply all learned fraction skills under pressure.",
-      "success_message": "You've conquered the jelly king's challenges, Romy!",
+      "title": "The golem swings — line up the falling slices!",
+      "background": "crystal_island4",
+      "coins": 20,
+      "mechanic_reason": "Combines all learned skills for a climactic challenge.",
+      "success_message": "You outsmarted the Golem, Romy!",
       "rounds": [
         {
-          "type": "drag_group",
-          "instruction": "Sort fractions as whole and not whole.",
-          "all_numbers": [
-            "1/2",
+          "type": "drag_sort",
+          "instruction": "The golem swings — line up the falling slices!",
+          "title": "The golem swings — line up the falling slices!",
+          "correct_order": [
+            "1/8",
             "1/4",
-            "1",
-            "3/4"
-          ],
-          "group_1_name": "Whole",
-          "group_2_name": "Not Whole",
-          "numbers_text": "1/2, 1/4, 1, 3/4",
-          "group1_name": "Whole",
-          "group2_name": "Not Whole",
-          "group1_values": "1",
-          "group2_values": "1/2, 1/4, 3/4",
-          "group_1_correct_numbers": [
-            "1"
-          ],
-          "group_2_correct_numbers": [
-            "1/2",
-            "1/4",
-            "3/4"
-          ],
-          "stage_essence": "Sort jellyfish into fraction groups"
-        },
-        {
-          "type": "drag_group",
-          "instruction": "Group fractions by above and below half.",
-          "all_numbers": [
-            "1/3",
-            "2/3",
-            "1/2",
-            "1"
-          ],
-          "group_1_name": "Below Half",
-          "group_2_name": "Above Half",
-          "numbers_text": "1/3, 2/3, 1/2, 1",
-          "group1_name": "Below Half",
-          "group2_name": "Above Half",
-          "group1_values": "1/3, 1/2",
-          "group2_values": "2/3, 1",
-          "group_1_correct_numbers": [
             "1/3",
             "1/2"
           ],
-          "group_2_correct_numbers": [
-            "2/3",
-            "1"
-          ],
-          "stage_essence": "Sort jellyfish into fraction groups"
-        },
-        {
-          "type": "multi_choice",
-          "prompt": "Which fraction is a half?",
-          "options": [
+          "items": [
             {
-              "id": "A",
-              "label": "1/4"
+              "id": "i1",
+              "value": "1/2",
+              "text": "1/2",
+              "image_key": "pearl_blue"
             },
             {
-              "id": "B",
-              "label": "1/2"
+              "id": "i2",
+              "value": "1/8",
+              "text": "1/8",
+              "image_key": "pearl_blue"
             },
             {
-              "id": "C",
-              "label": "3/4"
+              "id": "i3",
+              "value": "1/4",
+              "text": "1/4",
+              "image_key": "pearl_blue"
+            },
+            {
+              "id": "i4",
+              "value": "1/3",
+              "text": "1/3",
+              "image_key": "pearl_blue"
             }
+          ]
+        },
+        {
+          "type": "drag_sort",
+          "instruction": "Shards rain from the ceiling — smallest piece first!",
+          "title": "Shards rain from the ceiling — smallest piece first!",
+          "correct_order": [
+            "1/10",
+            "1/5",
+            "1/3",
+            "1/2"
           ],
-          "correct_option": "B"
+          "items": [
+            {
+              "id": "i1",
+              "value": "1/5",
+              "text": "1/5",
+              "image_key": "pearl_blue"
+            },
+            {
+              "id": "i2",
+              "value": "1/2",
+              "text": "1/2",
+              "image_key": "pearl_blue"
+            },
+            {
+              "id": "i3",
+              "value": "1/10",
+              "text": "1/10",
+              "image_key": "pearl_blue"
+            },
+            {
+              "id": "i4",
+              "value": "1/3",
+              "text": "1/3",
+              "image_key": "pearl_blue"
+            }
+          ]
         },
         {
           "type": "multi_choice",
-          "prompt": "Choose the fraction that makes a whole.",
+          "instruction": "The golem's chest opens on the right answer.",
+          "title": "The golem's chest opens on the right answer.",
+          "question": "1/3 of 18 = ?",
+          "prompt": "1/3 of 18 = ?",
           "options": [
             {
               "id": "A",
-              "label": "3/3"
+              "label": "6",
+              "correct": true
             },
             {
               "id": "B",
-              "label": "1/2"
+              "label": "3",
+              "correct": false
             },
             {
               "id": "C",
-              "label": "2/3"
+              "label": "9",
+              "correct": false
             }
           ],
           "correct_option": "A"
         },
         {
-          "type": "fill_blank",
-          "prompt": "? + 1/2 = 1",
-          "answer": "1/2"
-        },
-        {
-          "type": "fill_blank",
-          "prompt": "? + 3/4 = 1",
-          "answer": "1/4"
+          "type": "multi_choice",
+          "instruction": "Twenty crystals glow — take exactly one quarter.",
+          "title": "Twenty crystals glow — take exactly one quarter.",
+          "question": "Which shows one quarter of 20 crystals?",
+          "prompt": "Which shows one quarter of 20 crystals?",
+          "options": [
+            {
+              "id": "A",
+              "label": "4",
+              "correct": false
+            },
+            {
+              "id": "B",
+              "label": "5",
+              "correct": true
+            },
+            {
+              "id": "C",
+              "label": "10",
+              "correct": false
+            }
+          ],
+          "correct_option": "B"
         },
         {
           "type": "true_false",
-          "statement": "1/2 is equal to 2/4.",
+          "instruction": "The golem roars a claim about thirds.",
+          "title": "The golem roars a claim about thirds.",
+          "statement": "1/3 of 12 is 4.",
           "correct_answer": "true"
         },
         {
           "type": "true_false",
-          "statement": "1 equals 1/2.",
-          "correct_answer": "false"
+          "instruction": "Doctor Krit whispers a trick from the shadows.",
+          "title": "Doctor Krit whispers a trick from the shadows.",
+          "statement": "Two quarters of a crystal are the same as one half.",
+          "correct_answer": "true"
+        },
+        {
+          "type": "fill_blank",
+          "instruction": "Twenty crystals — quarter them to break the shield!",
+          "title": "Twenty crystals — quarter them to break the shield!",
+          "prompt": "1/4 of 20 =",
+          "example": "1/4 of 20 =",
+          "answer": "5"
+        },
+        {
+          "type": "fill_blank",
+          "instruction": "The focusing crystal needs one third of the pile.",
+          "title": "The focusing crystal needs one third of the pile.",
+          "prompt": "1/3 of 21 =",
+          "example": "1/3 of 21 =",
+          "answer": "7"
+        },
+        {
+          "type": "corridor_choice",
+          "instruction": "Dodge left or right — take the bigger share!",
+          "title": "Dodge left or right — take the bigger share!",
+          "question": "Which is bigger?",
+          "left_expression": "1/3 of 12",
+          "right_expression": "1/4 of 12",
+          "correct_side": "left"
+        },
+        {
+          "type": "corridor_choice",
+          "instruction": "The floor is cracking — pick the bigger share!",
+          "title": "The floor is cracking — pick the bigger share!",
+          "question": "Which is bigger?",
+          "left_expression": "1/2 of 6",
+          "right_expression": "1/4 of 16",
+          "correct_side": "right"
         },
         {
           "type": "match_pairs",
-          "pair_a": "1/2 = 1.5",
-          "pair_b": "1/3 = 1.3333333333333333",
-          "pair_c": "3/4 = 0.75",
-          "pair_d": "2/2 = 1",
-          "correct_pair_1": "C",
-          "correct_pair_2": "D"
-        },
-        {
-          "type": "match_pairs",
-          "pair_a": "1/3 = 0.3333333333333333",
-          "pair_b": "1/2 = 1.5",
-          "pair_c": "1/4 = 1.25",
-          "pair_d": "3/4 = 0.75",
+          "instruction": "Four runes blaze on the golem's chest — two are true.",
+          "title": "Four runes blaze on the golem's chest — two are true.",
+          "pair_a": "1/4 of 20 = 5",
+          "pair_b": "1/3 of 12 = 5",
+          "pair_c": "1/2 of 18 = 9",
+          "pair_d": "1/4 of 12 = 4",
           "correct_pair_1": "A",
-          "correct_pair_2": "D"
+          "correct_pair_2": "C"
+        },
+        {
+          "type": "match_pairs",
+          "instruction": "The last runes flicker — tap the two true splits.",
+          "title": "The last runes flicker — tap the two true splits.",
+          "pair_a": "1/3 of 15 = 6",
+          "pair_b": "1/2 of 20 = 10",
+          "pair_c": "1/4 of 24 = 6",
+          "pair_d": "1/2 of 14 = 8",
+          "correct_pair_1": "B",
+          "correct_pair_2": "C"
+        },
+        {
+          "type": "balance_scale",
+          "instruction": "Two equal halves must balance the golem's fist.",
+          "title": "Two equal halves must balance the golem's fist.",
+          "left_expression": "? × 2",
+          "right_expression": "18",
+          "answer": "9"
+        },
+        {
+          "type": "balance_scale",
+          "instruction": "Four equal quarters balance the focusing crystal.",
+          "title": "Four equal quarters balance the focusing crystal.",
+          "left_expression": "? × 4",
+          "right_expression": "20",
+          "answer": "5"
         },
         {
           "type": "text_task",
-          "prompt": "Explain what a quarter means.",
-          "answer": "One of four equal parts"
+          "instruction": "Doctor Krit hides his loot in four chests.",
+          "title": "Doctor Krit hides his loot in four chests.",
+          "prompt": "Doctor Krit hides 24 crystals in 4 equal chests. How many crystals are in one chest?",
+          "answer": "6"
         },
         {
           "type": "text_task",
-          "prompt": "Describe a whole using fractions.",
-          "answer": "Fraction with numerator same as denominator"
-        },
-        {
-          "type": "build_number",
-          "base_number": "1",
-          "number_of_parts": 2
-        },
-        {
-          "type": "build_number",
-          "base_number": "1",
-          "number_of_parts": 3
-        },
-        {
-          "type": "number_grid",
-          "prompt": "Locate 3/4 on the grid",
-          "answer": "A3",
-          "instruction": "Locate 3/4 on the grid",
-          "grid_numbers": [
-            "1/4",
-            "1/2",
-            "3/4",
-            "1",
-            "1/3",
-            "2/3",
-            "1/5",
-            "2/5",
-            "3/5",
-            "4/5",
-            "1/6",
-            "2/6",
-            "3/6",
-            "3/7",
-            "4/7",
-            "5/7",
-            "1/8",
-            "2/8",
-            "3/8",
-            "4/8",
-            "5/5",
-            "6/6",
-            "2/2",
-            "3/3",
-            "4/4"
-          ],
-          "stage_essence": "Navigate the jelly fraction grid"
-        },
-        {
-          "type": "number_grid",
-          "prompt": "Locate 3/4 on the grid",
-          "answer": "A3",
-          "instruction": "Locate 3/4 on the grid",
-          "grid_numbers": [
-            "1/4",
-            "1/2",
-            "3/4",
-            "1",
-            "1/3",
-            "2/3",
-            "1/5",
-            "2/5",
-            "3/5",
-            "4/5",
-            "1/6",
-            "2/6",
-            "3/6",
-            "3/7",
-            "4/7",
-            "5/7",
-            "1/8",
-            "2/8",
-            "3/8",
-            "4/8",
-            "5/5",
-            "6/6",
-            "2/2",
-            "3/3",
-            "4/4"
-          ],
-          "stage_essence": "Navigate the jelly fraction grid"
+          "instruction": "The golem's shards glow — free him with the last answer!",
+          "title": "The golem's shards glow — free him with the last answer!",
+          "prompt": "One third of the golem's 21 shards glow. How many shards glow?",
+          "answer": "7"
         }
       ],
-      "stage_essence": "Recall and apply all jelly fraction skills"
+      "stage_essence": "Free the crystal monkey golem"
     }
   ],
   "images_needed": {
     "artifact": {
-      "key": "Coral_trident",
-      "name": "Coral Trident",
-      "description": "Control the tides with this trident."
+      "key": "Focusing_crystal",
+      "name": "Focusing Crystal",
+      "description": "Reveals hidden paths and secret codes."
     }
   },
   "tutor_notes": {
-    "block1_script": "Engage Romy by inviting her to see how parts make a whole through the jellyfish's magic.",
-    "block2_hint": "Encourage creativity in explaining fractions; use visual aids when possible.",
+    "block1_script": "Introduce Romy to fractions using visual aids and hands-on gameplay.",
+    "block2_hint": "Encourage Romy to think of fractions as splitting delicious pies or cakes.",
     "block3_tips": [
-      "Use real-life examples, like slicing a pie, to relate fractions.",
-      "Keep explanations simple, breaking down numerator and denominator clearly."
+      "Reassure Romy that it's okay to make mistakes along the way.",
+      "Use concrete examples to demonstrate halves, thirds, and quarters."
     ],
-    "block5_abstraction": "Slowly introduce complex fraction concepts, such as equivalence through multiple visuals.",
-    "weak_point_focus": "Pay special attention to clarity in Romy's verbal explanations of fractions."
+    "block5_abstraction": "Gradually move from concrete examples to more abstract representations of fractions.",
+    "weak_point_focus": "Focus on understanding the concept of equal parts and the naming of fractions."
   }
 }
