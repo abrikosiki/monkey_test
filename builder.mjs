@@ -1660,6 +1660,7 @@ function buildHtml(
     .theory-vis-arrow{color:rgba(255,255,255,.3);font-size:18px}
     .theory-vis-parts{display:flex;gap:5px;align-items:center;flex-wrap:wrap;justify-content:center}
     .theory-vis-part-img{width:clamp(16px,1.9vw,26px);height:clamp(16px,1.9vw,26px);object-fit:contain;filter:drop-shadow(0 2px 4px rgba(0,0,0,.35))}
+    .theory-vis-part-img.blank{opacity:.25;filter:grayscale(1) drop-shadow(0 2px 4px rgba(0,0,0,.35))}
     .theory-vis-sep{color:rgba(255,255,255,.22);font-size:14px;margin:0 1px}
     .theory-vis-label{font-size:17px;color:var(--sand);font-weight:700;margin-top:2px}
     .theory-vis-eq{font-size:clamp(13px,1.5vw,18px);color:var(--sand);font-weight:700;line-height:1.35;text-align:center;margin-top:4px;letter-spacing:.01em}
@@ -5803,6 +5804,10 @@ function buildHtml(
           const partsRow = document.createElement("div");
           partsRow.className = "theory-vis-parts";
           const n = Math.max(2, Math.min(6, Number(v.parts) || 2));
+          // "shaded" (optional): how many of the N parts are filled. The first
+          // shaded parts render bright, the rest are greyed out so a label like
+          // "3/8" is actually visible on the shape. Defaults to all shaded.
+          const shaded = v.shaded == null ? n : Math.max(0, Math.min(n, Number(v.shaded)));
           for(let i = 0; i < n; i++){
             if(i > 0){
               const sep = document.createElement("span");
@@ -5810,7 +5815,8 @@ function buildHtml(
               sep.textContent = "|";
               partsRow.appendChild(sep);
             }
-            partsRow.appendChild(makeItemImg(v.icon, "theory-vis-part-img"));
+            const cls = i < shaded ? "theory-vis-part-img" : "theory-vis-part-img blank";
+            partsRow.appendChild(makeItemImg(v.icon, cls));
           }
           box.appendChild(partsRow);
           if(v.label){

@@ -1,707 +1,552 @@
 {
   "meta": {
-    "island_key": "crystal_island",
-    "difficulty_level": 5,
+    "island_key": "snowy_peaks_island",
     "student_name": "Romy",
-    "student_id": "MONKEY-3007",
+    "difficulty_level": 5,
+    "coins_balance": 41,
     "character_key": "pirate_green",
-    "child_inventory": [],
+    "character_image_path": "assets/characters/pirate_green.webp",
+    "child_inventory": [
+      "ring_ice",
+      "tiki_mask"
+    ],
     "has_freeze_ring": false,
     "student_code": "MONKEY-3007",
-    "student_level": 7,
-    "student_coins": 50,
-    "start_coins": 50,
-    "lesson_num": 3
+    "student_level": 9,
+    "student_coins": 41,
+    "start_coins": 41,
+    "lesson_num": 4
   },
   "story": {
-    "island_name": "Crystal Island",
-    "villain": "Crystal monkey golem",
-    "artifact_name": "Focusing crystal",
-    "artifact_emoji": "💎",
-    "artifact_power": "The crystal Doctor Krit needs for his mind-control machine.",
+    "island_name": "Snowy Peaks Island",
+    "villain": "Yeti-monkey Viking",
+    "artifact_name": "Frost Core",
+    "artifact_emoji": "❄️",
+    "artifact_power": "Ancient frozen power atop the highest peak.",
     "greeting": "Romy, your island mission begins now — listen closely.",
-    "act1": "Evil Doctor Krit is hunting the magical crystals from this island to power up his mind-control machine. He has awakened and taken control of the mind of an ancient crystal monkey golem. Romy, we need to reach the focusing crystal first and free the monkey golem from Doctor Krit's control.",
-    "act2": "The mischievous Crystal Monkey Golem, hands glimmering like gemstones, juggles precious crystals, dropping them into tricky puzzles that split and scatter the island's magic.",
-    "act3": "Romy, it's up to you to solve these puzzles and claim the powerful Focusing Crystal. With it, you can unlock the hidden secrets of the island!",
+    "act1": "On Snowy Peaks Island, jagged mountains rise through endless blizzards, where a towering yeti-monkey Viking roams the frozen ridges. Wielding an icy axe and driven by the will of Doctor Krit, it raids anything that dares cross its path. At the highest peak lies the Frost Core, pulsing with ancient power. Romy, we must reach it, shatter its influence, and free the yeti monkey from Krit's control before the storm swallows the island whole.",
+    "act2": "A bumbling yeti-monkey Viking is causing a chilly mess! He accidentally carved symbols into the ice, turning them into slippery fraction puzzles. As he stomps around, fractions are mislabelled on every icy surface.",
+    "act3": "Your mission, Romy, is to solve these frosty fraction puzzles and bring order back to the island. The Frost Bracelet, a treasure of boundless ice control, awaits.",
     "goal": "Romy, master every math trial, reach the island's core in time, and break Doctor Krit's hold."
   },
   "theory": {
-    "title": "Crystal Code: Halves, Thirds and Quarters",
+    "title": "Naming Fractions of Shapes",
     "rule": {
-      "text": "Split a whole into EQUAL parts: 2 parts are halves (1/2), 3 are thirds (1/3), 4 are quarters (1/4).",
-      "correct_label": "Equal parts",
+      "text": "Count ALL the equal parts for the bottom number, and only the shaded parts for the top. 3 shaded of 8 = 3/8.",
+      "correct_label": "shaded / total",
       "correct_icons": [
-        "pearl_blue",
-        "pearl_blue"
+        "stone_blue",
+        "stone_blue"
       ],
-      "wrong_label": "NOT equal parts",
+      "wrong_label": "shaded / blank",
       "wrong_icons": [
-        "pearl_blue",
-        "starfish",
-        "coral"
+        "stone_blue",
+        "spore"
       ]
     },
     "visuals": [
       {
         "type": "split",
-        "icon": "shell_blue",
-        "parts": 2,
-        "label": "1/2",
-        "name": "One half"
-      },
-      {
-        "type": "split",
-        "icon": "shell_blue",
-        "parts": 3,
-        "label": "1/3",
-        "name": "One third"
-      },
-      {
-        "type": "split",
-        "icon": "shell_blue",
+        "icon": "stone_blue",
         "parts": 4,
+        "shaded": 1,
         "label": "1/4",
-        "name": "One quarter"
+        "name": "1 shaded of 4"
+      },
+      {
+        "type": "split",
+        "icon": "stone_blue",
+        "parts": 8,
+        "shaded": 3,
+        "label": "3/8",
+        "name": "3 shaded of 8"
+      },
+      {
+        "type": "split",
+        "icon": "stone_blue",
+        "parts": 6,
+        "shaded": 5,
+        "label": "5/6",
+        "name": "5 shaded of 6"
       }
     ]
   },
   "stages": [
     {
       "id": 1,
-      "type": "drag_sort",
-      "title": "Doctor Krit shuffled two crystal slices — order them smallest first.",
-      "background": "crystal_island1",
-      "coins": 10,
-      "mechanic_reason": "At difficulty 5, ordering smaller fractions adds complexity for age 9.",
-      "success_message": "Great job ordering those slices, Romy!",
-      "rounds": [
-        {
-          "instruction": "1/2, 1/4",
-          "items": [
-            {
-              "id": "i1",
-              "value": "1/2",
-              "text": "1/2",
-              "image_key": "pearl_blue"
-            },
-            {
-              "id": "i2",
-              "value": "1/4",
-              "text": "1/4",
-              "image_key": "pearl_blue"
-            }
-          ],
-          "correct_order": [
-            "1/4",
-            "1/2"
-          ],
-          "rule": {
-            "correct_order": [
-              "1/4",
-              "1/2"
-            ]
-          },
-          "draggable_items": [
-            {
-              "image_key": "pearl_blue",
-              "starting_position": "lower",
-              "label": "1/2"
-            },
-            {
-              "image_key": "pearl_blue",
-              "starting_position": "lower",
-              "label": "1/4"
-            }
-          ],
-          "title": "Doctor Krit shuffled two crystal slices — order them smallest first.",
-          "stage_essence": "Order the crystal slices, smallest first"
-        },
-        {
-          "instruction": "1/2, 1/4, 1/3",
-          "items": [
-            {
-              "id": "i1",
-              "value": "1/2",
-              "text": "1/2",
-              "image_key": "pearl_blue"
-            },
-            {
-              "id": "i2",
-              "value": "1/4",
-              "text": "1/4",
-              "image_key": "pearl_blue"
-            },
-            {
-              "id": "i3",
-              "value": "1/3",
-              "text": "1/3",
-              "image_key": "pearl_blue"
-            }
-          ],
-          "correct_order": [
-            "1/4",
-            "1/3",
-            "1/2"
-          ],
-          "rule": {
-            "correct_order": [
-              "1/4",
-              "1/3",
-              "1/2"
-            ]
-          },
-          "draggable_items": [
-            {
-              "image_key": "pearl_blue",
-              "starting_position": "lower",
-              "label": "1/2"
-            },
-            {
-              "image_key": "pearl_blue",
-              "starting_position": "lower",
-              "label": "1/4"
-            },
-            {
-              "image_key": "pearl_blue",
-              "starting_position": "lower",
-              "label": "1/3"
-            }
-          ],
-          "title": "The golem drops three slices into the tunnel — smallest piece first.",
-          "stage_essence": "Order the crystal slices, smallest first"
-        },
-        {
-          "instruction": "1/3, 1/6, 1/2, 1/4",
-          "items": [
-            {
-              "id": "i1",
-              "value": "1/3",
-              "text": "1/3",
-              "image_key": "pearl_blue"
-            },
-            {
-              "id": "i2",
-              "value": "1/6",
-              "text": "1/6",
-              "image_key": "pearl_blue"
-            },
-            {
-              "id": "i3",
-              "value": "1/2",
-              "text": "1/2",
-              "image_key": "pearl_blue"
-            },
-            {
-              "id": "i4",
-              "value": "1/4",
-              "text": "1/4",
-              "image_key": "pearl_blue"
-            }
-          ],
-          "correct_order": [
-            "1/6",
-            "1/4",
-            "1/3",
-            "1/2"
-          ],
-          "rule": {
-            "correct_order": [
-              "1/6",
-              "1/4",
-              "1/3",
-              "1/2"
-            ]
-          },
-          "draggable_items": [
-            {
-              "image_key": "pearl_blue",
-              "starting_position": "lower",
-              "label": "1/6"
-            },
-            {
-              "image_key": "pearl_blue",
-              "starting_position": "lower",
-              "label": "1/4"
-            },
-            {
-              "image_key": "pearl_blue",
-              "starting_position": "lower",
-              "label": "1/3"
-            },
-            {
-              "image_key": "pearl_blue",
-              "starting_position": "lower",
-              "label": "1/2"
-            }
-          ],
-          "title": "Four slices glow inside the geode — line them up from the smallest.",
-          "stage_essence": "Order the crystal slices, smallest first"
-        }
-      ],
-      "stage_essence": "Order the crystal slices, smallest first"
-    },
-    {
-      "id": 2,
       "type": "multi_choice",
-      "title": "The golem guards a cut geode — name one piece.",
-      "background": "crystal_island1",
-      "coins": 10,
-      "mechanic_reason": "Multi-choice lets Romy think critically about correct fraction naming at level 5.",
-      "success_message": "Correct choice, Romy! You're a fraction master.",
+      "title": "The yeti carved a bar of ice into 8 equal blocks.",
+      "background": "snowy_peaks_island1",
+      "coins": 2,
+      "mechanic_reason": "Multi-choice allows engagement with the concept of fractions in shapes, fitting for age 9 and level 5 difficulty.",
+      "success_message": "Great job, Romy! The ice shards reveal their secrets.",
       "rounds": [
         {
-          "instruction": "A geode is cut into 4 equal parts. What is ONE part called?",
+          "instruction": "A bar has 8 equal parts. 3 are shaded. What fraction is shaded?",
           "options": [
             {
               "id": "A",
-              "label": "one quarter"
+              "label": "3/8"
             },
             {
               "id": "B",
-              "label": "one third"
+              "label": "3/5"
             },
             {
               "id": "C",
-              "label": "one half"
+              "label": "5/8"
             }
           ],
           "correct_option": "A",
-          "prompt": "A geode is cut into 4 equal parts. What is ONE part called?",
-          "title": "The golem guards a cut geode — name one piece.",
-          "stage_essence": "Name the equal parts"
+          "prompt": "A bar has 8 equal parts. 3 are shaded. What fraction is shaded?",
+          "title": "The yeti carved a bar of ice into 8 equal blocks.",
+          "stage_essence": "Name the shaded fraction"
         },
         {
-          "instruction": "Which crystal shows THIRDS?",
+          "instruction": "A shield is cut into 4 equal parts. 1 is shaded. What fraction is shaded?",
           "options": [
             {
               "id": "A",
-              "label": "cut into 3 equal parts"
+              "label": "1/3"
             },
             {
               "id": "B",
-              "label": "cut into 2 equal parts"
+              "label": "1/4"
             },
             {
               "id": "C",
-              "label": "cut into 3 unequal parts"
-            }
-          ],
-          "correct_option": "A",
-          "prompt": "Which crystal shows THIRDS?",
-          "title": "Three tunnels, but only one of them shows thirds.",
-          "stage_essence": "Name the equal parts"
-        },
-        {
-          "instruction": "1/2 of 10 crystals = ?",
-          "options": [
-            {
-              "id": "A",
-              "label": "2"
-            },
-            {
-              "id": "B",
-              "label": "5"
-            },
-            {
-              "id": "C",
-              "label": "10"
+              "label": "4/1"
             }
           ],
           "correct_option": "B",
-          "prompt": "1/2 of 10 crystals = ?",
-          "title": "Half the crystal pile opens the stone gate.",
-          "stage_essence": "Name the equal parts"
+          "prompt": "A shield is cut into 4 equal parts. 1 is shaded. What fraction is shaded?",
+          "title": "A frozen shield split into four equal wedges.",
+          "stage_essence": "Name the shaded fraction"
         },
         {
-          "instruction": "Each part of the prism is...",
+          "instruction": "A window has 6 equal panes. 5 are frosted. What fraction is frosted?",
           "options": [
             {
               "id": "A",
-              "label": "a third"
+              "label": "5/6"
             },
             {
               "id": "B",
-              "label": "a quarter"
+              "label": "5/1"
             },
             {
               "id": "C",
-              "label": "a half"
+              "label": "1/6"
             }
           ],
-          "correct_option": "C",
-          "prompt": "Each part of the prism is...",
-          "title": "The golem snaps a prism into two equal parts.",
-          "stage_essence": "Name the equal parts"
+          "correct_option": "A",
+          "prompt": "A window has 6 equal panes. 5 are frosted. What fraction is frosted?",
+          "title": "Frost creeps across a six-pane window.",
+          "stage_essence": "Name the shaded fraction"
+        },
+        {
+          "instruction": "A banner has 5 equal parts. 2 are shaded. What fraction is shaded?",
+          "options": [
+            {
+              "id": "A",
+              "label": "2/3"
+            },
+            {
+              "id": "B",
+              "label": "2/5"
+            },
+            {
+              "id": "C",
+              "label": "3/5"
+            }
+          ],
+          "correct_option": "B",
+          "prompt": "A banner has 5 equal parts. 2 are shaded. What fraction is shaded?",
+          "title": "The Viking's banner has five equal stripes.",
+          "stage_essence": "Name the shaded fraction"
+        },
+        {
+          "instruction": "A wall has 10 equal parts. 7 are shaded. What fraction is shaded?",
+          "options": [
+            {
+              "id": "A",
+              "label": "7/10"
+            },
+            {
+              "id": "B",
+              "label": "7/3"
+            },
+            {
+              "id": "C",
+              "label": "3/10"
+            }
+          ],
+          "correct_option": "A",
+          "prompt": "A wall has 10 equal parts. 7 are shaded. What fraction is shaded?",
+          "title": "An ice wall of ten equal bricks.",
+          "stage_essence": "Name the shaded fraction"
         }
       ],
-      "stage_essence": "Name the equal parts"
+      "stage_essence": "Name the shaded fraction"
+    },
+    {
+      "id": 2,
+      "type": "true_false",
+      "title": "The yeti pins a label on the ice bar.",
+      "background": "snowy_peaks_island1",
+      "coins": 2,
+      "mechanic_reason": "True/False tasks help Romy discern correct from incorrect fractions, ideal for this stage of concept understanding.",
+      "success_message": "Well done, Romy! You've uncovered the truth in the frost.",
+      "rounds": [
+        {
+          "statement": "A bar with 8 equal parts and 3 shaded is labelled 3/8.",
+          "correct_answer": "true",
+          "title": "The yeti pins a label on the ice bar.",
+          "stage_essence": "Is the label correct?"
+        },
+        {
+          "statement": "A bar with 8 equal parts and 3 shaded is labelled 3/5.",
+          "correct_answer": "false",
+          "title": "Doctor Krit scratches out the bottom number.",
+          "stage_essence": "Is the label correct?"
+        },
+        {
+          "statement": "A shield in 4 equal parts with 3 shaded is labelled 3/4.",
+          "correct_answer": "true",
+          "title": "Three of four shield wedges glow blue.",
+          "stage_essence": "Is the label correct?"
+        },
+        {
+          "statement": "A window in 6 equal parts with 1 frosted is labelled 1/5.",
+          "correct_answer": "false",
+          "title": "A sneaky mislabel on the window.",
+          "stage_essence": "Is the label correct?"
+        },
+        {
+          "statement": "In a fraction of a shape, the bottom number is the TOTAL number of equal parts.",
+          "correct_answer": "true",
+          "title": "The yeti explains the rule of the runes.",
+          "stage_essence": "Is the label correct?"
+        }
+      ],
+      "stage_essence": "Is the label correct?"
     },
     {
       "id": 3,
-      "type": "true_false",
-      "title": "Doctor Krit cracks a crystal into two uneven bits.",
-      "background": "crystal_island2",
-      "coins": 10,
-      "mechanic_reason": "True/false challenges Romy's understanding of equal parts in varied contexts.",
-      "success_message": "Great judgment, Romy! You sorted truth from tricks.",
+      "type": "drag_group",
+      "title": "Sort the yeti's ice runes by their top number.",
+      "background": "snowy_peaks_island2",
+      "coins": 2,
+      "mechanic_reason": "Drag and group develops understanding of unit versus non-unit fractions and helps visualize group differences.",
+      "success_message": "Smart sorting, Romy! The runes align harmoniously.",
       "rounds": [
         {
-          "statement": "A crystal split into 2 UNEQUAL pieces shows one half.",
-          "correct_answer": "false",
-          "title": "Doctor Krit cracks a crystal into two uneven bits.",
-          "stage_essence": "Only EQUAL parts count"
+          "numbers_text": "1/4, 3/4, 1/8, 5/8",
+          "group1_name": "Only ONE part (top = 1)",
+          "group2_name": "More than one (top > 1)",
+          "group1_values": "1/4, 1/8",
+          "group2_values": "3/4, 5/8",
+          "numbers": [
+            "1/4",
+            "3/4",
+            "1/8",
+            "5/8"
+          ],
+          "title": "Sort the yeti's ice runes by their top number.",
+          "stage_essence": "Sort by the top number"
         },
         {
-          "statement": "A geode cut into 4 equal parts shows quarters.",
-          "correct_answer": "true",
-          "title": "Four matching shards fall out of the geode.",
-          "stage_essence": "Only EQUAL parts count"
+          "numbers_text": "1/6, 4/6, 1/3, 2/3",
+          "group1_name": "Only ONE part (top = 1)",
+          "group2_name": "More than one (top > 1)",
+          "group1_values": "1/6, 1/3",
+          "group2_values": "4/6, 2/3",
+          "numbers": [
+            "1/6",
+            "4/6",
+            "1/3",
+            "2/3"
+          ],
+          "title": "More runes tumble down the slope.",
+          "stage_essence": "Sort by the top number"
         },
         {
-          "statement": "One third means one of 3 equal parts.",
-          "correct_answer": "true",
-          "title": "The golem hums an old riddle about thirds.",
-          "stage_essence": "Only EQUAL parts count"
-        },
-        {
-          "statement": "1/4 of 8 crystals is 4 crystals.",
-          "correct_answer": "false",
-          "title": "Eight crystals wait on the narrow ledge.",
-          "stage_essence": "Only EQUAL parts count"
-        },
-        {
-          "statement": "A half is bigger than a quarter of the same crystal.",
-          "correct_answer": "true",
-          "title": "Two pieces of the same crystal — one big, one small.",
-          "stage_essence": "Only EQUAL parts count"
+          "numbers_text": "1/5, 3/5, 1/10, 7/10",
+          "group1_name": "Only ONE part (top = 1)",
+          "group2_name": "More than one (top > 1)",
+          "group1_values": "1/5, 1/10",
+          "group2_values": "3/5, 7/10",
+          "numbers": [
+            "1/5",
+            "3/5",
+            "1/10",
+            "7/10"
+          ],
+          "title": "The last runes before the cave.",
+          "stage_essence": "Sort by the top number"
         }
       ],
-      "stage_essence": "Only EQUAL parts count"
+      "stage_essence": "Sort by the top number"
     },
     {
       "id": 4,
-      "type": "fill_blank",
-      "title": "Split 8 crystals in half to power the lamp.",
-      "background": "crystal_island2",
-      "coins": 10,
-      "mechanic_reason": "Fill_blank helps Romy solidify fraction basics through direct calculation.",
-      "success_message": "You're half genius, Romy!",
+      "type": "corridor_choice",
+      "title": "Two ice doors, only one shows 3/4.",
+      "background": "snowy_peaks_island2",
+      "coins": 2,
+      "mechanic_reason": "Corridor choice encourages critical analysis by presenting two similar options, perfect for honing judgment skills.",
+      "success_message": "You've chosen wisely, Romy! The path is clear.",
       "rounds": [
         {
-          "instruction": "1/2 of 8 =",
-          "example": "1/2 of 8 =",
-          "prompt": "1/2 of 8 =",
-          "answer": "4",
-          "title": "Split 8 crystals in half to power the lamp.",
-          "stage_essence": "Type one equal part"
+          "instruction": "Which shape shows 3/4 shaded?",
+          "question": "Which shape shows 3/4 shaded?",
+          "left_expression": "4 parts, 3 shaded",
+          "right_expression": "4 parts, 1 shaded",
+          "correct_side": "left",
+          "prompt": "Which shape shows 3/4 shaded?",
+          "left": "4 parts, 3 shaded",
+          "right": "4 parts, 1 shaded",
+          "title": "Two ice doors, only one shows 3/4.",
+          "stage_essence": "Pick the matching shape"
         },
         {
-          "instruction": "1/4 of 12 =",
-          "example": "1/4 of 12 =",
-          "prompt": "1/4 of 12 =",
-          "answer": "3",
-          "title": "A quarter of the shards unlocks the door.",
-          "stage_essence": "Type one equal part"
+          "instruction": "Which label is CORRECT?",
+          "question": "Which label is CORRECT?",
+          "left_expression": "6 parts, 5 shaded = 5/6",
+          "right_expression": "6 parts, 5 shaded = 5/1",
+          "correct_side": "left",
+          "prompt": "Which label is CORRECT?",
+          "left": "6 parts, 5 shaded = 5/6",
+          "right": "6 parts, 5 shaded = 5/1",
+          "title": "One label is a Krit forgery.",
+          "stage_essence": "Pick the matching shape"
         },
         {
-          "instruction": "1/3 of 9 =",
-          "example": "1/3 of 9 =",
-          "prompt": "1/3 of 9 =",
-          "answer": "3",
-          "title": "One third of the pile feeds the sleeping golem.",
-          "stage_essence": "Type one equal part"
+          "instruction": "Which shape has MORE shaded?",
+          "question": "Which shape has MORE shaded?",
+          "left_expression": "3/8",
+          "right_expression": "6/8",
+          "correct_side": "right",
+          "prompt": "Which shape has MORE shaded?",
+          "left": "3/8",
+          "right": "6/8",
+          "title": "The bigger-shaded door opens.",
+          "stage_essence": "Pick the matching shape"
         },
         {
-          "instruction": "1/2 of 14 =",
-          "example": "1/2 of 14 =",
-          "prompt": "1/2 of 14 =",
-          "answer": "7",
-          "title": "Halve the last 14 crystals before the tunnel closes.",
-          "stage_essence": "Type one equal part"
+          "instruction": "Which shape is 1/2 shaded?",
+          "question": "Which shape is 1/2 shaded?",
+          "left_expression": "8 parts, 4 shaded",
+          "right_expression": "8 parts, 3 shaded",
+          "correct_side": "left",
+          "prompt": "Which shape is 1/2 shaded?",
+          "left": "8 parts, 4 shaded",
+          "right": "8 parts, 3 shaded",
+          "title": "Which door is exactly half frosted?",
+          "stage_essence": "Pick the matching shape"
         }
       ],
-      "stage_essence": "Type one equal part"
+      "stage_essence": "Pick the matching shape"
     },
     {
       "id": 5,
-      "type": "corridor_choice",
-      "title": "Two glowing corridors — take the bigger piece.",
+      "type": "match_pairs",
+      "title": "Two of the four frost runes are true.",
       "background": "2",
-      "coins": 10,
-      "mechanic_reason": "Corridor choice encourages Romy to compare fractional sizes practically.",
-      "success_message": "Right path chosen, Romy!",
+      "coins": 2,
+      "mechanic_reason": "Matching pairs enhance deductive reasoning by finding correct fraction expressions, fitting for Romy's level.",
+      "success_message": "You've lighted the path, Romy! The runes reveal their secrets.",
       "rounds": [
         {
-          "instruction": "Which piece is BIGGER?",
-          "question": "Which piece is BIGGER?",
-          "left_expression": "1/2",
-          "right_expression": "1/4",
-          "correct_side": "left",
-          "prompt": "Which piece is BIGGER?",
-          "left_example": "1/2",
-          "right_example": "1/4",
-          "title": "Two glowing corridors — take the bigger piece.",
-          "stage_essence": "Run through the bigger piece"
+          "pair_a": "3/8 of 16 = 6",
+          "pair_b": "3/4 of 8 = 7",
+          "pair_c": "2/5 of 10 = 4",
+          "pair_d": "5/6 of 12 = 11",
+          "correct_pair_1": "A",
+          "correct_pair_2": "C",
+          "title": "Two of the four frost runes are true.",
+          "stage_essence": "Tap the two TRUE ice runes"
         },
         {
-          "instruction": "Which piece is SMALLER?",
-          "question": "Which piece is SMALLER?",
-          "left_expression": "1/3",
-          "right_expression": "1/2",
-          "correct_side": "left",
-          "prompt": "Which piece is SMALLER?",
-          "left_example": "1/3",
-          "right_example": "1/2",
-          "title": "The narrow crack fits only the smaller piece.",
-          "stage_essence": "Run through the bigger piece"
+          "pair_a": "3/4 of 12 = 10",
+          "pair_b": "2/3 of 9 = 6",
+          "pair_c": "5/8 of 16 = 10",
+          "pair_d": "3/5 of 10 = 7",
+          "correct_pair_1": "B",
+          "correct_pair_2": "C",
+          "title": "Light the bridge with the honest runes.",
+          "stage_essence": "Tap the two TRUE ice runes"
         },
         {
-          "instruction": "Which side shows QUARTERS?",
-          "question": "Which side shows QUARTERS?",
-          "left_expression": "3 equal parts",
-          "right_expression": "4 equal parts",
-          "correct_side": "right",
-          "prompt": "Which side shows QUARTERS?",
-          "left_example": "3 equal parts",
-          "right_example": "4 equal parts",
-          "title": "Only the quarters gate will open for you.",
-          "stage_essence": "Run through the bigger piece"
-        },
-        {
-          "instruction": "Which is more of the same geode?",
-          "question": "Which is more of the same geode?",
-          "left_expression": "1/4",
-          "right_expression": "1/3",
-          "correct_side": "right",
-          "prompt": "Which is more of the same geode?",
-          "left_example": "1/4",
-          "right_example": "1/3",
-          "title": "Same geode, two shares — take the bigger share.",
-          "stage_essence": "Run through the bigger piece"
+          "pair_a": "2/4 of 8 = 4",
+          "pair_b": "5/6 of 18 = 16",
+          "pair_c": "3/10 of 20 = 6",
+          "pair_d": "7/8 of 16 = 15",
+          "correct_pair_1": "A",
+          "correct_pair_2": "C",
+          "title": "Krit forged two runes near the peak.",
+          "stage_essence": "Tap the two TRUE ice runes"
         }
       ],
-      "stage_essence": "Run through the bigger piece"
+      "stage_essence": "Tap the two TRUE ice runes"
     },
     {
       "id": 6,
-      "type": "match_pairs",
-      "title": "Two of the golem's four runes tell the truth.",
+      "type": "build_number",
+      "title": "Rebuild the 8-block ice bar.",
       "background": "3",
-      "coins": 10,
-      "mechanic_reason": "Matching pairs deepen Romy's critical thinking skills.",
-      "success_message": "Pairs matched perfectly, Romy!",
+      "coins": 2,
+      "mechanic_reason": "Build number allows visualization of fractions as parts of a whole, fostering understanding of the fraction concept.",
+      "success_message": "Great reconstruction, Romy! The icy structures stand firm.",
       "rounds": [
         {
-          "pair_a": "1/2 of 8 = 4",
-          "pair_b": "1/4 of 8 = 3",
-          "pair_c": "1/3 of 9 = 3",
-          "pair_d": "1/2 of 6 = 4",
-          "correct_pair_1": "A",
-          "correct_pair_2": "C",
-          "title": "Two of the golem's four runes tell the truth.",
-          "stage_essence": "Tap the two TRUE crystal splits"
+          "base_number": 8,
+          "parts_count": 2,
+          "title": "Rebuild the 8-block ice bar.",
+          "stage_essence": "Shaded + blank make the whole"
         },
         {
-          "pair_a": "1/4 of 12 = 4",
-          "pair_b": "1/2 of 10 = 5",
-          "pair_c": "1/3 of 12 = 4",
-          "pair_d": "1/4 of 4 = 2",
-          "correct_pair_1": "B",
-          "correct_pair_2": "C",
-          "title": "Pick the honest runes to light the crystal bridge.",
-          "stage_essence": "Tap the two TRUE crystal splits"
+          "base_number": 6,
+          "parts_count": 2,
+          "title": "Rebuild the frosted window.",
+          "stage_essence": "Shaded + blank make the whole"
         },
         {
-          "pair_a": "1/3 of 6 = 2",
-          "pair_b": "1/2 of 12 = 7",
-          "pair_c": "1/4 of 16 = 4",
-          "pair_d": "1/3 of 15 = 6",
-          "correct_pair_1": "A",
-          "correct_pair_2": "C",
-          "title": "Doctor Krit forged two fake runes — find the real ones.",
-          "stage_essence": "Tap the two TRUE crystal splits"
+          "base_number": 10,
+          "parts_count": 2,
+          "title": "Rebuild the ten-brick wall.",
+          "stage_essence": "Shaded + blank make the whole"
         }
       ],
-      "stage_essence": "Tap the two TRUE crystal splits"
+      "stage_essence": "Shaded + blank make the whole"
     },
     {
       "id": 7,
-      "type": "balance_scale",
-      "title": "Two equal halves must weigh the whole crystal.",
-      "background": "crystal_island3",
-      "coins": 10,
-      "mechanic_reason": "Romy uses math to balance visual weights, enhancing symmetry skills.",
-      "success_message": "Perfectly balanced, Romy!",
+      "type": "five_tasks",
+      "title": "Write the fraction shaded on each ice panel.",
+      "background": "snowy_peaks_island3",
+      "coins": 2,
+      "mechanic_reason": "Five tasks improve accuracy and speed in naming fractions, increasing confidence and skill.",
+      "success_message": "You've mastered the icy tasks, Romy!",
       "rounds": [
         {
-          "left_expression": "? × 2",
-          "right_expression": "8",
-          "answer": "4",
-          "left_bowl_expression": "? × 2",
-          "right_bowl_expression": "8",
-          "answer_instead_of_question": "4",
-          "title": "Two equal halves must weigh the whole crystal.",
-          "stage_essence": "Equal parts must rebuild the whole"
+          "tasks": [
+            {
+              "q": "8 parts, 3 shaded → ?",
+              "a": "3/8"
+            },
+            {
+              "q": "4 parts, 1 shaded → ?",
+              "a": "1/4"
+            },
+            {
+              "q": "6 parts, 5 frosted → ?",
+              "a": "5/6"
+            },
+            {
+              "q": "5 parts, 2 shaded → ?",
+              "a": "2/5"
+            },
+            {
+              "q": "10 parts, 7 shaded → ?",
+              "a": "7/10"
+            }
+          ],
+          "title": "Write the fraction shaded on each ice panel.",
+          "stage_essence": "Write the shaded fraction"
         },
         {
-          "left_expression": "? × 4",
-          "right_expression": "12",
-          "answer": "3",
-          "left_bowl_expression": "? × 4",
-          "right_bowl_expression": "12",
-          "answer_instead_of_question": "3",
-          "title": "Four equal quarters rebuild the broken geode.",
-          "stage_essence": "Equal parts must rebuild the whole"
-        },
-        {
-          "left_expression": "? × 3",
-          "right_expression": "18",
-          "answer": "6",
-          "left_bowl_expression": "? × 3",
-          "right_bowl_expression": "18",
-          "answer_instead_of_question": "6",
-          "title": "Three equal thirds restore the golem's core.",
-          "stage_essence": "Equal parts must rebuild the whole"
+          "tasks": [
+            {
+              "q": "9 parts, 4 shaded → ?",
+              "a": "4/9"
+            },
+            {
+              "q": "12 parts, 5 shaded → ?",
+              "a": "5/12"
+            },
+            {
+              "q": "6 parts, 1 shaded → ?",
+              "a": "1/6"
+            },
+            {
+              "q": "8 parts, 5 shaded → ?",
+              "a": "5/8"
+            },
+            {
+              "q": "10 parts, 3 shaded → ?",
+              "a": "3/10"
+            }
+          ],
+          "title": "Name what Doctor Krit left shaded.",
+          "stage_essence": "Write the shaded fraction"
         }
       ],
-      "stage_essence": "Equal parts must rebuild the whole"
+      "stage_essence": "Write the shaded fraction"
     },
     {
       "id": 8,
-      "type": "text_task",
-      "title": "The golem shares its hoard between four chests.",
-      "background": "crystal_island3",
-      "coins": 10,
-      "mechanic_reason": "Text tasks challenge Romy's ability to interpret math in word problems.",
-      "success_message": "Riddle solved, Romy!",
+      "type": "timer_challenge",
+      "title": "Frost is melting — how many panes stay clear? Quick!",
+      "background": "snowy_peaks_island3",
+      "coins": 2,
+      "mechanic_reason": "Timer challenges enhance agile thinking and recall speed, engaging Romy with a sense of urgency.",
+      "success_message": "You did it, Romy! The frost stands strong.",
       "rounds": [
         {
-          "instruction": "The golem splits 12 crystals into 4 equal piles. How many crystals are in ONE pile?",
-          "prompt": "The golem splits 12 crystals into 4 equal piles. How many crystals are in ONE pile?",
-          "answer": "3",
-          "title": "The golem shares its hoard between four chests.",
-          "stage_essence": "Solve the crystal cave riddle"
+          "timer_example_a": "8 − 3 = ?",
+          "timer_example_b": "6 − 5 = ?",
+          "timer_example_c": "10 − 7 = ?",
+          "timer_answer_a": "5",
+          "timer_answer_b": "1",
+          "timer_answer_c": "3",
+          "timer_seconds": 40,
+          "title": "Frost is melting — how many panes stay clear? Quick!",
+          "stage_essence": "Count the blanks before the blizzard"
         },
         {
-          "instruction": "A geode breaks into 2 equal halves. One half holds 7 gems. How many gems were in the whole geode?",
-          "prompt": "A geode breaks into 2 equal halves. One half holds 7 gems. How many gems were in the whole geode?",
-          "answer": "14",
-          "title": "Half a geode is already in your hands.",
-          "stage_essence": "Solve the crystal cave riddle"
-        },
-        {
-          "instruction": "Romy shares 15 shards into 3 equal groups. How many shards are in each group?",
-          "prompt": "Romy shares 15 shards into 3 equal groups. How many shards are in each group?",
-          "answer": "5",
-          "title": "Three friends split the shards fairly.",
-          "stage_essence": "Solve the crystal cave riddle"
+          "timer_example_a": "5 − 2 = ?",
+          "timer_example_b": "9 − 4 = ?",
+          "timer_example_c": "12 − 5 = ?",
+          "timer_answer_a": "3",
+          "timer_answer_b": "5",
+          "timer_answer_c": "7",
+          "timer_seconds": 40,
+          "title": "Name the blanks before the storm hits!",
+          "stage_essence": "Count the blanks before the blizzard"
         }
       ],
-      "stage_essence": "Solve the crystal cave riddle"
+      "stage_essence": "Count the blanks before the blizzard"
     },
     {
       "id": 9,
       "type": "boss_mix",
-      "title": "The golem swings — line up the falling slices!",
-      "background": "crystal_island4",
-      "coins": 20,
-      "mechanic_reason": "Combines all learned skills for a climactic challenge.",
-      "success_message": "You outsmarted the Golem, Romy!",
+      "title": "The yeti hurls a shard — name the fraction fast!",
+      "background": "snowy_peaks_island4",
+      "coins": 5,
+      "mechanic_reason": "Boss mix encapsulates all learned concepts, challenging Romy's understanding and command of fractions.",
+      "success_message": "Congratulations, Romy! You've claimed the Frost Bracelet and freed Snowy Peaks Island!",
       "rounds": [
         {
-          "type": "drag_sort",
-          "instruction": "The golem swings — line up the falling slices!",
-          "title": "The golem swings — line up the falling slices!",
-          "correct_order": [
-            "1/8",
-            "1/4",
-            "1/3",
-            "1/2"
-          ],
-          "items": [
-            {
-              "id": "i1",
-              "value": "1/2",
-              "text": "1/2",
-              "image_key": "pearl_blue"
-            },
-            {
-              "id": "i2",
-              "value": "1/8",
-              "text": "1/8",
-              "image_key": "pearl_blue"
-            },
-            {
-              "id": "i3",
-              "value": "1/4",
-              "text": "1/4",
-              "image_key": "pearl_blue"
-            },
-            {
-              "id": "i4",
-              "value": "1/3",
-              "text": "1/3",
-              "image_key": "pearl_blue"
-            }
-          ]
-        },
-        {
-          "type": "drag_sort",
-          "instruction": "Shards rain from the ceiling — smallest piece first!",
-          "title": "Shards rain from the ceiling — smallest piece first!",
-          "correct_order": [
-            "1/10",
-            "1/5",
-            "1/3",
-            "1/2"
-          ],
-          "items": [
-            {
-              "id": "i1",
-              "value": "1/5",
-              "text": "1/5",
-              "image_key": "pearl_blue"
-            },
-            {
-              "id": "i2",
-              "value": "1/2",
-              "text": "1/2",
-              "image_key": "pearl_blue"
-            },
-            {
-              "id": "i3",
-              "value": "1/10",
-              "text": "1/10",
-              "image_key": "pearl_blue"
-            },
-            {
-              "id": "i4",
-              "value": "1/3",
-              "text": "1/3",
-              "image_key": "pearl_blue"
-            }
-          ]
-        },
-        {
           "type": "multi_choice",
-          "instruction": "The golem's chest opens on the right answer.",
-          "title": "The golem's chest opens on the right answer.",
-          "question": "1/3 of 18 = ?",
-          "prompt": "1/3 of 18 = ?",
+          "instruction": "The yeti hurls a shard — name the fraction fast!",
+          "title": "The yeti hurls a shard — name the fraction fast!",
+          "question": "A shape has 12 equal parts, 5 shaded. What fraction is shaded?",
+          "prompt": "A shape has 12 equal parts, 5 shaded. What fraction is shaded?",
           "options": [
             {
               "id": "A",
-              "label": "6",
+              "label": "5/12",
               "correct": true
             },
             {
               "id": "B",
-              "label": "3",
+              "label": "5/7",
               "correct": false
             },
             {
               "id": "C",
-              "label": "9",
+              "label": "7/12",
               "correct": false
             }
           ],
@@ -709,24 +554,24 @@
         },
         {
           "type": "multi_choice",
-          "instruction": "Twenty crystals glow — take exactly one quarter.",
-          "title": "Twenty crystals glow — take exactly one quarter.",
-          "question": "Which shows one quarter of 20 crystals?",
-          "prompt": "Which shows one quarter of 20 crystals?",
+          "instruction": "Dodge the ice axe and name it!",
+          "title": "Dodge the ice axe and name it!",
+          "question": "A shape has 9 equal parts, 4 shaded. What fraction is shaded?",
+          "prompt": "A shape has 9 equal parts, 4 shaded. What fraction is shaded?",
           "options": [
             {
               "id": "A",
-              "label": "4",
+              "label": "4/5",
               "correct": false
             },
             {
               "id": "B",
-              "label": "5",
+              "label": "4/9",
               "correct": true
             },
             {
               "id": "C",
-              "label": "10",
+              "label": "5/9",
               "correct": false
             }
           ],
@@ -734,123 +579,187 @@
         },
         {
           "type": "true_false",
-          "instruction": "The golem roars a claim about thirds.",
-          "title": "The golem roars a claim about thirds.",
-          "statement": "1/3 of 12 is 4.",
+          "instruction": "The yeti roars a claim about the runes.",
+          "title": "The yeti roars a claim about the runes.",
+          "statement": "A shape with 12 equal parts and 7 shaded is labelled 7/12.",
           "correct_answer": "true"
         },
         {
           "type": "true_false",
-          "instruction": "Doctor Krit whispers a trick from the shadows.",
-          "title": "Doctor Krit whispers a trick from the shadows.",
-          "statement": "Two quarters of a crystal are the same as one half.",
-          "correct_answer": "true"
+          "instruction": "Doctor Krit whispers a false label.",
+          "title": "Doctor Krit whispers a false label.",
+          "statement": "A shape with 9 equal parts and 4 shaded is labelled 4/5.",
+          "correct_answer": "false"
         },
         {
-          "type": "fill_blank",
-          "instruction": "Twenty crystals — quarter them to break the shield!",
-          "title": "Twenty crystals — quarter them to break the shield!",
-          "prompt": "1/4 of 20 =",
-          "example": "1/4 of 20 =",
-          "answer": "5"
+          "type": "drag_group",
+          "instruction": "Sort the falling runes — top number decides!",
+          "title": "Sort the falling runes — top number decides!",
+          "numbers_text": "1/9, 4/9, 1/12, 5/12",
+          "group1_name": "Only ONE part (top = 1)",
+          "group2_name": "More than one (top > 1)",
+          "group1_values": "1/9, 1/12",
+          "group2_values": "4/9, 5/12"
         },
         {
-          "type": "fill_blank",
-          "instruction": "The focusing crystal needs one third of the pile.",
-          "title": "The focusing crystal needs one third of the pile.",
-          "prompt": "1/3 of 21 =",
-          "example": "1/3 of 21 =",
-          "answer": "7"
+          "type": "drag_group",
+          "instruction": "More runes in the blizzard — sort them!",
+          "title": "More runes in the blizzard — sort them!",
+          "numbers_text": "1/10, 3/10, 1/8, 7/8",
+          "group1_name": "Only ONE part (top = 1)",
+          "group2_name": "More than one (top > 1)",
+          "group1_values": "1/10, 1/8",
+          "group2_values": "3/10, 7/8"
         },
         {
           "type": "corridor_choice",
-          "instruction": "Dodge left or right — take the bigger share!",
-          "title": "Dodge left or right — take the bigger share!",
-          "question": "Which is bigger?",
-          "left_expression": "1/3 of 12",
-          "right_expression": "1/4 of 12",
+          "instruction": "One ice door is mislabelled — pick the true one!",
+          "title": "One ice door is mislabelled — pick the true one!",
+          "question": "Which is correctly labelled?",
+          "left_expression": "10 parts, 3 shaded = 3/10",
+          "right_expression": "10 parts, 3 shaded = 3/7",
           "correct_side": "left"
         },
         {
           "type": "corridor_choice",
-          "instruction": "The floor is cracking — pick the bigger share!",
-          "title": "The floor is cracking — pick the bigger share!",
-          "question": "Which is bigger?",
-          "left_expression": "1/2 of 6",
-          "right_expression": "1/4 of 16",
+          "instruction": "The floor cracks — take the bigger-shaded side!",
+          "title": "The floor cracks — take the bigger-shaded side!",
+          "question": "Which shape has MORE shaded?",
+          "left_expression": "5/12",
+          "right_expression": "9/12",
           "correct_side": "right"
         },
         {
           "type": "match_pairs",
-          "instruction": "Four runes blaze on the golem's chest — two are true.",
-          "title": "Four runes blaze on the golem's chest — two are true.",
-          "pair_a": "1/4 of 20 = 5",
-          "pair_b": "1/3 of 12 = 5",
-          "pair_c": "1/2 of 18 = 9",
-          "pair_d": "1/4 of 12 = 4",
+          "instruction": "Four frost runes blaze — two are true.",
+          "title": "Four frost runes blaze — two are true.",
+          "pair_a": "5/12 of 24 = 10",
+          "pair_b": "2/9 of 18 = 5",
+          "pair_c": "7/10 of 20 = 14",
+          "pair_d": "3/8 of 24 = 10",
           "correct_pair_1": "A",
           "correct_pair_2": "C"
         },
         {
           "type": "match_pairs",
-          "instruction": "The last runes flicker — tap the two true splits.",
-          "title": "The last runes flicker — tap the two true splits.",
-          "pair_a": "1/3 of 15 = 6",
-          "pair_b": "1/2 of 20 = 10",
-          "pair_c": "1/4 of 24 = 6",
-          "pair_d": "1/2 of 14 = 8",
+          "instruction": "The last runes flicker — tap the two true ones.",
+          "title": "The last runes flicker — tap the two true ones.",
+          "pair_a": "3/7 of 14 = 7",
+          "pair_b": "4/9 of 18 = 8",
+          "pair_c": "5/6 of 24 = 20",
+          "pair_d": "2/11 of 22 = 5",
           "correct_pair_1": "B",
           "correct_pair_2": "C"
         },
         {
-          "type": "balance_scale",
-          "instruction": "Two equal halves must balance the golem's fist.",
-          "title": "Two equal halves must balance the golem's fist.",
-          "left_expression": "? × 2",
-          "right_expression": "18",
-          "answer": "9"
+          "type": "build_number",
+          "instruction": "Rebuild the 12-part ice gate.",
+          "title": "Rebuild the 12-part ice gate.",
+          "base_number": 12,
+          "parts_count": 2
         },
         {
-          "type": "balance_scale",
-          "instruction": "Four equal quarters balance the focusing crystal.",
-          "title": "Four equal quarters balance the focusing crystal.",
-          "left_expression": "? × 4",
-          "right_expression": "20",
-          "answer": "5"
+          "type": "build_number",
+          "instruction": "Rebuild the three-colour banner.",
+          "title": "Rebuild the three-colour banner.",
+          "base_number": 9,
+          "parts_count": 3
         },
         {
-          "type": "text_task",
-          "instruction": "Doctor Krit hides his loot in four chests.",
-          "title": "Doctor Krit hides his loot in four chests.",
-          "prompt": "Doctor Krit hides 24 crystals in 4 equal chests. How many crystals are in one chest?",
-          "answer": "6"
+          "type": "five_tasks",
+          "instruction": "Write the shaded fraction before the yeti strikes!",
+          "title": "Write the shaded fraction before the yeti strikes!",
+          "tasks": [
+            {
+              "q": "12 parts, 7 shaded → ?",
+              "a": "7/12"
+            },
+            {
+              "q": "9 parts, 4 shaded → ?",
+              "a": "4/9"
+            },
+            {
+              "q": "10 parts, 3 shaded → ?",
+              "a": "3/10"
+            },
+            {
+              "q": "8 parts, 5 shaded → ?",
+              "a": "5/8"
+            },
+            {
+              "q": "6 parts, 5 shaded → ?",
+              "a": "5/6"
+            }
+          ]
         },
         {
-          "type": "text_task",
-          "instruction": "The golem's shards glow — free him with the last answer!",
-          "title": "The golem's shards glow — free him with the last answer!",
-          "prompt": "One third of the golem's 21 shards glow. How many shards glow?",
-          "answer": "7"
+          "type": "five_tasks",
+          "instruction": "Name every shaded fraction to power the Frost Core!",
+          "title": "Name every shaded fraction to power the Frost Core!",
+          "tasks": [
+            {
+              "q": "9 parts, 7 shaded → ?",
+              "a": "7/9"
+            },
+            {
+              "q": "12 parts, 11 shaded → ?",
+              "a": "11/12"
+            },
+            {
+              "q": "10 parts, 9 shaded → ?",
+              "a": "9/10"
+            },
+            {
+              "q": "8 parts, 3 shaded → ?",
+              "a": "3/8"
+            },
+            {
+              "q": "6 parts, 1 shaded → ?",
+              "a": "1/6"
+            }
+          ]
+        },
+        {
+          "type": "timer_challenge",
+          "instruction": "Beat the blizzard — count the blanks!",
+          "title": "Beat the blizzard — count the blanks!",
+          "timer_example_a": "12 − 5 = ?",
+          "timer_answer_a": "7",
+          "timer_example_b": "9 − 4 = ?",
+          "timer_answer_b": "5",
+          "timer_example_c": "10 − 3 = ?",
+          "timer_answer_c": "7",
+          "timer_seconds": 40
+        },
+        {
+          "type": "timer_challenge",
+          "instruction": "Last blanks — free the yeti monkey!",
+          "title": "Last blanks — free the yeti monkey!",
+          "timer_example_a": "8 − 6 = ?",
+          "timer_answer_a": "2",
+          "timer_example_b": "6 − 2 = ?",
+          "timer_answer_b": "4",
+          "timer_example_c": "11 − 3 = ?",
+          "timer_answer_c": "8",
+          "timer_seconds": 40
         }
       ],
-      "stage_essence": "Free the crystal monkey golem"
+      "stage_essence": "Free the yeti monkey Viking"
     }
   ],
   "images_needed": {
     "artifact": {
-      "key": "Focusing_crystal",
-      "name": "Focusing Crystal",
-      "description": "Reveals hidden paths and secret codes."
+      "key": "Frost_bracelet"
     }
   },
   "tutor_notes": {
-    "block1_script": "Introduce Romy to fractions using visual aids and hands-on gameplay.",
-    "block2_hint": "Encourage Romy to think of fractions as splitting delicious pies or cakes.",
+    "block1_script": "Guide Romy through a journey of fractions, emphasizing the magic of numerals shading icy shapes.",
+    "block2_hint": "Keep a steady pace; each challenge builds on the last, offering Romy a path to mastering fractions.",
     "block3_tips": [
-      "Reassure Romy that it's okay to make mistakes along the way.",
-      "Use concrete examples to demonstrate halves, thirds, and quarters."
+      "Allow Romy to visualize and manipulate visuals to better grasp fractions.",
+      "Encourage quick decisions in timer challenges to build confidence."
     ],
-    "block5_abstraction": "Gradually move from concrete examples to more abstract representations of fractions.",
-    "weak_point_focus": "Focus on understanding the concept of equal parts and the naming of fractions."
+    "block5_abstraction": "Link fractions to everyday vision, seeing parts as proportions of larger dreams.",
+    "weak_point_focus": "Pay close attention to understanding fraction labels versus actual shaded parts."
   }
 }
