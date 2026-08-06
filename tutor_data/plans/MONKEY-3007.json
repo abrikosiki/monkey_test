@@ -59,8 +59,8 @@
       "key_concepts": ["shading a fraction", "naming the shaded fraction", "non-unit fractions", "spotting wrong labels"],
       "island": "snowy_peaks_island",
       "difficulty": 5,
-      "mechanics": ["multi_choice", "corridor_choice", "true_false", "fill_blank", "match_pairs", "drag_group", "build_number", "text_task"],
-      "mechanic_rationale": "corridor_choice and true_false train the child to judge whether a label matches the picture; build_number lets the child assemble the fraction from shaded and total parts.",
+      "mechanics": ["multi_choice", "true_false", "drag_group", "corridor_choice", "match_pairs", "build_number", "five_tasks", "timer_challenge"],
+      "mechanic_rationale": "corridor_choice and true_false train the child to judge whether a label matches the picture; build_number assembles the whole from shaded + blank parts; five_tasks and timer_challenge drill counting all parts (total - shaded = blank) for fluency.",
       "assessment_focus": "Does the child count the total parts, not just the shaded ones? A common slip is writing 3/5 when 3 of 8 are shaded — flag it on the naming rounds.",
       "status": "pending"
     },
