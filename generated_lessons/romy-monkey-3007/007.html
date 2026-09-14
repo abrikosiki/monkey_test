@@ -1,165 +1,9 @@
-import fs from "fs/promises";
-import path from "path";
-import { applyIslandLessonCanon, CANONICAL_ISLAND_KEYS } from "./island_canon.mjs";
-
-function usage() {
-  console.log("Usage: node builder.mjs <lesson.json> [output.html]");
-}
-
-function escapeHtml(value) {
-  return String(value ?? "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#39;");
-}
-
-function sanitizeLesson(raw) {
-  const lesson = raw?.lesson ?? raw;
-  if (!lesson || typeof lesson !== "object") {
-    throw new Error("Lesson JSON is empty or invalid");
-  }
-  if (!Array.isArray(lesson.stages) || lesson.stages.length === 0) {
-    throw new Error("Lesson JSON must contain non-empty stages[]");
-  }
-  return lesson;
-}
-
-/** Basename without extension; handles .PNG vs .png (path.basename(name, ".png") fails on .PNG). */
-function assetStem(fileName) {
-  const extRaw = path.extname(fileName);
-  if (!extRaw) return fileName;
-  return fileName.slice(0, -extRaw.length);
-}
-
-async function buildBackgroundMap(projectRoot) {
-  const backgroundsDir = path.join(projectRoot, "assets", "backgrounds");
-  const map = {};
-  const allowed = new Set([".webp", ".png", ".jpg", ".jpeg"]);
-
-  try {
-    const entries = await fs.readdir(backgroundsDir, { withFileTypes: true });
-    for (const entry of entries) {
-      if (!entry.isFile()) continue;
-      const ext = path.extname(entry.name).toLowerCase();
-      if (!allowed.has(ext)) continue;
-      const key = assetStem(entry.name);
-      map[key] = `assets/backgrounds/${entry.name}`;
-    }
-  } catch {
-    // Folder may not exist yet; fallback paths will still work.
-  }
-
-  return map;
-}
-
-async function buildCharacterMap(projectRoot) {
-  const charactersDir = path.join(projectRoot, "assets", "characters");
-  const map = {};
-  const allowed = new Set([".webp", ".png", ".jpg", ".jpeg"]);
-
-  try {
-    const entries = await fs.readdir(charactersDir, { withFileTypes: true });
-    for (const entry of entries) {
-      if (!entry.isFile()) continue;
-      const ext = path.extname(entry.name).toLowerCase();
-      if (!allowed.has(ext)) continue;
-      const key = assetStem(entry.name);
-      map[key] = `assets/characters/${entry.name}`;
-    }
-  } catch {
-    // Folder may not exist yet; fallback paths will still work.
-  }
-
-  return map;
-}
-
-async function buildItemsMap(projectRoot) {
-  const itemsDir = path.join(projectRoot, "assets", "items");
-  const map = {};
-  const allowed = new Set([".webp", ".png", ".jpg", ".jpeg"]);
-
-  try {
-    const entries = await fs.readdir(itemsDir, { withFileTypes: true });
-    for (const entry of entries) {
-      if (!entry.isFile()) continue;
-      const ext = path.extname(entry.name).toLowerCase();
-      if (!allowed.has(ext)) continue;
-      const key = assetStem(entry.name);
-      map[key] = `assets/items/${entry.name}`;
-    }
-  } catch {
-    // Folder may not exist yet; fallback paths will still work.
-  }
-
-  return map;
-}
-
-async function buildTargetsMap(projectRoot) {
-  const targetsDir = path.join(projectRoot, "assets", "targets");
-  const map = {};
-  const allowed = new Set([".webp", ".png", ".jpg", ".jpeg"]);
-
-  try {
-    const entries = await fs.readdir(targetsDir, { withFileTypes: true });
-    for (const entry of entries) {
-      if (!entry.isFile()) continue;
-      const ext = path.extname(entry.name).toLowerCase();
-      if (!allowed.has(ext)) continue;
-      const key = assetStem(entry.name);
-      map[key] = `assets/targets/${entry.name}`;
-    }
-  } catch {
-    // Folder may not exist yet; fallback paths will still work.
-  }
-
-  return map;
-}
-
-async function buildArtifactsMap(projectRoot) {
-  const artifactsDir = path.join(projectRoot, "assets", "artifacts");
-  const map = {};
-  const allowed = new Set([".webp", ".png", ".jpg", ".jpeg"]);
-
-  try {
-    const entries = await fs.readdir(artifactsDir, { withFileTypes: true });
-    for (const entry of entries) {
-      if (!entry.isFile()) continue;
-      const ext = path.extname(entry.name).toLowerCase();
-      if (!allowed.has(ext)) continue;
-      const key = assetStem(entry.name);
-      map[key] = `assets/artifacts/${entry.name}`;
-    }
-  } catch {
-    // Folder may not exist yet; runtime fallback can still be used.
-  }
-
-  return map;
-}
-
-function buildHtml(
-  lesson,
-  backgroundMap = {},
-  characterMap = {},
-  itemsMap = {},
-  targetsMap = {},
-  artifactsMap = {},
-) {
-  const title = `${lesson.island_name ?? "Monkey Archipelago"} - ${lesson.meta?.student_name ?? "Player"}`;
-  const payload = JSON.stringify(lesson).replaceAll("</script>", "<\\/script>");
-  const bgPayload = JSON.stringify(backgroundMap).replaceAll("</script>", "<\\/script>");
-  const charPayload = JSON.stringify(characterMap).replaceAll("</script>", "<\\/script>");
-  const itemsPayload = JSON.stringify(itemsMap).replaceAll("</script>", "<\\/script>");
-  const targetsPayload = JSON.stringify(targetsMap).replaceAll("</script>", "<\\/script>");
-  const artifactsPayload = JSON.stringify(artifactsMap).replaceAll("</script>", "<\\/script>");
-
-  return `<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${escapeHtml(title)}</title>
+  <title>Monkey Archipelago - Romy</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
     :root{
@@ -2059,12 +1903,12 @@ function buildHtml(
   </div>
 
   <script>
-  const LESSON = ${payload};
-  const BACKGROUND_MAP = ${bgPayload};
-  const CHARACTER_MAP = ${charPayload};
-  const ITEMS_MAP = ${itemsPayload};
-  const TARGETS_MAP = ${targetsPayload};
-  const ARTIFACT_MAP = ${artifactsPayload};
+  const LESSON = {"meta":{"island_key":"neon_city_island","student_name":"Romy","difficulty_level":5,"coins_balance":46,"character_key":"pirate_green","character_image_path":"assets/characters/pirate_green.webp","child_inventory":["ring_ice","tiki_mask"],"has_freeze_ring":false,"student_code":"MONKEY-3007","student_level":10,"student_coins":46,"start_coins":46,"lesson_num":7},"story":{"island_name":"Neon City Island","villain":"Cyber-enhanced monkey","artifact_name":"Neon Core","artifact_emoji":"🌃","artifact_power":"The city's central power — shut it down to break the signal.","greeting":"Romy, your island mission begins now — listen closely.","act1":"On Neon City Island, glowing towers hum with energy while neon lights flicker through endless streets. In the shadows moves a cyber-enhanced monkey, its mind enslaved by Doctor Krit's signal, controlling the city's systems like a living network. At the heart of the metropolis lies the Neon Core, pulsing with power. Romy, we must reach it, shut it down, and free the monkey before the entire city turns against us.","act2":"The cyber-monkey has scrambled every clock in the city — hands spinning, times flashing on giant screens. To reach the Neon Core, Romy must read each clock and set the times straight.","act3":"Read every clock, match the times, and shut down the Neon Core to break Doctor Krit's hold and free the cyber-monkey.","goal":"Romy, master every math trial, reach the island's core in time, and break Doctor Krit's hold."},"theory":{"title":"Reading a Clock","rule":{"text":"The SHORT hand shows the hour, the LONG hand shows the minutes. Long hand on 12 = o'clock, on 3 = quarter past, on 6 = half past, on 9 = quarter to (the NEXT hour). Count the minutes in 5s.","correct_label":"Long hand on 9 = quarter TO","correct_icons":["clock_0945"],"wrong_label":"Long hand on 9 is NOT quarter past","wrong_icons":["clock_0215"]},"visuals":[{"type":"equation","icon":"clock_0300","label":"3:00 — 3 o'clock","name":"o'clock"},{"type":"equation","icon":"clock_0215","label":"2:15 — quarter past 2","name":"quarter past"},{"type":"equation","icon":"clock_0530","label":"5:30 — half past 5","name":"half past"},{"type":"equation","icon":"clock_0945","label":"9:45 — quarter to 10","name":"quarter to"}]},"stages":[{"id":1,"type":"multi_choice","background":"neon_city_island1","coins":2,"stage_essence":"Read the clock","mechanic_reason":"Reading a real clock face and choosing the digital time is the core skill of the lesson.","success_message":"Right on time, Romy! A neon gate slides open.","rounds":[{"instruction":"What time is it?","prompt":"What time is it?","title":"A giant neon clock glows over the plaza.","stage_essence":"Read the clock","options":[{"id":"A","label":"3:00"},{"id":"B","label":"12:15"},{"id":"C","label":"3:15"}],"correct_option":"A","clock":"clock_0300"},{"instruction":"What time is it?","prompt":"What time is it?","title":"A billboard clock flickers to life.","stage_essence":"Read the clock","options":[{"id":"A","label":"3:10"},{"id":"B","label":"2:15"},{"id":"C","label":"2:03"}],"correct_option":"B","clock":"clock_0215"},{"instruction":"What time is it?","prompt":"What time is it?","title":"The station clock hums with power.","stage_essence":"Read the clock","options":[{"id":"A","label":"5:30"},{"id":"B","label":"6:25"},{"id":"C","label":"5:06"}],"correct_option":"A","clock":"clock_0530"},{"instruction":"What time is it?","prompt":"What time is it?","title":"A rooftop clock spins its hands.","stage_essence":"Read the clock","options":[{"id":"A","label":"3:45"},{"id":"B","label":"9:20"},{"id":"C","label":"4:45"}],"correct_option":"A","clock":"clock_0345"},{"instruction":"What time is it?","prompt":"What time is it?","title":"The tower clock towers above you.","stage_essence":"Read the clock","options":[{"id":"A","label":"9:00"},{"id":"B","label":"12:45"},{"id":"C","label":"9:45"}],"correct_option":"A","clock":"clock_0900"}],"title":"A giant neon clock glows over the plaza."},{"id":2,"type":"match_pairs","background":"neon_city_island1","coins":2,"stage_essence":"Tap the two TRUE clock matches","mechanic_reason":"Matching digital times to words drills o'clock, quarter past, half past and quarter to.","success_message":"Two true signals locked, Romy!","rounds":[{"pair_a":"3:00 = 3 o'clock","pair_b":"4:15 = quarter to 4","pair_c":"6:30 = half past 6","pair_d":"9:45 = quarter past 9","correct_pair_1":"A","correct_pair_2":"C","title":"Four holo-signs blink — two are true.","stage_essence":"Tap the two TRUE clock matches"},{"pair_a":"2:15 = quarter past 2","pair_b":"5:00 = half past 5","pair_c":"8:45 = quarter to 9","pair_d":"7:30 = quarter past 7","correct_pair_1":"A","correct_pair_2":"C","title":"Light the skyway with true matches.","stage_essence":"Tap the two TRUE clock matches"},{"pair_a":"10:15 = quarter past 10","pair_b":"1:30 = quarter to 1","pair_c":"12:00 = 12 o'clock","pair_d":"11:45 = quarter past 11","correct_pair_1":"A","correct_pair_2":"C","title":"Krit forged two of the signals.","stage_essence":"Tap the two TRUE clock matches"}],"title":"Four holo-signs blink — two are true."},{"id":3,"type":"fill_blank","background":"neon_city_island2","coins":2,"stage_essence":"Fill in the minutes","mechanic_reason":"Typing the minute value cements that quarter past = 15, half past = 30, quarter to = 45.","success_message":"Minutes locked in, Romy!","rounds":[{"prompt":"Quarter past 4 is 4:","answer":"15","title":"The subway sign needs its minutes.","stage_essence":"Fill in the minutes"},{"prompt":"Half past 7 is 7:","answer":"30","title":"Fill the missing minutes on the gate.","stage_essence":"Fill in the minutes"},{"prompt":"Quarter to 9 is 8:","answer":"45","title":"A quarter-to sign flickers — complete it.","stage_essence":"Fill in the minutes"},{"prompt":"The long hand points to 6, so minutes past =","answer":"30","title":"Read the long hand, type the minutes.","stage_essence":"Fill in the minutes"}],"title":"The subway sign needs its minutes."},{"id":4,"type":"true_false","background":"neon_city_island2","coins":2,"stage_essence":"Is the time correct?","mechanic_reason":"True/false on a real clock catches the hand-swap and quarter-to / quarter-past mix-up.","success_message":"You caught the glitch, Romy!","rounds":[{"statement":"This clock shows 3 o'clock.","correct_answer":"true","title":"A neon clock claims the time.","stage_essence":"Is the time correct?","clock":"clock_0300"},{"statement":"This clock shows quarter to 7.","correct_answer":"false","title":"Krit's screen flashes a claim.","stage_essence":"Is the time correct?","clock":"clock_0715"},{"statement":"This clock shows half past 10.","correct_answer":"true","title":"The plaza clock states the hour.","stage_essence":"Is the time correct?","clock":"clock_1030"},{"statement":"This clock shows quarter past 9.","correct_answer":"false","title":"A hologram tries to trick you.","stage_essence":"Is the time correct?","clock":"clock_0945"},{"statement":"This clock shows 5:30.","correct_answer":"true","title":"The last street clock speaks.","stage_essence":"Is the time correct?","clock":"clock_0530"}],"title":"A neon clock claims the time."},{"id":5,"type":"corridor_choice","background":"2","coins":2,"stage_essence":"Pick the correct time","mechanic_reason":"Two-door choices force Romy to translate a spoken time into the right digital clock.","success_message":"Correct door, Romy! You slip through.","rounds":[{"instruction":"Which is quarter past 6?","question":"Which is quarter past 6?","left_expression":"6:15","right_expression":"6:45","correct_side":"left","prompt":"Which is quarter past 6?","left":"6:15","right":"6:45","title":"Two neon doors — pick quarter past 6.","stage_essence":"Pick the correct time"},{"instruction":"Which is quarter to 8?","question":"Which is quarter to 8?","left_expression":"8:45","right_expression":"7:45","correct_side":"right","prompt":"Which is quarter to 8?","left":"8:45","right":"7:45","title":"Choose the quarter-to door.","stage_essence":"Pick the correct time"},{"instruction":"Which is half past 2?","question":"Which is half past 2?","left_expression":"2:30","right_expression":"2:15","correct_side":"left","prompt":"Which is half past 2?","left":"2:30","right":"2:15","title":"Half past two opens the way.","stage_essence":"Pick the correct time"},{"instruction":"Hour hand between 4 and 5, minute hand on 3. Which time?","question":"Hour hand between 4 and 5, minute hand on 3. Which time?","left_expression":"4:15","right_expression":"5:15","correct_side":"left","prompt":"Hour hand between 4 and 5, minute hand on 3. Which time?","left":"4:15","right":"5:15","title":"Read the hands, then choose.","stage_essence":"Pick the correct time"}],"title":"Two neon doors — pick quarter past 6."},{"id":6,"type":"drag_sort","background":"3","coins":2,"stage_essence":"Order the times, earliest first","mechanic_reason":"Ordering times builds a sense of how the clock moves forward through the day.","success_message":"Perfect order, Romy! The circuit powers up.","rounds":[{"correct_order":["1:00","2:30","4:15"],"image_key":"candy","title":"Sort the glowing times, earliest first.","stage_essence":"Order the times, earliest first"},{"correct_order":["3:15","6:00","9:45"],"image_key":"candy","title":"More times drift down — order them.","stage_essence":"Order the times, earliest first"},{"correct_order":["7:30","8:15","10:00","11:45"],"image_key":"candy","title":"Line up the last times in order.","stage_essence":"Order the times, earliest first"}],"title":"Sort the glowing times, earliest first."},{"id":7,"type":"text_task","background":"neon_city_island3","coins":2,"stage_essence":"Write the digital time","mechanic_reason":"Writing H:MM from a spoken time proves Romy can go from words to digits.","success_message":"Typed it right, Romy! The panel unlocks.","rounds":[{"prompt":"The show starts at quarter past 3. Write it as H:MM.","answer":"3:15","title":"The neon show starts soon.","stage_essence":"Write the digital time"},{"prompt":"The train leaves at half past 8. Write it as H:MM.","answer":"8:30","title":"Catch the maglev train.","stage_essence":"Write the digital time"},{"prompt":"It is quarter to 5. Write the digital time (H:MM).","answer":"4:45","title":"The gate opens at a quarter to.","stage_essence":"Write the digital time"}],"title":"The neon show starts soon."},{"id":8,"type":"number_grid","background":"neon_city_island3","coins":2,"stage_essence":"Find the matching time","mechanic_reason":"Scanning a grid of times to find one match sharpens quick clock reading.","success_message":"Found it, Romy! The grid lights green.","rounds":[{"prompt":"Find quarter past 6.","grid_numbers":["1:00","2:15","3:30","4:45","5:00","6:30","7:15","8:45","9:00","10:30","11:15","12:30","6:15","1:45","2:30","3:15","4:30","5:45","7:30","8:15","9:45","10:15","11:30","12:45","3:45"],"answer":"C3","title":"Find quarter past 6 on the grid.","stage_essence":"Find the matching time"},{"prompt":"Find half past 9.","grid_numbers":["1:15","2:30","3:45","4:00","5:30","6:45","7:00","8:30","9:30","10:15","11:45","12:00","1:30","2:45","3:15","4:15","5:45","6:30","7:45","8:00","9:15","10:45","11:00","12:30","4:45"],"answer":"B4","title":"Find half past 9 on the grid.","stage_essence":"Find the matching time"}],"title":"Find quarter past 6 on the grid."},{"id":9,"type":"boss_mix","background":"neon_city_island4","coins":5,"stage_essence":"Free the cyber-monkey","mechanic_reason":"The boss mixes every mechanic — clock reading, matching, minutes and ordering — under pressure.","success_message":"Congratulations, Romy! You shut down the Neon Core and freed the cyber-monkey!","rounds":[{"type":"multi_choice","title":"The cyber-monkey flashes a clock — read it fast!","instruction":"What time is it?","prompt":"What time is it?","clock":"clock_1030","options":[{"id":"A","label":"10:30","correct":true},{"id":"B","label":"6:50","correct":false},{"id":"C","label":"10:06","correct":false}],"correct_option":"A"},{"type":"multi_choice","title":"A glitching clock spins — don't be fooled!","instruction":"What time is it?","prompt":"What time is it?","clock":"clock_0945","options":[{"id":"A","label":"9:45","correct":true},{"id":"B","label":"10:45","correct":false},{"id":"C","label":"9:15","correct":false}],"correct_option":"A"},{"type":"match_pairs","title":"Four core-signals blink — two are true.","instruction":"Tap the two TRUE clock matches","pair_a":"8:15 = quarter past 8","pair_b":"3:45 = quarter past 3","pair_c":"6:30 = half past 6","pair_d":"10:45 = quarter past 10","correct_pair_1":"A","correct_pair_2":"C"},{"type":"match_pairs","title":"The last signals flicker — tap the honest two.","instruction":"Tap the two TRUE clock matches","pair_a":"9:45 = quarter to 10","pair_b":"1:15 = quarter to 1","pair_c":"12:30 = half past 12","pair_d":"5:15 = quarter to 5","correct_pair_1":"A","correct_pair_2":"C"},{"type":"fill_blank","title":"Complete the core's countdown minutes.","instruction":"Fill in the minutes","prompt":"Quarter to 12 is 11:","answer":"45"},{"type":"fill_blank","title":"Read the long hand to power the gate.","instruction":"Fill in the minutes","prompt":"The long hand points to 9, so minutes past =","answer":"45"},{"type":"true_false","title":"The Neon Core states the hour.","instruction":"Is the time correct?","clock":"clock_0900","statement":"This clock shows 9 o'clock.","correct_answer":"true"},{"type":"true_false","title":"Krit's screen tries one last trick.","instruction":"Is the time correct?","clock":"clock_0215","statement":"This clock shows quarter to 2.","correct_answer":"false"},{"type":"corridor_choice","title":"Two core-doors — pick quarter to 3!","instruction":"Which is quarter to 3?","question":"Which is quarter to 3?","left_expression":"2:45","right_expression":"3:45","correct_side":"left"},{"type":"corridor_choice","title":"Choose the quarter-past-11 door!","instruction":"Which is quarter past 11?","question":"Which is quarter past 11?","left_expression":"11:45","right_expression":"11:15","correct_side":"right"},{"type":"drag_sort","title":"Order the core-times before they scramble!","instruction":"Order the times, earliest first","correct_order":["2:15","5:30","6:45","9:00"],"image_key":"candy"},{"type":"drag_sort","title":"Line up the final times to reach the core!","instruction":"Order the times, earliest first","correct_order":["1:30","4:15","7:45","10:00"],"image_key":"starfish"},{"type":"text_task","title":"Type when the film ends to open the vault.","instruction":"Write the digital time","prompt":"The film ends at quarter to 10. Write H:MM.","answer":"9:45"},{"type":"text_task","title":"Write the break time to cut the signal.","instruction":"Write the digital time","prompt":"Break is at half past 12. Write H:MM.","answer":"12:30"},{"type":"number_grid","title":"Find the time on the core's grid!","instruction":"Find quarter past 7.","prompt":"Find quarter past 7.","grid_numbers":["1:00","2:15","3:30","4:45","5:15","6:00","8:30","9:45","10:00","11:15","12:30","1:45","2:30","3:15","4:00","5:30","7:15","8:45","9:00","10:30","11:30","12:15","1:30","2:45","6:45"],"answer":"D2"},{"type":"number_grid","title":"One last time to free the monkey — find it!","instruction":"Find half past 4.","prompt":"Find half past 4.","grid_numbers":["1:15","2:45","3:00","5:45","6:30","7:30","8:15","9:00","10:45","11:00","12:45","1:00","2:30","3:45","4:30","5:15","6:00","7:45","8:30","9:15","10:30","11:45","12:15","1:30","2:00"],"answer":"C5"}],"title":"The cyber-monkey flashes a clock — read it fast!"}],"images_needed":{"artifact":{"key":"Neon_Core"}},"tutor_notes":{"block1_script":"Anchor Romy on the two hands: short = hour, long = minutes. Read the short hand first.","block2_hint":"For the long hand, count in 5s: 3 is 15, 6 is 30, 9 is 45.","block3_tips":["Watch for the hand swap (reading the long hand as the hour).","Quarter to belongs to the NEXT hour: long hand on 9 with the short hand near 10 is quarter to 10."],"block5_abstraction":"A clock face is just two counters: one for hours, one for minutes.","weak_point_focus":"Read the short hand as the hour; never read 'quarter to' as 'quarter past'."}};
+  const BACKGROUND_MAP = {"2":"assets/backgrounds/2.webp","3":"assets/backgrounds/3.webp","antigravity_island1":"assets/backgrounds/antigravity_island1.webp","antigravity_island2":"assets/backgrounds/antigravity_island2.webp","antigravity_island3":"assets/backgrounds/antigravity_island3.webp","antigravity_island4":"assets/backgrounds/antigravity_island4.webp","blue_crab_island1":"assets/backgrounds/blue_crab_island1.webp","blue_crab_island2":"assets/backgrounds/blue_crab_island2.webp","blue_crab_island3":"assets/backgrounds/blue_crab_island3.webp","blue_crab_island4":"assets/backgrounds/blue_crab_island4.webp","cherry_blossom_island1":"assets/backgrounds/cherry_blossom_island1.webp","cherry_blossom_island2":"assets/backgrounds/cherry_blossom_island2.webp","cherry_blossom_island3":"assets/backgrounds/cherry_blossom_island3.webp","cherry_blossom_island4":"assets/backgrounds/cherry_blossom_island4.webp","crystal_island1":"assets/backgrounds/crystal_island1.webp","crystal_island2":"assets/backgrounds/crystal_island2.webp","crystal_island3":"assets/backgrounds/crystal_island3.webp","crystal_island4":"assets/backgrounds/crystal_island4.webp","jelly_bay_island1":"assets/backgrounds/jelly_bay_island1.webp","jelly_bay_island2":"assets/backgrounds/jelly_bay_island2.webp","jelly_bay_island3":"assets/backgrounds/jelly_bay_island3.webp","jelly_bay_island4":"assets/backgrounds/jelly_bay_island4.webp","mushroom_island1":"assets/backgrounds/mushroom_island1.webp","mushroom_island2":"assets/backgrounds/mushroom_island2.webp","mushroom_island3":"assets/backgrounds/mushroom_island3.webp","mushroom_island4":"assets/backgrounds/mushroom_island4.webp","neon_city_island1":"assets/backgrounds/neon_city_island1.webp","neon_city_island2":"assets/backgrounds/neon_city_island2.webp","neon_city_island3":"assets/backgrounds/neon_city_island3.webp","neon_city_island4":"assets/backgrounds/neon_city_island4.webp","second":"assets/backgrounds/second.webp","shop":"assets/backgrounds/shop.webp","snowy_peaks_island1":"assets/backgrounds/snowy_peaks_island1.webp","snowy_peaks_island2":"assets/backgrounds/snowy_peaks_island2.webp","snowy_peaks_island3":"assets/backgrounds/snowy_peaks_island3.webp","snowy_peaks_island4":"assets/backgrounds/snowy_peaks_island4.webp","story_back":"assets/backgrounds/story_back.webp","title":"assets/backgrounds/title.webp"};
+  const CHARACTER_MAP = {"boy_blue":"assets/characters/boy_blue.webp","boy_brown":"assets/characters/boy_brown.webp","boy_green":"assets/characters/boy_green.webp","elf_blue":"assets/characters/elf_blue.webp","elf_green":"assets/characters/elf_green.webp","elf_red":"assets/characters/elf_red.webp","fairy_green":"assets/characters/fairy_green.webp","fairy_purple":"assets/characters/fairy_purple.webp","fairy_red":"assets/characters/fairy_red.webp","girl_blue":"assets/characters/girl_blue.webp","girl_brown":"assets/characters/girl_brown.webp","girl_green":"assets/characters/girl_green.webp","pirate_blue":"assets/characters/pirate_blue.webp","pirate_brown":"assets/characters/pirate_brown.webp","pirate_green":"assets/characters/pirate_green.webp","wizard_blue":"assets/characters/wizard_blue.webp","wizard_green":"assets/characters/wizard_green.webp","wizard_red":"assets/characters/wizard_red.webp"};
+  const ITEMS_MAP = {"artifact":"assets/items/artifact.webp","bamboo":"assets/items/bamboo.webp","banana":"assets/items/banana.webp","box_close":"assets/items/box_close.webp","box_open":"assets/items/box_open.webp","bubble":"assets/items/bubble.webp","butterfly":"assets/items/butterfly.webp","candy":"assets/items/candy.webp","cherry":"assets/items/cherry.webp","clock_0215":"assets/items/clock_0215.png","clock_0300":"assets/items/clock_0300.png","clock_0345":"assets/items/clock_0345.png","clock_0530":"assets/items/clock_0530.png","clock_0715":"assets/items/clock_0715.png","clock_0900":"assets/items/clock_0900.png","clock_0945":"assets/items/clock_0945.png","clock_1030":"assets/items/clock_1030.png","cookie":"assets/items/cookie.webp","coral":"assets/items/coral.webp","crab_blue":"assets/items/crab_blue.webp","hibiscus":"assets/items/hibiscus.webp","jellyfish":"assets/items/jellyfish.webp","key":"assets/items/key.webp","leaf":"assets/items/leaf.webp","lollipop":"assets/items/lollipop.webp","mushroom":"assets/items/mushroom.webp","pawprint":"assets/items/pawprint.webp","pearl_blue":"assets/items/pearl_blue.webp","pearl_red":"assets/items/pearl_red.webp","samurai_monkey":"assets/items/samurai_monkey.webp","shell_blue":"assets/items/shell_blue.webp","shell_red":"assets/items/shell_red.webp","spore":"assets/items/spore.webp","starfish":"assets/items/starfish.webp","stone_blue":"assets/items/stone_blue.webp"};
+  const TARGETS_MAP = {"bag_cloth":"assets/targets/bag_cloth.webp","basket_wood":"assets/targets/basket_wood.webp","basket_woven":"assets/targets/basket_woven.webp","bowl_stone":"assets/targets/bowl_stone.webp","bowl_wood":"assets/targets/bowl_wood.webp","cauldron":"assets/targets/cauldron.webp","chest_open":"assets/targets/chest_open.webp","totem_1":"assets/targets/totem_1.webp","totem_2":"assets/targets/totem_2.webp","totem_3":"assets/targets/totem_3.webp"};
+  const ARTIFACT_MAP = {"Adventurers_binoculars":"assets/artifacts/Adventurers_binoculars.webp","Ancient_tome":"assets/artifacts/Ancient_tome.webp","Antigravity_boots":"assets/artifacts/Antigravity_boots.webp","Coral_trident":"assets/artifacts/Coral_trident.webp","Dragon_staff":"assets/artifacts/Dragon_staff.webp","Focusing_crystal":"assets/artifacts/Focusing_crystal.webp","Frost_bracelet":"assets/artifacts/Frost_bracelet.webp","Jungle_parrot":"assets/artifacts/Jungle_parrot.webp","Magic_lantern":"assets/artifacts/Magic_lantern.webp","Magic_necklace":"assets/artifacts/Magic_necklace.webp","Mysterious_egg":"assets/artifacts/Mysterious_egg.webp","Ninja_nunchucks":"assets/artifacts/Ninja_nunchucks.webp","Obsidian_shield":"assets/artifacts/Obsidian_shield.webp","Phoenix_feather":"assets/artifacts/Phoenix_feather.webp","Potion_of_wisdom":"assets/artifacts/Potion_of_wisdom.webp","Shadow_cape":"assets/artifacts/Shadow_cape.webp","Spy_phone":"assets/artifacts/Spy_phone.webp","Star_map_scroll":"assets/artifacts/Star_map_scroll.webp","Thunder_compass":"assets/artifacts/Thunder_compass.webp","Tiki_mask":"assets/artifacts/Tiki_mask.webp","Vanteon_Watch":"assets/artifacts/Vanteon_Watch.webp","boots_jump":"assets/artifacts/boots_jump.webp","box_of_threads":"assets/artifacts/box_of_threads.webp","cloak_invisible":"assets/artifacts/cloak_invisible.webp","crown":"assets/artifacts/crown.webp","dron":"assets/artifacts/dron.webp","egg":"assets/artifacts/egg.webp","glasses":"assets/artifacts/glasses.webp","glasses_mind":"assets/artifacts/glasses_mind.webp","lizard":"assets/artifacts/lizard.webp","ring_ice":"assets/artifacts/ring_ice.webp","sword":"assets/artifacts/sword.webp","sword_light":"assets/artifacts/sword_light.webp"};
   function buildShopItemsFromArtifacts(){
     const curatedShopItems = [
       { id: "magic_necklace", name: "Magic necklace", price: 75 },
@@ -2184,7 +2028,7 @@ function buildHtml(
   }
 
   function hasCyrillic(value){
-    return /[\\u0400-\\u04FF]/.test(String(value || ""));
+    return /[\u0400-\u04FF]/.test(String(value || ""));
   }
 
   function resolveEngineType(type){
@@ -2454,7 +2298,7 @@ function buildHtml(
   function titleFromKey(key){
     return String(key || "Mystery Artifact")
       .replace(/[_-]+/g, " ")
-      .replace(/\\b\\w/g, (c) => c.toUpperCase());
+      .replace(/\b\w/g, (c) => c.toUpperCase());
   }
 
   function ensureRingIceInventory(){
@@ -2486,7 +2330,7 @@ function buildHtml(
   function collectInventorySlugsForSync(){
     const set = new Set();
     const add = (x) => {
-      const s = String(x || "").trim().toLowerCase().replace(/\\s+/g, "_");
+      const s = String(x || "").trim().toLowerCase().replace(/\s+/g, "_");
       if(s) set.add(s);
     };
     for(const raw of LESSON.meta?.child_inventory || []) add(raw);
@@ -3066,7 +2910,7 @@ function buildHtml(
   function parseNumberList(value){
     if(Array.isArray(value)) return value.map((v) => String(v).trim()).filter(Boolean);
     return String(value || "")
-      .split(/[,\\s]+/)
+      .split(/[,\s]+/)
       .map((v) => v.trim())
       .filter(Boolean);
   }
@@ -3223,7 +3067,7 @@ function buildHtml(
         row.className = "seq-row";
         const promptParts = String(entry.prompt || "")
           .replace(/,/g, " ")
-          .split(/(\\?)/)
+          .split(/(\?)/)
           .map((s) => s.trim())
           .filter(Boolean);
         let blankAdded = false;
@@ -3671,7 +3515,7 @@ function buildHtml(
 
     const promptEl = document.createElement("div");
     promptEl.style.cssText = "font-size:64px;font-weight:700;color:#fff;text-shadow:0 3px 12px rgba(0,0,0,.7);min-height:80px;text-align:center;letter-spacing:2px;";
-    promptEl.textContent = "? \xd7 " + mult + " = ?";
+    promptEl.textContent = "? × " + mult + " = ?";
 
     const input = document.createElement("input");
     input.type = "number";
@@ -3729,7 +3573,7 @@ function buildHtml(
           setTimeout(function(){
             dRx=endRx; dRy=endRy; dmDraw();
             setTimeout(function(){
-              promptEl.textContent = diceVal+" \xd7 "+mult+" = ?";
+              promptEl.textContent = diceVal+" × "+mult+" = ?";
               input.disabled=false; input.focus();
             },120);
           },100);
@@ -4343,7 +4187,7 @@ function buildHtml(
 
   function parseKeyLockRound(stage){
     const splitNums = (raw) => String(raw || "")
-      .split(/[\s,]+/)
+      .split(/[s,]+/)
       .map((s) => s.trim())
       .filter(Boolean)
       .map(Number)
@@ -4930,7 +4774,7 @@ function buildHtml(
     const exprRaw = String(stage.symbol_expression || stage.symbolExpression || "A + B × C");
     const symbolMap = { A: itemA, B: itemB, C: itemC };
     exprRaw
-      .split(/(\\bA\\b|\\bB\\b|\\bC\\b)/g)
+      .split(/(\bA\b|\bB\b|\bC\b)/g)
       .filter(Boolean)
       .forEach((part) => {
         const key = part.trim();
@@ -5015,7 +4859,7 @@ function buildHtml(
     const exprRaw = String(stage.unknown_equation || stage.unknownEquation || "A + B + C = 15");
     const symbolMap = { A: itemA, B: itemB, C: itemC };
     exprRaw
-      .split(/(\\bA\\b|\\bB\\b|\\bC\\b)/g)
+      .split(/(\bA\b|\bB\b|\bC\b)/g)
       .filter(Boolean)
       .forEach((part) => {
         const key = part.trim();
@@ -5344,7 +5188,7 @@ function buildHtml(
 
   /** When meta.island_key is set, backgrounds are always PREFIX+1, PREFIX+2, "2", "3", PREFIX+3, PREFIX+4 (same as tutor server). */
   function islandPackBackgroundForIndex(islandKey, index){
-    const prefix = String(islandKey || "").trim().replace(/\\s+/g, "_");
+    const prefix = String(islandKey || "").trim().replace(/\s+/g, "_");
     if (!prefix) return "";
     const sn = index + 1;
     // Iron rule: bg1×2, bg2×2, cave2×1, cave3×1, bg3×2, bg4×1(boss)
@@ -5974,54 +5818,4 @@ function buildHtml(
   showIntroScreen();
   </script>
 </body>
-</html>`;
-}
-
-async function main() {
-  const [, , inputArg, outputArg] = process.argv;
-  if (!inputArg) {
-    usage();
-    process.exit(1);
-  }
-
-  const inputPath = path.resolve(process.cwd(), inputArg);
-  const outputPath = path.resolve(process.cwd(), outputArg || "game.html");
-
-  const rawText = await fs.readFile(inputPath, "utf-8");
-  const json = JSON.parse(rawText);
-  const lesson = sanitizeLesson(json);
-  const ik = String(lesson.meta?.island_key || "")
-    .trim()
-    .replace(/\s+/g, "_");
-  if (!CANONICAL_ISLAND_KEYS.includes(ik)) {
-    throw new Error(
-      `Lesson JSON needs meta.island_key as one of the eight tutor islands (got: ${JSON.stringify(lesson.meta?.island_key)})`,
-    );
-  }
-  lesson.meta = lesson.meta || {};
-  lesson.meta.island_key = ik;
-  applyIslandLessonCanon(lesson, {
-    child: { name: lesson.meta?.student_name },
-    context: { islandKey: ik },
-  });
-  const backgroundMap = await buildBackgroundMap(process.cwd());
-  const characterMap = await buildCharacterMap(process.cwd());
-  const itemsMap = await buildItemsMap(process.cwd());
-  const targetsMap = await buildTargetsMap(process.cwd());
-  const artifactsMap = await buildArtifactsMap(process.cwd());
-  const html = buildHtml(lesson, backgroundMap, characterMap, itemsMap, targetsMap, artifactsMap);
-
-  await fs.writeFile(outputPath, html, "utf-8");
-  console.log("Generated:", outputPath);
-  console.log("Stages:", lesson.stages.length);
-  console.log("Backgrounds found:", Object.keys(backgroundMap).length);
-  console.log("Characters found:", Object.keys(characterMap).length);
-  console.log("Items found:", Object.keys(itemsMap).length);
-  console.log("Targets found:", Object.keys(targetsMap).length);
-  console.log("Artifacts found:", Object.keys(artifactsMap).length);
-}
-
-main().catch((err) => {
-  console.error("Builder failed:", err.message);
-  process.exit(1);
-});
+</html>
