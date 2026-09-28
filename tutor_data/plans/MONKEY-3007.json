@@ -224,15 +224,15 @@
         "text_task",
         "multi_choice",
         "fill_blank",
-        "find_unknown",
+        "match_pairs",
         "corridor_choice",
         "true_false",
         "five_tasks",
-        "symbol_calc"
+        "number_grid"
       ],
-      "mechanic_rationale": "text_task frames real 'how long until…' problems; find_unknown asks for the missing start or end time; symbol_calc handles durations added together.",
+      "mechanic_rationale": "text_task frames real 'how long until…' problems; match_pairs drills true/false time facts; number_grid is a mini-calendar for finding dates.",
       "assessment_focus": "Watch how the child crosses the hour (e.g. 10:50 + 20 min). Counting minutes past 60 as if past 100 is the error to catch.",
-      "status": "pending"
+      "status": "done"
     },
     {
       "num": 9,
