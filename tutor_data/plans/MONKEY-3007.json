@@ -260,7 +260,7 @@
       ],
       "mechanic_rationale": "build_number literally builds a total from coins and notes; drag_sort orders amounts and corridor_choice compares two prices.",
       "assessment_focus": "Check the child adds different coin values in a sensible order (largest first). Note if the child treats every coin as worth 1.",
-      "status": "pending"
+      "status": "done"
     },
     {
       "num": 10,
