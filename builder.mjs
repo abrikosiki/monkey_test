@@ -4400,7 +4400,7 @@ function buildHtml(
     chestZone.className = "kl-chest-zone";
     const chest = document.createElement("img");
     chest.className = "kl-chest-img";
-    chest.src = "assets/items/box_close.png";
+    chest.src = "assets/items/box_close.webp";
     chest.alt = "locked box";
     chestZone.appendChild(chest);
     wrap.appendChild(chestZone);
@@ -4447,13 +4447,13 @@ function buildHtml(
     }
 
     function openChest(){
-      chest.src = "assets/items/box_open.png";
+      chest.src = "assets/items/box_open.webp";
       chest.classList.remove("open-pop");
       void chest.offsetWidth;
       chest.classList.add("open-pop");
     }
     function closeChest(){
-      chest.src = "assets/items/box_close.png";
+      chest.src = "assets/items/box_close.webp";
       chest.classList.remove("open-pop");
     }
 

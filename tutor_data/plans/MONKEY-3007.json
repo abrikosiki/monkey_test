@@ -278,7 +278,7 @@
       "difficulty": 6,
       "mechanics": [
         "text_task",
-        "find_unknown",
+        "match_pairs",
         "multi_choice",
         "fill_blank",
         "corridor_choice",
@@ -288,7 +288,7 @@
       ],
       "mechanic_rationale": "text_task carries the shopping story; find_unknown models change (paid − cost); key_lock frames 'unlock the till' as matching amounts to a target.",
       "assessment_focus": "Change is where subtraction across a 'ten' bites. Watch 20 − 13 style change and whether the child counts up or subtracts.",
-      "status": "pending"
+      "status": "done"
     },
     {
       "num": 11,
