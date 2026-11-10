@@ -316,7 +316,7 @@
       ],
       "mechanic_rationale": "multi_choice and match_pairs link objects to sensible units; drag_sort orders lengths/weights and corridor_choice compares two measurements.",
       "assessment_focus": "Watch unit sense — measuring a pencil in metres or a door in cm signals the child is not picturing the size. Note estimation vs exact confusion.",
-      "status": "pending"
+      "status": "done"
     },
     {
       "num": 12,
