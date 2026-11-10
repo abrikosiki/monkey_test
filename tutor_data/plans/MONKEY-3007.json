@@ -361,7 +361,7 @@
       "island": "crystal_island",
       "difficulty": 7,
       "mechanics": [
-        "drag_group",
+        "drag_sort",
         "multi_choice",
         "true_false",
         "match_pairs",
@@ -370,9 +370,9 @@
         "number_grid",
         "text_task"
       ],
-      "mechanic_rationale": "drag_group sorts 2D from 3D; match_pairs links shapes to their properties; corridor_choice and true_false test angle identification.",
+      "mechanic_rationale": "drag_sort orders shapes by number of sides; corridor_choice sorts 2D vs 3D; match_pairs links shapes to their properties; true_false and multi_choice test angle identification.",
       "assessment_focus": "Watch the 2D/3D mix-up (square vs cube, circle vs sphere) and whether the child counts faces of a 3D shape rather than sides.",
-      "status": "pending"
+      "status": "done"
     },
     {
       "num": 14,

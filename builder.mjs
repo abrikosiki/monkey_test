@@ -5799,9 +5799,16 @@ function buildHtml(
         function makeShapeSvg(v){
           var stroke = "#7ec8ff", fillc = "rgba(126,200,255,.14)", txt = "#f5ecd6";
           var miss = v.missing;
-          var show = function(side, val){ return miss === side ? "?" : String(val); };
+          var show = function(side, val){
+            if(val == null || val === "") return "";
+            return miss === side ? "?" : String(val);
+          };
           var lbl = function(x,y,t){
+            if(t === "" || t == null) return "";
             return "<text x='" + x + "' y='" + y + "' fill='" + txt + "' font-size='15' font-weight='700' text-anchor='middle' dominant-baseline='middle'>" + t + "</text>";
+          };
+          var poly = function(pts){
+            return "<polygon points='" + pts + "' fill='" + fillc + "' stroke='" + stroke + "' stroke-width='3' stroke-linejoin='round'/>";
           };
           var inner;
           if(v.shape === "rectangle"){
@@ -5809,6 +5816,28 @@ function buildHtml(
             inner = "<rect x='14' y='30' width='92' height='46' rx='4' fill='" + fillc + "' stroke='" + stroke + "' stroke-width='3'/>"
               + lbl(60,22,show("top",w)) + lbl(60,86,show("bottom",w))
               + lbl(7,53,show("left",h)) + lbl(113,53,show("right",h));
+          } else if(v.shape === "triangle"){
+            var ts = v.side;
+            inner = poly("60,12 14,84 106,84")
+              + lbl(30,50,show("left",ts)) + lbl(90,50,show("right",ts)) + lbl(60,96,show("bottom",ts));
+          } else if(v.shape === "circle"){
+            inner = "<ellipse cx='60' cy='48' rx='40' ry='40' fill='" + fillc + "' stroke='" + stroke + "' stroke-width='3'/>";
+          } else if(v.shape === "angle"){
+            var ax = 30, ay = 78, kind = v.angle || "right";
+            var horiz = "<line x1='" + ax + "' y1='" + ay + "' x2='112' y2='" + ay + "' stroke='" + stroke + "' stroke-width='3' stroke-linecap='round'/>";
+            var ray, marker = "", deg;
+            if(kind === "acute"){
+              ray = "<line x1='" + ax + "' y1='" + ay + "' x2='92' y2='28' stroke='" + stroke + "' stroke-width='3' stroke-linecap='round'/>";
+              deg = lbl(ax + 26, ay - 16, "<90");
+            } else if(kind === "obtuse"){
+              ray = "<line x1='" + ax + "' y1='" + ay + "' x2='10' y2='32' stroke='" + stroke + "' stroke-width='3' stroke-linecap='round'/>";
+              deg = lbl(ax + 40, ay - 20, ">90");
+            } else {
+              ray = "<line x1='" + ax + "' y1='" + ay + "' x2='" + ax + "' y2='14' stroke='" + stroke + "' stroke-width='3' stroke-linecap='round'/>";
+              marker = "<rect x='" + ax + "' y='" + (ay - 14) + "' width='14' height='14' fill='none' stroke='" + stroke + "' stroke-width='2'/>";
+              deg = lbl(ax + 30, ay - 30, "90");
+            }
+            inner = horiz + ray + marker + deg;
           } else {
             var s = v.side;
             inner = "<rect x='29' y='16' width='62' height='62' rx='4' fill='" + fillc + "' stroke='" + stroke + "' stroke-width='3'/>"
