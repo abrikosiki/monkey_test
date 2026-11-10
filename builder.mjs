@@ -5793,13 +5793,44 @@ function buildHtml(
           return img;
         }
 
-        // Top icon
+        // Helper: build an inline SVG of a labelled square/rectangle.
+        // v.shape = "square" (uses v.side) | "rectangle" (uses v.w / v.h).
+        // v.missing = "top"|"bottom"|"left"|"right" renders "?" on that side.
+        function makeShapeSvg(v){
+          var stroke = "#7ec8ff", fillc = "rgba(126,200,255,.14)", txt = "#f5ecd6";
+          var miss = v.missing;
+          var show = function(side, val){ return miss === side ? "?" : String(val); };
+          var lbl = function(x,y,t){
+            return "<text x='" + x + "' y='" + y + "' fill='" + txt + "' font-size='15' font-weight='700' text-anchor='middle' dominant-baseline='middle'>" + t + "</text>";
+          };
+          var inner;
+          if(v.shape === "rectangle"){
+            var w = v.w, h = v.h;
+            inner = "<rect x='14' y='30' width='92' height='46' rx='4' fill='" + fillc + "' stroke='" + stroke + "' stroke-width='3'/>"
+              + lbl(60,22,show("top",w)) + lbl(60,86,show("bottom",w))
+              + lbl(7,53,show("left",h)) + lbl(113,53,show("right",h));
+          } else {
+            var s = v.side;
+            inner = "<rect x='29' y='16' width='62' height='62' rx='4' fill='" + fillc + "' stroke='" + stroke + "' stroke-width='3'/>"
+              + lbl(60,9,show("top",s)) + lbl(60,86,show("bottom",s))
+              + lbl(14,47,show("left",s)) + lbl(106,47,show("right",s));
+          }
+          var holder = document.createElement("div");
+          holder.innerHTML = "<svg viewBox='0 0 120 96' width='120' height='96' xmlns='http://www.w3.org/2000/svg'>" + inner + "</svg>";
+          return holder.firstChild;
+        }
+
+        // Top icon (or a drawn shape for v.type === "shape")
         const top = document.createElement("div");
         top.className = "theory-vis-top";
-        top.appendChild(makeItemImg(v.icon, "theory-vis-img"));
+        if(v.type === "shape"){
+          top.appendChild(makeShapeSvg(v));
+        } else {
+          top.appendChild(makeItemImg(v.icon, "theory-vis-img"));
+        }
         box.appendChild(top);
 
-        if(v.type === "equation"){
+        if(v.type === "equation" || v.type === "shape"){
           // Equation mode: image + math equation below
           if(v.label){
             const eq = document.createElement("div");
