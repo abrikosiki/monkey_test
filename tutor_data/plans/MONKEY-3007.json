@@ -334,17 +334,17 @@
       "difficulty": 7,
       "mechanics": [
         "fill_blank",
-        "find_unknown",
+        "match_pairs",
         "multi_choice",
         "text_task",
         "balance_scale",
         "corridor_choice",
-        "symbol_calc",
+        "five_tasks",
         "true_false"
       ],
       "mechanic_rationale": "find_unknown and balance_scale both model 'total perimeter fixed, one side missing'; symbol_calc handles perimeter formulas with repeated sides.",
       "assessment_focus": "Watch whether the child adds every side (not just two) and how the child handles a missing side by subtracting from the total. Flag counting a side twice.",
-      "status": "pending"
+      "status": "done"
     },
     {
       "num": 13,
