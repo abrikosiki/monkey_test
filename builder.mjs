@@ -5849,17 +5849,59 @@ function buildHtml(
           return holder.firstChild;
         }
 
-        // Top icon (or a drawn shape for v.type === "shape")
+        // Helper: a small bar chart. v.bars = [{l:"Red", v:8}, ...] (up to 4).
+        function makeBarsSvg(v){
+          var txt = "#f5ecd6", axis = "rgba(245,236,214,.45)";
+          var palette = ["#ff5db1", "#7ec8ff", "#9d7bff", "#5ecc7b"];
+          var bars = Array.isArray(v.bars) ? v.bars.slice(0, 4) : [];
+          var maxV = Math.max(1, (v.scaleMax ? Number(v.scaleMax) : 0), bars.reduce(function(m, b){ return Math.max(m, Number(b.v) || 0); }, 0));
+          var baseY = 80, topY = 14, maxH = baseY - topY;
+          var n = bars.length || 1, slotW = (118 - 18) / n;
+          var inner = "<line x1='16' y1='" + topY + "' x2='16' y2='" + baseY + "' stroke='" + axis + "' stroke-width='2'/>"
+            + "<line x1='16' y1='" + baseY + "' x2='118' y2='" + baseY + "' stroke='" + axis + "' stroke-width='2'/>";
+          bars.forEach(function(b, i){
+            var val = Number(b.v) || 0;
+            var h = Math.round((val / maxV) * maxH);
+            var bw = Math.round(slotW * 0.58);
+            var x = Math.round(18 + i * slotW + (slotW - bw) / 2);
+            var y = baseY - h;
+            inner += "<rect x='" + x + "' y='" + y + "' width='" + bw + "' height='" + h + "' rx='2' fill='" + palette[i % 4] + "'/>";
+            inner += "<text x='" + (x + bw / 2) + "' y='" + (y - 4) + "' fill='" + txt + "' font-size='13' font-weight='700' text-anchor='middle'>" + val + "</text>";
+            inner += "<text x='" + (x + bw / 2) + "' y='" + (baseY + 12) + "' fill='" + txt + "' font-size='11' text-anchor='middle'>" + String(b.l || "") + "</text>";
+          });
+          var holder = document.createElement("div");
+          holder.innerHTML = "<svg viewBox='0 0 128 96' width='128' height='96' xmlns='http://www.w3.org/2000/svg'>" + inner + "</svg>";
+          return holder.firstChild;
+        }
+
+        // Helper: a pictogram row. v.n symbols, key given via v.label (e.g. "★ = 2 → ★★★★ = 8").
+        function makePictoSvg(v){
+          var fill = "#ffd36e", n = Math.max(1, Math.min(6, Number(v.n) || 1));
+          var inner = "";
+          for(var i = 0; i < n; i++){
+            var cx = 18 + i * 18;
+            inner += "<circle cx='" + cx + "' cy='46' r='8' fill='" + fill + "'/>";
+          }
+          var holder = document.createElement("div");
+          holder.innerHTML = "<svg viewBox='0 0 128 92' width='128' height='92' xmlns='http://www.w3.org/2000/svg'>" + inner + "</svg>";
+          return holder.firstChild;
+        }
+
+        // Top icon (or a drawn shape / chart for the matching v.type)
         const top = document.createElement("div");
         top.className = "theory-vis-top";
         if(v.type === "shape"){
           top.appendChild(makeShapeSvg(v));
+        } else if(v.type === "bars"){
+          top.appendChild(makeBarsSvg(v));
+        } else if(v.type === "pictogram"){
+          top.appendChild(makePictoSvg(v));
         } else {
           top.appendChild(makeItemImg(v.icon, "theory-vis-img"));
         }
         box.appendChild(top);
 
-        if(v.type === "equation" || v.type === "shape"){
+        if(v.type === "equation" || v.type === "shape" || v.type === "bars" || v.type === "pictogram"){
           // Equation mode: image + math equation below
           if(v.label){
             const eq = document.createElement("div");

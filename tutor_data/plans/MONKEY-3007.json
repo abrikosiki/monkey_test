@@ -400,7 +400,7 @@
       ],
       "mechanic_rationale": "number_grid and multi_choice mirror reading values off a chart; drag_sort orders categories by size; text_task poses 'how many more' questions.",
       "assessment_focus": "Watch pictogram keys where one symbol = 2 or 5 — reading it as 1 each is the classic error. Note whether the child uses the scale on a bar chart.",
-      "status": "pending"
+      "status": "done"
     },
     {
       "num": 15,
