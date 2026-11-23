@@ -3883,10 +3883,10 @@ function buildHtml(
     const promptText = stage.prompt || stage.instruction || "Find the answer in the grid!";
 
     const wrap = document.createElement("div");
-    wrap.style.cssText = "display:flex;flex-direction:column;align-items:center;gap:12px;padding:16px 8px;";
+    wrap.style.cssText = "position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:12px;padding:16px 12px;width:min(92%,460px);box-sizing:border-box;";
 
     const promptEl = document.createElement("div");
-    promptEl.style.cssText = "font-size:24px;font-weight:700;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.5);text-align:center;";
+    promptEl.style.cssText = "font-size:22px;font-weight:700;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.5);text-align:center;line-height:1.25;";
     promptEl.textContent = promptText;
 
     const rows = ["A","B","C","D","E"];
