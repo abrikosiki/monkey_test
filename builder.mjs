@@ -2589,6 +2589,7 @@ function buildHtml(
       "pair_1", "pair_2", "pair_3", "pair1", "pair2", "pair3",
       "lock1_sum", "lock2_sum", "lock3_sum",
       "post_story_text",
+      "chart",
       "statement", "correct_answer", "prompt", "tasks",
       "multiplier1", "multiplier2",
       "artifact_key",
@@ -3875,6 +3876,51 @@ function buildHtml(
     img.alt = "clock";
     img.style.cssText = "width:160px;height:160px;object-fit:contain;margin:0 auto 12px;display:block;filter:drop-shadow(0 4px 14px rgba(0,0,0,.5));";
     lane.appendChild(img);
+  }
+
+  // Draw a real chart inside a round. chart = {kind:"bars", bars:[{l,v}], key?}
+  // or {kind:"picto", n, key:"● = 2 drones"}. Rendered as a card at the top of
+  // the play zone so the child reads values off the picture, not off text.
+  function stageChartBarsMarkup(bars){
+    var txt = "#f5ecd6", axis = "rgba(245,236,214,.5)";
+    var palette = ["#ff5db1", "#7ec8ff", "#9d7bff", "#5ecc7b"];
+    var bs = (bars || []).slice(0, 4);
+    var maxV = Math.max(1, bs.reduce(function(m, b){ return Math.max(m, Number(b.v) || 0); }, 0));
+    var baseY = 86, topY = 12, maxH = baseY - topY, n = bs.length || 1, slotW = (158 - 20) / n;
+    var inner = "<line x1='18' y1='" + topY + "' x2='18' y2='" + baseY + "' stroke='" + axis + "' stroke-width='2'/>"
+      + "<line x1='18' y1='" + baseY + "' x2='158' y2='" + baseY + "' stroke='" + axis + "' stroke-width='2'/>";
+    bs.forEach(function(b, i){
+      var val = Number(b.v) || 0, h = Math.round((val / maxV) * maxH);
+      var bw = Math.round(slotW * 0.56), x = Math.round(20 + i * slotW + (slotW - bw) / 2), y = baseY - h;
+      inner += "<rect x='" + x + "' y='" + y + "' width='" + bw + "' height='" + h + "' rx='2' fill='" + palette[i % 4] + "'/>";
+      inner += "<text x='" + (x + bw / 2) + "' y='" + (y - 4) + "' fill='" + txt + "' font-size='14' font-weight='700' text-anchor='middle'>" + val + "</text>";
+      inner += "<text x='" + (x + bw / 2) + "' y='" + (baseY + 14) + "' fill='" + txt + "' font-size='12' text-anchor='middle'>" + String(b.l || "") + "</text>";
+    });
+    return "<svg viewBox='0 0 168 104' width='210' height='128' xmlns='http://www.w3.org/2000/svg'>" + inner + "</svg>";
+  }
+  function stageChartPictoMarkup(n){
+    var fill = "#ffd36e";
+    n = Math.max(1, Math.min(8, Number(n) || 1));
+    var inner = "";
+    for(var i = 0; i < n; i++){ inner += "<circle cx='" + (16 + i * 24) + "' cy='22' r='10' fill='" + fill + "'/>"; }
+    var w = 16 + n * 24;
+    return "<svg viewBox='0 0 " + w + " 44' width='" + Math.min(300, w * 1.5) + "' height='40' xmlns='http://www.w3.org/2000/svg'>" + inner + "</svg>";
+  }
+  function stageChartEl(chart){
+    if(!chart || typeof chart !== "object") return null;
+    var holder = document.createElement("div");
+    holder.style.cssText = "position:absolute;left:50%;top:3%;transform:translateX(-50%);z-index:13;background:rgba(8,18,33,.78);border:1px solid rgba(255,255,255,.22);border-radius:16px;padding:10px 18px 8px;display:flex;flex-direction:column;align-items:center;gap:2px;max-width:92%;";
+    var svg = chart.kind === "picto" ? stageChartPictoMarkup(chart.n) : stageChartBarsMarkup(chart.bars);
+    var box = document.createElement("div");
+    box.innerHTML = svg;
+    holder.appendChild(box.firstChild);
+    if(chart.key){
+      var k = document.createElement("div");
+      k.textContent = chart.key;
+      k.style.cssText = "color:#f5ecd6;font-size:15px;font-weight:800;margin-top:2px;letter-spacing:.01em;";
+      holder.appendChild(k);
+    }
+    return holder;
   }
 
   function renderNumberGrid(stage){
@@ -5338,6 +5384,15 @@ function buildHtml(
     else if(engType === "number_grid") renderNumberGrid(stage);
     else {
       setMessage("Unknown stage type: " + stage.type);
+    }
+    // Optional per-round chart (bar chart / pictogram) drawn above the question.
+    if(stage.chart){
+      const chartEl = stageChartEl(stage.chart);
+      if(chartEl){
+        lane.appendChild(chartEl);
+        const card = lane.querySelector(".choice-box, .eq-card");
+        if(card) card.style.top = "48%";
+      }
     }
     updateStageControls();
   }
