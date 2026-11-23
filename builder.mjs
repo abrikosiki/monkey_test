@@ -3882,21 +3882,29 @@ function buildHtml(
   // or {kind:"picto", n, key:"● = 2 drones"}. Rendered as a card at the top of
   // the play zone so the child reads values off the picture, not off text.
   function stageChartBarsMarkup(bars){
-    var txt = "#f5ecd6", axis = "rgba(245,236,214,.5)";
+    var txt = "#f5ecd6", axis = "rgba(245,236,214,.6)", grid = "rgba(245,236,214,.16)";
     var palette = ["#ff5db1", "#7ec8ff", "#9d7bff", "#5ecc7b"];
     var bs = (bars || []).slice(0, 4);
     var maxV = Math.max(1, bs.reduce(function(m, b){ return Math.max(m, Number(b.v) || 0); }, 0));
-    var baseY = 86, topY = 12, maxH = baseY - topY, n = bs.length || 1, slotW = (158 - 20) / n;
-    var inner = "<line x1='18' y1='" + topY + "' x2='18' y2='" + baseY + "' stroke='" + axis + "' stroke-width='2'/>"
-      + "<line x1='18' y1='" + baseY + "' x2='158' y2='" + baseY + "' stroke='" + axis + "' stroke-width='2'/>";
+    var maxTick = maxV % 2 === 0 ? maxV : maxV + 1; // even top tick so the scale reads cleanly
+    var baseY = 112, topY = 10, maxH = baseY - topY;
+    var leftX = 26, rightX = 184, n = bs.length || 1, slotW = (rightX - leftX) / n;
+    var inner = "";
+    // gridlines at every unit; number labels on the even ticks — the child reads the bar top off this scale
+    for(var tk = 0; tk <= maxTick; tk++){
+      var gy = baseY - (tk / maxTick) * maxH;
+      inner += "<line x1='" + leftX + "' y1='" + gy.toFixed(1) + "' x2='" + rightX + "' y2='" + gy.toFixed(1) + "' stroke='" + grid + "' stroke-width='1'/>";
+      if(tk % 2 === 0) inner += "<text x='" + (leftX - 6) + "' y='" + (gy + 4).toFixed(1) + "' fill='" + txt + "' font-size='11' text-anchor='end'>" + tk + "</text>";
+    }
+    inner += "<line x1='" + leftX + "' y1='" + topY + "' x2='" + leftX + "' y2='" + baseY + "' stroke='" + axis + "' stroke-width='2'/>"
+      + "<line x1='" + leftX + "' y1='" + baseY + "' x2='" + rightX + "' y2='" + baseY + "' stroke='" + axis + "' stroke-width='2'/>";
     bs.forEach(function(b, i){
-      var val = Number(b.v) || 0, h = Math.round((val / maxV) * maxH);
-      var bw = Math.round(slotW * 0.56), x = Math.round(20 + i * slotW + (slotW - bw) / 2), y = baseY - h;
-      inner += "<rect x='" + x + "' y='" + y + "' width='" + bw + "' height='" + h + "' rx='2' fill='" + palette[i % 4] + "'/>";
-      inner += "<text x='" + (x + bw / 2) + "' y='" + (y - 4) + "' fill='" + txt + "' font-size='14' font-weight='700' text-anchor='middle'>" + val + "</text>";
-      inner += "<text x='" + (x + bw / 2) + "' y='" + (baseY + 14) + "' fill='" + txt + "' font-size='12' text-anchor='middle'>" + String(b.l || "") + "</text>";
+      var val = Number(b.v) || 0, h = (val / maxTick) * maxH;
+      var bw = Math.round(slotW * 0.5), x = Math.round(leftX + i * slotW + (slotW - bw) / 2), y = baseY - h;
+      inner += "<rect x='" + x + "' y='" + y.toFixed(1) + "' width='" + bw + "' height='" + h.toFixed(1) + "' rx='2' fill='" + palette[i % 4] + "'/>";
+      inner += "<text x='" + (x + bw / 2) + "' y='" + (baseY + 15) + "' fill='" + txt + "' font-size='12' font-weight='700' text-anchor='middle'>" + String(b.l || "") + "</text>";
     });
-    return "<svg viewBox='0 0 168 104' width='210' height='128' xmlns='http://www.w3.org/2000/svg'>" + inner + "</svg>";
+    return "<svg viewBox='0 0 192 134' width='250' height='174' xmlns='http://www.w3.org/2000/svg'>" + inner + "</svg>";
   }
   function stageChartPictoMarkup(n){
     var fill = "#ffd36e";
