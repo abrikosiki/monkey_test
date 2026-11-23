@@ -3898,30 +3898,41 @@ function buildHtml(
     }
     inner += "<line x1='" + leftX + "' y1='" + topY + "' x2='" + leftX + "' y2='" + baseY + "' stroke='" + axis + "' stroke-width='2'/>"
       + "<line x1='" + leftX + "' y1='" + baseY + "' x2='" + rightX + "' y2='" + baseY + "' stroke='" + axis + "' stroke-width='2'/>";
+    var colorByLabel = { red: "#ff6b6b", blue: "#7ec8ff", green: "#5ecc7b", yellow: "#ffd36e", purple: "#9d7bff", pink: "#ff5db1", orange: "#ff9f45" };
     bs.forEach(function(b, i){
       var val = Number(b.v) || 0, h = (val / maxTick) * maxH;
       var bw = Math.round(slotW * 0.5), x = Math.round(leftX + i * slotW + (slotW - bw) / 2), y = baseY - h;
-      inner += "<rect x='" + x + "' y='" + y.toFixed(1) + "' width='" + bw + "' height='" + h.toFixed(1) + "' rx='2' fill='" + palette[i % 4] + "'/>";
+      var col = colorByLabel[String(b.l || "").toLowerCase()] || palette[i % 4];
+      inner += "<rect x='" + x + "' y='" + y.toFixed(1) + "' width='" + bw + "' height='" + h.toFixed(1) + "' rx='2' fill='" + col + "'/>";
       inner += "<text x='" + (x + bw / 2) + "' y='" + (baseY + 15) + "' fill='" + txt + "' font-size='12' font-weight='700' text-anchor='middle'>" + String(b.l || "") + "</text>";
     });
     return "<svg viewBox='0 0 192 134' width='250' height='174' xmlns='http://www.w3.org/2000/svg'>" + inner + "</svg>";
   }
-  function stageChartPictoMarkup(n){
-    var fill = "#ffd36e";
-    n = Math.max(1, Math.min(8, Number(n) || 1));
-    var inner = "";
-    for(var i = 0; i < n; i++){ inner += "<circle cx='" + (16 + i * 24) + "' cy='22' r='10' fill='" + fill + "'/>"; }
-    var w = 16 + n * 24;
-    return "<svg viewBox='0 0 " + w + " 44' width='" + Math.min(300, w * 1.5) + "' height='40' xmlns='http://www.w3.org/2000/svg'>" + inner + "</svg>";
+  function stageChartPictoRow(chart){
+    var n = Math.max(1, Math.min(8, Number(chart.n) || 1));
+    var row = document.createElement("div");
+    row.style.cssText = "display:flex;gap:7px;align-items:center;justify-content:center;flex-wrap:wrap;max-width:300px;";
+    var src = imagePathByKey(chart.img || "bubble", "item");
+    for(var i = 0; i < n; i++){
+      var im = document.createElement("img");
+      im.src = src;
+      im.alt = "";
+      im.style.cssText = "width:34px;height:34px;object-fit:contain;filter:drop-shadow(0 2px 5px rgba(0,0,0,.45));";
+      row.appendChild(im);
+    }
+    return row;
   }
   function stageChartEl(chart){
     if(!chart || typeof chart !== "object") return null;
     var holder = document.createElement("div");
-    holder.style.cssText = "position:absolute;left:50%;top:3%;transform:translateX(-50%);z-index:13;background:rgba(8,18,33,.78);border:1px solid rgba(255,255,255,.22);border-radius:16px;padding:10px 18px 8px;display:flex;flex-direction:column;align-items:center;gap:2px;max-width:92%;";
-    var svg = chart.kind === "picto" ? stageChartPictoMarkup(chart.n) : stageChartBarsMarkup(chart.bars);
-    var box = document.createElement("div");
-    box.innerHTML = svg;
-    holder.appendChild(box.firstChild);
+    holder.style.cssText = "position:absolute;left:50%;top:3%;transform:translateX(-50%);z-index:13;background:rgba(8,18,33,.78);border:1px solid rgba(255,255,255,.22);border-radius:16px;padding:10px 18px 8px;display:flex;flex-direction:column;align-items:center;gap:4px;max-width:92%;";
+    if(chart.kind === "picto"){
+      holder.appendChild(stageChartPictoRow(chart));
+    } else {
+      var box = document.createElement("div");
+      box.innerHTML = stageChartBarsMarkup(chart.bars);
+      holder.appendChild(box.firstChild);
+    }
     if(chart.key){
       var k = document.createElement("div");
       k.textContent = chart.key;
