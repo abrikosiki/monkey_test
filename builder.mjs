@@ -3504,7 +3504,7 @@ function buildHtml(
     input.autocomplete = "off";
     const correct = String(stage.answer ?? "").trim().toLowerCase();
     function checkTextAnswer(){
-      if(state.stageSolved) return;
+      if(state.stageSolved || input.disabled) return;
       const val = input.value.trim().toLowerCase();
       if(!val) return;
       if(val === correct){
